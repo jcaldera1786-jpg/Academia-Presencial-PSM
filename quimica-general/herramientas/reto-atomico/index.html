@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reto Atómico: ZUFORCA Academia v3.1</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root { --primary: #0f172a; --accent: #38bdf8; --success: #22c55e; --error: #ef4444; --bg: #f1f5f9; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; }
+        #quiz-card { background: white; width: 100%; max-width: 700px; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .screen { display: none; }
+        .active { display: block; }
+        .option-btn { display: block; width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #e2e8f0; border-radius: 10px; background: white; cursor: pointer; text-align: left; font-size: 1.1em; transition: 0.2s; }
+        .option-btn:hover:not(:disabled) { border-color: var(--accent); background: #f0f9ff; }
+        .correct { background: #dcfce7 !important; border-color: var(--success) !important; color: #166534; }
+        .wrong { background: #fee2e2 !important; border-color: var(--error) !important; color: #991b1b; }
+        #feedback { margin-top: 20px; padding: 15px; border-radius: 10px; display: none; border-left: 5px solid #ccc; }
+        .btn-main { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 15px; font-size: 1.1em; transition: 0.3s; }
+        .btn-disabled { background: #cbd5e1 !important; cursor: not-allowed; opacity: 0.6; }
+        .progress { height: 8px; background: #e2e8f0; border-radius: 4px; margin: 15px 0; overflow: hidden; }
+        #progress-fill { height: 100%; background: var(--accent); width: 0%; transition: 0.3s; }
+        textarea { width: 100%; height: 120px; margin-top: 10px; font-family: monospace; padding: 10px; box-sizing: border-box; font-size: 0.85em; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; }
+    </style>
+</head>
+<body>
+
+<div id="quiz-card">
+    <div id="screen-start" class="screen active">
+        <h1 style="color:var(--primary); margin-top:0;">🔬 Reto Atómico</h1>
+        <p>Este sistema registrará tus intentos directamente en la base de datos del profesor. <strong>Debes enviar tu reporte para habilitar nuevos intentos.</strong></p>
+        <div style="margin-top:25px;">
+            <label style="font-weight:bold; display:block; margin-bottom:8px;">Nombre Completo:</label>
+            <input type="text" id="user-name" placeholder="Ej: Juan Pérez" style="width:100%; padding:14px; border-radius:8px; border:2px solid #e2e8f0; box-sizing: border-box; font-size:1.1em;">
+        </div>
+        <button class="btn-main" onclick="startQuiz()">Comenzar Evaluación</button>
+    </div>
+
+    <div id="screen-game" class="screen">
+        <div style="display:flex; justify-content:space-between; color:#64748b; font-weight:bold; font-size:0.9em;">
+            <span id="q-number">Cargando...</span>
+            <span id="score-text">Aciertos: 0</span>
+        </div>
+        <div class="progress"><div id="progress-fill"></div></div>
+        <h2 id="q-text" style="margin:20px 0; min-height:60px;"></h2>
+        <div id="options-area"></div>
+        <div id="feedback"></div>
+        <button id="next-btn" class="btn-main" style="display:none;" onclick="showNext()">Continuar →</button>
+    </div>
+
+    <div id="screen-result" class="screen" style="text-align:center;">
+        <h1 style="margin-top:0;">Evaluación Finalizada</h1>
+        <div style="background:#f8fafc; padding:30px; border-radius:20px; margin:20px 0; border:1px solid #e2e8f0;">
+            <p style="font-size:3.5em; font-weight:900; margin:0; color:var(--primary);" id="res-percent">0%</p>
+            <p id="res-detail" style="font-weight:600; color:#64748b;"></p>
+        </div>
+        
+        <div style="text-align:left; margin-bottom:20px;">
+            <p style="font-weight:bold; color:var(--primary); margin-bottom:5px;">Historial de Progresión:</p>
+            <textarea id="csv-output" readonly></textarea>
+        </div>
+
+        <button id="send-btn" class="btn-main" style="background:#2563eb;" onclick="sendToGoogle()">🚀 1. Enviar Resultados a la Nube</button>
+        <button id="retry-btn" class="btn-main btn-disabled" disabled onclick="location.reload()">🔄 2. Realizar Nuevo Intento</button>
+        <p id="lock-msg" style="font-size:0.9em; color:var(--error); margin-top:15px; font-weight:500;">⚠️ Bloqueado: Envía tus resultados para volver a intentar.</p>
+    </div>
+</div>
+
+<script>
+const bank = [
+    { q: "¿Qué significa 'átomo'?", a: ["Sin división", "Pequeña masa", "Esfera", "Carga"], c: 0, r: "Del griego 'a' (sin) y 'tomo' (división)." },
+    { q: "Dalton dijo que los átomos de un elemento son:", a: ["Iguales en masa", "Diferentes", "Huecos", "Divisibles"], c: 0, r: "Postuló identidad total en átomos del mismo elemento." },
+    { q: "¿Qué descubrió Thomson?", a: ["Electrón", "Protón", "Neutrón", "Núcleo"], c: 0, r: "Descubierto mediante rayos catódicos." },
+    { q: "Modelo de Thomson:", a: ["Pudín de pasas", "Planetario", "Billar", "Ondas"], c: 0, r: "Electrones incrustados en masa positiva." },
+    { q: "Partículas alfa (Rutherford) tienen carga:", a: ["Positiva", "Negativa", "Neutra", "Cero"], c: 0, r: "Son núcleos de Helio (carga +2)." },
+    { q: "Rutherford descubrió:", a: ["El núcleo denso", "El electrón", "La elipse", "El spin"], c: 0, r: "El rebote de partículas alfa probó el núcleo." },
+    { q: "Salto de órbita externa a interna:", a: ["Emite luz", "Absorbe luz", "Explota", "No pasa nada"], c: 0, r: "Libera energía en forma de fotón." },
+    { q: "Bohr llamó a sus órbitas:", a: ["Estados estacionarios", "Nodos", "Nubes", "Túneles"], c: 0, r: "Niveles donde el electrón no irradia energía." },
+    { q: "Sommerfeld añadió órbitas:", a: ["Elípticas", "Cuadradas", "Cúbicas", "Planas"], c: 0, r: "Para explicar los subniveles de energía." },
+    { q: "Chadwick descubrió el:", a: ["Neutrón", "Protón", "Electrón", "Positrón"], c: 0, r: "En 1932, completando la masa nuclear." },
+    { q: "Fallo de Rutherford:", a: ["El e- debería caer al núcleo", "No había núcleo", "Era muy grande", "Sin gravedad"], c: 0, r: "Cargas aceleradas pierden energía en física clásica." },
+    { q: "Dalton se basó en:", a: ["Ley de conservación de masa", "Relatividad", "Cuántica", "Gravedad"], c: 0, r: "La masa constante sugería piezas indivisibles." },
+    { q: "Número cuántico 'n' define:", a: ["Nivel y tamaño", "Forma", "Giro", "Color"], c: 0, r: "Principal: energía y volumen." },
+    { q: "Si n=3, valores de 'l' son:", a: ["0, 1, 2", "1, 2, 3", "0, 1", "Solo 3"], c: 0, r: "Desde 0 hasta n-1." },
+    { q: "Orbital 'p' (l=1) tiene orientaciones:", a: ["3 (-1, 0, 1)", "1 (0)", "5", "7"], c: 0, r: "Corresponden a px, py y pz." },
+    { q: "El spin (ms) indica:", a: ["Giro magnético", "Energía", "Forma", "Posición"], c: 0, r: "Sentido horario o antihorario (+1/2, -1/2)." },
+    { q: "Heisenberg dice que:", a: ["No hay posición y velocidad exacta", "El átomo es vacío", "Todo es relativo", "La luz es masa"], c: 0, r: "Principio de Incertidumbre." },
+    { q: "Un orbital es:", a: ["Zona de máxima probabilidad", "Un camino", "Un cable", "Un hueco"], c: 0, r: "Concepto probabilístico del electrón." },
+    { q: "Principio de Pauli:", a: ["Máximo 2 e- por orbital", "Máximo 8", "Solo 1", "Ilimitados"], c: 0, r: "Deben tener espines opuestos." },
+    { q: "Electrones en nivel n=2:", a: ["8", "2", "18", "32"], c: 0, r: "Fórmula 2n²." },
+    { q: "e- en subnivel 'd':", a: ["10", "2", "6", "14"], c: 0, r: "5 orbitales x 2 e- cada uno." },
+    { q: "Un nodo es:", a: ["Probabilidad cero", "Muchos e-", "El núcleo", "El borde"], c: 0, r: "Regiones donde la función de onda es nula." },
+    { q: "Dualidad onda-partícula propuesta por:", a: ["De Broglie", "Einstein", "Bohr", "Dalton"], c: 0, r: "La materia tiene comportamiento ondulatorio." },
+    { q: "¿Qué tiene más energía?", a: ["3d", "4s", "3p", "2s"], c: 0, r: "3d (n+l=5) supera al 4s (n+l=4)." },
+    { q: "Regla de Hund:", a: ["e- solos antes de aparear", "Llenar rápido", "Sin orden", "Solo pares"], c: 0, r: "Minimiza repulsión electrónica." },
+    { q: "Aufbau significa:", a: ["Construcción", "Energía", "Destrucción", "Lluvia"], c: 0, r: "Llenado de menor a mayor energía." },
+    { q: "Configuración del Na (Z=11):", a: ["1s² 2s² 2p⁶ 3s¹", "1s² 2s² 2p⁶", "1s² 3s¹", "1s² 2s² 2p⁵"], c: 0, r: "Total 11 electrones." },
+    { q: "Estabilidad del Argón (Z=18):", a: ["Octeto completo", "Sin electrones", "Solo 2 e-", "Es metal"], c: 0, r: "Última capa s²p⁶ llena." },
+    { q: "Excepción del Cromo (Z=24):", a: ["4s¹ 3d⁵", "4s² 3d⁴", "4s⁰ 3d⁶", "3d⁴"], c: 0, r: "Estabilidad por subnivel d semilleno." },
+    { q: "Cobre (Z=29):", a: ["4s¹ 3d¹⁰", "4s² 3d⁹", "4s⁰ 3d¹¹", "4p¹"], c: 0, r: "Estabilidad por subnivel d completo." },
+    { q: "e- de valencia del Carbono (Z=6):", a: ["4", "2", "6", "12"], c: 0, r: "Capa externa 2s² 2p²." },
+    { q: "El kernel [Ne] representa:", a: ["Capas internas llenas", "Valencia", "Carga", "El núcleo"], c: 0, r: "Simplifica la configuración usando gases nobles." },
+    { q: "Después del 3p se llena el:", a: ["4s", "3d", "4p", "3s"], c: 0, r: "Siguiendo la regla de Moeller." },
+    { q: "Valencia del Calcio (Z=20) en capa:", a: ["4", "3", "2", "1"], c: 0, r: "Termina en 4s²." },
+    { q: "Ion Na+ (Z=11) tiene e-:", a: ["10", "11", "12", "1"], c: 0, r: "Pierde el electrón de valencia." },
+    { q: "Paramagnetismo es por:", a: ["e- desapareados", "e- apareados", "Neutrones", "Protones"], c: 0, r: "Crea atracción hacia imanes." },
+    { q: "Periodos indican:", a: ["Nivel de energía", "Valencia", "Grupo", "Masa"], c: 0, r: "Filas horizontales de la tabla." },
+    { q: "Grupos tienen en común:", a: ["e- de valencia", "Masa", "Radio", "Z"], c: 0, r: "Misma configuración externa." },
+    { q: "Bloque 's' son grupos:", a: ["1 y 2", "13 a 18", "3 a 12", "F"], c: 0, r: "Metales alcalinos y térreos." },
+    { q: "Más electronegativo:", a: ["Flúor", "Francio", "Oxígeno", "Cloro"], c: 0, r: "Atrae e- con máxima fuerza." },
+    { q: "Radio atómico mayor:", a: ["Potasio (K)", "Litio (Li)", "Sodio (Na)", "Flúor (F)"], c: 0, r: "Aumenta hacia abajo." },
+    { q: "Radio disminuye a la derecha por:", a: ["Más protones (Z ef)", "Menos e-", "Más capas", "Gravedad"], c: 0, r: "El núcleo atrae más la nube." },
+    { q: "Halógenos son grupo:", a: ["17", "1", "18", "2"], c: 0, r: "F, Cl, Br, I, At." },
+    { q: "Energía de Ionización es:", a: ["Energía para quitar e-", "Energía ganada", "Masa", "Calor"], c: 0, r: "Arrancar electrón de átomo gaseoso." },
+    { q: "Ion más pequeño:", a: ["Catión (+)", "Anión (-)", "Átomo neutro", "Isótopo"], c: 0, r: "Pierde e- y la nube se encoge." },
+    { q: "Carácter metálico aumenta:", a: ["Abajo a la izquierda", "Arriba a la derecha", "Al centro", "No cambia"], c: 0, r: "Facilidad para perder electrones." },
+    { q: "Identidad del elemento dada por:", a: ["Protones (Z)", "Electrones", "Neutrones", "Masa"], c: 0, r: "Número atómico Z." },
+    { q: "Tabla moderna organizada por:", a: ["Z creciente", "Masa", "Nombre", "Densidad"], c: 0, r: "Ley periódica de Moseley." },
+    { q: "¿Qué tipo de hibridación presenta el carbono en el metano (CH4)?", a: ["sp3", "sp", "sp2", "dsp2"], c: 0, r: "Geometría tetraédrica con 4 enlaces sigma." },
+    { q: "Un ángulo de enlace de 120° es característico de:", a: ["Trigonal plana sp2", "Lineal sp", "Tetraédrica sp3", "Octaédrica"], c: 0, r: "Típico del etileno o grafito." },
+    { q: "En el acetileno (C2H2), los carbonos tienen hibridación:", a: ["sp", "sp2", "sp3", "d2sp3"], c: 0, r: "Poseen un triple enlace (1 sigma y 2 pi)." },
+    { q: "¿Cuántos orbitales 'p' puros quedan en un carbono sp2?", a: ["Uno", "Ninguno", "Dos", "Tres"], c: 0, r: "Dos se hibridan y uno queda puro para el enlace pi." },
+    { q: "La geometría angular del agua (H2O) se debe a:", a: ["Repulsión de pares libres", "Electronegatividad", "Tamaño atómico", "Hibridación sp"], c: 0, r: "Los pares libres ocupan más espacio y cierran el ángulo." },
+    { q: "La hibridación sp3d2 da lugar a una geometría:", a: ["Octaédrica", "Bipirámide", "Tetraédrica", "Angular"], c: 0, r: "Seis orbitales híbridos equivalentes." },
+    { q: "El solapamiento LATERAL de orbitales 'p' forma enlace:", a: ["Pi (π)", "Sigma (σ)", "Iónico", "Metálico"], c: 0, r: "Los orbitales se tocan de lado, no de frente." },
+    { q: "¿Cuál es la masa molar del agua (H2O)? Datos: H=1g/mol, O=16g/mol", a: ["18 g/mol", "17 g/mol", "16 g/mol", "33 g/mol"], c: 0, r: "Calculado como: (2 x 1g) + (1 x 16g) = 18g/mol." },
+    { q: "En 1 mol de cualquier sustancia, ¿cuántas partículas hay según Avogadro?", a: ["6.022 x 10^23", "6.022 x 10^22", "1 x 10^10", "3 x 10^8"], c: 0, r: "El número de Avogadro define la cantidad de entidades en un mol." },
+    { q: "Si tenemos 44g de CO2 y su masa molar es 44g/mol, ¿cuántos moles hay?", a: ["1 mol", "2 moles", "0.5 moles", "44 moles"], c: 0, r: "Moles = masa / masa molar. 44g / 44g/mol = 1 mol." },
+    { q: "¿Cuántos gramos de Oxígeno hay en 1 mol de O2? Dato: O=16g/mol", a: ["32 g", "16 g", "8 g", "64 g"], c: 0, r: "El oxígeno molecular es diatómico (O2), por lo tanto 16g x 2 = 32g." },
+    { q: "Para la reacción H2 + Cl2 -> 2HCl, ¿cuántos moles de HCl se producen con 1 mol de H2?", a: ["2 moles", "1 mol", "0.5 moles", "4 moles"], c: 0, r: "La relación estequiométrica según la ecuación balanceada es 1:2." },
+    { q: "¿Qué volumen ocupa 1 mol de gas ideal en condiciones normales (STP)?", a: ["22.4 Litros", "11.2 Litros", "1 Litro", "24.4 Litros"], c: 0, r: "Es el volumen molar estándar para gases ideales." },
+    { q: "Si la masa molar del NaOH es 40g/mol, ¿cuántos gramos son 0.5 moles?", a: ["20 g", "40 g", "80 g", "10 g"], c: 0, r: "Masa = moles x masa molar. 0.5 x 40 = 20g." },
+    { q: "En la ecuación N2 + 3H2 -> 2NH3, ¿cuál es la relación molar N2 : H2?", a: ["1 : 3", "1 : 2", "3 : 2", "1 : 1"], c: 0, r: "Los coeficientes indican que 1 mol de N2 reacciona con 3 de H2." },
+    { q: "¿Qué átomo tiene una masa atómica de aproximadamente 12 u.m.a?", a: ["Carbono", "Magnesio", "Nitrógeno", "Oxígeno"], c: 0, r: "El Carbono-12 es el estándar para la unidad de masa atómica." },
+    { q: "Si reaccionan 4g de H2 con exceso de O2 para formar agua (2H2 + O2 -> 2H2O), ¿cuántos moles de agua resultan?", a: ["2 moles", "1 mol", "4 moles", "0.5 moles"], c: 0, r: "4g de H2 son 2 moles. La relación H2:H2O es 1:1, resultan 2 moles." },
+    { q: "La masa molar del metano (CH4) es 16g/mol. ¿Cuál es el % en masa del Carbono?", a: ["75%", "25%", "50%", "90%"], c: 0, r: "(12g C / 16g total) x 100 = 75%." },
+    { q: "¿Cuál de estos es el Reactivo Limitante?", a: ["El que se agota primero", "El que sobra", "El que tiene más masa", "El más caro"], c: 0, r: "El limitante determina cuánto producto se puede formar." },
+    { q: "Si una reacción tiene un rendimiento teórico de 100g pero solo obtienes 80g, el % de rendimiento es:", a: ["80%", "20%", "100%", "125%"], c: 0, r: "(Rendimiento real / Teórico) x 100." },
+    { q: "¿Cuántos átomos de Hidrógeno hay en una molécula de (NH4)2SO4?", a: ["8", "4", "2", "6"], c: 0, r: "Hay dos grupos NH4, por lo tanto 2 x 4 = 8 átomos." },
+    { q: "Masa molar del NaCl (Na=23, Cl=35.5):", a: ["58.5 g/mol", "50 g/mol", "117 g/mol", "23 g/mol"], c: 0, r: "Suma simple: 23 + 35.5 = 58.5 g/mol." }
+];
+
+let state = { name: "", current: 0, score: 0, selected: [], answered: false, attempts: 0 };
+
+function startQuiz() {
+    const input = document.getElementById('user-name');
+    state.name = input.value.trim();
+    if(state.name.length < 3) {
+        alert("Ingresa tu nombre completo.");
+        return;
+    }
+    
+    let history = localStorage.getItem('atomic_history') || "";
+    state.attempts = (history.split('\n').filter(x => x).length) + 1;
+
+    state.selected = [...bank].sort(() => 0.5 - Math.random()).slice(0, 15);
+    state.current = 0; 
+    state.score = 0;
+    
+    document.getElementById('screen-start').classList.remove('active');
+    document.getElementById('screen-game').classList.add('active');
+    render();
+}
+
+function render() {
+    state.answered = false;
+    const q = state.selected[state.current];
+    document.getElementById('q-number').innerText = `PREGUNTA ${state.current + 1} DE 15`;
+    document.getElementById('q-text').innerText = q.q;
+    document.getElementById('progress-fill').style.width = `${(state.current/15)*100}%`;
+    document.getElementById('feedback').style.display = 'none';
+    document.getElementById('next-btn').style.display = 'none';
+    
+    const area = document.getElementById('options-area');
+    area.innerHTML = '';
+    
+    let opts = q.a.map((t, i) => ({ t, correct: i === 0 }));
+    opts.sort(() => 0.5 - Math.random());
+    
+    opts.forEach(o => {
+        const b = document.createElement('button');
+        b.className = 'option-btn';
+        b.innerText = o.t;
+        b.onclick = () => check(o.correct, b);
+        area.appendChild(b);
+    });
+
+    if (window.MathJax) {
+        MathJax.typesetPromise();
+    }
+}
+
+function check(isC, btn) {
+    if(state.answered) return;
+    state.answered = true;
+    const q = state.selected[state.current];
+    const btns = document.querySelectorAll('.option-btn');
+    
+    if(isC) {
+        state.score++;
+        btn.classList.add('correct');
+    } else {
+        btn.classList.add('wrong');
+        btns.forEach(b => { 
+            if(b.innerText === q.a[0]) b.classList.add('correct'); 
+        });
+    }
+    
+    document.getElementById('score-text').innerText = `Aciertos: ${state.score}`;
+    const f = document.getElementById('feedback');
+    f.style.display = 'block';
+    f.style.borderColor = isC ? 'var(--success)' : 'var(--error)';
+    f.innerHTML = `<strong>${isC ? '¡CORRECTO!' : 'INCORRECTO'}</strong><br>${q.r}`;
+    document.getElementById('next-btn').style.display = 'block';
+}
+
+function showNext() {
+    state.current++;
+    if(state.current < 15) render();
+    else finish();
+}
+
+function finish() {
+    document.getElementById('screen-game').classList.remove('active');
+    document.getElementById('screen-result').classList.add('active');
+    const p = Math.round((state.score/15)*100);
+    document.getElementById('res-percent').innerText = p + "%";
+    document.getElementById('res-detail').innerText = `Puntos: ${state.score}/15 | Intento Actual: ${state.attempts}`;
+    
+    const newLine = `[Intento ${state.attempts}] Score: ${p}% | ${new Date().toLocaleString()}`;
+    let history = localStorage.getItem('atomic_history') || "";
+    history += newLine + "\n";
+    localStorage.setItem('atomic_history', history);
+    document.getElementById('csv-output').value = history;
+}
+
+async function sendToGoogle() {
+    const btn = document.getElementById('send-btn');
+    const retryBtn = document.getElementById('retry-btn');
+    const historyData = document.getElementById('csv-output').value;
+    
+    const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSd5Jn4E5qa5zRk_a_732HF-WpO48eE68089VTc5D1eYh9HGoA/formResponse";
+    const ID_NOMBRE = "entry.32493666";
+    const ID_DATOS = "entry.449628299";
+
+    const formData = new FormData();
+    formData.append(ID_NOMBRE, state.name);
+    formData.append(ID_DATOS, historyData);
+
+    btn.innerText = "Enviando...";
+    btn.disabled = true;
+
+    try {
+        await fetch(FORM_URL, { method: "POST", mode: "no-cors", body: formData });
+        alert("Datos enviados con éxito a la nube.");
+        btn.innerText = "✅ Reporte Sincronizado";
+        btn.style.background = "var(--success)";
+        retryBtn.disabled = false;
+        retryBtn.classList.remove('btn-disabled');
+        document.getElementById('lock-msg').innerHTML = "✅ Datos guardados. Ya puedes reintentar.";
+        document.getElementById('lock-msg').style.color = "var(--success)";
+    } catch (e) {
+        alert("Error de conexión. Inténtalo de nuevo.");
+        btn.innerText = "❌ Reintentar Envío";
+        btn.disabled = false;
+    }
+}
+</script>
+</body>
+</html>
+
