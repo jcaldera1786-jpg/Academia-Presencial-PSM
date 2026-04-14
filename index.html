@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZUFORCA Academia - Dr. José Ángel Caldera</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: #f4f7f6; color: #333; text-align: center; }
+        header { background: #004a99; color: white; padding: 2rem 1rem; }
+        .logos-container { display: flex; justify-content: space-around; align-items: center; max-width: 800px; margin: 0 auto 1rem; }
+        .logo { max-width: 100px; height: auto; border-radius: 8px; }
+        .profile-section { padding: 3rem 1rem; background: white; }
+        .profile-img { width: 250px; height: 250px; border-radius: 50%; object-fit: cover; border: 5px solid #004a99; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .subject-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; padding: 2rem; max-width: 1200px; margin: 0 auto; }
+        .card { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-top: 5px solid #004a99; transition: 0.3s; text-decoration: none; color: inherit; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        h1 { margin: 10px 0; }
+        .btn { display: inline-block; padding: 10px 20px; background: #004a99; color: white; text-decoration: none; border-radius: 5px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logos-container">
+        <img src="assets/logo-luz.png" alt="Escudo LUZ" class="logo">
+        <img src="assets/logo-psm.png" alt="Símbolo PSM" class="logo">
+    </div>
+    <h1>ZUFORCA Academia</h1>
+    <p>Doctor en Química | 27 años de trayectoria docente</p>
+</header>
+
+<section class="profile-section">
+    <img src="assets/foto-aula.jpg" alt="Dr. José Ángel Caldera en el aula" class="profile-img">
+    <h2>Dr. José Ángel Caldera</h2>
+    <p style="max-width: 600px; margin: 1rem auto; line-height: 1.6;">
+        Comprometido con la formación de excelencia en ingeniería, integrando la simulación digital y la química aplicada para el desarrollo tecnológico industrial.
+    </p>
+</section>
+
+<div class="subject-grid">
+    <a href="Quimica-General/Herramientas/Reto-Atomico/index.html" class="card">
+        <h3>Química General</h3>
+        <p>Accede al Reto Atómico y material de apoyo.</p>
+        <span class="btn">Explorar</span>
+    </a>
+
+    <a href="Instrumentacion-y-Control/Herramientas/" class="card">
+        <h3>Instrumentación y Control</h3>
+        <p>Simulaciones en Octave y modelos DWSIM.</p>
+        <span class="btn">Explorar</span>
+    </a>
+    
+    </div>
+
+<footer>
+    <p>&copy; 2026 ZUFORCA Academia | Maracaibo, Venezuela</p>
+</footer>
+
+</body>
+</html>
