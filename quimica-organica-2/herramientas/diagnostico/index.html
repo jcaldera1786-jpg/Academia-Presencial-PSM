@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Diagnóstico Extendido | Química Orgánica II</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #003366; --accent: #28a745; --bg: #f4f7f6; }
+        body { font-family: 'Roboto', sans-serif; background-color: var(--bg); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .quiz-card { background: white; width: 100%; max-width: 550px; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .step { display: none; }
+        .active { display: block; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        h2 { color: var(--primary); font-size: 1.3rem; margin-top: 0; }
+        .progress-bar { height: 8px; background: #eee; border-radius: 4px; margin-bottom: 25px; }
+        .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s; border-radius: 4px; }
+        label { display: block; margin-bottom: 12px; font-weight: bold; color: #444; line-height: 1.4; }
+        input, select, textarea { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; box-sizing: border-box; }
+        button { width: 100%; background-color: var(--primary); color: white; border: none; padding: 15px; font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 20px; }
+        .btn-finish { background-color: var(--accent); }
+    </style>
+</head>
+<body>
+
+<div class="quiz-card">
+    <div class="progress-bar"><div class="progress-fill" id="p-fill"></div></div>
+
+    <div id="step0" class="step active">
+        <h2>Diagnóstico de Conocimientos</h2>
+        <p>Evaluación de prerrequisitos para Química Orgánica II.</p>
+        <label>Nombre del Estudiante:</label>
+        <input type="text" id="estudiante" placeholder="Nombre y Apellido">
+        <button onclick="nextStep(0)">Iniciar (15 Preguntas)</button>
+    </div>
+
+    <div id="step1" class="step">
+        <label>1. ¿Cuál es la hibridación de los carbonos en un alcano lineal?</label>
+        <select id="q1"><option value="">Seleccione...</option><option value="sp">sp</option><option value="sp2">sp2</option><option value="sp3">sp3</option></select>
+        <button onclick="nextStep(1)">Siguiente</button>
+    </div>
+
+    <div id="step2" class="step">
+        <label>2. Según la estabilidad de carbocationes, ¿cuál es el más estable?</label>
+        <select id="q2"><option value="">Seleccione...</option><option value="Metilo">Metilo</option><option value="Primario">Primario (1°)</option><option value="Secundario">Secundario (2°)</option><option value="Terciario">Terciario (3°)</option></select>
+        <button onclick="nextStep(2)">Siguiente</button>
+    </div>
+
+    <div id="step3" class="step">
+        <label>3. ¿Cómo se llaman los isómeros que solo se diferencian por la rotación en torno a un enlace sencillo C-C?</label>
+        <input type="text" id="q3" placeholder="Ej: estereoisomeros...">
+        <button onclick="nextStep(3)">Siguiente</button>
+    </div>
+
+    <div id="step4" class="step">
+        <label>4. ¿Qué regla predice el producto mayoritario en la adición de HX a un alqueno asimétrico?</label>
+        <select id="q4"><option value="">Seleccione...</option><option value="Zaitsev">Regla de Zaitsev</option><option value="Markovnikov">Regla de Markovnikov</option><option value="Hund">Regla de Hund</option></select>
+        <button onclick="nextStep(4)">Siguiente</button>
+    </div>
+
+    <div id="step5" class="step">
+        <label>5. ¿Qué nombre recibe una mezcla equimolar de dos enantiómeros?</label>
+        <input type="text" id="q5" placeholder="Tu respuesta...">
+        <button onclick="nextStep(5)">Siguiente</button>
+    </div>
+
+    <div id="step6" class="step">
+        <label>6. En una reacción SN2, ¿la velocidad de reacción depende de la concentración de qué especies?</label>
+        <select id="q6"><option value="">Seleccione...</option><option value="Sustrato">Solo del sustrato</option><option value="Nucleofilo">Solo del nucleófilo</option><option value="Ambos">Tanto del sustrato como del nucleófilo</option></select>
+        <button onclick="nextStep(6)">Siguiente</button>
+    </div>
+
+    <div id="step7" class="step">
+        <label>7. Ordene de mayor a menor acidez: Alcano, Alqueno, Alquino.</label>
+        <input type="text" id="q7" placeholder="Ej: Alqueno > Alcano > Alquino">
+        <button onclick="nextStep(7)">Siguiente</button>
+    </div>
+
+    <div id="step8" class="step">
+        <label>8. ¿Qué tipo de ruptura de enlace genera radicales libres?</label>
+        <select id="q8"><option value="">Seleccione...</option><option value="Homolitica">Ruptura Homolítica</option><option value="Heterolitica">Ruptura Heterolítica</option></select>
+        <button onclick="nextStep(8)">Siguiente</button>
+    </div>
+
+    <div id="step9" class="step">
+        <label>9. ¿Cuál es el producto de la oxidación fuerte (KMnO4) de un alcohol primario?</label>
+        <input type="text" id="q9" placeholder="Ej: cetona...">
+        <button onclick="nextStep(9)">Siguiente</button>
+    </div>
+
+    <div id="step10" class="step">
+        <label>10. ¿Cuántos electrones pi (π) tiene el anillo de benceno?</label>
+        <input type="number" id="q10" placeholder="Número de electrones">
+        <button onclick="nextStep(10)">Siguiente</button>
+    </div>
+
+    <div id="step11" class="step">
+        <label>11. ¿Cuál es el nombre del grupo funcional -CHO?</label>
+        <input type="text" id="q11" placeholder="Ej: alcohol...">
+        <button onclick="nextStep(11)">Siguiente</button>
+    </div>
+
+    <div id="step12" class="step">
+        <label>12. Entre los halógenos, ¿cuál es el mejor grupo saliente?</label>
+        <select id="q12"><option value="">Seleccione...</option><option value="F">Flúor (F-)</option><option value="Cl">Cloro (Cl-)</option><option value="Br">Bromo (Br-)</option><option value="I">Yodo (I-)</option></select>
+        <button onclick="nextStep(12)">Siguiente</button>
+    </div>
+
+    <div id="step13" class="step">
+        <label>13. En un montaje de destilación, ¿por dónde debe entrar el agua al condensador?</label>
+        <select id="q13"><option value="">Seleccione...</option><option value="Superior">Por arriba (descendente)</option><option value="Inferior">Por abajo (contracorriente)</option></select>
+        <button onclick="nextStep(13)">Siguiente</button>
+    </div>
+
+    <div id="step14" class="step">
+        <label>14. ¿Para qué se abre la llave del embudo de decantación al agitar una mezcla?</label>
+        <input type="text" id="q14" placeholder="Ej: para remover el tapon...">
+        <button onclick="nextStep(14)">Siguiente</button>
+    </div>
+
+    <div id="step15" class="step">
+        <label>15. Técnica estándar para verificar la pureza de un sólido orgánico:</label>
+        <select id="q15"><option value="">Seleccione...</option><option value="PF">Punto de Fusión</option><option value="PE">Punto de Ebullición</option><option value="Cromatografia">Cromatografía</option></select>
+        <button onclick="nextStep(15)">Siguiente</button>
+    </div>
+
+    <div id="step16" class="step">
+        <h2>Diagnóstico Finalizado</h2>
+        <p>Has respondido las 15 preguntas. Presiona el botón para enviar el reporte al Dr. Caldera.</p>
+        <button class="btn-finish" onclick="sendToWS()">Enviar vía WhatsApp</button>
+    </div>
+</div>
+
+<script>
+    function nextStep(current) {
+        if (current === 0 && document.getElementById('estudiante').value.trim() === "") {
+            alert("Ingresa tu nombre para comenzar."); return;
+        }
+        document.getElementById('step' + current).classList.remove('active');
+        document.getElementById('step' + (current + 1)).classList.add('active');
+        
+        // Progreso basado en 16 pasos totales (0 a 16)
+        let progress = ((current + 1) / 16) * 100;
+        document.getElementById('p-fill').style.width = progress + "%";
+    }
+
+    function sendToWS() {
+        const n = document.getElementById('estudiante').value;
+        // Recolectamos las 15 respuestas
+        let res = [];
+        for(let i=1; i<=15; i++) {
+            res.push(document.getElementById('q' + i).value);
+        }
+
+        const telefono = "584128697428"; 
+        
+        let msg = `*REPORTE DIAGNÓSTICO ORGÁNICA II*%0A*Estudiante:* ${n}%0A%0A`;
+        res.forEach((r, i) => { msg += `*P${i+1}:* ${r}%0A`; });
+
+        const url = `https://wa.me/${telefono}?text=${msg}`;
+        window.open(url, '_blank');
+    }
+</script>
+</body>
+</html>
