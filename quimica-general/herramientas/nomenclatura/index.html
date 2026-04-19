@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación de Química - Prof. Caldera</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root { --primary: #1a5276; --secondary: #2980b9; --success: #1e8449; --bg: #e5e8e8; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); padding: 20px; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+        .header { text-align: center; border-bottom: 5px solid var(--primary); margin-bottom: 25px; }
+        .stats-bar { display: flex; justify-content: space-around; background: var(--primary); color: white; padding: 10px; border-radius: 8px; margin-bottom: 20px; }
+        .card { border: 2px solid #ddd; padding: 25px; border-radius: 12px; min-height: 400px; }
+        .option { display: block; width: 100%; padding: 12px; margin: 10px 0; border: 2px solid var(--secondary); border-radius: 8px; cursor: pointer; text-align: left; font-size: 1.1em; background: white; }
+        .option:hover:not(:disabled) { background: #d4e6f1; }
+        .feedback { display: none; padding: 15px; border-radius: 8px; margin-top: 15px; font-weight: bold; }
+        .btn-action { background: var(--success); color: white; padding: 12px 30px; border: none; border-radius: 8px; cursor: pointer; float: right; font-weight: bold; }
+        .btn-action:disabled { background: #ccc; cursor: not-allowed; }
+        .formula-display { font-size: 2.2em; text-align: center; margin: 20px 0; color: #c0392b; font-weight: bold; }
+        .alert-init { background: #fcf3cf; border: 1px solid #f39c12; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Evaluación de Química Inorgánica y Estequiometría</h1>
+        <p>Zuforca Academy | Prof. José Ángel Caldera Luzardo</p>
+    </div>
+
+    <div id="setup">
+        <div class="alert-init">
+            ⚠️ REQUISITOS: Papel, lápiz, calculadora y tabla periódica.<br>
+            RETO: ¡Logre 100% de acierto en 5 intentos seguidos!
+        </div>
+        <input type="text" id="name" placeholder="Nombre Completo" style="width:95%; padding:12px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc;">
+        
+        <label style="font-weight:bold; display:block; margin-bottom:5px;">Cédula de Identidad (Solo números):</label>
+        <input type="text" id="cedula" 
+               placeholder="Ej: 12345678" 
+               oninput="this.value = this.value.replace(/[^0-9]/g, '');" 
+               style="width:95%; padding:12px; margin-bottom:20px; border-radius:5px; border:1px solid #ccc;">
+        
+        <button class="option" onclick="iniciar()" style="text-align:center; background:var(--primary); color:white;">Iniciar Evaluación</button>
+    </div>
+
+    <div id="quiz" style="display:none;">
+        <div class="stats-bar">
+            <span>Pregunta: <span id="q-num">1</span>/15</span>
+            <span>Acierto: <span id="percent">0</span>%</span>
+            <span>Intento: <span id="attempt-num">1</span></span>
+        </div>
+        <div class="card">
+            <h3 id="q-text"></h3>
+            <div id="q-formula" class="formula-display"></div>
+            <div id="options"></div>
+            <div id="feedback" class="feedback"></div>
+            <div id="action-area" style="margin-top:20px;">
+                <button id="btn-next" class="btn-action" onclick="siguiente()" style="display:none;">Siguiente →</button>
+            </div>
+            <div style="clear:both;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbxUoqKF0QIAJlnjK-bbpEXAzbsOf-oxo5cKkjy6x_hTawa8ANYQrTs3_UiBGhAtz9xILA/exec";
+    
+    let userData = { nombre: "", cedula: "", intento: 1 };
+    let correctCount = 0, qIndex = 1, currentCorrect = "";
+
+    const dataQuimica = {
+        metales: [
+            {n:"Hierro", s:"Fe", v:[2,3], t:["Ferroso", "Férrico"]},
+            {n:"Cobre", s:"Cu", v:[1,2], t:["Cuproso", "Cúprico"]},
+            {n:"Sodio", s:"Na", v:[1], t:["Sódico"]},
+            {n:"Aluminio", s:"Al", v:[3], t:["Alumínico"]},
+            {n:"Níquel", s:"Ni", v:[2,3], t:["Niqueloso", "Niquélico"]}
+        ],
+        noMetales: [
+            {n:"Azufre", s:"S", v:[4,6], t:["Sulfuroso", "Sulfúrico"]},
+            {n:"Cloro", s:"Cl", v:[1,3,5,7], t:["Hipocloroso", "Cloroso", "Clórico", "Perclórico"]},
+            {n:"Nitrógeno", s:"N", v:[3,5], t:["Nitroso", "Nítrico"]}
+        ]
+    };
+
+    function shuffle(a) { return a.sort(() => Math.random() - 0.5); }
+
+    function generarFormula(s1, v1, s2, v2) {
+        let n1 = v2, n2 = v1;
+        let mcd = (a,b) => b ? mcd(b, a%b) : a;
+        let div = mcd(n1, n2);
+        n1 /= div; n2 /= div;
+        return `${s1}${n1 > 1 ? n1 : ""}${s2}${n2 > 1 ? n2 : ""}`;
+    }
+
+    const generadores = [
+        // 1. Nomenclatura Mixta
+        () => {
+            const esMetal = Math.random() > 0.5;
+            const el = esMetal ? dataQuimica.metales[Math.floor(Math.random()*dataQuimica.metales.length)] : dataQuimica.noMetales[Math.floor(Math.random()*dataQuimica.noMetales.length)];
+            const idx = Math.floor(Math.random()*el.v.length);
+            const v = el.v[idx];
+            const formula = generarFormula(el.s, v, "O", 2);
+            const usarTradicional = Math.random() > 0.5;
+            let correcta = usarTradicional ? (esMetal ? `Óxido ${el.t[idx]}` : `Anhídrido ${el.t[idx]}`) : `Óxido de ${el.n} (${v})`;
+            return {
+                text: `Identifique el nombre en sistema ${usarTradicional ? 'TRADICIONAL' : 'STOCK'} para:`,
+                formula: formula,
+                options: shuffle([correcta, `Ácido de ${el.n}`, `Sal de ${el.n}`, `Óxido de ${el.n} (VII)`]),
+                correct: correcta,
+                hint: `Valencia analizada: +${v}.`
+            };
+        },
+        // 2. Físico-Química Rotativa
+        () => {
+            const m = (Math.random()*150 + 10).toFixed(1);
+            const v = (Math.random()*30 + 5).toFixed(1);
+            const d = (m/v).toFixed(2);
+            const r = Math.floor(Math.random()*3);
+            if(r===0) return { text: `Calcule Densidad (ρ):`, formula: `m=${m}g, V=${v}cm³`, options: shuffle([`${d} g/cm³`, `${(m*v).toFixed(1)} g/cm³`, "1.10 g/cm³"]), correct: `${d} g/cm³`, hint: "ρ = m / V" };
+            if(r===1) return { text: `Calcule Masa (m):`, formula: `ρ=${d}g/cm³, V=${v}cm³`, options: shuffle([`${m} g`, `${(d/v).toFixed(1)} g`, "5.5 g"]), correct: `${m} g`, hint: "m = ρ × V" };
+            return { text: `Calcule Volumen (V):`, formula: `m=${m}g, ρ=${d}g/cm³`, options: shuffle([`${v} cm³`, `${(m/d).toFixed(1)} cm³`, "15.0 cm³"]), correct: `${v} cm³`, hint: "V = m / ρ" };
+        },
+        // 3. Estequiometría Pura
+        () => {
+            const mol = (Math.random()*2 + 0.1).toFixed(2);
+            const atom = (mol * 6.022).toFixed(3);
+            const esDirecto = Math.random() > 0.5;
+            return {
+                text: esDirecto ? `¿Cuántas partículas hay en la muestra?` : `¿A cuántos moles equivalen las partículas?`,
+                formula: esDirecto ? `${mol} moles` : `${atom}x10²³ partículas`,
+                options: esDirecto ? shuffle([`${atom}x10²³`, `${(mol/6.022).toFixed(2)}x10²³`, "6.022x10²³"]) : shuffle([`${mol} moles`, "2.5 moles", "0.1 moles"]),
+                correct: esDirecto ? `${atom}x10²³` : `${mol} moles`,
+                hint: "Relación: 1 mol = 6.022x10²³"
+            };
+        },
+        // 4. NUEVO: Cálculo de Estados de Oxidación (Valencia)
+        () => {
+            const acidos = [
+                {f: "HClO₄", el: "Cloro (Cl)", v: "+7"},
+                {f: "H₂SO₄", el: "Azufre (S)", v: "+6"},
+                {f: "HNO₃", el: "Nitrógeno (N)", v: "+5"},
+                {f: "HClO", el: "Cloro (Cl)", v: "+1"},
+                {f: "H₂CO₃", el: "Carbono (C)", v: "+4"},
+                {f: "KMnO₄", el: "Manganeso (Mn)", v: "+7"}
+            ];
+            const a = acidos[Math.floor(Math.random()*acidos.length)];
+            return {
+                text: `Calcule el estado de oxidación del elemento subrayado:`,
+                formula: a.f,
+                options: shuffle([a.v, "+1", "+3", "+5", "+4", "+2"]),
+                correct: a.v,
+                hint: `Recuerde: H = +1, O = -2. La suma algebraica de las cargas debe ser cero.`
+            };
+        }
+    ];
+
+    function iniciar() {
+        const n = document.getElementById('name').value;
+        const c = document.getElementById('cedula').value;
+        if(!n || !c) return alert("Ingrese sus datos correctamente.");
+        userData.nombre = n; userData.cedula = c;
+        document.getElementById('setup').style.display = 'none';
+        document.getElementById('quiz').style.display = 'block';
+        cargar();
+    }
+
+    function cargar() {
+        const q = generadores[Math.floor(Math.random()*generadores.length)]();
+        currentCorrect = q.correct;
+        document.getElementById('q-text').innerText = q.text;
+        document.getElementById('q-formula').innerText = q.formula;
+        const area = document.getElementById('options');
+        area.innerHTML = "";
+        q.options.forEach(o => {
+            const b = document.createElement('button');
+            b.className = 'option';
+            b.innerText = o;
+            b.onclick = () => verificar(o, q.hint);
+            area.appendChild(b);
+        });
+        document.getElementById('feedback').style.display = 'none';
+        document.getElementById('btn-next').style.display = 'none';
+    }
+
+    function verificar(sel, hint) {
+        const fb = document.getElementById('feedback');
+        fb.style.display = 'block';
+        document.querySelectorAll('.option').forEach(b => b.disabled = true);
+        if(sel === currentCorrect) {
+            fb.innerHTML = "✅ CORRECTO. " + hint;
+            fb.style.background = "#d4edda";
+            correctCount++;
+        } else {
+            fb.innerHTML = "❌ INCORRECTO. Era: " + currentCorrect + "<br>" + hint;
+            fb.style.background = "#f8d7da";
+        }
+        document.getElementById('percent').innerText = ((correctCount/qIndex)*100).toFixed(0);
+        document.getElementById('btn-next').style.display = 'block';
+    }
+
+    function siguiente() {
+        if(qIndex < 15) { qIndex++; document.getElementById('q-num').innerText = qIndex; cargar(); }
+        else { prepararEnvio(); }
+    }
+
+    function prepararEnvio() {
+        document.getElementById('action-area').innerHTML = `<button id="btn-send" class="btn-action" onclick="enviar()">Enviar Resultados</button>`;
+    }
+
+    function enviar() {
+        const btn = document.getElementById('btn-send');
+        btn.disabled = true; btn.innerText = "Enviando...";
+        const finalPercent = ((correctCount/15)*100).toFixed(0);
+        const payload = { nombre: userData.nombre, cedula: userData.cedula, puntos: finalPercent, intento: userData.intento };
+
+        fetch(GOOGLE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) })
+        .then(() => {
+            alert(`SISTEMA: Intento ${userData.intento} registrado (${finalPercent}%).`);
+            document.getElementById('action-area').innerHTML = `<button class="btn-action" onclick="reiniciarIntento()" style="background:var(--secondary)">Iniciar Nuevo Intento</button>`;
+        });
+    }
+
+    function reiniciarIntento() {
+        userData.intento++;
+        correctCount = 0; qIndex = 1;
+        document.getElementById('percent').innerText = "0";
+        document.getElementById('q-num').innerText = "1";
+        document.getElementById('attempt-num').innerText = userData.intento;
+        document.getElementById('action-area').innerHTML = `<button id="btn-next" class="btn-action" onclick="siguiente()" style="display:none;">Siguiente →</button>`;
+        cargar();
+    }
+</script>
+</body>
+</html>
