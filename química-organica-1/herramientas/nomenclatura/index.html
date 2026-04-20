@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orgánica I: Generador de Retos - Zuforca</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root { --primary: #1e8449; --secondary: #2874a6; --bg: #f4f6f7; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); padding: 20px; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
+        .header { text-align: center; border-bottom: 5px solid var(--primary); margin-bottom: 25px; }
+        .formula-card { background: #fff; border: 2px solid #34495e; padding: 25px; border-radius: 12px; margin-bottom: 20px; text-align: center; font-size: 1.6em; min-height: 100px; display: flex; align-items: center; justify-content: center; color: #2c3e50; overflow-x: auto; }
+        .constructor-zone { background: #fdfefe; border: 3px dashed var(--secondary); padding: 15px; border-radius: 10px; min-height: 50px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 5px; align-items: center; justify-content: center; }
+        .token { background: var(--secondary); color: white; padding: 5px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        .word-bank-section { background: #f9f9f9; padding: 15px; border-radius: 10px; border: 1px solid #ddd; }
+        .bank-group { margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+        .bank-label { width: 100%; text-align: center; font-size: 0.75em; font-weight: bold; color: #7f8c8d; text-transform: uppercase; }
+        .word-btn { background: white; border: 1px solid #bdc3c7; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.85em; }
+        .word-btn:hover { background: #ebf5fb; }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; font-size: 1.1em; margin-top: 10px; }
+        .stats { display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: bold; color: var(--secondary); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Evaluación Aleatoria: Orgánica I</h1>
+        <p>Zuforca Academy | Prof. José Ángel Caldera</p>
+    </div>
+
+    <div id="setup">
+        <input type="text" id="name" placeholder="Nombre Completo" style="width:95%; padding:12px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc;">
+        <input type="text" id="cedula" placeholder="Cédula" oninput="this.value = this.value.replace(/[^0-9]/g, '');" style="width:95%; padding:12px; margin-bottom:20px; border-radius:5px; border:1px solid #ccc;">
+        <button class="btn-main" onclick="iniciar()">Generar mi Examen (8 Reactivos)</button>
+    </div>
+
+    <div id="quiz" style="display:none;">
+        <div class="stats">
+            <span>Reactivo: <span id="q-num">1</span>/8</span>
+            <span>Aciertos: <span id="correct-count">0</span></span>
+        </div>
+        <div class="formula-card" id="formula-math"></div>
+        <div id="constructor" class="constructor-zone"></div>
+
+        <div class="word-bank-section">
+            <div class="bank-group" id="numbers"></div>
+            <div class="bank-group" id="radicals"></div>
+            <div class="bank-group" id="chains"></div>
+        </div>
+
+        <button class="btn-main" onclick="verificar()">Validar Nomenclatura</button>
+        <button id="btn-next" class="btn-main" onclick="siguiente()" style="display:none; background:var(--secondary)">Siguiente →</button>
+        <div id="feedback" style="display:none; padding:10px; margin-top:10px; border-radius:8px; text-align:center; font-weight:bold;"></div>
+    </div>
+</div>
+
+<script>
+    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbK8ZKk7XBOB0_AgNkont5EJqQlmRuiIdZfwO04n16abTPu5cPVIm5gK2IuZnhu0jaPYA/exec";
+    
+    // MEGA BANCO DE DATOS (Puedes agregar 100 si quieres)
+const megaBanco = [
+    // --- ALCANOS LINEALES Y RAMIFICADOS (24) ---
+    { f: "$$CH_3-CH(CH_3)-CH_3$$", c: "2-metilpropano" },
+    { f: "$$CH_3-CH_2-CH(CH_3)-CH_2-CH_3$$", c: "3-metilpentano" },
+    { f: "$$CH_3-C(CH_3)_2-CH_3$$", c: "2,2-dimetilpropano" },
+    { f: "$$CH_3-CH(CH_3)-CH(CH_3)-CH_2-CH_3$$", c: "2,3-dimetilpentano" },
+    { f: "$$CH_3-CH(C_2H_5)-CH_2-CH_2-CH_3$$", c: "3-metilhexano" },
+    { f: "$$CH_3-CH_2-C(CH_3)_2-CH_2-CH_3$$", c: "3,3-dimetilpentano" },
+    { f: "$$CH_3-CH(CH_3)-CH(C_2H_5)-CH_2-CH_2-CH_3$$", c: "3-etil-2-metilhexano" },
+    { f: "$$CH_3-C(CH_3)_2-CH(CH_3)-CH_3$$", c: "2,2,3-trimetilbutano" },
+    { f: "$$CH_3-CH_2-CH(CH(CH_3)_2)-CH_2-CH_3$$", c: "3-isopropilpentano" },
+    { f: "$$CH_3-(CH_2)_4-CH_3$$", c: "hexano" },
+    { f: "$$(CH_3)_3C-CH_2-CH(CH_3)_2$$", c: "2,2,4-trimetilpentano" },
+    { f: "$$CH_3-CH(CH_3)-CH_2-CH(CH_3)-CH_3$$", c: "2,4-dimetilpentano" },
+    { f: "$$CH_3-CH_2-CH(C_2H_5)-CH(C_2H_5)-CH_3$$", c: "3,4-dietilhexano" },
+    { f: "$$CH_3-CH(CH_3)-C(CH_3)_2-CH_2-CH_3$$", c: "2,3,3-trimetilpentano" },
+    { f: "$$CH_3-CH_2-CH(CH_3)-CH(CH_3)-CH_2-CH_3$$", c: "3,4-dimetilhexano" },
+    { f: "$$CH_3-CH(CH_3)-CH_2-CH_2-CH(CH_3)_2$$", c: "2,5-dimetilhexano" },
+    { f: "$$CH_3-C(CH_3)_2-CH_2-C(CH_3)_3$$", c: "2,2,4,4-tetrametilpentano" },
+    { f: "$$CH_3-CH_2-CH(CH_2-CH_2-CH_3)-CH_2-CH_3$$", c: "3-etilhexano" },
+    { f: "$$CH_3-CH(CH_3)-CH(CH_3)-CH(CH_3)-CH_3$$", c: "2,3,4-trimetilpentano" },
+    { f: "$$CH_3-CH_2-CH_2-CH(CH_3)-CH_2-CH_3$$", c: "3-metilhexano" },
+    { f: "$$CH_3-CH(CH_3)-CH_2-CH_2-CH_2-CH_3$$", c: "2-metilhexano" },
+    { f: "$$CH_3-CH_2-C(C_2H_5)_2-CH_2-CH_3$$", c: "3,3-dietilpentano" },
+    { f: "$$CH_3-CH(CH_3)-CH(CH_2-CH_3)-CH_3$$", c: "3-etil-2-metilbutano" },
+    { f: "$$CH_3-(CH_2)_5-CH_3$$", c: "heptano" },
+
+    // --- ALQUENOS (Insaturaciones dobles) (20) ---
+    { f: "$$CH_2=CH-CH_3$$", c: "propeno" },
+    { f: "$$CH_2=CH-CH_2-CH_3$$", c: "1-buteno" },
+    { f: "$$CH_3-CH=CH-CH_3$$", c: "2-buteno" },
+    { f: "$$CH_2=C(CH_3)-CH_3$$", c: "2-metilpropeno" },
+    { f: "$$CH_2=CH-CH(CH_3)-CH_3$$", c: "3-metil-1-buteno" },
+    { f: "$$CH_3-C(CH_3)=CH-CH_3$$", c: "2-metil-2-buteno" },
+    { f: "$$CH_2=CH-CH_2-CH_2-CH_3$$", c: "1-penteno" },
+    { f: "$$CH_3-CH=CH-CH_2-CH_3$$", c: "2-penteno" },
+    { f: "$$CH_2=C(CH_3)-CH_2-CH_3$$", c: "2-metil-1-buteno" },
+    { f: "$$CH_2=CH-CH=CH_2$$", c: "1,3-butadieno" },
+    { f: "$$CH_3-CH=C(CH_3)-CH_3$$", c: "2-metil-2-buteno" },
+    { f: "$$CH_2=CH-CH(CH_3)-CH_2-CH_3$$", c: "3-metil-1-penteno" },
+    { f: "$$CH_3-CH=CH-CH(CH_3)-CH_3$$", c: "4-metil-2-penteno" },
+    { f: "$$CH_2=C(CH_3)-CH(CH_3)-CH_3$$", c: "2,3-dimetil-1-buteno" },
+    { f: "$$CH_2=CH-CH_2-CH=CH_2$$", c: "1,4-pentadieno" },
+    { f: "$$CH_3-C(CH_3)=C(CH_3)-CH_3$$", c: "2,3-dimetil-2-buteno" },
+    { f: "$$CH_2=CH-C(CH_3)_3$$", c: "3,3-dimetil-1-buteno" },
+    { f: "$$CH_2=C(C_2H_5)-CH_2-CH_3$$", c: "2-etil-1-buteno" },
+    { f: "$$CH_3-CH=CH-CH=CH-CH_3$$", c: "2,4-hexadieno" },
+    { f: "$$CH_2=CH-(CH_2)_3-CH_3$$", c: "1-hexeno" },
+
+    // --- ALQUINOS (Insaturaciones triples) (16) ---
+    { f: "$$CH \\equiv C-CH_3$$", c: "propino" },
+    { f: "$$CH \\equiv C-CH_2-CH_3$$", c: "1-butino" },
+    { f: "$$CH_3-C \\equiv C-CH_3$$", c: "2-butino" },
+    { f: "$$CH \\equiv C-CH(CH_3)-CH_3$$", c: "3-metil-1-butino" },
+    { f: "$$CH \\equiv C-CH_2-CH_2-CH_3$$", c: "1-pentino" },
+    { f: "$$CH_3-C \\equiv C-CH_2-CH_3$$", c: "2-pentino" },
+    { f: "$$CH \\equiv C-C(CH_3)_3$$", c: "3,3-dimetil-1-butino" },
+    { f: "$$CH_3-C \\equiv C-CH(CH_3)-CH_3$$", c: "4-metil-2-pentino" },
+    { f: "$$CH \\equiv C-CH(CH_3)-CH_2-CH_3$$", c: "3-metil-1-pentino" },
+    { f: "$$CH \\equiv C-CH_2-CH(CH_3)-CH_3$$", c: "4-metil-1-pentino" },
+    { f: "$$CH_3-CH_2-C \\equiv C-CH_2-CH_3$$", c: "3-hexino" },
+    { f: "$$CH \\equiv C-C \\equiv CH$$", c: "1,3-butadiino" },
+    { f: "$$CH_3-C \\equiv C-C(CH_3)_3$$", c: "4,4-dimetil-2-pentino" },
+    { f: "$$CH \\equiv C-(CH_2)_3-CH_3$$", c: "1-hexino" },
+    { f: "$$CH_3-C \\equiv C-CH_2-CH_2-CH_3$$", c: "2-hexino" },
+    { f: "$$CH \\equiv C-CH(C_2H_5)-CH_3$$", c: "3-metil-1-pentino" },
+
+    // --- CÍCLICOS Y MIXTOS (12) ---
+    { f: "$$C_3H_6 \\text{ (Anillo)}$$", c: "ciclopropano" },
+    { f: "$$C_4H_8 \\text{ (Anillo)}$$", c: "ciclobutano" },
+    { f: "$$C_5H_{10} \\text{ (Anillo)}$$", c: "ciclopentano" },
+    { f: "$$C_6H_{12} \\text{ (Anillo)}$$", c: "ciclohexano" },
+    { f: "$$CH_3-C_5H_9 \\text{ (Anillo)}$$", c: "metilciclopentano" },
+    { f: "$$C_2H_5-C_6H_{11} \\text{ (Anillo)}$$", c: "etilciclohexano" },
+    { f: "$$1,2-dimetilciclohexano$$", c: "1,2-dimetilciclohexano" },
+    { f: "$$1,3-dimetilciclopentano$$", c: "1,3-dimetilciclopentano" },
+    { f: "$$isopropilciclohexano$$", c: "isopropilciclohexano" },
+    { f: "$$ciclobuteno$$", c: "ciclobuteno" },
+    { f: "$$1,3-ciclohexadieno$$", c: "1,3-ciclohexadieno" },
+    { f: "$$metilciclobutano$$", c: "metilciclobutano" }
+];
+    let examenActual = [], qIndex = 0, correctCount = 0, currentTokens = [], userData = {};
+
+    function iniciar() {
+        const n = document.getElementById('name').value;
+        const c = document.getElementById('cedula').value;
+        if(!n || !c) return alert("Identifíquese para registrar su nota.");
+        userData = { nombre: n, cedula: c };
+        
+        // Mezclar y seleccionar 8 al azar
+        examenActual = megaBanco.sort(() => 0.5 - Math.random()).slice(0, 8);
+        
+        document.getElementById('setup').style.display = 'none';
+        document.getElementById('quiz').style.display = 'block';
+        crearBancoFijo();
+        cargar();
+    }
+
+    function crearBancoFijo() {
+    const nums = ["1","2","3","4","5","6",",","-"];
+    
+    // Agregamos 'ciclo' aquí para que actúe como un bloque de construcción
+    const rads = ["metil","etil","propil","isopropil","butil","isobutil","sec-butil","ter-butil","di","tri","tetra","ciclo"];
+    
+    // Las cadenas quedan puras
+    const chains = [
+        "propano","butano","pentano","hexano","heptano","octano",
+        "propeno","buteno","penteno","hexeno",
+        "propino","butino","pentino","butadieno","hexadieno"
+    ];
+    
+    const fill = (id, arr, label) => {
+        const el = document.getElementById(id);
+        el.innerHTML = `<div class="bank-label">${label}</div>`;
+        arr.forEach(t => {
+            const b = document.createElement('button');
+            b.className = 'word-btn'; b.innerText = t;
+            b.onclick = () => { currentTokens.push(t); actualizar(); };
+            el.appendChild(b);
+        });
+    };
+    fill('numbers', nums, 'Posiciones y Signos');
+    fill('radicals', rads, 'Radicales y Prefijos');
+    fill('chains', chains, 'Cadenas Principales');
+}function crearBancoFijo() {
+    const nums = ["1","2","3","4","5","6",",","-"];
+    
+    // Agregamos 'ciclo' aquí para que actúe como un bloque de construcción
+    const rads = ["metil","etil","propil","isopropil","butil","isobutil","sec-butil","ter-butil","di","tri","tetra","ciclo"];
+    
+    // Las cadenas quedan puras
+    const chains = [
+        "propano","butano","pentano","hexano","heptano","octano",
+        "propeno","buteno","penteno","hexeno",
+        "propino","butino","pentino","butadieno","hexadieno"
+    ];
+    
+    const fill = (id, arr, label) => {
+        const el = document.getElementById(id);
+        el.innerHTML = `<div class="bank-label">${label}</div>`;
+        arr.forEach(t => {
+            const b = document.createElement('button');
+            b.className = 'word-btn'; b.innerText = t;
+            b.onclick = () => { currentTokens.push(t); actualizar(); };
+            el.appendChild(b);
+        });
+    };
+    fill('numbers', nums, 'Posiciones y Signos');
+    fill('radicals', rads, 'Radicales y Prefijos');
+    fill('chains', chains, 'Cadenas Principales');
+}
+    function cargar() {
+        currentTokens = [];
+        const p = examenActual[qIndex];
+        document.getElementById('formula-math').innerHTML = p.f;
+        document.getElementById('q-num').innerText = qIndex + 1;
+        MathJax.typeset();
+        actualizar();
+        document.getElementById('feedback').style.display = 'none';
+        document.getElementById('btn-next').style.display = 'none';
+    }
+
+    function actualizar() {
+        const zone = document.getElementById('constructor');
+        zone.innerHTML = currentTokens.map((t, i) => `<div class="token" onclick="remover(${i})">${t}</div>`).join("");
+    }
+
+    function remover(i) { currentTokens.splice(i,1); actualizar(); }
+
+    function verificar() {
+        const builds = currentTokens.join("");
+        const correcta = examenActual[qIndex].c;
+        const fb = document.getElementById('feedback');
+        fb.style.display = 'block';
+        
+        if(builds === correcta) {
+            fb.innerHTML = "✅ CORRECTO"; fb.style.background = "#d4edda";
+            correctCount++;
+            document.getElementById('correct-count').innerText = correctCount;
+        } else {
+            fb.innerHTML = `❌ ERROR. Era: ${correcta}`; fb.style.background = "#f8d7da";
+        }
+        document.getElementById('btn-next').style.display = 'block';
+    }
+
+    function siguiente() {
+        qIndex++;
+        if(qIndex < 8) cargar();
+        else finalizar();
+    }
+
+    function finalizar() {
+        const p = ((correctCount/8)*100).toFixed(0);
+        fetch(GOOGLE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
+            nombre: userData.nombre, cedula: userData.cedula, puntos: p, intento: 1
+        })});
+        document.getElementById('quiz').innerHTML = `<div style="text-align:center"><h2>Evaluación Finalizada: ${p}%</h2><p>Reportado a la nube Zuforca.</p></div>`;
+    }
+</script>
+</body>
+</html>
