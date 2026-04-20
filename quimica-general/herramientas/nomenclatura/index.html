@@ -226,20 +226,27 @@ const dataQuimica = {
     }
 
     function verificar(sel, hint) {
-        const fb = document.getElementById('feedback');
-        fb.style.display = 'block';
-        document.querySelectorAll('.option').forEach(b => b.disabled = true);
-        if(sel === currentCorrect) {
-            fb.innerHTML = "✅ CORRECTO. " + hint;
-            fb.style.background = "#d4edda";
-            correctCount++;
-        } else {
-            fb.innerHTML = "❌ INCORRECTO. Era: " + currentCorrect + "<br>" + hint;
-            fb.style.background = "#f8d7da";
+    const fb = document.getElementById('feedback');
+    fb.style.display = 'block';
+    document.querySelectorAll('.option').forEach(b => b.disabled = true);
+    
+    if(sel === currentCorrect) {
+        fb.innerHTML = "✅ CORRECTO. " + hint;
+        fb.style.background = "#d4edda";
+        correctCount++;
+    } else {
+        // Limpiamos la pista para que no mencione H si no es necesario
+        let mensajeHint = hint;
+        if (!document.getElementById('q-formula').innerText.includes('H')) {
+            mensajeHint = mensajeHint.replace("H = +1, ", "");
         }
-        document.getElementById('percent').innerText = ((correctCount/qIndex)*100).toFixed(0);
-        document.getElementById('btn-next').style.display = 'block';
+        
+        fb.innerHTML = "❌ INCORRECTO. Era: " + currentCorrect + "<br>" + mensajeHint;
+        fb.style.background = "#f8d7da";
     }
+    document.getElementById('percent').innerText = ((correctCount/qIndex)*100).toFixed(0);
+    document.getElementById('btn-next').style.display = 'block';
+}
 
     function siguiente() {
         if(qIndex < 15) { qIndex++; document.getElementById('q-num').innerText = qIndex; cargar(); }
