@@ -59,54 +59,111 @@
     const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbxyvZ7kq5nwmQzZMyH7l4Fyl3_NpTgARxpbJBO_UQb2g2ihV1mf3TNMJ3dUFv1xh2oqEQ/exec";
     
     let userData = { nombre: "", cedula: "", intento: 1 };
-    let correctCount = 0, qIndex = 1, currentAnswer = [];
+    let correctCount = 0, qIndex = 0, currentAnswer = [];
+    let bancoActual = [];
 
-    const poolReacciones = [
-        { ec: ["Li", "O₂", "→", "Li₂O"], coefs: [4, 1, 2], hint: "Ajuste el oxígeno primero." },
-        { ec: ["Mg", "HCl", "→", "MgCl₂", "H₂"], coefs: [1, 2, 1, 1], hint: "Revise los subíndices del Cloro." },
-        { ec: ["Al", "O₂", "→", "Al₂O₃"], coefs: [4, 3, 2], hint: "Busque el MCM del oxígeno (6)." },
-        { ec: ["C₃H₈", "O₂", "→", "CO₂", "H₂O"], coefs: [1, 5, 3, 4], hint: "Combustión: Carbono, Hidrógeno y luego Oxígeno." },
-        { ec: ["Fe", "O₂", "→", "Fe₂O₃"], coefs: [4, 3, 2], hint: "Oxidación del hierro (III)." },
-        { ec: ["KClO₃", "→", "KCl", "O₂"], coefs: [2, 2, 3], hint: "Descomposición térmica." },
-        { ec: ["N₂", "H₂", "→", "NH₃"], coefs: [1, 3, 2], hint: "Proceso Haber." },
-        { ec: ["Na", "H₂O", "→", "NaOH", "H₂"], coefs: [2, 2, 2, 1], hint: "Cuidado con el hidrógeno diatómico." },
-        { ec: ["P₄", "O₂", "→", "P₄O₁₀"], coefs: [1, 5, 1], hint: "El fósforo blanco es tetratómico." },
-        { ec: ["CH₄", "O₂", "→", "CO₂", "H₂O"], coefs: [1, 2, 1, 2], hint: "Balancee el hidrógeno antes que el oxígeno." }
+const poolReacciones = [
+        // NIVEL BÁSICO (Síntesis y Descomposición)
+        { ec: ["H₂", "+", "O₂", "→", "H₂O"], coefs: [2, 1, 2] },
+        { ec: ["N₂", "+", "H₂", "→", "NH₃"], coefs: [1, 3, 2] },
+        { ec: ["Li", "+", "O₂", "→", "Li₂O"], coefs: [4, 1, 2] },
+        { ec: ["Mg", "+", "O₂", "→", "MgO"], coefs: [2, 1, 2] },
+        { ec: ["Na", "+", "Cl₂", "→", "NaCl"], coefs: [2, 1, 2] },
+        { ec: ["KClO₃", "→", "KCl", "+", "O₂"], coefs: [2, 2, 3] },
+        { ec: ["CaCO₃", "→", "CaO", "+", "CO₂"], coefs: [1, 1, 1] },
+        { ec: ["H₂O₂", "→", "H₂O", "+", "O₂"], coefs: [2, 2, 1] },
+        { ec: ["Al", "+", "O₂", "→", "Al₂O₃"], coefs: [4, 3, 2] },
+        { ec: ["Fe", "+", "O₂", "→", "Fe₂O₃"], coefs: [4, 3, 2] },
+
+        // NIVEL INTERMEDIO (Sustitución y Óxidos)
+        { ec: ["Zn", "+", "HCl", "→", "ZnCl₂", "+", "H₂"], coefs: [1, 2, 1, 1] },
+        { ec: ["Mg", "+", "HCl", "→", "MgCl₂", "+", "H₂"], coefs: [1, 2, 1, 1] },
+        { ec: ["Cu", "+", "AgNO₃", "→", "Cu(NO₃)₂", "+", "Ag"], coefs: [1, 2, 1, 2] },
+        { ec: ["Al", "+", "H₂SO₄", "→", "Al₂(SO₄)₃", "+", "H₂"], coefs: [2, 3, 1, 3] },
+        { ec: ["Na", "+", "H₂O", "→", "NaOH", "+", "H₂"], coefs: [2, 2, 2, 1] },
+        { ec: ["Fe", "+", "H₂O", "→", "Fe₃O₄", "+", "H₂"], coefs: [3, 4, 1, 4] },
+        { ec: ["P₄", "+", "O₂", "→", "P₄O₁₀"], coefs: [1, 5, 1] },
+        { ec: ["S₈", "+", "O₂", "→", "SO₃"], coefs: [1, 12, 8] },
+        { ec: ["Cl₂", "+", "KI", "→", "KCl", "+", "I₂"], coefs: [1, 2, 2, 1] },
+        { ec: ["Pb(NO₃)₂", "+", "KI", "→", "PbI₂", "+", "KNO₃"], coefs: [1, 2, 1, 2] },
+
+        // NIVEL AVANZADO (Combustión y otros)
+        { ec: ["CH₄", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [1, 2, 1, 2] },
+        { ec: ["C₂H₆", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [2, 7, 4, 6] },
+        { ec: ["C₃H₈", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [1, 5, 3, 4] },
+        { ec: ["C₄H₁₀", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [2, 13, 8, 10] },
+        { ec: ["C₂H₂", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [2, 5, 4, 2] },
+        { ec: ["C₂H₅OH", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [1, 3, 2, 3] },
+        { ec: ["NH₃", "+", "O₂", "→", "NO", "+", "H₂O"], coefs: [4, 5, 4, 6] },
+        { ec: ["FeS₂", "+", "O₂", "→", "Fe₂O₃", "+", "SO₂"], coefs: [4, 11, 2, 8] },
+        { ec: ["K", "+", "H₂O", "→", "KOH", "+", "H₂"], coefs: [2, 2, 2, 1] },
+        { ec: ["C₆H₁₂O₆", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [1, 6, 6, 6] }
+// ADICIONALES (31 - 60) - NIVEL EXPERTO Y SALES
+        { ec: ["Ag", "+", "H₂S", "+", "O₂", "→", "Ag₂S", "+", "H₂O"], coefs: [4, 2, 1, 2, 2] },
+        { ec: ["Al", "+", "HCl", "→", "AlCl₃", "+", "H₂"], coefs: [2, 6, 2, 3] },
+        { ec: ["BaCl₂", "+", "Na₂SO₄", "→", "BaSO₄", "+", "NaCl"], coefs: [1, 1, 1, 2] },
+        { ec: ["Ca(OH)₂", "+", "CO₂", "→", "CaCO₃", "+", "H₂O"], coefs: [1, 1, 1, 1] },
+        { ec: ["Cu", "+", "HNO₃", "→", "Cu(NO₃)₂", "+", "NO₂", "+", "H₂O"], coefs: [1, 4, 1, 2, 2] },
+        { ec: ["H₂SO₄", "+", "NaOH", "→", "Na₂SO₄", "+", "H₂O"], coefs: [1, 2, 1, 2] },
+        { ec: ["KI", "+", "Pb(NO₃)₂", "→", "PbI₂", "+", "KNO₃"], coefs: [2, 1, 1, 2] },
+        { ec: ["MnO₂", "+", "HCl", "→", "MnCl₂", "+", "Cl₂", "+", "H₂O"], coefs: [1, 4, 1, 1, 2] },
+        { ec: ["P₄", "+", "Cl₂", "→", "PCl₃"], coefs: [1, 6, 4] },
+        { ec: ["C₅H₁₂", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [1, 8, 5, 6] },
+        { ec: ["C₆H₆", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [2, 15, 12, 6] },
+        { ec: ["K", "+", "Br₂", "→", "KBr"], coefs: [2, 1, 2] },
+        { ec: ["Fe₂O₃", "+", "C", "→", "Fe", "+", "CO"], coefs: [1, 3, 2, 3] },
+        { ec: ["TiCl₄", "+", "Mg", "→", "Ti", "+", "MgCl₂"], coefs: [1, 2, 1, 2] },
+        { ec: ["Na₂O", "+", "H₂O", "→", "NaOH"], coefs: [1, 1, 2] },
+        { ec: ["SO₂", "+", "O₂", "→", "SO₃"], coefs: [2, 1, 2] },
+        { ec: ["C₁₂H₂₂O₁₁", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [1, 12, 12, 11] },
+        { ec: ["H₃PO₄", "+", "Ca(OH)₂", "→", "Ca₃(PO₄)₂", "+", "H₂O"], coefs: [2, 3, 1, 6] },
+        { ec: ["FeCl₃", "+", "NaOH", "→", "Fe(OH)₃", "+", "NaCl"], coefs: [1, 3, 1, 3] },
+        { ec: ["CS₂", "+", "O₂", "→", "CO₂", "+", "SO₂"], coefs: [1, 3, 1, 2] },
+        { ec: ["ZnS", "+", "O₂", "→", "ZnO", "+", "SO₂"], coefs: [2, 3, 2, 2] },
+        { ec: ["Na₂CO₃", "+", "HCl", "→", "NaCl", "+", "H₂O", "+", "CO₂"], coefs: [1, 2, 2, 1, 1] },
+        { ec: ["NH₃", "+", "CuO", "→", "Cu", "+", "N₂", "+", "H₂O"], coefs: [2, 3, 3, 1, 3] },
+        { ec: ["C₈H₁₈", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [2, 25, 16, 18] },
+        { ec: ["KMnO₄", "→", "K₂MnO₄", "+", "MnO₂", "+", "O₂"], coefs: [2, 1, 1, 1] },
+        { ec: ["B₂H₆", "+", "O₂", "→", "B₂O₃", "+", "H₂O"], coefs: [1, 3, 1, 3] },
+        { ec: ["Al₄C₃", "+", "H₂O", "→", "Al(OH)₃", "+", "CH₄"], coefs: [1, 12, 4, 3] },
+        { ec: ["Ca₃(PO₄)₂", "+", "SiO₂", "+", "C", "→", "CaSiO₃", "+", "P₄", "+", "CO"], coefs: [2, 6, 10, 6, 1, 10] },
+        { ec: ["Fe₂O₃", "+", "H₂", "→", "Fe", "+", "H₂O"], coefs: [1, 3, 2, 3] },
+        { ec: ["C₂H₄", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [1, 3, 2, 2] }
     ];
+    function shuffle(array) { return array.sort(() => Math.random() - 0.5); }
 
     function iniciar() {
         const n = document.getElementById('name').value;
         const c = document.getElementById('cedula').value;
         if(!n || !c) return alert("Ingrese sus datos.");
         userData.nombre = n; userData.cedula = c;
+        bancoActual = shuffle([...poolReacciones]).slice(0, 10);
         document.getElementById('setup').style.display = 'none';
         document.getElementById('quiz').style.display = 'block';
         cargar();
     }
 
     function cargar() {
-        const r = poolReacciones[Math.floor(Math.random()*poolReacciones.length)];
+        const r = bancoActual[qIndex];
         currentAnswer = r.coefs;
         const area = document.getElementById('equation-area');
         area.innerHTML = "";
         
-        let coefIdx = 0;
+        let inputCount = 0;
         r.ec.forEach((part) => {
-            if (part === "→" || part === "+") {
-                area.innerHTML += `<span>${part === "→" ? " → " : " + "}</span>`;
-            } else {
-                area.innerHTML += `<input type="text" class="coef-input" id="c${coefIdx}" placeholder="1">`;
+            if (["+", "→"].includes(part)) {
                 area.innerHTML += `<span>${part}</span>`;
-                if(coefIdx < r.ec.filter(p => p!=="→" && p!=="+").length - 1 && r.ec[r.ec.indexOf(part)+1] !== "→") {
-                   // No añadir plus aquí, ya está en el array ec si lo deseamos o lo manejamos manual
-                }
-                coefIdx++;
+            } else {
+                area.innerHTML += `<input type="text" class="coef-input" id="c${inputCount}" placeholder="1">`;
+                area.innerHTML += `<span>${part}</span>`;
+                inputCount++;
             }
         });
 
         document.getElementById('feedback').style.display = 'none';
         document.getElementById('btn-check').style.display = 'inline-block';
         document.getElementById('btn-next').style.display = 'none';
+        document.getElementById('q-num').innerText = qIndex + 1;
     }
 
     function verificar() {
@@ -121,24 +178,23 @@
         fb.style.display = 'block';
         
         if(isCorrect) {
-            fb.innerHTML = "✅ ¡Perfecto! La ecuación cumple con la Ley de Conservación de la Masa.";
+            fb.innerHTML = "✅ ¡Perfecto! La ecuación está balanceada.";
             fb.style.background = "#d4edda";
             correctCount++;
         } else {
-            fb.innerHTML = `❌ Incorrecto. Los coeficientes correctos son: [${currentAnswer.join(', ')}].`;
+            fb.innerHTML = `❌ Incorrecto. Los coeficientes eran: [${currentAnswer.join(', ')}].`;
             fb.style.background = "#f8d7da";
         }
 
-        document.getElementById('percent').innerText = ((correctCount/qIndex)*100).toFixed(0);
+        document.getElementById('percent').innerText = ((correctCount/(qIndex+1))*100).toFixed(0);
         document.getElementById('btn-check').style.display = 'none';
         document.getElementById('btn-next').style.display = 'inline-block';
         document.querySelectorAll('.coef-input').forEach(input => input.disabled = true);
     }
 
     function siguiente() {
-        if(qIndex < 10) {
+        if(qIndex < 9) {
             qIndex++;
-            document.getElementById('q-num').innerText = qIndex;
             cargar();
         } else {
             prepararEnvio();
@@ -147,46 +203,29 @@
 
     function prepararEnvio() {
         const finalP = ((correctCount/10)*100).toFixed(0);
-        document.getElementById('action-area').innerHTML = `<button id="btn-send" class="btn-action" onclick="enviar(${finalP})">Enviar Informe a la Nube</button>`;
+        document.getElementById('action-area').innerHTML = `<button id="btn-send" class="btn-action" onclick="enviar(${finalP})">Enviar Resultados</button>`;
     }
 
     async function enviar(p) {
         const btn = document.getElementById('btn-send');
-        btn.disabled = true;
-        btn.innerText = "Enviando...";
-
-        const data = {
-            nombre: userData.nombre,
-            cedula: userData.cedula,
-            puntos: p,
-            intento: userData.intento
-        };
+        btn.disabled = true; btn.innerText = "Enviando...";
+        const data = { nombre: userData.nombre, cedula: userData.cedula, puntos: p, intento: userData.intento };
 
         try {
-            // Usando un formulario oculto para evitar bloqueos de CORS en algunos navegadores
-            const form = new FormData();
-            for (const key in data) { form.append(key, data[key]); }
-
-            await fetch(GOOGLE_URL, {
-                method: 'POST',
-                mode: 'no-cors', // Importante para Google Apps Script
-                body: JSON.stringify(data)
-            });
-
-            alert("SISTEMA: Informe enviado con éxito.");
+            await fetch(GOOGLE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
+            alert("SISTEMA: Datos guardados en la nube.");
             document.getElementById('action-area').innerHTML = `<button class="btn-action" onclick="reintentar()" style="background:var(--secondary)">Nuevo Intento</button>`;
         } catch (e) {
-            alert("Error al enviar. Revise su conexión.");
-            btn.disabled = false;
-            btn.innerText = "Reintentar Envío";
+            alert("Error de conexión.");
+            btn.disabled = false; btn.innerText = "Reintentar";
         }
     }
 
     function reintentar() {
         userData.intento++;
-        correctCount = 0; qIndex = 1;
+        correctCount = 0; qIndex = 0;
+        bancoActual = shuffle([...poolReacciones]).slice(0, 10);
         document.getElementById('percent').innerText = "0";
-        document.getElementById('q-num').innerText = "1";
         document.getElementById('attempt-num').innerText = userData.intento;
         document.getElementById('action-area').innerHTML = `<button id="btn-check" class="btn-action" onclick="verificar()">Verificar Balanceo</button><button id="btn-next" class="btn-action" onclick="siguiente()" style="display:none;">Siguiente →</button>`;
         cargar();

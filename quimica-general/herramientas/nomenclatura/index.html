@@ -72,20 +72,19 @@
     let correctCount = 0, qIndex = 1, currentCorrect = "";
 
 const dataQuimica = {
-        metales: [
-            {n:"Hierro", s:"Fe", v:[2,3], t:["Ferroso", "Férrico"]},
-            {n:"Cobre", s:"Cu", v:[1,2], t:["Cuproso", "Cúprico"]},
-            {n:"Sodio", s:"Na", v:[1], t:["Sodio"]}, // Eliminamos "Sódico" si prefieres el nombre simple
-            {n:"Aluminio", s:"Al", v:[3], t:["Aluminio"]}, 
-            {n:"Níquel", s:"Ni", v:[2,3], t:["Niqueloso", "Niquélico"]}
-        ],
-    };
-        noMetales: [
-            {n:"Azufre", s:"S", v:[4,6], t:["Sulfuroso", "Sulfúrico"]},
-            {n:"Cloro", s:"Cl", v:[1,3,5,7], t:["Hipocloroso", "Cloroso", "Clórico", "Perclórico"]},
-            {n:"Nitrógeno", s:"N", v:[3,5], t:["Nitroso", "Nítrico"]}
-        ]
-    };
+    metales: [
+        {n:"Hierro", s:"Fe", v:[2,3], t:["Ferroso", "Férrico"]},
+        {n:"Cobre", s:"Cu", v:[1,2], t:["Cuproso", "Cúprico"]},
+        {n:"Sodio", s:"Na", v:[1], t:["Sodio"]}, 
+        {n:"Aluminio", s:"Al", v:[3], t:["Aluminio"]}, 
+        {n:"Níquel", s:"Ni", v:[2,3], t:["Niqueloso", "Niquélico"]}
+    ], // Solo una coma aquí, NO una llave de cierre
+    noMetales: [
+        {n:"Azufre", s:"S", v:[4,6], t:["Sulfuroso", "Sulfúrico"]},
+        {n:"Cloro", s:"Cl", v:[1,3,5,7], t:["Hipocloroso", "Cloroso", "Clórico", "Perclórico"]},
+        {n:"Nitrógeno", s:"N", v:[3,5], t:["Nitroso", "Nítrico"]}
+    ]
+}; // Aquí sí se cierra el objeto completo
 
     // FUNCIÓN DE CONVERSIÓN A ROMANOS (SOLUCIÓN AL ERROR IV)
     function aRomano(n) {
