@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zuforca Academy - Desafío 30 Fórmulas</title>
+    <style>
+        :root { --primary: #2e86c1; --secondary: #28b463; --help: #d35400; --bg: #ebf5fb; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 650px; text-align: center; }
+        .instruction-box { background: #e8f6f3; border: 1px solid #1abc9c; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: left; font-size: 0.9em; color: #117a65; }
+        .formula-container { background: #fff; border: 2px solid #e1e8ed; border-radius: 12px; margin-bottom: 20px; height: 140px; display: flex; align-items: center; justify-content: center; }
+        .formula-text { font-size: 58px; font-weight: bold; color: #2c3e50; }
+        sub { font-size: 0.5em; vertical-align: sub; }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #555; }
+        input[type="text"] { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
+        button { flex: 1; padding: 15px; border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: bold; }
+        .btn-check { background: var(--primary); }
+        .btn-help { background: var(--help); }
+        #feedback-box { display: none; margin-top: 20px; padding: 15px; border-radius: 8px; font-weight: bold; }
+        #tutor-box { display: none; margin-top: 15px; padding: 15px; background: #fdf2e9; border-left: 6px solid var(--help); text-align: left; }
+        #next-btn { width: 100%; background: var(--secondary); display: none; margin-top: 15px; font-size: 18px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2 style="color: var(--primary); margin-bottom: 5px;">Zuforca Academy</h2>
+    
+    <div class="instruction-box">
+        <b>📝 Instrucciones del Profesor:</b><br>
+        1. Se acepta el nombre en cualquier sistema (Tradicional, Stock o IUPAC/Sistemática).<br>
+        2. El <b>Estado de Oxidación</b> DEBE incluir el signo positivo (+) o negativo (-) de forma obligatoria.<br>
+        3. Verifica bien tus cálculos antes de presionar "Verificar".
+    </div>
+    
+    <div class="formula-container">
+        <div class="formula-text" id="formula-display">...</div>
+    </div>
+    
+    <div class="input-group">
+        <label>Nombre del Compuesto:</label>
+        <input type="text" id="user-name" placeholder="Ej: Oxido de Hierro (III) o Ferrico..." autocomplete="off">
+    </div>
+
+    <div class="input-group">
+        <label>Estado de Oxidación (Atomo Central/Metal):</label>
+        <input type="text" id="user-valencia" placeholder="Ej: +3 o -2" autocomplete="off">
+    </div>
+    
+    <div class="btn-group">
+        <button class="btn-check" onclick="validar()">Verificar</button>
+        <button class="btn-help" onclick="solicitarAyuda()">Solicitar Ayuda</button>
+    </div>
+
+    <div id="feedback-box"></div>
+    <div id="tutor-box">
+        <strong>💡 Guía de Resolución:</strong>
+        <p id="tutor-msg"></p>
+    </div>
+    <button id="next-btn" onclick="siguiente()">Siguiente Compuesto →</button>
+</div>
+
+<script>
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx3J3H_1IWvejJpjtquuHV-HmXeoZ29PGo828lazfCrTijX8Uk1_fgDdzC8Xe_MdgZUhA/exec"; 
+
+    const bancoOriginal = [
+        { f: "NaCl", c: ["cloruro de sodio"], v: "+1", hint: "Sal binaria simple. El Na es del grupo 1." },
+        { f: "H<sub>2</sub>SO<sub>4</sub>", c: ["acido sulfurico", "tetraoxosulfato (vi) de hidrogeno"], v: "+6", hint: "Oxoácido central. S con valencia máxima." },
+        { f: "KOH", c: ["hidroxido de potasio"], v: "+1", hint: "Hidróxido de metal alcalino." },
+        { f: "Fe<sub>2</sub>O<sub>3</sub>", c: ["oxido ferrico", "oxido de hierro (iii)", "trioxido de dihierro"], v: "+3", hint: "Óxido metálico. El Fe usa su valencia mayor." },
+        { f: "KMnO<sub>4</sub>", c: ["permanganato de potasio", "tetraoxomanganato (vii) de potasio"], v: "+7", hint: "El Mn con su estado de oxidación más alto." },
+        { f: "HCl", c: ["acido clorhidrico", "cloruro de hidrogeno"], v: "-1", hint: "Hidrácido. El cloro usa su valencia negativa." },
+        { f: "CO<sub>2</sub>", c: ["dioxido de carbono", "anhidrido carbonico"], v: "+4", hint: "Gas de efecto invernadero." },
+        { f: "NaOH", c: ["hidroxido de sodio", "sosa caustica"], v: "+1", hint: "Base fuerte." },
+        { f: "CuSO<sub>4</sub>", c: ["sulfato de cobre (ii)", "sulfato cuprico"], v: "+2", hint: "Sal oxisal del Cobre (II)." },
+        { f: "NH<sub>3</sub>", c: ["amoniaco", "trihidruro de nitrogeno"], v: "-3", hint: "Nitrógeno con hidrógeno." },
+        { f: "H<sub>2</sub>O<sub>2</sub>", c: ["peroxido de hidrogeno", "agua oxigenada"], v: "-1", hint: "Excepción: Peróxido (O es -1)." },
+        { f: "K<sub>2</sub>Cr<sub>2</sub>O<sub>7</sub>", c: ["dicromato de potasio"], v: "+6", hint: "Sal de cromo hexavalente." },
+        { f: "MgO", c: ["oxido de magnesio"], v: "+2", hint: "Óxido básico de metal grupo 2." },
+        { f: "HNO<sub>3</sub>", c: ["acido nitrico"], v: "+5", hint: "N con valencia +5." },
+        { f: "Al(OH)<sub>3</sub>", c: ["hidroxido de aluminio"], v: "+3", hint: "Metal de grupo 13." },
+        { f: "CaCO<sub>3</sub>", c: ["carbonato de calcio"], v: "+4", hint: "El carbono central tiene valencia +4." },
+        { f: "LiH", c: ["hidruro de litio"], v: "-1", hint: "Hidruro metálico (H es -1)." },
+        { f: "SO<sub>3</sub>", c: ["trioxido de azufre", "anhidrido sulfurico"], v: "+6", hint: "Anhídrido de azufre." },
+        { f: "AgCl", c: ["cloruro de plata"], v: "+1", hint: "Plata (Ag) siempre es +1." },
+        { f: "FeSO<sub>4</sub>", c: ["sulfato ferroso", "sulfato de hierro (ii)"], v: "+2", hint: "Hierro con su menor valencia (+2)." },
+        { f: "H<sub>3</sub>PO<sub>4</sub>", c: ["acido fosforico"], v: "+5", hint: "Ácido del fósforo." },
+        { f: "PbO<sub>2</sub>", c: ["oxido plumbico", "oxido de plomo (iv)"], v: "+4", hint: "Plomo con su mayor valencia." },
+        { f: "Ni(OH)<sub>2</sub>", c: ["hidroxido niqueloso", "hidroxido de niquel (ii)"], v: "+2", hint: "Níquel con valencia menor." },
+        { f: "ZnCl<sub>2</sub>", c: ["cloruro de zinc"], v: "+2", hint: "Zinc siempre actúa con +2." },
+        { f: "HClO", c: ["acido hipocloroso"], v: "+1", hint: "Cloro con su valencia positiva más baja." },
+        { f: "Na<sub>2</sub>O", c: ["oxido de sodio"], v: "+1", hint: "Óxido de metal alcalino." },
+        { f: "Ba(OH)<sub>2</sub>", c: ["hidroxido de bario"], v: "+2", hint: "Metal de grupo 2." },
+        { f: "P<sub>2</sub>O<sub>5</sub>", c: ["pentaoxido de difosforo", "anhidrido fosforico"], v: "+5", hint: "Fósforo con valencia +5." },
+        { f: "K<sub>2</sub>O", c: ["oxido de potasio"], v: "+1", hint: "Potasio siempre +1." },
+        { f: "HBr", c: ["acido bromhidrico", "bromuro de hidrogeno"], v: "-1", hint: "Halógeno en hidrácido." }
+    ];
+
+    let examen = [];
+    let current = 0;
+
+    function limpiarTexto(texto) {
+        return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+    }
+
+    function mezclarYEmpezar() {
+        examen = [...bancoOriginal].sort(() => Math.random() - 0.5);
+        current = 0;
+        cargar();
+    }
+
+    function cargar() {
+        document.getElementById('formula-display').innerHTML = examen[current].f;
+        document.getElementById('feedback-box').style.display = 'none';
+        document.getElementById('tutor-box').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('user-name').value = '';
+        document.getElementById('user-valencia').value = '';
+        document.getElementById('user-name').disabled = false;
+        document.getElementById('user-valencia').disabled = false;
+    }
+
+    async function validar() {
+        const resNomOriginal = document.getElementById('user-name').value.trim();
+        const resVal = document.getElementById('user-valencia').value.trim();
+        const fBox = document.getElementById('feedback-box');
+        
+        if (!resNomOriginal || !resVal) {
+            alert("Por favor, completa ambos campos.");
+            return;
+        }
+
+        const nombreLimpio = limpiarTexto(resNomOriginal);
+        const nombreValido = examen[current].c.some(opcion => limpiarTexto(opcion) === nombreLimpio);
+        const valenciaValida = resVal === examen[current].v;
+
+        fBox.style.display = 'block';
+        fBox.style.backgroundColor = "#fcf3cf";
+        fBox.innerHTML = "🧪 Enviando respuesta al profesor y consultando a la IA...";
+
+        // Enviar datos al script (doPost)
+        const datos = {
+            nombre: "Estudiante_Gral",
+            formula: examen[current].f.replace(/<[^>]*>?/gm, ''),
+            respuestaAlumno: `Nombre: ${resNomOriginal} | Val: ${resVal}`,
+            respuestaCorrecta: `Nombre: ${examen[current].c[0]} | Val: ${examen[current].v}`,
+            modo: "Practica_30_Formulas"
+        };
+
+        try {
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify(datos)
+            });
+
+            // Feedback visual local
+            if (nombreValido && valenciaValida) {
+                fBox.style.backgroundColor = '#d4edda';
+                fBox.style.color = '#155724';
+                fBox.innerHTML = "✅ ¡Excelente! El registro se ha guardado en el Excel.";
+            } else {
+                fBox.style.backgroundColor = '#f8d7da';
+                fBox.style.color = '#721c24';
+                fBox.innerHTML = "❌ Hay errores. El profesor recibirá tu intento para revisarlo.";
+            }
+            
+            document.getElementById('next-btn').style.display = 'block';
+            document.getElementById('user-name').disabled = true;
+            document.getElementById('user-valencia').disabled = true;
+
+        } catch (error) {
+            fBox.innerHTML = "⚠️ Error de conexión. Revisa tu internet.";
+        }
+    }
+
+    function solicitarAyuda() {
+        const tBox = document.getElementById('tutor-box');
+        const tMsg = document.getElementById('tutor-msg');
+        tMsg.innerHTML = `<b>Nombres aceptados:</b> ${examen[current].c.join(" / ")}<br><b>Estado de Oxidación:</b> ${examen[current].v}<br><br><b>Guía:</b> ${examen[current].hint}`;
+        tBox.style.display = 'block';
+        document.getElementById('next-btn').style.display = 'block';
+    }
+
+    function siguiente() {
+        current++;
+        if (current < examen.length) cargar();
+        else { alert("Has completado las 30 fórmulas. ¡Felicidades!"); mezclarYEmpezar(); }
+    }
+
+    window.onload = mezclarYEmpezar;
+</script>
+</body>
+</html>

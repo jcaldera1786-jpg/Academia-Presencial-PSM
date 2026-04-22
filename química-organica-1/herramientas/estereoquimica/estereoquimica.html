@@ -3,242 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reto de Estereoquímica - Zuforca Academy</title>
+    <title>Zuforca Academy - Estereoquímica PRO</title>
     <style>
-        :root { --primary: #1a5276; --secondary: #2980b9; --accent: #e67e22; --bg: #f4f7f6; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .container { max-width: 800px; width: 100%; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .header { text-align: center; border-bottom: 4px solid var(--primary); margin-bottom: 20px; padding-bottom: 10px; }
-        .stats { display: flex; justify-content: space-between; background: var(--primary); color: white; padding: 10px 20px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; }
-        .molecule-card { text-align: center; border: 2px solid #eee; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-        .molecule-img { max-width: 100%; height: auto; border-radius: 8px; transition: transform 0.3s; }
-        .molecule-img:hover { transform: scale(1.05); }
-        
-        /* Zona de Construcción */
-        .build-zone { min-height: 60px; border: 2px dashed var(--secondary); border-radius: 10px; padding: 15px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: #fdfefe; }
-        .token { background: var(--secondary); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.9em; display: flex; align-items: center; }
-        .token-remove { margin-left: 8px; cursor: pointer; font-weight: bold; color: #fad7a0; }
-
-        /* Banco de Botones */
-        .bank-section { margin-bottom: 15px; }
-        .bank-label { font-size: 0.8em; color: #666; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; }
-        .buttons-grid { display: flex; flex-wrap: wrap; gap: 6px; }
-        .btn-word { background: white; border: 1px solid #ccc; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 0.9em; }
-        .btn-word:hover { background: #ebf5fb; border-color: var(--secondary); }
-        
-        .controls { display: flex; justify-content: space-between; margin-top: 30px; }
-        .btn-main { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; }
-        .btn-check { background: var(--primary); }
-        .btn-next { background: #27ae60; display: none; }
-        
-        #feedback { display: none; padding: 15px; border-radius: 8px; margin-top: 15px; text-align: center; font-weight: bold; }
-        .setup-screen { text-align: center; }
-        input[type="text"] { width: 80%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
+        :root { --primary: #1a5276; --secondary: #2471a3; --bg: #f4f7f6; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; align-items: center; }
+        .container { background: white; width: 90%; max-width: 600px; margin-top: 20px; padding: 20px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; }
+        img { max-width: 100%; height: auto; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 15px; min-height: 200px; }
+        input[type="text"] { width: 100%; padding: 12px; margin: 15px 0; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+        button { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        button:hover { background: var(--secondary); }
+        #feedback { margin-top: 20px; padding: 15px; border-radius: 8px; display: none; text-align: left; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; display: none; margin: 10px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">
-        <h1>Evaluación de Estereoquímica I</h1>
-        <p>Prof. José Ángel Caldera | Zuforca Academy</p>
+    <h2>Evaluador Inteligente de Orgánica</h2>
+    <p>Identifica el nombre IUPAC (Incluye R/S)</p>
+    
+    <div id="quiz-area">
+        <img id="mol-img" src="" alt="Cargando molécula...">
+        <input type="text" id="user-answer" placeholder="Escribe el nombre aquí..." autocomplete="off">
+        <div class="loader" id="loader"></div>
+        <button onclick="enviarRespuesta()" id="btn-enviar">Verificar con IA</button>
     </div>
 
-    <div id="setup" class="setup-screen">
-        <p>Identifique correctamente la nomenclatura IUPAC incluyendo descriptores R/S y E/Z.</p>
-        <input type="text" id="userName" placeholder="Nombre Completo">
-        <input type="text" id="userCedula" placeholder="Cédula de Identidad" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
-        <button class="btn-main btn-check" onclick="iniciarExamen()" style="width: 85%; margin-top: 10px;">Comenzar Intento (5 Retos)</button>
-    </div>
-
-    <div id="quiz-area" style="display:none;">
-        <div class="stats">
-            <span>Reto: <span id="q-current">1</span>/5</span>
-            <span>Aciertos: <span id="q-score">0</span></span>
-            <span>Intento: <span id="u-attempt">1</span></span>
-        </div>
-
-        <div class="molecule-card">
-            <img id="mol-img" class="molecule-img" src="" alt="Cargando estructura...">
-            <p style="color: #777; font-size: 0.8em;">Imagen vía PubChem API</p>
-        </div>
-
-        <div class="bank-label">Tu respuesta construida:</div>
-        <div id="build-zone" class="build-zone"></div>
-
-        <div class="bank-section">
-            <div class="bank-label">Sintaxis, Números y Estereoquímica</div>
-            <div id="bank-syntax" class="buttons-grid"></div>
-        </div>
-
-        <div class="bank-section">
-            <div class="bank-label">Fragmentos IUPAC</div>
-            <div id="bank-parts" class="buttons-grid"></div>
-        </div>
-
-        <div id="feedback"></div>
-
-        <div class="controls">
-            <button class="btn-main btn-check" id="btn-verify" onclick="verificarRespuesta()">Verificar Nomenclatura</button>
-            <button class="btn-main btn-next" id="btn-next" onclick="proximaPregunta()">Siguiente Reto →</button>
-        </div>
-    </div>
+    <div id="feedback"></div>
+    <button id="btn-next" style="display:none; margin-top:15px;" onclick="siguientePregunta()">Siguiente Estructura</button>
 </div>
 
 <script>
-    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbyeW5cMzojhicf9HbXl6kv-X6iInwpXkiFMC8WJe-zBG8pk2qo5Ri4g9vKdm7Y7X-b0Xw/exec";
+    // 1. URL DE TU SCRIPT (Enlace /exec)
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxixP903rVHlimkBB_ExvjK7dk5vjSUzn_PGeBif1XUE19oHmevy87FdvDm0t_EUeEBBA/exec";
     
-    // BASE DE DATOS (Primeros 20 de 72 - Seguir añadiendo aquí)
-    const bancoTotal = [
-        { cid: "637566", c: "(2E)-3,7-dimetilocta-2,6-dien-1-ol" },
-        { cid: "643820", c: "(2Z)-3,7-dimetilocta-2,6-dien-1-ol" },
+    // 2. BANCO DE DATOS (Nivel Iniciación)
+    const examen = [
         { cid: "637567", c: "(S)-2-bromobutano" },
-        { cid: "12236109", c: "(S)-3-metilhexano" },
-        { cid: "2733157", c: "(R)-2-butanol" },
-        { cid: "5366432", c: "(R)-3-cloropentano" },
-        { cid: "5950", c: "(S)-alanina" },
-        { cid: "444908", c: "(2R,3R)-ácido tartárico" },
-        { cid: "11115312", c: "(R)-2-metilhexano" },
-        { cid: "115162", c: "(S)-3-metil-1-pentino" },
-        { cid: "8129", c: "(S)-2-hexanol" },
-        { cid: "104727", c: "(R)-3-metilhexano" },
-        { cid: "8051", c: "isopropanol" },
-        { cid: "522216", c: "(2S,3R)-3-metil-2-pentanol" },
         { cid: "637568", c: "(R)-2-bromopentano" },
-        { cid: "702", c: "etanol" },
-        { cid: "94154", c: "(R)-3-cloro-1-buteno" },
-        { cid: "10831", c: "(R)-ácido láctico" },
-        { cid: "5460504", c: "(S)-2-cloropropanoico" },
-        { cid: "12236110", c: "(R)-3-metilheptano" }
+        { cid: "11242",  c: "2-cloropropano" },
+        { cid: "3350",   c: "(S)-2-clorobutano" },
+        { cid: "3351",   c: "(R)-2-clorobutano" },
+        { cid: "5366432", c: "(R)-3-cloropentano" },
+        { cid: "11619",  c: "2-yodopropano" },
+        { cid: "11234",  c: "1-clorobutano" }
     ];
 
-    let examen = [];
-    let qIdx = 0, score = 0, intento = 1;
-    let tokens = [];
-    let userData = { nombre: "", cedula: "" };
+    let qIdx = 0;
+    let nombreUsuario = "";
+    let cedulaUsuario = "";
 
-    const btnSyntax = ["(", ")", "-", ",", "1", "2", "3", "4", "5", "6", "7", "8", "9", "R", "S", "E", "Z"];
-    const btnParts = ["metil", "etil", "dimetil", "trimetil", "cloro", "bromo", "yodo", "hidroxi", "ácido", "octa", "dien", "eno", "ol", "ano", "pent", "hex", "hept", "but"];
-
-    function iniciarExamen() {
-        userData.nombre = document.getElementById('userName').value;
-        userData.cedula = document.getElementById('userCedula').value;
-        if(!userData.nombre || !userData.cedula) return alert("Por favor, ingrese sus datos.");
-
-        examen = bancoTotal.sort(() => 0.5 - Math.random()).slice(0, 5);
-        document.getElementById('setup').style.display = 'none';
-        document.getElementById('quiz-area').style.display = 'block';
-        
-        cargarBancos();
+    window.onload = () => {
+        nombreUsuario = prompt("Nombre Completo:");
+        cedulaUsuario = prompt("Cédula:");
+        if(!nombreUsuario || !cedulaUsuario) {
+            alert("Los datos son obligatorios.");
+            location.reload();
+        }
         cargarPregunta();
-    }
-
-    function cargarBancos() {
-        const fill = (id, arr) => {
-            const div = document.getElementById(id);
-            div.innerHTML = "";
-            arr.forEach(t => {
-                const b = document.createElement('button');
-                b.className = 'btn-word';
-                b.innerText = t;
-                b.onclick = () => { tokens.push(t); renderTokens(); };
-                div.appendChild(b);
-            });
-        };
-        fill('bank-syntax', btnSyntax);
-        fill('bank-parts', btnParts);
-    }
-
-    function renderTokens() {
-        const zone = document.getElementById('build-zone');
-        zone.innerHTML = "";
-        tokens.forEach((t, i) => {
-            const span = document.createElement('div');
-            span.className = 'token';
-            span.innerHTML = `${t}<span class="token-remove" onclick="removeToken(${i})">×</span>`;
-            zone.appendChild(span);
-        });
-    }
-
-    function removeToken(i) { tokens.splice(i, 1); renderTokens(); }
+    };
 
     function cargarPregunta() {
-    // 1. Limpiamos TODO antes de cargar lo nuevo
-    document.getElementById('feedback').style.display = 'none';
-    document.getElementById('btn-next').style.display = 'none';
-    document.getElementById('btn-verify').disabled = false;
-    tokens = [];
-    renderTokens();
-
-    // 2. Sincronización estricta entre Imagen y Nombre
-    const p = examen[qIdx];
-    const imgElement = document.getElementById('mol-img');
-    
-    // Cambiamos la URL de la imagen y actualizamos el nombre correcto EN ESE MOMENTO
-    imgElement.src = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${p.cid}/PNG?record_type=2d&image_size=large`;
-    
-    // Guardamos la respuesta correcta en una variable global fresca
-    currentCorrectName = p.c; 
-    
-    document.getElementById('q-current').innerText = qIdx + 1;
-}
-
-    function verificarRespuesta() {
-        const rUser = tokens.join("");
-        if(!rUser) return alert("Construya el nombre primero.");
-
-        if(confirm(`¿Está seguro de que la nomenclatura es:\n${rUser}?`)) {
-            const correcta = examen[qIdx].c;
-            const fb = document.getElementById('feedback');
-            fb.style.display = 'block';
-            document.getElementById('btn-verify').disabled = true;
-
-            if(rUser === correcta) {
-                fb.innerHTML = "✅ CORRECTO. Excelente análisis de prioridades.";
-                fb.style.background = "#d4edda";
-                score++;
-            } else {
-                fb.innerHTML = `❌ INCORRECTO.<br>Tu respuesta: ${rUser}<br>La correcta era: <b>${correcta}</b>`;
-                fb.style.background = "#f8d7da";
-            }
-            document.getElementById('q-score').innerText = score;
-            document.getElementById('btn-next').style.display = 'block';
-        }
+        const p = examen[qIdx];
+        document.getElementById('mol-img').src = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${p.cid}/PNG?record_type=2d&image_size=large`;
+        document.getElementById('user-answer').value = "";
+        document.getElementById('feedback').style.display = "none";
+        document.getElementById('btn-next').style.display = "none";
+        document.getElementById('btn-enviar').disabled = false;
+        document.getElementById('user-answer').focus();
     }
 
-    function proximaPregunta() {
-        if(qIdx < 4) {
-            qIdx++;
-            cargarPregunta();
-        } else {
-            enviarResultados();
-        }
-    }
+    async function enviarRespuesta() {
+        const respuestaAlumno = document.getElementById('user-answer').value.trim();
+        if(!respuestaAlumno) return alert("Escribe el nombre de la estructura.");
 
-    function enviarResultados() {
-        const finalPuntos = ((score / 5) * 100).toFixed(0);
-        const payload = { 
-            nombre: userData.nombre, 
-            cedula: userData.cedula, 
-            puntos: finalPuntos, 
-            intento: intento 
+        document.getElementById('loader').style.display = "block";
+        document.getElementById('btn-enviar').disabled = true;
+
+        const payload = {
+            nombre: nombreUsuario,
+            cedula: cedulaUsuario,
+            respuestaAlumno: respuestaAlumno,
+            respuestaCorrecta: examen[qIdx].c,
+            idPregunta: `CID: ${examen[qIdx].cid}`,
+            intento: 1
         };
 
-        alert(`Evaluación finalizada. Puntaje: ${finalPuntos}%. Enviando a la nube...`);
-        
-        fetch(GOOGLE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) })
-        .then(() => {
-            alert("Registro guardado exitosamente.");
-            reiniciar();
-        });
+        try {
+            // Enviamos los datos al Apps Script
+            await fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify(payload)
+            });
+
+            // Feedback visual de éxito
+            const fb = document.getElementById('feedback');
+            fb.innerHTML = `
+                <div style="background:#d4edda; color:#155724; padding:10px; border-radius:8px; border: 1px solid #c3e6cb;">
+                    <b>✅ Enviado con éxito.</b><br>
+                    Tu respuesta se registró en el sistema. La IA evaluará la precisión química en la hoja del profesor.
+                </div>`;
+            fb.style.display = "block";
+            document.getElementById('btn-next').style.display = "inline-block";
+        } catch (e) {
+            alert("Error al conectar con el servidor.");
+            document.getElementById('btn-enviar').disabled = false;
+        } finally {
+            document.getElementById('loader').style.display = "none";
+        }
     }
 
-    function reiniciar() {
-        intento++;
-        document.getElementById('u-attempt').innerText = intento;
-        qIdx = 0; score = 0;
-        document.getElementById('q-score').innerText = "0";
-        iniciarExamen();
+    function siguientePregunta() {
+        qIdx++;
+        if(qIdx < examen.length) {
+            cargarPregunta();
+        } else {
+            alert("¡Felicidades! Has terminado el reto de estereoquímica.");
+            location.reload();
+        }
     }
 </script>
 </body>
