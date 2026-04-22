@@ -123,55 +123,48 @@
         document.getElementById('user-valencia').disabled = false;
     }
 
-async function validar() {
+    async function validar() {
         const resNomOriginal = document.getElementById('user-name').value.trim();
         const resVal = document.getElementById('user-valencia').value.trim();
         const fBox = document.getElementById('feedback-box');
         
-        console.log("Iniciando validación para:", resNomOriginal, resVal); // Esto debe salir en consola
-
         if (!resNomOriginal || !resVal) {
             alert("Por favor, completa ambos campos.");
             return;
         }
 
-        // 1. Limpieza de texto (Normalización)
         const nombreLimpio = limpiarTexto(resNomOriginal);
         const nombreValido = examen[current].c.some(opcion => limpiarTexto(opcion) === nombreLimpio);
         const valenciaValida = resVal === examen[current].v;
 
-        // 2. Feedback visual de espera
         fBox.style.display = 'block';
         fBox.style.backgroundColor = "#fcf3cf";
         fBox.innerHTML = "🧪 Procesando respuesta...";
 
-        // 3. Preparar datos para el Excel y Gemini
         const datos = {
             nombre: "Estudiante_PSM",
             formula: examen[current].f.replace(/<[^>]*>?/gm, ''),
             respuestaAlumno: `Nombre: ${resNomOriginal} | Val: ${resVal}`,
             respuestaCorrecta: `Nombre: ${examen[current].c[0]} | Val: ${examen[current].v}`,
-            modo: "Practica_General_Nomenclatura"
+            modo: "Practica_General"
         };
 
         try {
-            console.log("Enviando a la API...");
-            // Usamos fetch con la URL de tu script
+            // Envío asíncrono
             fetch(WEB_APP_URL, {
                 method: 'POST',
                 mode: 'no-cors',
                 body: JSON.stringify(datos)
             });
 
-            // 4. Resultado final en pantalla
             if (nombreValido && valenciaValida) {
                 fBox.style.backgroundColor = '#d4edda';
                 fBox.style.color = '#155724';
-                fBox.innerHTML = "✅ ¡Correcto! Datos registrados en el sistema.";
+                fBox.innerHTML = "✅ ¡Excelente! Todo correcto.";
             } else {
                 fBox.style.backgroundColor = '#f8d7da';
                 fBox.style.color = '#721c24';
-                fBox.innerHTML = "❌ Hay errores. Revisa el nombre o el signo de la valencia.";
+                fBox.innerHTML = "❌ Hay errores en tu respuesta.";
             }
             
             document.getElementById('next-btn').style.display = 'block';
@@ -179,8 +172,7 @@ async function validar() {
             document.getElementById('user-valencia').disabled = true;
 
         } catch (error) {
-            console.error("Error en el envío:", error);
-            fBox.innerHTML = "⚠️ Error de conexión con el servidor.";
+            fBox.innerHTML = "⚠️ Error de conexión.";
         }
     }
 
@@ -195,7 +187,7 @@ async function validar() {
     function siguiente() {
         current++;
         if (current < examen.length) cargar();
-        else { alert("Has completado las 30 fórmulas. ¡Felicidades!"); mezclarYEmpezar(); }
+        else { alert("¡Felicidades!"); mezclarYEmpezar(); }
     }
 
     window.onload = mezclarYEmpezar;
