@@ -183,19 +183,21 @@
         }
     }
 
-    function enviarDatos(u, c) {
-        fetch(DRIVE_API_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: JSON.stringify({
-                nombre: "Andrea",
-                formula: `${num1}x${num2}`,
-                respuestaAlumno: u,
-                respuestaCorrecta: c,
-                modo: "Tablas_Confeti"
-            })
-        });
-    }
+function enviarDatos(u, c) {
+    // Creamos un formulario virtual para que Google lo lea fácil
+    const formData = new FormData();
+    formData.append('nombre', "Andrea");
+    formData.append('formula', `${num1}x${num2}`);
+    formData.append('respuestaAlumno', u);
+    formData.append('respuestaCorrecta', c);
+    formData.append('modo', "Tablas_Confeti");
+
+    fetch(DRIVE_API_URL, {
+        method: 'POST',
+        mode: 'no-cors', // Mantenemos esto para evitar bloqueos de seguridad
+        body: formData
+    });
+}
 
     window.onload = generate;
 </script>
