@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Examen Química Orgánica I - IUPSM</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f8f9fa; padding: 15px; }
+        .container { max-width: 650px; background: white; margin: auto; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+        .parte-examen { display: none; }
+        .activo { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        h2 { color: #004a99; border-bottom: 2px solid #004a99; padding-bottom: 10px; text-align: center; font-size: 1.4em; }
+        h3 { color: #444; font-size: 1.1em; margin-top: 20px; border-left: 4px solid #004a99; padding-left: 10px; }
+        label { display: block; margin: 15px 0 5px; font-weight: 600; font-size: 0.95em; }
+        textarea, input, select { width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box; font-size: 1em; }
+        button { background: #004a99; color: white; padding: 14px; border: none; border-radius: 6px; cursor: pointer; width: 100%; font-size: 1.1em; font-weight: bold; margin-top: 20px; }
+        .btn-next { background: #28a745; }
+        #status-msg { height: 20px; color: #28a745; text-align: center; font-weight: bold; margin-top: 10px; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Química Orgánica I (2026-1)</h2>
+
+    <div id="paso0" class="parte-examen activo">
+        <p style="text-align:center">Ingrese sus datos para iniciar el intento único.</p>
+        <label>Nombre y Apellido:</label>
+        <input type="text" id="nom" placeholder="Ej: Caldera José">
+        <label>Cédula:</label>
+        <input type="text" id="ced" placeholder="Solo números">
+        <button onclick="iniciarExamen()">Validar e Iniciar Evaluación</button>
+    </div>
+
+    <form id="examenForm">
+<div id="paso1" class="parte-examen">
+            <h3>PARTE I: DEFINICIONES Y CONCEPTOS (8 pts)</h3>
+            <label>1. Explique qué ocurre orbitalmente cuando un carbono forma enlaces simples (alcanos) frente a enlaces dobles:</label>
+            <textarea name="p1" required></textarea>
+            
+            <label>2. Defina cómo la electronegatividad de un átomo influye en la densidad electrónica de una cadena sigma (σ):</label>
+            <textarea name="p2" required></textarea>
+
+            <label>3. Describa cómo el volumen de los grupos sustituyentes puede afectar la velocidad o viabilidad de una reacción:</label>
+            <textarea name="p3" required></textarea>
+
+            <label>4. ¿Qué condición debe cumplir un átomo de carbono para ser considerado un centro de quiralidad?</label>
+            <textarea name="p4" required></textarea>
+            <button type="button" class="btn-next" onclick="enviarParte(1, 2)">Guardar y Continuar</button>
+        </div>
+
+        <div id="paso2" class="parte-examen">
+            <h3>PARTE II: CLASIFICACIÓN DE ISÓMEROS (4 pts)</h3>
+            <p>Complete según la clasificación de isómeros:</p>
+            <label>Isómeros que varían en el orden de conectividad de sus átomos:</label>
+            <input type="text" name="p5_1" required>
+            
+            <label>Isómeros que tienen la misma conectividad pero diferente orientación espacial:</label>
+            <input type="text" name="p5_2" required>
+
+            <label>De las siguientes opciones, ¿cuál define mejor a un par de ENANTIÓMEROS?</label>
+            <select name="p6" required>
+                <option value="">---</option>
+                <option value="a">Moléculas que son imágenes especulares superponibles.</option>
+                <option value="b">Moléculas que no son imágenes especulares y tienen diferentes propiedades físicas.</option>
+                <option value="c">Moléculas que son imágenes especulares no superponibles.</option>
+                <option value="d">Isómeros que solo difieren en la posición de un doble enlace.</option>
+            </select>
+            <button type="button" class="btn-next" onclick="enviarParte(2, 3)">Guardar y Continuar</button>
+        </div>
+
+        <div id="paso3" class="parte-examen">
+            <h3>PARTE III: ALCANOS Y PROPIEDADES (2 pts)</h3>
+            <label>Defina qué es una serie homóloga en el contexto de los alcanos y cómo afecta el aumento del peso molecular a los puntos de ebullición:</label>
+            <textarea name="p7" required></textarea>
+            
+            <label>En el análisis conformacional del etano o butano, ¿cuál conformación es más estable y por qué (basándose en la repulsión electrónica)?</label>
+            <textarea name="p8" required></textarea>
+            <button type="button" class="btn-next" onclick="enviarParte(3, 4)">Guardar y Continuar</button>
+        </div>
+
+        <div id="paso4" class="parte-examen">
+            <h3>PARTE IV: DESARROLLO TEÓRICO (6 pts)</h3>
+            <label>Explique la importancia de los elementos de simetría (como el plano de simetría). ¿Qué sucede con la actividad óptica de una molécula si presenta un plano de simetría interno, incluso si tiene centros quirales?</label>
+            <textarea name="p9" required></textarea>
+            
+            <label>Compare el efecto de un grupo tractor de electrones (como el Flúor) frente a un grupo dador (como un metilo) sobre la estabilidad de una carga positiva en una molécula orgánica cercana:</label>
+            <textarea name="p10" required></textarea>
+
+            <label>¿Cuáles son las reglas de asignación de prioridad de grupo para isomería óptica y geométrica?</label>
+            <textarea name="p11" required></textarea>
+            <button type="button" onclick="enviarFinal()">Finalizar y Enviar Examen</button>
+        </div>
+    </form>
+    <div id="status-msg"></div>
+</div>
+
+<script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwxSNpLnhNGF9Ozi3C8nOfgPldbjCtz6f9b__Ge3t-tozHQh2Qk3RXZuDKpVqp-3s_V/exec';
+    const autorizados = ["32025870", "25188520", "31449479", "23447165", "31094437", "32891208", "32491977", "31467983", "11282631"];
+    let nomEst, cedEst;
+
+    function iniciarExamen() {
+        nomEst = document.getElementById('nom').value.trim();
+        cedEst = document.getElementById('ced').value.trim();
+        if(autorizados.includes(cedEst) && nomEst !== "") {
+            document.getElementById('paso0').classList.remove('activo');
+            document.getElementById('paso1').classList.add('activo');
+        } else { alert("Datos incorrectos o no autorizados."); }
+    }
+
+    function enviarParte(actual, sig) {
+        const status = document.getElementById('status-msg');
+        status.innerText = "Guardando en Drive...";
+        
+        const formData = new FormData(document.getElementById('examenForm'));
+        formData.append('nombre', nomEst);
+        formData.append('cedula', cedEst);
+        formData.append('parte', actual);
+
+        if(actual === 2) {
+            formData.append('p5', "Est: " + formData.get('p5_1') + " | Esp: " + formData.get('p5_2'));
+        }
+
+        fetch(scriptURL, { method: 'POST', body: formData })
+        .then(() => {
+            status.innerText = "✓ Parte " + actual + " guardada correctamente.";
+            setTimeout(() => {
+                status.innerText = "";
+                document.getElementById('paso' + actual).classList.remove('activo');
+                document.getElementById('paso' + sig).classList.add('activo');
+                window.scrollTo(0,0);
+            }, 1000);
+        });
+    }
+
+    function enviarFinal() {
+        enviarParte(4, 5);
+        setTimeout(() => {
+            document.body.innerHTML = "<div style='text-align:center; margin-top:100px; font-family:sans-serif;'><h2>Evaluación Finalizada con Éxito</h2><p>Sus respuestas están en el servidor del Dr. Caldera.</p></div>";
+        }, 1500);
+    }
+</script>
+</body>
+</html>
