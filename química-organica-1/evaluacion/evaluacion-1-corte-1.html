@@ -134,56 +134,53 @@
         });
     }
 
-function enviarFinal() {
-        // Primero enviamos la última parte al Drive
+        function enviarFinal() {
+        // 1. Enviamos la última parte al Drive
         enviarParte(4, 5);
         
-        // Capturamos las respuestas para el respaldo del estudiante
+        // 2. Recolectamos las respuestas del formulario antes de borrar la pantalla
         const form = document.getElementById('examenForm');
-        const respuestas = new FormData(form);
+        const p1 = form.p1.value;
+        const p2 = form.p2.value;
+        const p3 = form.p3.value;
+        const p4 = form.p4.value;
+        const p5 = "Est: " + form.p5_1.value + " | Esp: " + form.p5_2.value;
+        const p6 = form.p6.value;
+        const p7 = form.p7.value;
+        const p8 = form.p8.value;
+        const p9 = form.p9.value;
+        const p10 = form.p10.value;
+        const p11 = form.p11.value;
         const fecha = new Date().toLocaleString();
 
-        // Creamos la visualización del respaldo
+        // 3. Mostramos la constancia con el botón de impresión bien visible
         setTimeout(() => {
             document.body.innerHTML = `
-                <div style="max-width: 700px; margin: 40px auto; padding: 30px; border: 2px solid #004a99; border-radius: 10px; font-family: sans-serif; background: white;">
-                    <h2 style="color: #004a99; text-align: center;">CONSTANCIA DE ENTREGA - IUPSM</h2>
-                    <p style="text-align: center; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
-                        <strong>Asignatura:</strong> Química Orgánica I | <strong>Corte:</strong> 1ero
-                    </p>
-                    
-                    <div style="margin: 20px 0;">
-                        <p><strong>Estudiante:</strong> ${nomEst}</p>
-                        <p><strong>Cédula:</strong> ${cedEst}</p>
-                        <p><strong>Fecha de Envío:</strong> ${fecha}</p>
+                <div style="max-width: 600px; margin: 20px auto; padding: 25px; border: 3px solid #004a99; border-radius: 10px; font-family: sans-serif; background: #fff;">
+                    <h2 style="color: #004a99; text-align: center; margin-top:0;">RESUMEN DE ENTREGA - IUPSM</h2>
+                    <p><strong>Estudiante:</strong> ${nomEst}</p>
+                    <p><strong>Cédula:</strong> ${cedEst}</p>
+                    <p><strong>Fecha:</strong> ${fecha}</p>
+                    <hr>
+                    <div style="font-size: 0.85em; background: #f4f4f4; padding: 10px; border-radius: 5px; max-height: 300px; overflow-y: auto;">
+                        <p><strong>P1:</strong> ${p1}</p>
+                        <p><strong>P2:</strong> ${p2}</p>
+                        <p><strong>P3:</strong> ${p3}</p>
+                        <p><strong>P4:</strong> ${p4}</p>
+                        <p><strong>P5:</strong> ${p5}</p>
+                        <p><strong>P6:</strong> Opción ${p6}</p>
+                        <p><strong>P7:</strong> ${p7}</p>
+                        <p><strong>P8:</strong> ${p8}</p>
+                        <p><strong>P9:</strong> ${p9}</p>
+                        <p><strong>P10:</strong> ${p10}</p>
+                        <p><strong>P11:</strong> ${p11}</p>
                     </div>
-
-                    <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; font-size: 0.9em; max-height: 400px; overflow-y: auto;">
-                        <h4 style="margin-top:0;">Resumen de respuestas enviadas:</h4>
-                        <p><strong>P1:</strong> ${respuestas.get('p1')}</p>
-                        <p><strong>P2:</strong> ${respuestas.get('p2')}</p>
-                        <p><strong>P3:</strong> ${respuestas.get('p3')}</p>
-                        <p><strong>P4:</strong> ${respuestas.get('p4')}</p>
-                        <p><strong>P5 (Completación):</strong> ${respuestas.get('p5_1')} / ${respuestas.get('p5_2')}</p>
-                        <p><strong>P6 (Selección):</strong> Opción ${respuestas.get('p6')}</p>
-                        <p><strong>P7:</strong> ${respuestas.get('p7')}</p>
-                        <p><strong>P8:</strong> ${respuestas.get('p8')}</p>
-                        <p><strong>P9:</strong> ${respuestas.get('p9')}</p>
-                        <p><strong>P10:</strong> ${respuestas.get('p10')}</p>
-                        <p><strong>P11:</strong> ${respuestas.get('p11')}</p>
-                    </div>
-
-                    <p style="color: #d9534f; font-weight: bold; margin-top: 20px;">
-                        ⚠️ Tome una captura de pantalla o imprima este recibo como su comprobante legal de evaluación.
+                    <p style="color: red; font-weight: bold; text-align: center; margin-top: 15px;">
+                        ¡IMPORTANTE! Guarde este resumen como respaldo.
                     </p>
-                    
-                    <button onclick="window.print()" style="background: #6c757d; color: white; padding: 10px; width: 100%; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
-                        🖨️ Imprimir o Guardar como PDF
+                    <button onclick="window.print()" style="background: #28a745; color: white; padding: 15px; width: 100%; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1em; font-weight: bold;">
+                        🖨️ CLIC AQUÍ PARA GUARDAR PDF
                     </button>
-                    
-                    <p style="text-align: center; font-size: 0.8em; color: #777; margin-top: 20px;">
-                        Profesor: Dr. José Ángel Caldera Luzardo
-                    </p>
                 </div>
             `;
         }, 1500);
