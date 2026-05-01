@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad 2: Modelado Dinámico de Procesos</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        header {
+            border-bottom: 3px solid var(--accent-color);
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+        }
+        h1 { color: var(--primary-color); margin-bottom: 5px; }
+        h2 { color: var(--secondary-color); border-left: 5px solid var(--accent-color); padding-left: 15px; margin-top: 30px; }
+        .instructions {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 5px;
+            font-style: italic;
+            margin-bottom: 20px;
+            border: 1px solid #d0e7f9;
+        }
+        .problem-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+        }
+        .problem-card:hover {
+            border-color: var(--accent-color);
+        }
+        .math {
+            font-family: "Times New Roman", Times, serif;
+            font-weight: bold;
+            color: #c0392b;
+            font-style: italic;
+        }
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #7f8c8d;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        .tag {
+            display: inline-block;
+            background: var(--primary-color);
+            color: #fff;
+            padding: 2px 12px;
+            border-radius: 15px;
+            font-size: 0.75em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Instrumentación y Control</h1>
+            <p><strong>Unidad 2:</strong> Modelado Matemático y Dinámica de Procesos Industriales</p>
+        </header>
+
+        <div class="instructions">
+            <strong>Consigna de Trabajo:</strong> Los siguientes problemas deben ser desarrollados de forma detallada en sus cuadernos para la clase del próximo jueves. Se evaluará el rigor en los balances de masa/energía y la correcta transición al dominio de Laplace.
+        </div>
+
+        <h2>I. Cuestionario de Fundamentos</h2>
+        <div class="problem-card">
+            <ul>
+                <li>Defina <strong>Variable de Desviación</strong> y explique mediante una ecuación por qué simplifica el uso de la Transformada de Laplace.</li>
+                <li>Explique la diferencia en el comportamiento dinámico entre sistemas <strong>interactuantes</strong> y <strong>no interactuantes</strong>.</li>
+                <li>¿Qué representa físicamente la "Ganancia de Estado Estable" (<span class="math">K</span>) en un proceso industrial?</li>
+            </ul>
+        </div>
+
+        <h2>II. Problemas de Modelado</h2>
+
+        <div class="problem-card">
+            <div class="tag">Sistemas de Nivel</div>
+            <h3>1. Respuesta Dinámica de Tanque con Salida Lineal</h3>
+            <p>Un tanque cilíndrico tiene un área transversal <span class="math">A</span>. El flujo de salida <span class="math">q<sub>o</sub></span> es proporcional al nivel <span class="math">h</span> a través de una resistencia <span class="math">R</span> (<span class="math">q<sub>o</sub> = h/R</span>).</p>
+            <p><strong>Tarea:</strong> Obtenga la función de transferencia <span class="math">H(s)/Q<sub>i</sub>(s)</span>. Si el tanque está inicialmente vacío y se aplica un flujo de entrada escalón constante, grafique cualitativamente la respuesta.</p>
+        </div>
+
+        <div class="problem-card">
+            <div class="tag">Procesos Térmicos</div>
+            <h3>2. Calentamiento en Tanque Agitado</h3>
+            <p>Un flujo constante <span class="math">w</span> entra a un tanque agitado a una temperatura <span class="math">T<sub>i</sub>(t)</span>. El volumen del tanque es constante. Se suministra calor <span class="math">Q</span> mediante un serpentín de vapor.</p>
+            <p><strong>Tarea:</strong> Realice el balance de energía y obtenga la función de transferencia que relaciona la temperatura de salida <span class="math">T(s)</span> con la temperatura de entrada <span class="math">T<sub>i</sub>(s)</span>.</p>
+        </div>
+
+        <div class="problem-card">
+            <div class="tag">Procesos de Mezclado</div>
+            <h3>3. Control de Concentración</h3>
+            <p>Se desea modelar un tanque de mezclado de volumen <span class="math">V</span> constante. La concentración de entrada es <span class="math">C<sub>i</sub>(t)</span> y el caudal es <span class="math">q</span>.</p>
+            <p><strong>Tarea:</strong> Demuestre que el sistema es de primer orden y determine cuánto tiempo (en función de <span class="math">V</span> y <span class="math">q</span>) tarda la concentración de salida en alcanzar el 95% de su valor final ante un cambio tipo escalón.</p>
+        </div>
+
+        <div class="problem-card">
+            <div class="tag">Sistemas en Serie (2do Orden)</div>
+            <h3>4. Cascada de Tanques No Interactuantes</h3>
+            <p>Considere dos tanques de nivel colocados en serie donde el flujo del tanque 1 cae libremente al tanque 2. Ambos tienen la misma resistencia <span class="math">R</span> y área <span class="math">A</span>.</p>
+            <p><strong>Tarea:</strong> Encuentre la función de transferencia global. Determine si el sistema es subamortiguado, sobreamortiguado o críticamente amortiguado basándose en el cálculo del factor <span class="math">ζ</span>.</p>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 Cátedra de Instrumentación y Control - Material de Apoyo Educativo</p>
+        </footer>
+    </div>
+</body>
+</html>
