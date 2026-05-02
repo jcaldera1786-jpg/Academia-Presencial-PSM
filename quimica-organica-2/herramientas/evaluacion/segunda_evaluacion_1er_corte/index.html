@@ -32,89 +32,73 @@
 
 <div class="container">
     <div class="header">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/3/32/LOGO_DE_IUPSM_azul.jpg" alt="Logo PSM">
+        <img src="logo-psm.png" alt="Logo PSM">
         <h2>I.U.P. "Santiago Mariño"</h2>
-        <p><b>Química Orgánica II - Corte 1 (10%)</b></p>
+        <p><b>Química Orgánica II - Corte 1 (20%)</b></p>
         <div class="progress-container"><div class="progress-bar" id="pBar"></div></div>
     </div>
 
-    <!-- PASO 0: REGISTRO -->
+    <!-- PASO 0: IDENTIFICACIÓN (Igual al anterior) -->
     <div class="step active" id="step0">
         <div class="info-grid">
             <div><b>Profesor:</b> José Ángel Caldera</div>
             <div><b>Sección:</b> A / Escuela 49</div>
             <div><b>Lapso:</b> 2026-1</div>
-            <div><b>Ponderación:</b> 20 Puntos</div>
+            <div><b>Ponderación:</b> 20 Puntos (20%)</div>
         </div>
         <div class="section-title">IDENTIFICACIÓN DEL ESTUDIANTE</div>
         <div class="question">Nombre y Apellido:</div>
-        <input type="text" id="student_name" placeholder="Ej: Juan Pérez">
-        <div class="question">Cédula de Identidad / ID:</div>
-        <input type="text" id="student_id" placeholder="Ej: 12345678">
-        <button class="btn btn-next" onclick="nextStep(0)">Iniciar Evaluación</button>
+        <input type="text" id="student_name">
+        <div class="question">Cédula de Identidad:</div>
+        <input type="text" id="student_id">
+        <button class="btn btn-next" onclick="nextStep(0)">Iniciar Examen del 20%</button>
     </div>
 
-    <!-- PASO 1: PARTE I -->
+    <!-- PASO 1: REACCIONES (Problema 1) -->
     <div class="step" id="step1">
-        <div class="section-title">PARTE I: DEFINICIONES Y CONCEPTOS (8 pts)</div>
-        <div class="question">1. Halogenuros de Alquilo: Defina este tipo de compuesto y especifique la polaridad del enlace \(C-X\):</div>
-        <textarea id="ans_1"></textarea>
-        <div class="question">2. Clasificación de Alcoholes: Explique el criterio basado en el carbono unido al grupo \(-OH\):</div>
+        <div class="section-title">PARTE I: PRODUCTOS DE REACCIÓN (4 pts)</div>
+        <div class="question">1a. Proponga el producto para: (S)-2-yodopentano + \(NaCN / DMSO\):</div>
+        <textarea id="ans_1" placeholder="Indique nombre IUPAC y estereoquímica resultante..."></textarea>
+        <div class="question">1b. Proponga el producto para: 2-fenil-2-buteno + \(H_2SO_4\) diluido:</div>
         <textarea id="ans_2"></textarea>
         <button class="btn btn-next" onclick="nextStep(1)">Siguiente</button>
     </div>
 
+    <!-- PASO 2: SÍNTESIS (Problemas 2 y 3) -->
     <div class="step" id="step2">
-        <div class="section-title">PARTE I (Continuación)</div>
-        <div class="question">3. Éteres: Defina la diferencia estructural entre éteres simétricos y asimétricos:</div>
-        <textarea id="ans_3"></textarea>
-        <div class="question">4. Éteres cíclicos: Describa su estructura y por qué son significativamente más reactivos que los de cadena abierta:</div>
-        <textarea id="ans_4"></textarea>
+        <div class="section-title">PARTE II: ESTRATEGIAS DE SÍNTESIS (6 pts)</div>
+        <div class="question">2. Identifique la base para obtener el producto de Hofmann (2-metil-1-buteno):</div>
+        <input type="text" id="ans_3" placeholder="Ej: t-BuOK / Ter-butóxido de potasio">
+        <div class="question">3. Ruta de Williamson: Indique Alcóxido y Haluro para sintetizar etil terc-butil éter:</div>
+        <textarea id="ans_4" placeholder="R-O- Na+ y R'-X necesarios..."></textarea>
         <button class="btn btn-prev" onclick="prevStep(2)">Anterior</button>
         <button class="btn btn-next" onclick="nextStep(2)">Siguiente</button>
     </div>
 
-    <!-- PASO 3: PARTE II -->
+    <!-- PASO 3: LABORATORIO (Problemas 4 y 5) -->
     <div class="step" id="step3">
-        <div class="section-title">PARTE II: PROPIEDADES FÍSICAS Y QUÍMICAS (6 pts)</div>
-        <div class="question">1. ¿Por qué los alcoholes tienen puntos de ebullición mucho más altos que los éteres similares?</div>
-        <textarea id="ans_5"></textarea>
-        <div class="question">2. Explique cómo afecta la longitud de la cadena carbonada a la solubilidad de un alcohol en agua:</div>
-        <textarea id="ans_6"></textarea>
-        <div class="question">3. Fuerza de enlace: Ordene (F, Cl, Br, I) y explique cómo influye el tamaño del átomo:</div>
-        <textarea id="ans_7"></textarea>
+        <div class="section-title">PARTE III: LABORATORIO Y REACTIVIDAD (10 pts)</div>
+        <div class="question">4. Prediga el producto mayoritario de la deshidratación del 2-metil-2-butanol en medio ácido (Zaitsev):</div>
+        <input type="text" id="ans_5">
+        <div class="question">5. Práctica de Oxidación: Explique consideraciones experimentales, cambios de color observados y plantee la reacción:</div>
+        <textarea id="ans_6" style="height:150px;"></textarea>
         <button class="btn btn-prev" onclick="prevStep(3)">Anterior</button>
-        <button class="btn btn-next" onclick="nextStep(3)">Siguiente</button>
-    </div>
-
-    <!-- PASO 4: PARTE III y IV -->
-    <div class="step" id="step4">
-        <div class="section-title">PARTE III (2 pts) y PARTE IV (4 pts)</div>
-        <div class="question">III-1. Prioridad IUPAC: Entre halógeno y \(-OH\), ¿cuál tiene prioridad en la numeración?</div>
-        <textarea id="ans_8"></textarea>
-        <div class="question">III-2. Rol del halógeno: ¿Es un "grupo saliente" o un "nucleófilo"? Justifique:</div>
-        <textarea id="ans_9"></textarea>
-        <div class="question">IV-1. Acidez: ¿Por qué los alcoholes son ácidos débiles y cómo afecta un Flúor cercano?</div>
-        <textarea id="ans_10"></textarea>
-        <div class="question">IV-2. Reactividad: ¿Por qué los epóxidos reaccionan más fácil que los éteres lineales?</div>
-        <textarea id="ans_11"></textarea>
-        <button class="btn btn-prev" onclick="prevStep(4)">Anterior</button>
         <button class="btn btn-next" onclick="finishQuiz()">Finalizar</button>
     </div>
 
-    <!-- PASO FINAL -->
-    <div class="step" id="step5">
+    <!-- PASO FINAL (Igual al anterior) -->
+    <div class="step" id="step4">
         <div class="section-title" style="background: #28a745;">ENVÍO EXITOSO</div>
-        <p>Los datos se han sincronizado con el registro del profesor.</p>
-        <p><b>IMPORTANTE:</b> Pulse el botón de abajo, guarde como <b>PDF</b> y súbalo a la plataforma <b>SAIA</b>.</p>
-        <button class="btn" style="background:var(--psm-gold); color:white; width:100%" onclick="window.print()">DESCARGAR COMPROBANTE PDF</button>
+        <p>Tu evaluación del 20% ha sido registrada.</p>
+        <button class="btn" style="background:var(--psm-gold); color:white; width:100%" onclick="window.print()">DESCARGAR COMPROBANTE 20%</button>
     </div>
 </div>
 
 <script>
-    let currentStep = 0;
-    const totalSteps = 5;
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwp89aBmcq1Yr8AP5WhQ8zIhAG_BPFzztuLw8gcgIyjex3JD5T-DfPqq6XgCa8ZWpGbGA/exec';
+	let currentStep = 0;
+	const totalSteps = 4; // Ajustado a tus 4 pasos de contenido
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxUxeBvpa4KURJmzoQuMw0jDDIfS-MHYNgo6Ze8Co_Fyx2qtjh_dUhIxQUYQ-mk0nTS1g/exec';
+    
 
     function updateProgress() {
         document.getElementById('pBar').style.width = (currentStep / totalSteps * 100) + "%";
@@ -125,7 +109,7 @@
             id: document.getElementById('student_id').value,
             name: document.getElementById('student_name').value,
             type: currentStep === 0 ? "INICIO" : (currentStep >= 4 ? "FINAL" : "PROGRESO"),
-            answers: Array.from({length: 11}, (_, i) => document.getElementById(`ans_${i+1}`)?.value || "")
+            answers: Array.from({length: 6}, (_, i) => document.getElementById(`ans_${i+1}`)?.value || "")
         };
         fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
     }
@@ -155,7 +139,7 @@
     function finishQuiz() {
         saveToCloud();
         document.getElementById('step4').classList.remove('active');
-        currentStep = 5;
+        currentStep = 4;
         document.getElementById('step5').classList.add('active');
         updateProgress();
     }
