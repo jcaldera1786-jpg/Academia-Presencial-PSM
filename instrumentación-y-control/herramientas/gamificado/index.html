@@ -65,24 +65,24 @@
         { q: "¿Cuál es la unidad de la variable 's' en Laplace?", a: ["Tiempo inverso (1/s)", "Segundos", "Voltios", "Adimensional"], c: 0, r: "La variable complejo 's' tiene unidades de frecuencia (frecuencia compleja)." },
         { q: "Un tanque de nivel suele modelarse como:", a: ["Sistema de primer orden", "Sistema derivativo", "Sistema de tercer orden", "Circuito abierto"], c: 0, r: "El nivel de un fluido en un tanque responde de forma exponencial, típico de primer orden." },
         { q: "Sistemas en serie sin interacción resultan en una G(s) total que es:", a: ["El producto de las funciones individuales", "La suma", "La resta", "La inversa"], c: 0, r: "Al estar en serie, las funciones de transferencia se multiplican para obtener la total." },
-        { q: "Los sistemas de segundo orden pueden ser:", a: ["Sub, crítica o sobreamortiguados", "Lineales únicamente", "Siempre inestables", "Digitales"], c: 0, r: "El comportamiento depende del coeficiente de amortiguamiento (\u03B6)." },
+        { q: "Los sistemas de segundo orden pueden ser:", a: ["Sub, crítica o sobreamortiguados", "Lineales únicamente", "Siempre inestables", "Digitales"], c: 0, r: "El comportamiento depende del coeficiente de amortiguamiento (ζ)." },
         { q: "En un reactor, el balance de masa permite obtener:", a: ["La ecuación dinámica", "El costo", "La presión", "La viscosidad"], c: 0, r: "Las leyes de conservación (masa/energía) son la base del modelado matemático." },
         { q: "¿Qué señal estándar es común en instrumentación?", a: ["4 a 20 mA", "0 a 100 V", "1 a 5 A", "10 a 50 Hz"], c: 0, r: "La señal de corriente 4-20mA es el estándar industrial por su inmunidad al ruido." },
-        { q: "El Teorema del Valor Final en Laplace permite conocer:", a: ["El estado estacionario (t \u2192 \u221E)", "El valor inicial", "La estabilidad", "La resonancia"], c: 0, r: "Permite saber a qué valor llegará el sistema cuando se estabilice sin ir al dominio del tiempo." },
+        { q: "El Teorema del Valor Final en Laplace permite conocer:", a: ["El estado estacionario (t → ∞)", "El valor inicial", "La estabilidad", "La resonancia"], c: 0, r: "Permite saber a qué valor llegará el sistema cuando se estabilice sin ir al dominio del tiempo." },
         { q: "¿Qué representa un bloque en un diagrama?", a: ["Una operación matemática o G(s)", "Un cable", "Un operario", "Energía"], c: 0, r: "Cada bloque procesa una entrada para producir una salida según su función interna." },
         { q: "¿Qué es el 'Dead Time' en un proceso?", a: ["Intervalo sin respuesta inicial", "Vida del sensor", "Velocidad CPU", "Error del operador"], c: 0, r: "Es el retraso físico (transporte) antes de que la variable empiece a cambiar." },
         { q: "La retroalimentación negativa busca:", a: ["Reducir el error a cero", "Aumentar oscilación", "Invertir polaridad", "Apagar todo"], c: 0, r: "Resta la salida de la entrada para que el sistema se auto-corrija." },
         { q: "En Laplace, integrar equivale a:", a: ["Dividir por 's'", "Multiplicar por 's'", "s al cuadrado", "No hay cambio"], c: 0, r: "La operación de integración en el tiempo es 1/s en el dominio complejo." },
         { q: "¿Cuál es la función del Actuador?", a: ["Ejecutar la acción física", "Medir", "Comparar", "Transmitir"], c: 0, r: "Es el elemento final, como una válvula o motor, que modifica el proceso físicamente." },
         { q: "Un sistema es 'Estable' si:", a: ["Su respuesta es acotada ante entrada acotada", "Nunca se mueve", "No gasta energía", "Tiene 3 sensores"], c: 0, r: "Criterio BIBO (Bounded Input, Bounded Output): el sistema no 'explota' ni se sale de control." },
-        { q: "La ganancia estática se obtiene:", a: ["Haciendo s \u2192 0", "Haciendo s \u2192 \u221E", "Multiplicando", "Restando"], c: 0, r: "Es el valor de la función de transferencia cuando la frecuencia es cero (estado estable)." },
+        { q: "La ganancia estática se obtiene:", a: ["Haciendo s → 0", "Haciendo s → ∞", "Multiplicando", "Restando"], c: 0, r: "Es el valor de la función de transferencia cuando la frecuencia es cero (estado estable)." },
         { q: "El símbolo de un rombo en flujo de señal es:", a: ["Punto de decisión o suma", "Tubería", "Motor", "Tanque"], c: 0, r: "Representa el lugar donde varias señales se combinan algebraicamente." },
         { q: "La capacitancia térmica se asocia a:", a: ["Almacenar calor", "Resistencia de aire", "Temperatura ambiente", "Voltaje"], c: 0, r: "Es la propiedad de un cuerpo de absorber calor aumentando su temperatura." },
-        { q: "¿Qué sucede si \u03B6 > 1 en segundo orden?", a: ["Es sobreamortiguado y lento", "Oscila mucho", "Es instantáneo", "Es inestable"], c: 0, r: "El sistema regresa al equilibrio sin oscilar, pero tarda más tiempo." },
+        { q: "¿Qué sucede si ζ > 1 en segundo orden?", a: ["Es sobreamortiguado y lento", "Oscila mucho", "Es instantáneo", "Es inestable"], c: 0, r: "El sistema regresa al equilibrio sin oscilar, pero tarda más tiempo." },
         { q: "La 'Variable Manipulada' es la que:", a: ["El controlador modifica", "Toca el operador", "Se pierde", "Mide el sensor"], c: 0, r: "Es la variable que el controlador cambia (ej. apertura de válvula) para controlar el proceso." },
         { q: "El burbujeador mide nivel por:", a: ["Presión hidrostática", "Capacitancia", "Ultrasonido", "Luz"], c: 0, r: "Mide la presión necesaria para vencer la columna de líquido." },
         { q: "En ISA, la letra 'F' inicial significa:", a: ["Flujo (Flow)", "Frecuencia", "Fuerza", "Fase"], c: 0, r: "Indica que el instrumento mide o controla el caudal (flujo) de un fluido." },
-        { q: "Si \u03B6 = 0 en segundo orden, el sistema:", a: ["Oscila permanentemente", "Es rápido", "Es crítico", "Es constante"], c: 0, r: "Se llama sistema no amortiguado; mantiene una oscilación sinusoidal eterna." },
+        { q: "Si ζ = 0 en segundo orden, el sistema:", a: ["Oscila permanentemente", "Es rápido", "Es crítico", "Es constante"], c: 0, r: "Se llama sistema no amortiguado; mantiene una oscilación sinusoidal eterna." },
         { q: "¿Qué es la 'Histéresis'?", a: ["Diferencia según dirección de cambio", "Error máximo", "Velocidad", "Garantía"], c: 0, r: "El instrumento marca distinto si la variable sube a si la variable baja." },
         { q: "La Serie de Taylor para linealizar se trunca en:", a: ["Primer orden (lineal)", "Cuadrático", "Infinito", "Cero"], c: 0, r: "Se desprecian los términos de alto orden para obtener una aproximación lineal válida." },
         { q: "Transformada de Laplace de constante 'A':", a: ["A/s", "A*s", "A", "1/s"], c: 0, r: "Cualquier valor constante en el tiempo se representa como A/s en el dominio de Laplace." },
@@ -101,22 +101,17 @@
     let userData = {};
     const scriptURL = 'https://script.google.com/macros/s/AKfycbz-NnILz2l131Ua8upny3Q1H1ypXM-FfpE8CC-I2F1MMzpzF4HyA6rtBA8L0_C9djJz/exec';
 
-function startChallenge() {
-    const name = document.getElementById('studentName').value;
-    const id = document.getElementById('studentID').value;
-    if (!name || !id) return Swal.fire('Atención', 'Por favor ingrese su identificación', 'warning');
-    
-    // Guardamos ambos datos por separado
-    userData = { 
-        nombre: name,
-        cedula: id 
-    };
-    
-    document.getElementById('login').classList.remove('active');
-    document.getElementById('game').classList.add('active');
-    quizQuestions = [...bank].sort(() => Math.random() - 0.5).slice(0, 15);
-    showQuestion();
-}
+    function startChallenge() {
+        const name = document.getElementById('studentName').value.trim();
+        const id = document.getElementById('studentID').value.trim();
+        if (!name || !id) return Swal.fire('Atención', 'Por favor ingrese su identificación', 'warning');
+        
+        userData = { nombre: name, cedula: id };
+        document.getElementById('login').classList.remove('active');
+        document.getElementById('game').classList.add('active');
+        quizQuestions = [...bank].sort(() => Math.random() - 0.5).slice(0, 15);
+        showQuestion();
+    }
 
     function showQuestion() {
         if (currentQ < quizQuestions.length) {
@@ -156,45 +151,42 @@ function startChallenge() {
         }
     }
 
-function finish() {
-    const finalPercent = Math.round((score / quizQuestions.length) * 100);
-    document.getElementById('game').classList.remove('active');
-    document.getElementById('results').classList.add('active');
-    document.getElementById('finalScore').innerText = "Resultado Final: " + finalPercent + "%";
-    
-    // Mostramos cargando
-    Swal.fire({
-        title: 'Sincronizando...',
-        text: 'Guardando tu nota en el registro del Prof. Caldera',
-        allowOutsideClick: false,
-        didOpen: () => { Swal.showLoading(); }
-    });
-
-    // EJECUCIÓN DEL ENVÍO
-    fetch(scriptURL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-            nombre: userData.nombre, 
-            cedula: userData.cedula, 
-            puntaje: finalPercent 
-        })
-    }).then(() => {
-        // ESTO ES LO QUE FALTABA: Cerrar la alerta y avisar éxito
-        Swal.close();
+    function finish() {
+        const finalPercent = Math.round((score / quizQuestions.length) * 100);
+        document.getElementById('game').classList.remove('active');
+        document.getElementById('results').classList.add('active');
+        document.getElementById('finalScore').innerText = "Resultado Final: " + finalPercent + "%";
+        
         Swal.fire({
-            title: '¡Logrado!',
-            text: 'Tu nota ha sido enviada con éxito.',
-            icon: 'success',
-            confirmButtonColor: '#002d5b'
+            title: 'Sincronizando...',
+            text: 'Guardando tu nota en el registro del Prof. Caldera',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
         });
-    }).catch(err => {
-        Swal.close();
-        console.error(err);
-        Swal.fire('Error', 'No se pudo conectar con el servidor', 'error');
-    });
-} // Cerramos la función finish
+
+        fetch(scriptURL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                nombre: userData.nombre, 
+                cedula: userData.cedula, 
+                puntaje: finalPercent 
+            })
+        }).then(() => {
+            Swal.close();
+            Swal.fire({
+                title: '¡Sincronizado!',
+                text: 'Tu nota ha sido enviada con éxito.',
+                icon: 'success',
+                confirmButtonColor: '#002d5b'
+            });
+        }).catch(err => {
+            Swal.close();
+            console.error('Error de red:', err);
+            Swal.fire('Error', 'No se pudo conectar con el servidor', 'error');
+        });
+    }
 </script>
 </body>
 </html>
