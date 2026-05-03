@@ -99,7 +99,7 @@
 
     let currentQ = 0, score = 0, quizQuestions = [];
     let userData = {};
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbyzoJfa7KZaBtAVsrDES8X22q8IRR51Kbs9DAQNYc07mJMxvBwz1bx04h8fUf79jgk/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxQufoIA8RMgJ2f5cBGwJdfPdP1G_X0w8yOgad2ocS_KmiGsC1Q7ofXAh2uF0qSvHBB/exec';
 
     function startChallenge() {
         const name = document.getElementById('studentName').value;
@@ -150,20 +150,32 @@
         }
     }
 
-    function finish() {
-        const finalPercent = Math.round((score / quizQuestions.length) * 100);
-        document.getElementById('game').classList.remove('active');
-        document.getElementById('results').classList.add('active');
-        document.getElementById('finalScore').innerText = "Resultado Final: " + finalPercent + "%";
-        
-        fetch(scriptURL, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: JSON.stringify({ nombre: userData.nombre, puntaje: finalPercent })
-        }).then(() => {
-            Swal.fire('Sincronizado', 'Tu nota ha sido enviada al profesor.', 'info');
-        });
-    }
+function finish() {
+    const finalPercent = Math.round((score / quizQuestions.length) * 100);
+    document.getElementById('game').classList.remove('active');
+    document.getElementById('results').classList.add('active');
+    document.getElementById('finalScore').innerText = "Resultado Final: " + finalPercent + "%";
+    
+    // Mostramos cargando para que el alumno no cierre la pestaña antes de tiempo
+    Swal.fire({
+        title: 'Sincronizando...',
+        text: 'Guardando tu nota en el registro del Prof. Caldera',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+    });
+
+    fetch(scriptURL, {
+        method: 'POST',
+        mode: 'no-cors', // Mantenemos no-cors para evitar errores de dominio
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre: userData.nombre, puntaje: finalPercent })
+    }).then(() => {
+        Swal.fire('¡Sincronizado!', 'Tu nota ha sido registrada con éxito.', 'success');
+    }).catch(err => {
+        console.error(err);
+        Swal.fire('Error', 'No se pudo conectar con el servidor, avisa al profesor.', 'error');
+    });
+}
 </script>
 </body>
 </html>
