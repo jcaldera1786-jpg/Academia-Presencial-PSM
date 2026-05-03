@@ -4,14 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Práctica: Propiedades de Alcoholes - PSM</title>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         :root { --psm-blue: #003366; --psm-gold: #b8860b; --lab-green: #2ecc71; --bg: #f8f9fa; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; background-color: var(--bg); margin: 0; padding: 0; }
         .container { max-width: 900px; margin: 20px auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         .header { text-align: center; border-bottom: 3px solid var(--psm-blue); padding-bottom: 20px; margin-bottom: 30px; }
-        .header img { width: 180px; margin-bottom: 10px; }
+        .header img { max-width: 150px; height: auto; margin-bottom: 10px; }
         h1 { color: var(--psm-blue); margin: 10px 0; font-size: 1.8rem; }
         h2 { color: var(--psm-gold); border-left: 5px solid var(--psm-blue); padding-left: 15px; margin-top: 30px; }
         .theory-box { background: #eef2f7; padding: 20px; border-radius: 8px; font-style: italic; border-left: 5px solid var(--psm-gold); }
@@ -24,16 +22,18 @@
         table, th, td { border: 1px solid #ddd; }
         th { background: var(--psm-blue); color: white; padding: 12px; }
         td { padding: 10px; text-align: center; }
-        .video-placeholder { background: #333; color: white; height: 400px; display: flex; align-items: center; center; justify-content: center; border-radius: 10px; margin: 20px 0; text-align: center; }
-        .warning { background: #fff3cd; color: #856404; padding: 15px; border-radius: 5px; border: 1px solid #ffeeba; font-weight: bold; }
+        .video-placeholder { background: #333; color: white; height: 300px; display: flex; align-items: center; justify-content: center; border-radius: 10px; margin: 20px 0; text-align: center; border: 3px dashed var(--psm-gold); }
+        .warning { background: #fff3cd; color: #856404; padding: 15px; border-radius: 5px; border: 1px solid #ffeeba; font-weight: bold; margin: 15px 0; }
         .footer { text-align: center; font-size: 0.8rem; color: #777; margin-top: 50px; border-top: 1px solid #eee; padding-top: 20px; }
+        sub { font-size: 0.75em; }
+        @media (max-width: 600px) { .grid-materials { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <img src="logo-psm.png" alt="Logo Institucional PSM">
+        <img src="logo-psm.png" alt="Logo PSM">
         <h1>Laboratorio Virtual de Química Orgánica II</h1>
         <p><b>Práctica N° 1: Reactividad y Caracterización de Alcoholes</b></p>
     </div>
@@ -41,7 +41,7 @@
     <section>
         <h2>1. Fundamentación Teórica</h2>
         <div class="theory-box">
-            Los alcoholes presentan una reactividad química que depende principalmente de su estructura (primarios, secundarios o terciarios). La ruptura del enlace O-H permite su comportamiento como ácidos débiles frente a metales activos, mientras que la ruptura del enlace C-O permite reacciones de sustitución y oxidación. La velocidad de formación de carbocationes y la disponibilidad de hidrógenos en el carbono $\alpha$ determinan los resultados de las pruebas de Lucas y Jones respectivamente.
+            Los alcoholes presentan una reactividad química que depende principalmente de su estructura (primarios, secundarios o terciarios). La ruptura del enlace O-H permite su comportamiento como ácidos débiles frente a metales activos, mientras que la ruptura del enlace C-O permite reacciones de sustitución y oxidación. La velocidad de formación de carbocationes y la disponibilidad de hidrógenos en el carbono <b>&alpha;</b> determinan los resultados de las pruebas de Lucas y Jones respectivamente.
         </div>
     </section>
 
@@ -62,8 +62,8 @@
                 <ul>
                     <li>Etanol, 2-Propanol y t-Butanol</li>
                     <li><b>Sodio metálico</b> (bajo queroseno)</li>
-                    <li><b>Reactivo de Lucas</b> ($ZnCl_2$ en $HCl$ conc.)</li>
-                    <li><b>Reactivo de Jones</b> ($CrO_3$ o $K_2Cr_2O_7$ en $H_2SO_4$)</li>
+                    <li><b>Reactivo de Lucas</b> (ZnCl<sub>2</sub> en HCl conc.)</li>
+                    <li><b>Reactivo de Jones</b> (CrO<sub>3</sub> o K<sub>2</sub>Cr<sub>2</sub>O<sub>7</sub> en H<sub>2</sub>SO<sub>4</sub>)</li>
                 </ul>
             </div>
         </div>
@@ -96,11 +96,11 @@
     </section>
 
     <section>
-        <h2>4. Apoyo Audiovisual (Grabación en Laboratorio)</h2>
+        <h2>4. Apoyo Audiovisual</h2>
         <div class="video-placeholder">
             <div>
-                <p>🎬 [AQUÍ SE INSERTARÁ EL VIDEO QUE GRABARÁS ESTA SEMANA]</p>
-                <small>El video mostrará las reacciones reales con tus estudiantes.</small>
+                <p style="font-size: 1.2rem;">🎬 <b>Espacio reservado para el video</b></p>
+                <p>Grabación del laboratorio en curso...</p>
             </div>
         </div>
     </section>
@@ -118,27 +118,9 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Etanol</td>
-                    <td>1°</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>2-Propanol</td>
-                    <td>2°</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>t-Butanol</td>
-                    <td>3°</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
+                <tr><td>Etanol</td><td>1°</td><td></td><td></td><td></td></tr>
+                <tr><td>2-Propanol</td><td>2°</td><td></td><td></td><td></td></tr>
+                <tr><td>t-Butanol</td><td>3°</td><td></td><td></td><td></td></tr>
             </tbody>
         </table>
     </section>
@@ -146,15 +128,15 @@
     <section>
         <h2>6. Discusión de Resultados</h2>
         <ol>
-            <li><b>Desprendimiento de Gas:</b> ¿Cuál es la composición química del gas desprendido en la Prueba A? Escriba la ecuación de la formación del alcóxido de sodio.</li>
-            <li><b>Turbidez en Lucas:</b> ¿Por qué los alcoholes terciarios reaccionan casi instantáneamente mientras los primarios no? Explique mediante el mecanismo $S_N1$.</li>
-            <li><b>Cambio de Color:</b> Explique por qué el t-Butanol no cambia de color con el Reactivo de Jones. ¿Qué papel juega el hidrógeno en el carbono alfa?</li>
-            <li><b>Variante Química:</b> Si usamos Dicromato de Potasio ($K_2Cr_2O_7$) en lugar de Óxido Crómico ($CrO_3$), ¿cambia el estado de oxidación final del cromo?</li>
+            <li><b>Desprendimiento de Gas:</b> ¿Cuál es la composición química del gas desprendido? Escriba la ecuación de la formación del alcóxido de sodio.</li>
+            <li><b>Turbidez en Lucas:</b> ¿Por qué los alcoholes terciarios reaccionan casi instantáneamente? Explique mediante el mecanismo <b>S<sub>N</sub>1</b>.</li>
+            <li><b>Cambio de Color:</b> ¿Qué papel juega el hidrógeno en el carbono <b>&alpha;</b> durante la oxidación?</li>
+            <li><b>Variante Química:</b> Al usar K<sub>2</sub>Cr<sub>2</sub>O<sub>7</sub> en lugar de CrO<sub>3</sub>, ¿cuál es el agente reductor en la reacción?</li>
         </ol>
     </section>
 
     <div class="footer">
-        <p>Elaborado por: Prof. José Ángel Caldera Luzardo | Escuela 49 - PSM</p>
+        <p><b>Prof. José Ángel Caldera Luzardo</b> | Escuela 49 - PSM</p>
         <p>© 2026 Instituto Universitario Politécnico Santiago Mariño</p>
     </div>
 </div>
