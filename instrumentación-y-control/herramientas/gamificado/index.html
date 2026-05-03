@@ -162,7 +162,7 @@ function finish() {
     document.getElementById('results').classList.add('active');
     document.getElementById('finalScore').innerText = "Resultado Final: " + finalPercent + "%";
     
-    // Mostramos cargando para que el alumno no cierre la pestaña antes de tiempo
+    // Mostramos cargando
     Swal.fire({
         title: 'Sincronizando...',
         text: 'Guardando tu nota en el registro del Prof. Caldera',
@@ -170,16 +170,31 @@ function finish() {
         didOpen: () => { Swal.showLoading(); }
     });
 
-fetch(scriptURL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ 
-        nombre: userData.nombre, 
-        cedula: userData.cedula, 
-        puntaje: finalPercent 
-    })
-})
+    // EJECUCIÓN DEL ENVÍO
+    fetch(scriptURL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            nombre: userData.nombre, 
+            cedula: userData.cedula, 
+            puntaje: finalPercent 
+        })
+    }).then(() => {
+        // ESTO ES LO QUE FALTABA: Cerrar la alerta y avisar éxito
+        Swal.close();
+        Swal.fire({
+            title: '¡Logrado!',
+            text: 'Tu nota ha sido enviada con éxito.',
+            icon: 'success',
+            confirmButtonColor: '#002d5b'
+        });
+    }).catch(err => {
+        Swal.close();
+        console.error(err);
+        Swal.fire('Error', 'No se pudo conectar con el servidor', 'error');
+    });
+} // Cerramos la función finish
 </script>
 </body>
 </html>
