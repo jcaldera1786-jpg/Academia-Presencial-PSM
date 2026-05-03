@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Práctica: Propiedades de Alcoholes - PSM</title>
+
+    <!-- Cargamos MathJax con una configuración clásica y estable -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [['$','$'], ['\\(','\\)']],
+          processEscapes: true
+        }
+      });
+    </script>
+    <script type="text/javascript" async
+      src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+
+    <style>
+        :root { --psm-blue: #003366; --psm-gold: #b8860b; --lab-green: #2ecc71; --bg: #f8f9fa; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; background-color: var(--bg); margin: 0; padding: 0; }
+        .container { max-width: 900px; margin: 20px auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .header { text-align: center; border-bottom: 3px solid var(--psm-blue); padding-bottom: 20px; margin-bottom: 30px; }
+        .header img { max-width: 150px; height: auto; margin-bottom: 10px; }
+        h1 { color: var(--psm-blue); margin: 10px 0; font-size: 1.8rem; }
+        h2 { color: var(--psm-gold); border-left: 5px solid var(--psm-blue); padding-left: 15px; margin-top: 30px; }
+        .theory-box { background: #eef2f7; padding: 20px; border-radius: 8px; font-style: italic; border-left: 5px solid var(--psm-gold); }
+        .grid-materials { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .card { background: white; border: 1px solid #ddd; padding: 20px; border-radius: 10px; transition: 0.3s; margin-bottom: 20px; }
+        .card:hover { border-color: var(--psm-blue); transform: translateY(-5px); }
+        .card h3 { margin-top: 0; color: var(--psm-blue); display: flex; align-items: center; }
+        .badge { background: var(--psm-blue); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; margin-right: 10px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: white; }
+        table, th, td { border: 1px solid #ddd; }
+        th { background: var(--psm-blue); color: white; padding: 12px; }
+        td { padding: 10px; text-align: center; }
+        .video-placeholder { background: #333; color: white; height: 300px; display: flex; align-items: center; justify-content: center; border-radius: 10px; margin: 20px 0; text-align: center; border: 3px dashed var(--psm-gold); }
+        .warning { background: #fff3cd; color: #856404; padding: 15px; border-radius: 5px; border: 1px solid #ffeeba; font-weight: bold; margin: 15px 0; }
+        .footer { text-align: center; font-size: 0.8rem; color: #777; margin-top: 50px; border-top: 1px solid #eee; padding-top: 20px; }
+        @media (max-width: 600px) { .grid-materials { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <img src="logo-psm.png" alt="Logo PSM">
+        <h1>Laboratorio Virtual de Química Orgánica II</h1>
+        <p><b>Práctica N° 1: Reactividad y Caracterización de Alcoholes</b></p>
+    </div>
+
+    <section>
+        <h2>1. Fundamentación Teórica</h2>
+        <div class="theory-box">
+            Los alcoholes presentan una reactividad química que depende principalmente de su estructura (primarios, secundarios o terciarios). La ruptura del enlace $O-H$ permite su comportamiento como ácidos débiles frente a metales activos, mientras que la ruptura del enlace $C-O$ permite reacciones de sustitución y oxidación. La velocidad de formación de carbocationes y la disponibilidad de hidrógenos en el carbono $\alpha$ determinan los resultados de las pruebas de Lucas y Jones respectivamente.
+        </div>
+    </section>
+
+    <section>
+        <h2>2. Materiales y Reactivos</h2>
+        <div class="grid-materials">
+            <div>
+                <h3>Materiales</h3>
+                <ul>
+                    <li>Gradilla y tubos de ensayo</li>
+                    <li>Pipetas graduadas (5 mL)</li>
+                    <li>Pinzas de madera</li>
+                    <li>Vidrio de reloj</li>
+                </ul>
+            </div>
+            <div>
+                <h3>Reactivos</h3>
+                <ul>
+                    <li>Etanol, 2-Propanol y t-Butanol</li>
+                    <li><b>Sodio metálico</b> (bajo queroseno)</li>
+                    <li><b>Reactivo de Lucas</b> ($ZnCl_2$ en $HCl$ conc.)</li>
+                    <li><b>Reactivo de Jones</b> ($CrO_3$ o $K_2Cr_2O_7$ en $H_2SO_4$)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>3. Procedimiento Experimental</h2>
+        <p class="warning">⚠️ ATENCIÓN: El uso de Sodio Metálico requiere campana de extracción y ausencia total de agua.</p>
+
+        <div class="card">
+            <h3><span class="badge">Prueba A</span> Reacción con Sodio Metálico</h3>
+            <p>1. Coloque 1 mL de cada alcohol en tubos secos.</p>
+            <p>2. Agregue un trozo pequeño (tamaño cabeza de fósforo) de Sodio metálico.</p>
+            <p>3. Observe la velocidad del desprendimiento de gas burbujeante.</p>
+        </div>
+
+        <div class="card">
+            <h3><span class="badge">Prueba B</span> Reactivo de Lucas</h3>
+            <p>1. Mezcle 1 mL del alcohol con 2 mL del Reactivo de Lucas.</p>
+            <p>2. Agite vigorosamente y cronometre el tiempo en que aparece una turbidez o separación de fases.</p>
+            <p>3. Si no hay reacción en 5 min, caliente en baño maría.</p>
+        </div>
+
+        <div class="card">
+            <h3><span class="badge">Prueba C</span> Prueba de Jones (Oxidación)</h3>
+            <p>1. Agregue 2 gotas del Reactivo de Jones (o Dicromato de Potasio acidulado) al alcohol.</p>
+            <p>2. Observe el cambio de coloración de naranja a verde/azul.</p>
+            <p>3. Note la diferencia inmediata entre alcoholes primarios/secundarios y terciarios.</p>
+        </div>
+    </section>
+
+    <section>
+        <h2>4. Apoyo Audiovisual</h2>
+        <div class="video-placeholder">
+            <div>
+                <p style="font-size: 1.2rem;">🎬 <b>Espacio reservado para el video</b></p>
+                <p>video grabado en el laboratorio esta semana.</p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>5. Registro de Observaciones</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Alcohol</th>
+                    <th>Tipo</th>
+                    <th>Sodio (Burbujeo)</th>
+                    <th>Lucas (Tiempo)</th>
+                    <th>Jones (Color)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Etanol</td><td>1°</td><td></td><td></td><td></td></tr>
+                <tr><td>2-Propanol</td><td>2°</td><td></td><td></td><td></td></tr>
+                <tr><td>t-Butanol</td><td>3°</td><td></td><td></td><td></td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>6. Discusión de Resultados</h2>
+        <ol>
+            <li><b>Desprendimiento de Gas:</b> ¿Cuál es la composición química del gas desprendido? Escriba la ecuación de la formación del alcóxido de sodio.</li>
+            <li><b>Turbidez en Lucas:</b> ¿Por qué los alcoholes terciarios reaccionan casi instantáneamente? Explique mediante el mecanismo $S_N1$.</li>
+            <li><b>Cambio de Color:</b> ¿Qué papel juega el hidrógeno en el carbono $\alpha$ durante la oxidación?</li>
+            <li><b>Variante Química:</b> Al usar $K_2Cr_2O_7$ en lugar de $CrO_3$, ¿cuál es el agente reductor en la reacción?</li>
+        </ol>
+    </section>
+
+    <div class="footer">
+        <p><b>Prof. José Ángel Caldera Luzardo</b> | Escuela 49 - PSM</p>
+        <p>© 2026 Instituto Universitario Politécnico Santiago Mariño</p>
+    </div>
+</div>
+
+</body>
+</html>
