@@ -124,7 +124,7 @@
 <script>
     let currentStep = 0;
     const totalSteps = 4;
-    const scriptURL = 'https://script.google.com/macros/s/AKfycby_D3FxXRW6OzyhbixP648enpIv-TywionsYl2mMts1gfRC1z_G9zmRKEANo3ks5v33XQ/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwhilBBeFP8UHTtsNqyVkZuQmkuP-_cHvncZgv9b8-iyNO-sMbesGBS9fIcJdBiu1q69A/exec';
     let uploadedLinks = {};
 
     function updateProgress() {
@@ -205,32 +205,59 @@
         window.scrollTo(0,0);
     }
 
-    async function finishQuiz() {
+        async function finishQuiz() {
         const btn = document.getElementById('finalizarBtn');
-        btn.innerText = "Finalizando...";
+        btn.innerText = "Enviando respuestas...";
         btn.disabled = true;
 
-        // Envío final de las respuestas de texto
+        // Recopilamos los 6 campos de respuesta
+        const respuestas = [
+            document.getElementById('ans_1').value,
+            document.getElementById('ans_2').value,
+            document.getElementById('ans_3').value,
+            document.getElementById('ans_4').value,
+            document.getElementById('ans_5').value,
+            document.getElementById('ans_6').value
+        ];
+
         const finalData = {
             id: document.getElementById('student_id').value,
             name: document.getElementById('student_name').value,
             type: "FINAL_TEXTO",
-            answers: Array.from({length: 6}, (_, i) => document.getElementById(`ans_${i+1}`)?.value || "")
+            answers: respuestas
         };
 
-        await fetch(scriptURL, { method: 'POST', body: JSON.stringify(finalData) });
+        try {
+            // Enviamos los datos al Google Sheet
+            const response = await fetch(scriptURL, { 
+                method: 'POST', 
+                mode: 'no-cors', // Importante para evitar bloqueos de CORS al enviar
+                body: JSON.stringify(finalData) 
+            });
 
-        // Mostrar links en el comprobante
-        const linksDiv = document.getElementById('final_links');
-        linksDiv.innerHTML = "<strong>Links de mecanismos:</strong><br>";
-        for (let tag in uploadedLinks) {
-            linksDiv.innerHTML += `${tag}: <a href="${uploadedLinks[tag]}" target="_blank">${uploadedLinks[tag]}</a><br>`;
+            // Actualizamos la interfaz para el estudiante
+            const linksDiv = document.getElementById('final_links');
+            linksDiv.innerHTML = "<strong>Mecanismos registrados exitosamente:</strong><br><br>";
+            
+            const sortedTags = Object.keys(uploadedLinks).sort();
+            if(sortedTags.length === 0) {
+                linksDiv.innerHTML += "<em>No se detectaron imágenes adjuntas.</em>";
+            } else {
+                sortedTags.forEach(tag => {
+                    linksDiv.innerHTML += `<b>${tag}:</b> <a href="${uploadedLinks[tag]}" target="_blank" style="color:#003366;">Ver archivo en Drive</a><br>`;
+                });
+            }
+
+            document.getElementById('step3').classList.remove('active');
+            document.getElementById('step4').classList.add('active');
+            currentStep = 4;
+            updateProgress();
+        } catch (e) {
+            console.error("Error en el envío:", e);
+            alert("Error al finalizar. Verifique su conexión.");
+            btn.innerText = "Reintentar Finalizar";
+            btn.disabled = false;
         }
-
-        document.getElementById('step3').classList.remove('active');
-        document.getElementById('step4').classList.add('active');
-        currentStep = 4;
-        updateProgress();
     }
 </script>
 </body>
