@@ -15,11 +15,11 @@
         input, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; }
         button { background: var(--tech-blue); color: white; border: none; cursor: pointer; font-weight: bold; transition: 0.3s; }
         button:hover { background: var(--electric); color: #000; }
-        .option-btn { background: #f8f9fa; color: #333; text-align: left; border: 2px solid #eee; margin: 5px 0; }
+        .option-btn { background: #f8f9fa; color: #333; text-align: left; border: 2px solid #eee; margin: 5px 0; width: 100%; padding: 12px; border-radius: 8px; cursor: pointer; }
         .option-btn:hover { border-color: var(--electric); background: #eefcff; }
         .progress-bar { width: 100%; height: 8px; background: #eee; border-radius: 4px; margin: 20px 0; }
         .progress-fill { height: 100%; background: var(--electric); width: 0%; transition: 0.4s; }
-        .theory-link { color: var(--psm-gold); text-decoration: none; font-weight: bold; }
+        .theory-link { color: var(--psm-gold); text-decoration: underline; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -33,7 +33,10 @@
     <!-- PANTALLA 1: LOGIN -->
     <div id="login" class="login-box active">
         <h3>Identificación del Estudiante</h3>
-        <p>Material de estudio <a href="https://webdelprofesor.ula.ve/ingenieria/djean/index_archivos/Documentos/Teoria_Control.pdf" target="_blank" class="theory-link"></a> Instruyase .</p>
+        <!-- CORRECCIÓN DEL LINK: Ahora tiene texto para hacer clic -->
+        <p>📖 <b>Paso 1:</b> <a href="https://webdelprofesor.ula.ve/ingenieria/djean/index_archivos/Documentos/Teoria_Control.pdf" target="_blank" class="theory-link">Haga clic aquí para estudiar el material</a>.</p>
+        <p>✅ <b>Paso 2:</b> Ingrese sus datos para iniciar el desafío.</p>
+        
         <input type="text" id="studentName" placeholder="Nombre y Apellido" required>
         <input type="text" id="studentID" placeholder="Cédula de Identidad" required>
         <button onclick="startChallenge()">ACCEDER AL SISTEMA</button>
@@ -58,7 +61,7 @@
 <script>
     const bank = [
         { q: "¿Qué define a un sistema de Lazo Cerrado?", a: ["Retroalimentación de la salida hacia el control", "Ausencia de sensores", "Control basado solo en el tiempo", "Sistema sin actuadores"], c: 0 },
-        { q: "¿Cuál es la utilidad de la Transformada de Laplace en sistemas físicos?", a: ["Resolver ecuaciones diferenciales mediante álgebra", "Medir la presión de un gas", "Linealizar válvulas", "Calcular el costo del instrumento"], c: 0 },
+        { q: "¿Cuál es la utilidad de la Transformada de Laplace en sistemas físicos?", a: ["Resolver ecuaciones diferenciales mediante álgebra", "Medir la presión de un gas", "Linearizar válvulas", "Calcular el costo del instrumento"], c: 0 },
         { q: "¿Qué representa la Función de Transferencia G(s)?", a: ["Salida(s) / Entrada(s)", "Entrada(s) / Salida(s)", "Suma de señales de error", "Ganancia estática únicamente"], c: 0 },
         { q: "Un sistema de primer orden se caracteriza por tener:", a: ["Un solo elemento almacenador de energía", "Dos polos complejos", "Retardo infinito", "Tres variables de estado"], c: 0 },
         { q: "¿Qué busca la Linealización de un sistema físico?", a: ["Aproximar el comportamiento cerca de un punto de operación", "Eliminar todas las variables", "Convertir señales AC en DC", "Hacer el sistema más lento"], c: 0 },
@@ -71,7 +74,7 @@
         { q: "En un reactor químico, el balance de masa permite obtener:", a: ["La ecuación dinámica del sistema", "El costo del reactivo", "La presión nominal", "La viscosidad"], c: 0 },
         { q: "¿Qué señal estándar de transmisión es la más común en instrumentación?", a: ["4 a 20 mA", "0 a 100 V", "1 a 5 Amperios", "10 a 50 Hz"], c: 0 },
         { q: "El Teorema del Valor Final en Laplace permite conocer:", a: ["El comportamiento del sistema cuando t tiende a infinito", "El valor inicial en t=0", "La estabilidad de Routh", "La frecuencia de resonancia"], c: 0 },
-        { q: "¿Qué representa un bloque en un diagrama de bloques?", a: ["Una operación matemática o función de transferencia", "Un cable eléctrico", "Un operario", "Una fuente de energía"], c: 0 }
+        { q: "¿Qué representa un bloque en un diagrama de bloques?", a: ["Una operación matemática o función de transferencia", "Un cable eléctrico", "Un operario", "Una fuente de energía"], c: 0 }, // COMA AGREGADA AQUÍ
         { q: "¿Qué es el 'Tiempo de Retraso' (Dead Time) en un proceso?", a: ["El intervalo donde la variable no responde al cambio", "El tiempo de vida del sensor", "La velocidad de la CPU", "El tiempo que el operador tarda en ver la pantalla"], c: 0 },
         { q: "Un lazo de control con retroalimentación negativa busca:", a: ["Reducir el error a cero", "Aumentar la oscilación", "Invertir la polaridad de la fuente", "Apagar el sistema automáticamente"], c: 0 },
         { q: "En Laplace, la integración en el tiempo equivale a:", a: ["Dividir por 's'", "Multiplicar por 's'", "Elevar 's' al cuadrado", "No tiene equivalencia"], c: 0 },
