@@ -99,18 +99,24 @@
 
     let currentQ = 0, score = 0, quizQuestions = [];
     let userData = {};
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxQufoIA8RMgJ2f5cBGwJdfPdP1G_X0w8yOgad2ocS_KmiGsC1Q7ofXAh2uF0qSvHBB/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbz-NnILz2l131Ua8upny3Q1H1ypXM-FfpE8CC-I2F1MMzpzF4HyA6rtBA8L0_C9djJz/exec';
 
-    function startChallenge() {
-        const name = document.getElementById('studentName').value;
-        const id = document.getElementById('studentID').value;
-        if (!name || !id) return Swal.fire('Atención', 'Por favor ingrese su identificación', 'warning');
-        userData = { nombre: name + " (" + id + ")" };
-        document.getElementById('login').classList.remove('active');
-        document.getElementById('game').classList.add('active');
-        quizQuestions = [...bank].sort(() => Math.random() - 0.5).slice(0, 15);
-        showQuestion();
-    }
+function startChallenge() {
+    const name = document.getElementById('studentName').value;
+    const id = document.getElementById('studentID').value;
+    if (!name || !id) return Swal.fire('Atención', 'Por favor ingrese su identificación', 'warning');
+    
+    // Guardamos ambos datos por separado
+    userData = { 
+        nombre: name,
+        cedula: id 
+    };
+    
+    document.getElementById('login').classList.remove('active');
+    document.getElementById('game').classList.add('active');
+    quizQuestions = [...bank].sort(() => Math.random() - 0.5).slice(0, 15);
+    showQuestion();
+}
 
     function showQuestion() {
         if (currentQ < quizQuestions.length) {
@@ -164,18 +170,16 @@ function finish() {
         didOpen: () => { Swal.showLoading(); }
     });
 
-    fetch(scriptURL, {
-        method: 'POST',
-        mode: 'no-cors', // Mantenemos no-cors para evitar errores de dominio
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre: userData.nombre, puntaje: finalPercent })
-    }).then(() => {
-        Swal.fire('¡Sincronizado!', 'Tu nota ha sido registrada con éxito.', 'success');
-    }).catch(err => {
-        console.error(err);
-        Swal.fire('Error', 'No se pudo conectar con el servidor, avisa al profesor.', 'error');
-    });
-}
+fetch(scriptURL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
+        nombre: userData.nombre, 
+        cedula: userData.cedula, 
+        puntaje: finalPercent 
+    })
+})
 </script>
 </body>
 </html>
