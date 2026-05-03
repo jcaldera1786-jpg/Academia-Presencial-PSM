@@ -90,24 +90,26 @@
         <button class="btn btn-next" onclick="nextStep(2)">Siguiente</button>
     </div>
 
-    <!-- PASO 3: LABORATORIO -->
-    <div class="step" id="step3">
-        <div class="section-title">PARTE III: LABORATORIO Y REACTIVIDAD</div>
-        
-        <div class="question">Problema 4. Prediga el producto de deshidratación mayoritario del 2-metil-2-butanol en condiciones ácidas:(5 puntos)</div>
-        <input type="text" id="ans_5">
-        <input type="file" accept="image/*" onchange="uploadImage(this, 'P4')">
-        <div id="status_P4" class="upload-status">Adjuntar soporte visual...</div>
+<!-- PASO 3: LABORATORIO -->
+<div class="step" id="step3">
+    <div class="section-title">PARTE III: LABORATORIO Y REACTIVIDAD</div>
+    
+    <div class="question">Problema 4. Prediga el producto de deshidratación mayoritario del 2-metil-2-butanol en condiciones ácidas: (5 puntos)</div>
+    <input type="text" id="ans_5" placeholder="Nombre del alqueno...">
+    <input type="file" accept="image/*" onchange="uploadImage(this, 'P4')">
+    <div id="status_P4" class="upload-status">Adjuntar soporte visual...</div>
 
-        <div class="question">Problema 5.  ¿En el laboratorio se usó como reacción d identificación de alcoholes, la oxidación del mismo, explique cuáles son las consideraciones experimentales?  y cuáles son las variables o cambios que le permiten confirmar la presencia de un alcohol. Plantee la reacción que realizó en el laboratorio.: (5 puntos) </div>
-        <textarea id="ans_6"></textarea>
-        <input type="file" accept="image/*" onchange="uploadImage(this, 'P5')">
-        <div id="status_P5" class="upload-status">Adjuntar evidencia de laboratorio...</div>
-
-        <button class="btn btn-prev" onclick="prevStep(3)">Anterior</button>
-        <button class="btn btn-next" id="finalizarBtn" onclick="finishQuiz()">Finalizar y Generar PDF</button>
+    <div class="question" style="line-height: 1.4;">
+        Problema 5. En el laboratorio se usó como reacción de identificación de alcoholes la oxidación del mismo. 
+        Explique: ¿Cuáles son las consideraciones experimentales, qué variables o cambios permiten confirmar la presencia del alcohol y plantee la reacción realizada? (5 puntos)
     </div>
+    <textarea id="ans_6" placeholder="Escriba su explicación aquí..."></textarea>
+    <input type="file" accept="image/*" onchange="uploadImage(this, 'P5')">
+    <div id="status_P5" class="upload-status">Adjuntar evidencia de laboratorio...</div>
 
+    <button class="btn btn-prev" onclick="prevStep(3)">Anterior</button>
+    <button class="btn btn-next" id="finalizarBtn" onclick="finishQuiz()">Finalizar y Generar PDF</button>
+</div>
     <!-- PASO FINAL -->
     <div class="step" id="step4">
         <div class="section-title" style="background: #28a745;">ENVÍO COMPLETO</div>
