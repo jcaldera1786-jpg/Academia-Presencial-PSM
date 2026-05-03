@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafío: Instrumentación y Control - PSM</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root { --tech-blue: #002d5b; --electric: #00d4ff; --psm-gold: #b8860b; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
+        .container { max-width: 700px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 5px solid var(--psm-gold); }
+        .header { text-align: center; border-bottom: 2px solid #eee; margin-bottom: 25px; padding-bottom: 10px; }
+        .login-box, .game-box, .results-box { display: none; }
+        .active { display: block; }
+        input, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; }
+        button { background: var(--tech-blue); color: white; border: none; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        button:hover { background: var(--electric); color: #000; }
+        .option-btn { background: #f8f9fa; color: #333; text-align: left; border: 2px solid #eee; margin: 5px 0; }
+        .option-btn:hover { border-color: var(--electric); background: #eefcff; }
+        .progress-bar { width: 100%; height: 8px; background: #eee; border-radius: 4px; margin: 20px 0; }
+        .progress-fill { height: 100%; background: var(--electric); width: 0%; transition: 0.4s; }
+        .theory-link { color: var(--psm-gold); text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Instrumentación y Control</h1>
+        <p><b>Protocolo de Evaluación Continua - Prof. Caldera</b></p>
+    </div>
+
+    <!-- PANTALLA 1: LOGIN -->
+    <div id="login" class="login-box active">
+        <h3>Identificación del Estudiante</h3>
+        <p>Realice la <a href="TU_LINK_DE_LECTURA" target="_blank" class="theory-link">lectura obligatoria aquí</a> antes de iniciar.</p>
+        <input type="text" id="studentName" placeholder="Nombre y Apellido" required>
+        <input type="text" id="studentID" placeholder="Cédula de Identidad" required>
+        <button onclick="startChallenge()">ACCEDER AL SISTEMA</button>
+    </div>
+
+    <!-- PANTALLA 2: DESAFÍO -->
+    <div id="game" class="game-box">
+        <div class="progress-bar"><div id="progress" class="progress-fill"></div></div>
+        <h4 id="q-count" style="color: #777;"></h4>
+        <h3 id="q-text">Cargando...</h3>
+        <div id="options"></div>
+    </div>
+
+    <!-- PANTALLA 3: FIN -->
+    <div id="results" class="results-box">
+        <h2 id="finalScore">Puntaje: 0%</h2>
+        <p>Sus resultados han sido sincronizados con el registro del docente.</p>
+        <button onclick="location.reload()">NUEVO INTENTO</button>
+    </div>
+</div>
+
+<script>
+    const bank = [
+        { q: "¿Qué define a un sistema de Lazo Cerrado?", a: ["Retroalimentación de la salida hacia el control", "Ausencia de sensores", "Control basado solo en el tiempo", "Sistema sin actuadores"], c: 0 },
+        { q: "¿Cuál es la utilidad de la Transformada de Laplace en sistemas físicos?", a: ["Resolver ecuaciones diferenciales mediante álgebra", "Medir la presión de un gas", "Linealizar válvulas", "Calcular el costo del instrumento"], c: 0 },
+        { q: "¿Qué representa la Función de Transferencia G(s)?", a: ["Salida(s) / Entrada(s)", "Entrada(s) / Salida(s)", "Suma de señales de error", "Ganancia estática únicamente"], c: 0 },
+        { q: "Un sistema de primer orden se caracteriza por tener:", a: ["Un solo elemento almacenador de energía", "Dos polos complejos", "Retardo infinito", "Tres variables de estado"], c: 0 },
+        { q: "¿Qué busca la Linealización de un sistema físico?", a: ["Aproximar el comportamiento cerca de un punto de operación", "Eliminar todas las variables", "Convertir señales AC en DC", "Hacer el sistema más lento"], c: 0 },
+        { q: "En simbología ISA, un círculo con una línea horizontal indica:", a: ["Instrumento montado en panel principal", "Instrumento montado en campo", "Válvula de seguridad", "Conexión de software"], c: 0 },
+        { q: "¿Qué es el 'Error' en un lazo de control?", a: ["Diferencia entre Set-Point y Valor Medido", "La falla de un componente", "El ruido eléctrico", "La histéresis del sensor"], c: 0 },
+        { q: "¿Cuál es la unidad de la variable 's' en Laplace?", a: ["Tiempo inverso (1/s)", "Segundos", "Voltios", "Adimensional"], c: 0 },
+        { q: "Un proceso de nivel de un tanque suele modelarse como:", a: ["Sistema de primer orden", "Sistema puramente derivativo", "Sistema de tercer orden", "Circuito abierto"], c: 0 },
+        { q: "Sistemas en serie sin interacción resultan en una Función de Transferencia total que es:", a: ["El producto de las funciones individuales", "La suma de las funciones", "La resta de las funciones", "Inversa a la entrada"], c: 0 },
+        { q: "Los sistemas de segundo orden pueden ser:", a: ["Subamortiguados, críticamente amortiguados o sobreamortiguados", "Lineales únicamente", "Siempre inestables", "Digitales de alta frecuencia"], c: 0 },
+        { q: "En un reactor químico, el balance de masa permite obtener:", a: ["La ecuación dinámica del sistema", "El costo del reactivo", "La presión nominal", "La viscosidad"], c: 0 },
+        { q: "¿Qué señal estándar de transmisión es la más común en instrumentación?", a: ["4 a 20 mA", "0 a 100 V", "1 a 5 Amperios", "10 a 50 Hz"], c: 0 },
+        { q: "El Teorema del Valor Final en Laplace permite conocer:", a: ["El comportamiento del sistema cuando t tiende a infinito", "El valor inicial en t=0", "La estabilidad de Routh", "La frecuencia de resonancia"], c: 0 },
+        { q: "¿Qué representa un bloque en un diagrama de bloques?", a: ["Una operación matemática o función de transferencia", "Un cable eléctrico", "Un operario", "Una fuente de energía"], c: 0 }
+        { q: "¿Qué es el 'Tiempo de Retraso' (Dead Time) en un proceso?", a: ["El intervalo donde la variable no responde al cambio", "El tiempo de vida del sensor", "La velocidad de la CPU", "El tiempo que el operador tarda en ver la pantalla"], c: 0 },
+        { q: "Un lazo de control con retroalimentación negativa busca:", a: ["Reducir el error a cero", "Aumentar la oscilación", "Invertir la polaridad de la fuente", "Apagar el sistema automáticamente"], c: 0 },
+        { q: "En Laplace, la integración en el tiempo equivale a:", a: ["Dividir por 's'", "Multiplicar por 's'", "Elevar 's' al cuadrado", "No tiene equivalencia"], c: 0 },
+        { q: "¿Cuál es la función principal de un Actuador?", a: ["Ejecutar la acción física sobre el proceso", "Medir la variable", "Comparar el set-point", "Transmitir la señal a 4-20mA"], c: 0 },
+        { q: "Un sistema es 'Estable' si:", a: ["Su respuesta permanece acotada ante una entrada acotada", "Nunca se mueve", "No consume energía", "Tiene al menos tres sensores"], c: 0 },
+        { q: "La ganancia estática de un sistema se obtiene:", a: ["Haciendo que 's' tienda a cero", "Haciendo que 's' tienda a infinito", "Multiplicando por la entrada", "Restando el error"], c: 0 },
+        { q: "¿Qué representa el símbolo de un rombo en un diagrama de flujo de señal?", a: ["Un punto de decisión o suma", "Una tubería", "Un motor", "Un tanque de gas"], c: 0 },
+        { q: "En un proceso térmico, la capacitancia térmica se asocia a:", a: ["La capacidad de almacenar calor", "La resistencia al flujo de aire", "La temperatura del ambiente", "El voltaje del calentador"], c: 0 },
+        { q: "¿Qué sucede en un sistema sobreamortiguado (\u03B6 > 1)?", a: ["No presenta oscilaciones y es lento", "Oscila indefinidamente", "Llega al valor final de forma instantánea", "Es inestable"], c: 0 },
+        { q: "La 'Variable Manipulada' es aquella que:", a: ["El controlador modifica para influir en la variable controlada", "El operador toca manualmente", "Se pierde por el ruido", "Mide el sensor"], c: 0 },
+        { q: "Un sensor de nivel tipo burbujeador se basa en el principio de:", a: ["Presión hidrostática", "Capacitancia eléctrica", "Ultrasonido", "Radiactividad"], c: 0 },
+        { q: "En la norma ISA, la primera letra 'F' en un círculo de instrumento significa:", a: ["Flujo (Flow)", "Frecuencia", "Fuerza", "Final de carrera"], c: 0 },
+        { q: "Un sistema de segundo orden con coeficiente de amortiguamiento \u03B6 = 0 es:", a: ["Oscilatorio puro (sin amortiguar)", "Estable y rápido", "Críticamente amortiguado", "Una constante"], c: 0 },
+        { q: "¿Qué es la 'Histéresis' en un instrumento?", a: ["Diferencia en la salida según la dirección del cambio (ascendente/descendente)", "El error máximo permitido", "La velocidad de respuesta", "El consumo de corriente"], c: 0 },
+        { q: "La linealización por Serie de Taylor suele truncarse en:", a: ["El término de primer orden (lineal)", "El término cuadrático", "El infinito", "El valor de estado estable"], c: 0 },
+        { q: "¿Cuál es la transformada de Laplace de una constante 'A'?", a: ["A/s", "A*s", "A", "1/s"], c: 0 },
+        { q: "En un sistema de control de temperatura, el 'Perturbación' podría ser:", a: ["Un cambio en la temperatura ambiente", "El ajuste del set-point", "La señal del sensor", "El encendido del controlador"], c: 0 },
+        { q: "Un transmisor inteligente (Smart) permite:", a: ["Configuración remota y autodiagnóstico", "Funcionar sin energía", "Eliminar la necesidad de sensores", "Cambiar el proceso físicamente"], c: 0 },
+        { q: "¿Qué indica la letra 'C' en segunda posición (ej. TIC)?", a: ["Controlador", "Caudal", "Campo", "Computador"], c: 0 },
+        { q: "¿Qué es el 'Rango' (Range) de un instrumento?", a: ["Límites entre los cuales varía la variable medida", "La distancia física del cable", "La precisión porcentual", "El tiempo de garantía"], c: 0 },
+        { q: "Un proceso de mezclado se considera de primer orden porque:", a: ["Tiene una sola constante de tiempo dominante", "No tiene inercia", "Usa un solo motor", "Es instantáneo"], c: 0 },
+        { q: "La estabilidad de un sistema se puede ver en el plano 's' si:", a: ["Los polos están en el semiplano izquierdo", "Los polos están en el semiplano derecho", "No hay ceros", "Los polos son reales"], c: 0 },
+        { q: "En un sistema de gas, la resistencia se debe a:", a: ["La caída de presión en válvulas o tuberías", "El volumen del tanque", "La temperatura del gas", "El peso del gas"], c: 0 },
+        { q: "El 'Offset' en control proporcional es:", a: ["Un error en estado estable permanente", "Un ruido de alta frecuencia", "El valor máximo de la salida", "La calibración del cero"], c: 0 },
+        { q: "¿Qué representa la variable 's' en el modelado de sistemas?", a: ["La frecuencia compleja", "El tiempo transcurrido", "La superficie del sensor", "La velocidad del sonido"], c: 0 }
+    ];
+
+    let currentQ = 0, score = 0, quizQuestions = [];
+    let userData = {};
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyzoJfa7KZaBtAVsrDES8X22q8IRR51Kbs9DAQNYc07mJMxvBwz1bx04h8fUf79jgk/exec';
+
+    function startChallenge() {
+        const name = document.getElementById('studentName').value;
+        const id = document.getElementById('studentID').value;
+        if (!name || !id) return Swal.fire('Atención', 'Por favor ingrese su identificación', 'warning');
+        
+        userData = { nombre: name + " (" + id + ")" };
+        document.getElementById('login').classList.remove('active');
+        document.getElementById('game').classList.add('active');
+        
+        quizQuestions = [...bank].sort(() => Math.random() - 0.5);
+        showQuestion();
+    }
+
+    function showQuestion() {
+        if (currentQ < quizQuestions.length) {
+            const qObj = quizQuestions[currentQ];
+            document.getElementById('q-count').innerText = `Pregunta ${currentQ + 1} de ${quizQuestions.length}`;
+            document.getElementById('q-text').innerText = qObj.q;
+            const optDiv = document.getElementById('options');
+            optDiv.innerHTML = '';
+            
+            let indices = qObj.a.map((_, i) => i).sort(() => Math.random() - 0.5);
+
+            indices.forEach(i => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = qObj.a[i];
+                btn.onclick = () => {
+                    if (i === qObj.c) score++;
+                    currentQ++;
+                    showQuestion();
+                };
+                optDiv.appendChild(btn);
+            });
+            document.getElementById('progress').style.width = (currentQ / quizQuestions.length * 100) + "%";
+        } else {
+            finish();
+        }
+    }
+
+    function finish() {
+        const finalPercent = Math.round((score / quizQuestions.length) * 100);
+        document.getElementById('game').classList.remove('active');
+        document.getElementById('results').classList.add('active');
+        document.getElementById('finalScore').innerText = "Resultado Final: " + finalPercent + "%";
+        
+        fetch(scriptURL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({ nombre: userData.nombre, puntaje: finalPercent })
+        }).then(() => {
+            Swal.fire('¡Enviado!', 'Tu nota ha sido registrada en el sistema.', 'success');
+        });
+    }
+</script>
+</body>
+</html>
