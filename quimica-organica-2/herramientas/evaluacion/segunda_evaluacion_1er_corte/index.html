@@ -24,9 +24,8 @@
         .step.active { display: block; }
         .progress-container { width: 100%; background-color: #e0e0e0; border-radius: 10px; margin: 20px 0; height: 8px; overflow: hidden; }
         .progress-bar { height: 100%; background: var(--psm-gold); transition: width 0.4s ease; width: 0%; }
-        .upload-status { font-size: 0.8rem; font-weight: bold; margin-top: 5px; color: #666; padding: 5px; border-radius: 4px; }
-        .status-success { color: #28a745; background: #e8f5e9; }
-        .error-field { border-color: red !important; background-color: #fff8f8; }
+        .upload-status { font-size: 0.8rem; font-weight: bold; margin-top: 5px; color: #d9534f; padding: 5px; border-radius: 4px; border: 1px solid #f5c6cb; background-color: #fdf2f2; }
+        .status-success { color: #28a745 !important; background: #e8f5e9 !important; border: 1px solid #c3e6cb !important; }
         @media print { .btn, .progress-container, .btn-prev, .btn-next, input[type="file"], .upload-status { display: none !important; } .step { display: block !important; } textarea { border: 1px solid #000; height: auto; min-height: 50px; } }
     </style>
 </head>
@@ -60,12 +59,12 @@
         <div class="question">Problema 1a. (S)-2-yodopentano + \(NaCN / DMSO\):</div>
         <textarea id="ans_1" placeholder="Explicación o nombre..."></textarea>
         <input type="file" accept="image/*" onchange="uploadImage(this, 'P1a')">
-        <div id="status_P1a" class="upload-status">Esperando imagen del mecanismo...</div>
+        <div id="status_P1a" class="upload-status">⚠️ Esperando imagen del mecanismo...</div>
 
         <div class="question">Problema 1b. 2-fenil-2-buteno + \(H_2SO_4\) diluido:</div>
         <textarea id="ans_2"></textarea>
         <input type="file" accept="image/*" onchange="uploadImage(this, 'P1b')">
-        <div id="status_P1b" class="upload-status">Esperando imagen del mecanismo...</div>
+        <div id="status_P1b" class="upload-status">⚠️ Esperando imagen del mecanismo...</div>
 
         <button class="btn btn-next" onclick="nextStep(1)">Siguiente</button>
     </div>
@@ -76,12 +75,12 @@
         <div class="question">Problema 2. Identifique la base para obtener el producto de Hofmann: (3 puntos)</div>
         <input type="text" id="ans_3">
         <input type="file" accept="image/*" onchange="uploadImage(this, 'P2')">
-        <div id="status_P2" class="upload-status">Adjuntar soporte visual...</div>
+        <div id="status_P2" class="upload-status">⚠️ Adjuntar soporte visual...</div>
 
         <div class="question">Problema 3. Ruta de Williamson para el Etil terc-butil éter:(3 puntos)</div>
         <textarea id="ans_4"></textarea>
         <input type="file" accept="image/*" onchange="uploadImage(this, 'P3')">
-        <div id="status_P3" class="upload-status">Adjuntar soporte visual...</div>
+        <div id="status_P3" class="upload-status">⚠️ Adjuntar soporte visual...</div>
 
         <button class="btn btn-prev" onclick="prevStep(2)">Anterior</button>
         <button class="btn btn-next" onclick="nextStep(2)">Siguiente</button>
@@ -93,7 +92,7 @@
         <div class="question">Problema 4. Prediga el producto de deshidratación mayoritario del 2-metil-2-butanol en condiciones ácidas: (5 puntos)</div>
         <input type="text" id="ans_5" placeholder="Nombre del alqueno...">
         <input type="file" accept="image/*" onchange="uploadImage(this, 'P4')">
-        <div id="status_P4" class="upload-status">Adjuntar soporte visual...</div>
+        <div id="status_P4" class="upload-status">⚠️ Adjuntar soporte visual...</div>
 
         <div class="question" style="line-height: 1.4;">
             Problema 5. En el laboratorio se usó como reacción de identificación de alcoholes la oxidación del mismo. 
@@ -101,7 +100,7 @@
         </div>
         <textarea id="ans_6" placeholder="Escriba su explicación aquí..."></textarea>
         <input type="file" accept="image/*" onchange="uploadImage(this, 'P5')">
-        <div id="status_P5" class="upload-status">Adjuntar evidencia de laboratorio...</div>
+        <div id="status_P5" class="upload-status">⚠️ Adjuntar evidencia de laboratorio...</div>
 
         <button class="btn btn-prev" onclick="prevStep(3)">Anterior</button>
         <button class="btn btn-next" id="finalizarBtn" onclick="finishQuiz()">Finalizar y Generar PDF</button>
@@ -120,7 +119,16 @@
     let currentStep = 0;
     const totalSteps = 4;
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyaj2Z8HOIqgEpTx1S5LDRG_ezm3XE0prcpxuj4My1ZSe7Jjjb3wZuyYobphdynM4i26w/exec';
-    let uploadedLinks = {};
+    
+    // Objeto de control interno para registrar de forma segura qué fotos ya se subieron
+    let imagenesSubidas = {
+        'P1a': false,
+        'P1b': false,
+        'P2': false,
+        'P3': false,
+        'P4': false,
+        'P5': false
+    };
 
     function updateProgress() {
         document.getElementById('pBar').style.width = (currentStep / totalSteps * 100) + "%";
@@ -131,8 +139,9 @@
         const file = input.files[0];
         if (!file) return;
 
-        statusDiv.innerText = "⏳ Subiendo...";
+        statusDiv.innerText = "⏳ Subiendo archivo al servidor...";
         statusDiv.classList.remove('status-success');
+        imagenesSubidas[tag] = false; // Reiniciar estado de subida por si vuelven a subir otra
         
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -160,47 +169,45 @@
 
                 try {
                     await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-                    statusDiv.innerHTML = "✅ Imagen enviada";
+                    statusDiv.innerHTML = "✅ Imagen cargada y enviada correctamente";
                     statusDiv.classList.add('status-success');
-                    uploadedLinks[tag] = true; // Marcamos como subida
-                } catch (e) { statusDiv.innerText = "❌ Error al subir"; }
+                    imagenesSubidas[tag] = true; // SE REGISTRA ÉXITO REAL
+                } catch (e) { 
+                    statusDiv.innerText = "❌ Error al subir. Intente de nuevo."; 
+                    imagenesSubidas[tag] = false;
+                }
             };
         };
     }
 
     function nextStep(step) {
-        const currentDiv = document.getElementById(`step${step}`);
-        
         // 1. Validar Identificación (Paso 0)
         if(step === 0) {
             const id = document.getElementById('student_id').value.trim();
             const name = document.getElementById('student_name').value.trim();
             if(!id || !name) {
-                alert("Por favor ingrese su Nombre y Cédula.");
+                alert("Por favor ingrese su Nombre y Cédula para iniciar.");
                 return;
             }
         }
 
-        // 2. Validar Imágenes en Pasos con preguntas (1 y 2)
-        if(step > 0) {
-            const statusLabels = currentDiv.querySelectorAll('.upload-status');
-            let allUploaded = true;
-            
-            statusLabels.forEach(label => {
-                if (!label.classList.contains('status-success')) {
-                    allUploaded = false;
-                    label.style.border = "1px solid red";
-                } else {
-                    label.style.border = "none";
-                }
-            });
-
-            if (!allUploaded) {
-                alert("Debe subir las imágenes de soporte para todas las preguntas antes de continuar.");
+        // 2. Validar Paso 1 (Requiere P1a y P1b cargadas)
+        if(step === 1) {
+            if(!imagenesSubidas['P1a'] || !imagenesSubidas['P1b']) {
+                alert("Bloqueado: Debe subir las imágenes de soporte para el Problema 1a y 1b.");
                 return;
             }
         }
 
+        // 3. Validar Paso 2 (Requiere P2 y P3 cargadas)
+        if(step === 2) {
+            if(!imagenesSubidas['P2'] || !imagenesSubidas['P3']) {
+                alert("Bloqueado: Debe subir las imágenes de soporte para el Problema 2 y 3.");
+                return;
+            }
+        }
+
+        // Si pasa las validaciones, avanzar
         document.getElementById(`step${step}`).classList.remove('active');
         currentStep++;
         document.getElementById(`step${currentStep}`).classList.add('active');
@@ -209,6 +216,7 @@
     }
 
     function prevStep(step) {
+        // Retroceder es libre para que puedan repasar
         document.getElementById(`step${step}`).classList.remove('active');
         currentStep--;
         document.getElementById(`step${currentStep}`).classList.add('active');
@@ -217,25 +225,14 @@
     }
 
     async function finishQuiz() {
-        // Validar imágenes del último paso
-        const currentDiv = document.getElementById('step3');
-        const statusLabels = currentDiv.querySelectorAll('.upload-status');
-        let allUploaded = true;
-
-        statusLabels.forEach(label => {
-            if (!label.classList.contains('status-success')) {
-                allUploaded = false;
-                label.style.border = "1px solid red";
-            }
-        });
-
-        if (!allUploaded) {
-            alert("Falta adjuntar evidencia de laboratorio o soporte visual en la última sección.");
+        // Validar Paso 3 (Requiere P4 y P5 antes de finalizar)
+        if(!imagenesSubidas['P4'] || !imagenesSubidas['P5']) {
+            alert("Bloqueado: Debe subir el soporte de laboratorio para el Problema 4 y 5.");
             return;
         }
 
         const btn = document.getElementById('finalizarBtn');
-        btn.innerText = "Enviando respuestas...";
+        btn.innerText = "Enviando respuestas escritas...";
         btn.disabled = true;
 
         const respuestas = [
