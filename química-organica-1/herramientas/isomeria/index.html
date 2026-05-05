@@ -16,11 +16,9 @@
         .btn-send { background: #28a745; color: white; width: 100%; font-size: 1.1rem; margin-top: 20px; }
         .status-tag { display: inline-block; margin-top: 10px; font-size: 0.9rem; font-weight: bold; color: #666; }
         
-        /* Modal corregido */
         #modalEditor { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; overflow-y: auto; }
         .modal-content { background: white; width: 95%; max-width: 550px; margin: 20px auto; padding: 20px; border-radius: 8px; text-align: center; position: relative; }
         
-        /* Asegurar que el contenedor tenga espacio */
         #jsme_container { 
             width: 500px; 
             height: 400px; 
@@ -84,10 +82,8 @@
     let currentTargetName = '';
     const scriptURL = 'https://script.google.com/macros/s/AKfycbwPsysDh255aIdyonjBX1SvGqQG9lNJzXH__Is_aJ_wWeikxdFpIkG0ryFg2QCQJF3E4g/exec';
 
-    // Se ejecuta al cargar la página
     function jsmeOnLoad() {
-        // No inicializamos aquí para evitar el error de display:none
-        console.log("JSME cargado correctamente");
+        console.log("JSME cargado");
     }
 
     function abrirEditor(tag, nombreMolecula) {
@@ -104,15 +100,16 @@
         document.getElementById('instruccion_pregunta').innerText = "Dibujando: " + nombreMolecula;
         document.getElementById('modalEditor').style.display = 'block';
 
-        // INICIALIZACIÓN FORZADA AL ABRIR EL MODAL
-        if (!jsmeApplet) {
-            jsmeApplet = new JSME.Jsme("jsme_container", "500px", "400px", {
-                "options" : "query,hydrogens,stereo"
-            });
-        } else {
-            // Si ya existe, nos aseguramos de que esté limpio
-            jsmeApplet.clear();
-        }
+        // EL TRUCO: Esperar 200ms a que el modal termine de abrirse
+        setTimeout(() => {
+            if (!jsmeApplet) {
+                jsmeApplet = new JSME.Jsme("jsme_container", "500px", "400px", {
+                    "options" : "query,hydrogens,stereo"
+                });
+            } else {
+                jsmeApplet.repaint(); // Refresca las herramientas si ya existe
+            }
+        }, 200);
     }
 
     function cerrarEditor() {
