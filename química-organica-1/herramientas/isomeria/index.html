@@ -2,113 +2,88 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evaluación de Isomería - PSM</title>
+    <title>Evaluación Isomería PSM</title>
     <script type="text/javascript" src="https://jsme-editor.github.io/dist/jsme/jsme.nocache.js"></script>
     <style>
-        :root { --psm-blue: #003366; --psm-gold: #b8860b; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; padding: 20px; }
-        .container { max-width: 850px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 10px solid var(--psm-blue); }
-        .header { text-align: center; border-bottom: 2px solid #eee; margin-bottom: 20px; padding-bottom: 10px; }
-        .question-box { background: #fafafa; padding: 20px; border-left: 5px solid var(--psm-gold); margin-bottom: 20px; border-radius: 4px; }
-        
-        /* Contenedor con dimensiones explícitas para evitar que salga blanco */
-        #jsme_container { 
-            width: 100%; 
-            min-height: 450px; 
-            margin: 20px auto; 
-            border: 2px solid #003366;
-            background: #ffffff;
-        }
-        
-        .btn { padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; width: 100%; }
-        .btn-save { background: #28a745; color: white; margin-top: 10px; font-size: 1.1rem; }
-        input { width: 100%; padding: 10px; margin: 5px 0 15px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        .status-tag { display: block; margin-top: 15px; font-size: 1rem; font-weight: bold; text-align: center; color: #666; }
+        :root { --blue: #003366; }
+        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; text-align: center; }
+        .card { max-width: 700px; margin: auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-top: 8px solid var(--blue); }
+        #jsme_container { width: 100%; height: 400px; margin: 15px auto; border: 1px solid #003366; background: #fff; }
+        input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
+        .btn { padding: 12px 25px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; color: white; margin: 5px; }
+        .btn-success { background: #28a745; }
+        .btn-info { background: #17a2b8; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">
-        <h2>Evaluación de Química Orgánica I</h2>
-        <p>I.U.P. "Santiago Mariño" - Prof. José Ángel Caldera</p>
+<div class="card">
+    <h2>Evaluación de Química Orgánica</h2>
+    <p>Prof. José Ángel Caldera</p>
+
+    <input type="text" id="student_name" placeholder="Nombre completo">
+    <input type="text" id="student_id" placeholder="Cédula de identidad">
+
+    <div style="background: #fff9c4; padding: 10px; border-radius: 5px; margin: 10px 0;">
+        <strong>Reto:</strong> Dibuje el <strong>(S)-2-butanol</strong> (use cuñas para la estereoquímica).
     </div>
 
-    <div class="question-box">
-        <label><b>Nombre y Apellido:</b></label>
-        <input type="text" id="student_name" placeholder="Ej: José Caldera">
-        <label><b>Cédula de Identidad:</b></label>
-        <input type="text" id="student_id" placeholder="Ej: 11282631">
-    </div>
-
-    <div class="question-box">
-        <p><strong>Problema de Isomería:</strong> Dibuje la estructura del <strong>(S)-2-butanol</strong>. Use las herramientas de cuña para la estereoquímica.</p>
-        
-        <div id="jsme_container"></div>
-
-        <button class="btn btn-save" onclick="enviarDatos()">✅ Guardar Dibujo y Enviar</button>
-        
-        <div style="margin-top:20px;">
-            <label style="font-size:0.8rem; color:#666;">SMILES Generado:</label>
-            <input type="text" id="smiles_output" readonly>
-        </div>
-        
-        <div id="status_msg" class="status-tag">⚠️ Esperando dibujo...</div>
-    </div>
+    <div id="jsme_container"></div>
+    
+    <button class="btn btn-info" onclick="inicializarEditor()">🔄 Si el cuadro sale blanco, toca aquí para recargar</button>
+    <br><br>
+    <button class="btn btn-success" onclick="enviar()">✅ Guardar y Enviar Respuesta</button>
+    
+    <p id="msg" style="font-weight: bold; color: #666;">Esperando dibujo...</p>
 </div>
 
 <script>
     var jsmeApplet;
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwPsysDh255aIdyonjBX1SvGqQG9lNJzXH__Is_aJ_wWeikxdFpIkG0ryFg2QCQJF3E4g/exec';
 
-    // Esta función la llama la librería JSME automáticamente al terminar de cargar
+    // Esta función se activa sola al cargar, pero también la podemos llamar manual
     function jsmeOnLoad() {
-        // Inicialización con ID exacto y opciones de dibujo visibles
-        jsmeApplet = new JSME.Jsme("jsme_container", "100%", "450px", {
-            "options" : "oldlook,stereo,hydrogens"
-        });
+        inicializarEditor();
     }
 
-    async function enviarDatos() {
-        const name = document.getElementById('student_name').value;
-        const id = document.getElementById('student_id').value;
-        
-        if (!jsmeApplet) {
-            alert("El editor no ha cargado. Refresque la página.");
-            return;
-        }
-
-        const smiles = jsmeApplet.smiles();
-
-        if (!name || !id || !smiles) {
-            alert("Complete sus datos y dibuje la molécula.");
-            return;
-        }
-
-        document.getElementById('smiles_output').value = smiles;
-        const status = document.getElementById('status_msg');
-        status.innerText = "⏳ Enviando respuesta...";
-
-        const payload = {
-            id: id,
-            name: name,
-            type: "EVALUACION_SMILES",
-            preguntaCorrecta: "(S)-2-butanol",
-            smiles: smiles
-        };
-
+    function inicializarEditor() {
         try {
-            fetch(scriptURL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify(payload)
+            jsmeApplet = new JSME.Jsme("jsme_container", "100%", "400px", {
+                "options" : "stereo,hydrogens"
             });
-            status.innerText = "✅ Respuesta enviada satisfactoriamente";
-            status.style.color = "#28a745";
+            console.log("Editor listo");
         } catch (e) {
-            status.innerText = "❌ Error al enviar. Intente de nuevo.";
+            console.error("Error cargando JSME: ", e);
         }
+    }
+
+    function enviar() {
+        const sm = jsmeApplet.smiles();
+        const nom = document.getElementById('student_name').value;
+        const id = document.getElementById('student_id').value;
+
+        if(!sm || !nom || !id) {
+            alert("Por favor rellene sus datos y dibuje la molécula.");
+            return;
+        }
+
+        document.getElementById('msg').innerText = "⏳ Enviando datos...";
+
+        const url = 'https://script.google.com/macros/s/AKfycbwPsysDh255aIdyonjBX1SvGqQG9lNJzXH__Is_aJ_wWeikxdFpIkG0ryFg2QCQJF3E4g/exec';
+        
+        fetch(url, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({
+                id: id,
+                name: nom,
+                type: "EVALUACION_SMILES",
+                preguntaCorrecta: "(S)-2-butanol",
+                smiles: sm
+            })
+        });
+
+        document.getElementById('msg').innerText = "✅ ¡Enviado! Ya puede cerrar o imprimir.";
+        document.getElementById('msg').style.color = "green";
     }
 </script>
 
