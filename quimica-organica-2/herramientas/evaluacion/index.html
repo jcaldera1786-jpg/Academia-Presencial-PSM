@@ -38,7 +38,6 @@
         <div class="progress-container"><div class="progress-bar" id="pBar"></div></div>
     </div>
 
-    <!-- PASO 0: REGISTRO -->
     <div class="step active" id="step0">
         <div class="info-grid">
             <div><b>Profesor:</b> José Ángel Caldera</div>
@@ -54,7 +53,6 @@
         <button class="btn btn-next" onclick="nextStep(0)">Iniciar Evaluación</button>
     </div>
 
-    <!-- PASO 1: PARTE I -->
     <div class="step" id="step1">
         <div class="section-title">PARTE I: DEFINICIONES Y CONCEPTOS (8 pts)</div>
         <div class="question">1. Halogenuros de Alquilo: Defina este tipo de compuesto y especifique la polaridad del enlace \(C-X\):</div>
@@ -74,7 +72,6 @@
         <button class="btn btn-next" onclick="nextStep(2)">Siguiente</button>
     </div>
 
-    <!-- PASO 3: PARTE II -->
     <div class="step" id="step3">
         <div class="section-title">PARTE II: PROPIEDADES FÍSICAS Y QUÍMICAS (6 pts)</div>
         <div class="question">1. ¿Por qué los alcoholes tienen puntos de ebullición mucho más altos que los éteres similares?</div>
@@ -87,7 +84,6 @@
         <button class="btn btn-next" onclick="nextStep(3)">Siguiente</button>
     </div>
 
-    <!-- PASO 4: PARTE III y IV -->
     <div class="step" id="step4">
         <div class="section-title">PARTE III (2 pts) y PARTE IV (4 pts)</div>
         <div class="question">III-1. Prioridad IUPAC: Entre halógeno y \(-OH\), ¿cuál tiene prioridad en la numeración?</div>
@@ -102,7 +98,6 @@
         <button class="btn btn-next" onclick="finishQuiz()">Finalizar</button>
     </div>
 
-    <!-- PASO FINAL -->
     <div class="step" id="step5">
         <div class="section-title" style="background: #28a745;">ENVÍO EXITOSO</div>
         <p>Los datos se han sincronizado con el registro del profesor.</p>
@@ -114,7 +109,7 @@
 <script>
     let currentStep = 0;
     const totalSteps = 5;
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwp89aBmcq1Yr8AP5WhQ8zIhAG_BPFzztuLw8gcgIyjex3JD5T-DfPqq6XgCa8ZWpGbGA/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyYd4B33tLlLZGIeI139O97g3eQPeZBaqdQX_MgpV8RGzMHqwq7lrXKIRhd6jQe2bdHFQ/exec';
 
     function updateProgress() {
         document.getElementById('pBar').style.width = (currentStep / totalSteps * 100) + "%";
@@ -131,12 +126,33 @@
     }
 
     function nextStep(step) {
+        // VALIDACIÓN DE CAMPOS VACÍOS
+        const currentDiv = document.getElementById(`step${step}`);
+        const inputs = currentDiv.querySelectorAll('input[type="text"], textarea');
+        let valid = true;
+
+        inputs.forEach(input => {
+            if (input.value.trim() === "") {
+                valid = false;
+                input.style.borderColor = "red";
+            } else {
+                input.style.borderColor = "#ccc";
+            }
+        });
+
+        if (!valid) {
+            alert("Por favor, responda todas las preguntas de esta sección antes de continuar.");
+            return;
+        }
+
+        // LÓGICA DE REGISTRO INICIAL
         if(step === 0) {
             const sid = document.getElementById('student_id').value;
-            if(!sid || !document.getElementById('student_name').value) return alert("Faltan datos.");
+            const sname = document.getElementById('student_name').value;
             if(localStorage.getItem('eval_psm_'+sid) && !confirm("Ya tiene un intento. ¿Continuar?")) return;
             localStorage.setItem('eval_psm_'+sid, "true");
         }
+
         saveToCloud();
         document.getElementById(`step${step}`).classList.remove('active');
         currentStep++;
@@ -153,6 +169,25 @@
     }
 
     function finishQuiz() {
+        // VALIDACIÓN FINAL PARA EL ÚLTIMO PASO
+        const currentDiv = document.getElementById('step4');
+        const inputs = currentDiv.querySelectorAll('textarea');
+        let valid = true;
+
+        inputs.forEach(input => {
+            if (input.value.trim() === "") {
+                valid = false;
+                input.style.borderColor = "red";
+            } else {
+                input.style.borderColor = "#ccc";
+            }
+        });
+
+        if (!valid) {
+            alert("Debe completar todas las respuestas antes de finalizar.");
+            return;
+        }
+
         saveToCloud();
         document.getElementById('step4').classList.remove('active');
         currentStep = 5;
