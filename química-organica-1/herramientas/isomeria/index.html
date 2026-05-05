@@ -2,88 +2,84 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Evaluación Isomería PSM</title>
-    <script type="text/javascript" src="https://jsme-editor.github.io/dist/jsme/jsme.nocache.js"></script>
+    <title>Evaluación de Isomería - PSM</title>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/kekule/dist/themes/default/kekule.css" />
+    <script src="https://unpkg.com/kekule/dist/kekule.js?modules=chemWidget,algorithm"></script>
+    
     <style>
-        :root { --blue: #003366; }
-        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; text-align: center; }
-        .card { max-width: 700px; margin: auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-top: 8px solid var(--blue); }
-        #jsme_container { width: 100%; height: 400px; margin: 15px auto; border: 1px solid #003366; background: #fff; }
-        input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
-        .btn { padding: 12px 25px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; color: white; margin: 5px; }
-        .btn-success { background: #28a745; }
-        .btn-info { background: #17a2b8; font-size: 0.8rem; }
+        :root { --psm-blue: #003366; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; padding: 20px; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 25px; border-radius: 10px; border-top: 10px solid var(--psm-blue); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        #composer { width: 100%; height: 450px; border: 1px solid #ccc; margin: 15px 0; }
+        .btn { width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
+        input { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>Evaluación de Química Orgánica</h2>
-    <p>Prof. José Ángel Caldera</p>
+<div class="container">
+    <h2>Examen de Química Orgánica I</h2>
+    <p>I.U.P. "Santiago Mariño" - Prof. José Ángel Caldera</p>
 
-    <input type="text" id="student_name" placeholder="Nombre completo">
-    <input type="text" id="student_id" placeholder="Cédula de identidad">
+    <input type="text" id="student_name" placeholder="Nombre del Estudiante">
+    <input type="text" id="student_id" placeholder="Cédula de Identidad">
 
-    <div style="background: #fff9c4; padding: 10px; border-radius: 5px; margin: 10px 0;">
-        <strong>Reto:</strong> Dibuje el <strong>(S)-2-butanol</strong> (use cuñas para la estereoquímica).
+    <div style="background: #e3f2fd; padding: 15px; border-radius: 5px;">
+        <strong>Instrucción:</strong> Dibuje la estructura del <b>(S)-2-butanol</b> usando el editor inferior.
     </div>
 
-    <div id="jsme_container"></div>
-    
-    <button class="btn btn-info" onclick="inicializarEditor()">🔄 Si el cuadro sale blanco, toca aquí para recargar</button>
-    <br><br>
-    <button class="btn btn-success" onclick="enviar()">✅ Guardar y Enviar Respuesta</button>
-    
-    <p id="msg" style="font-weight: bold; color: #666;">Esperando dibujo...</p>
+    <div id="composer" data-widget="Kekule.ChemWidget.Composer" data-chem-obj=""></div>
+
+    <button class="btn" onclick="enviarExamen()">✅ Enviar Respuesta a la Nube</button>
+    <p id="status" style="text-align: center; font-weight: bold; margin-top: 10px;"></p>
 </div>
 
 <script>
-    var jsmeApplet;
+    let composer;
 
-    // Esta función se activa sola al cargar, pero también la podemos llamar manual
-    function jsmeOnLoad() {
-        inicializarEditor();
-    }
+    // Inicializar el editor cuando la librería esté lista
+    Kekule.X.domReady(() => {
+        composer = Kekule.Widget.getWidgetById('composer');
+        // Configuración para que sea fácil de usar
+        composer.setCommonToolButtons(['erase', 'bond', 'atom', 'ring', 'charge']);
+    });
 
-    function inicializarEditor() {
-        try {
-            jsmeApplet = new JSME.Jsme("jsme_container", "100%", "400px", {
-                "options" : "stereo,hydrogens"
-            });
-            console.log("Editor listo");
-        } catch (e) {
-            console.error("Error cargando JSME: ", e);
-        }
-    }
-
-    function enviar() {
-        const sm = jsmeApplet.smiles();
-        const nom = document.getElementById('student_name').value;
+    async function enviarExamen() {
+        const chemObj = composer.getChemObj();
+        // Convertimos el dibujo a SMILES
+        const smiles = Kekule.IO.saveFormatData(chemObj, 'smi');
+        const name = document.getElementById('student_name').value;
         const id = document.getElementById('student_id').value;
 
-        if(!sm || !nom || !id) {
-            alert("Por favor rellene sus datos y dibuje la molécula.");
+        if (!smiles || smiles === "" || !name || !id) {
+            alert("Por favor, complete sus datos y dibuje la estructura.");
             return;
         }
 
-        document.getElementById('msg').innerText = "⏳ Enviando datos...";
+        const status = document.getElementById('status');
+        status.innerText = "⏳ Enviando datos...";
+        status.style.color = "orange";
 
-        const url = 'https://script.google.com/macros/s/AKfycbwPsysDh255aIdyonjBX1SvGqQG9lNJzXH__Is_aJ_wWeikxdFpIkG0ryFg2QCQJF3E4g/exec';
-        
-        fetch(url, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: JSON.stringify({
-                id: id,
-                name: nom,
-                type: "EVALUACION_SMILES",
-                preguntaCorrecta: "(S)-2-butanol",
-                smiles: sm
-            })
-        });
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwPsysDh255aIdyonjBX1SvGqQG9lNJzXH__Is_aJ_wWeikxdFpIkG0ryFg2QCQJF3E4g/exec';
 
-        document.getElementById('msg').innerText = "✅ ¡Enviado! Ya puede cerrar o imprimir.";
-        document.getElementById('msg').style.color = "green";
+        try {
+            await fetch(scriptURL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify({
+                    id: id,
+                    name: name,
+                    type: "EVALUACION_SMILES",
+                    preguntaCorrecta: "(S)-2-butanol",
+                    smiles: smiles
+                })
+            });
+            status.innerText = "✅ ¡Enviado con éxito! Puede cerrar la página.";
+            status.style.color = "green";
+        } catch (e) {
+            status.innerText = "❌ Error al enviar. Revise su conexión.";
+            status.style.color = "red";
+        }
     }
 </script>
 
