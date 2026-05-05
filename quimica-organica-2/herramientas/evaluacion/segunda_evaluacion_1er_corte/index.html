@@ -24,8 +24,9 @@
         .step.active { display: block; }
         .progress-container { width: 100%; background-color: #e0e0e0; border-radius: 10px; margin: 20px 0; height: 8px; overflow: hidden; }
         .progress-bar { height: 100%; background: var(--psm-gold); transition: width 0.4s ease; width: 0%; }
-        .upload-status { font-size: 0.8rem; font-weight: bold; margin-top: 5px; color: #666; }
-        .status-success { color: #28a745; }
+        .upload-status { font-size: 0.8rem; font-weight: bold; margin-top: 5px; color: #666; padding: 5px; border-radius: 4px; }
+        .status-success { color: #28a745; background: #e8f5e9; }
+        .error-field { border-color: red !important; background-color: #fff8f8; }
         @media print { .btn, .progress-container, .btn-prev, .btn-next, input[type="file"], .upload-status { display: none !important; } .step { display: block !important; } textarea { border: 1px solid #000; height: auto; min-height: 50px; } }
     </style>
 </head>
@@ -38,7 +39,6 @@
         <div class="progress-container"><div class="progress-bar" id="pBar"></div></div>
     </div>
 
-    <!-- PASO 0: IDENTIFICACIÓN -->
     <div class="step active" id="step0">
         <div class="info-grid">
             <div><b>Profesor:</b> José Ángel Caldera Luzardo</div>
@@ -54,7 +54,6 @@
         <button class="btn btn-next" onclick="nextStep(0)">Iniciar Examen</button>
     </div>
 
-    <!-- PASO 1: REACCIONES -->
     <div class="step" id="step1">
         <div class="section-title">PARTE I: Proponga el producto orgánico resultante (4 puntos)</div>
         
@@ -71,7 +70,6 @@
         <button class="btn btn-next" onclick="nextStep(1)">Siguiente</button>
     </div>
 
-    <!-- PASO 2: SÍNTESIS -->
     <div class="step" id="step2">
         <div class="section-title">PARTE II:  ESTRATEGIAS DE SÍNTESIS </div>
         
@@ -89,33 +87,31 @@
         <button class="btn btn-next" onclick="nextStep(2)">Siguiente</button>
     </div>
 
-<!-- PASO 3: LABORATORIO -->
-<div class="step" id="step3">
-    <div class="section-title">PARTE III: LABORATORIO Y REACTIVIDAD</div>
-    
-    <div class="question">Problema 4. Prediga el producto de deshidratación mayoritario del 2-metil-2-butanol en condiciones ácidas: (5 puntos)</div>
-    <input type="text" id="ans_5" placeholder="Nombre del alqueno...">
-    <input type="file" accept="image/*" onchange="uploadImage(this, 'P4')">
-    <div id="status_P4" class="upload-status">Adjuntar soporte visual...</div>
+    <div class="step" id="step3">
+        <div class="section-title">PARTE III: LABORATORIO Y REACTIVIDAD</div>
+        
+        <div class="question">Problema 4. Prediga el producto de deshidratación mayoritario del 2-metil-2-butanol en condiciones ácidas: (5 puntos)</div>
+        <input type="text" id="ans_5" placeholder="Nombre del alqueno...">
+        <input type="file" accept="image/*" onchange="uploadImage(this, 'P4')">
+        <div id="status_P4" class="upload-status">Adjuntar soporte visual...</div>
 
-    <div class="question" style="line-height: 1.4;">
-        Problema 5. En el laboratorio se usó como reacción de identificación de alcoholes la oxidación del mismo. 
-        Explique: ¿Cuáles son las consideraciones experimentales, qué variables o cambios permiten confirmar la presencia del alcohol y plantee la reacción realizada? (5 puntos)
+        <div class="question" style="line-height: 1.4;">
+            Problema 5. En el laboratorio se usó como reacción de identificación de alcoholes la oxidación del mismo. 
+            Explique: ¿Cuáles son las consideraciones experimentales, qué variables o cambios permiten confirmar la presencia del alcohol y plantee la reacción realizada? (5 puntos)
+        </div>
+        <textarea id="ans_6" placeholder="Escriba su explicación aquí..."></textarea>
+        <input type="file" accept="image/*" onchange="uploadImage(this, 'P5')">
+        <div id="status_P5" class="upload-status">Adjuntar evidencia de laboratorio...</div>
+
+        <button class="btn btn-prev" onclick="prevStep(3)">Anterior</button>
+        <button class="btn btn-next" id="finalizarBtn" onclick="finishQuiz()">Finalizar y Generar PDF</button>
     </div>
-    <textarea id="ans_6" placeholder="Escriba su explicación aquí..."></textarea>
-    <input type="file" accept="image/*" onchange="uploadImage(this, 'P5')">
-    <div id="status_P5" class="upload-status">Adjuntar evidencia de laboratorio...</div>
 
-    <button class="btn btn-prev" onclick="prevStep(3)">Anterior</button>
-    <button class="btn btn-next" id="finalizarBtn" onclick="finishQuiz()">Finalizar y Generar PDF</button>
-</div>
-    <!-- PASO FINAL -->
     <div class="step" id="step4">
         <div class="section-title" style="background: #28a745;">ENVÍO COMPLETO</div>
         <p>Se han subido las respuestas y las imágenes a su carpeta personal.</p>
         <div id="final_links" style="background:#eee; padding:15px; border-radius:5px; font-size:0.8rem; max-height:200px; overflow-y:auto;">
-            <!-- Aquí se listarán los links de las fotos subidas -->
-        </div>
+            </div>
         <button class="btn" style="background:var(--psm-gold); color:white; width:100%;" onclick="window.print()">GUARDAR PDF DE RESPALDO</button>
     </div>
 </div>
@@ -136,6 +132,8 @@
         if (!file) return;
 
         statusDiv.innerText = "⏳ Subiendo...";
+        statusDiv.classList.remove('status-success');
+        
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = async (event) => {
@@ -161,20 +159,48 @@
                 };
 
                 try {
-                    // Usamos una técnica de envío compatible con Apps Script
-                    fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+                    await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
                     statusDiv.innerHTML = "✅ Imagen enviada";
                     statusDiv.classList.add('status-success');
-                    uploadedLinks[tag] = "Cargada al Drive";
-                } catch (e) { statusDiv.innerText = "❌ Error"; }
+                    uploadedLinks[tag] = true; // Marcamos como subida
+                } catch (e) { statusDiv.innerText = "❌ Error al subir"; }
             };
         };
     }
 
     function nextStep(step) {
-        if(step === 0 && (!document.getElementById('student_id').value || !document.getElementById('student_name').value)) {
-            return alert("Ingrese sus datos");
+        const currentDiv = document.getElementById(`step${step}`);
+        
+        // 1. Validar Identificación (Paso 0)
+        if(step === 0) {
+            const id = document.getElementById('student_id').value.trim();
+            const name = document.getElementById('student_name').value.trim();
+            if(!id || !name) {
+                alert("Por favor ingrese su Nombre y Cédula.");
+                return;
+            }
         }
+
+        // 2. Validar Imágenes en Pasos con preguntas (1 y 2)
+        if(step > 0) {
+            const statusLabels = currentDiv.querySelectorAll('.upload-status');
+            let allUploaded = true;
+            
+            statusLabels.forEach(label => {
+                if (!label.classList.contains('status-success')) {
+                    allUploaded = false;
+                    label.style.border = "1px solid red";
+                } else {
+                    label.style.border = "none";
+                }
+            });
+
+            if (!allUploaded) {
+                alert("Debe subir las imágenes de soporte para todas las preguntas antes de continuar.");
+                return;
+            }
+        }
+
         document.getElementById(`step${step}`).classList.remove('active');
         currentStep++;
         document.getElementById(`step${currentStep}`).classList.add('active');
@@ -191,8 +217,25 @@
     }
 
     async function finishQuiz() {
+        // Validar imágenes del último paso
+        const currentDiv = document.getElementById('step3');
+        const statusLabels = currentDiv.querySelectorAll('.upload-status');
+        let allUploaded = true;
+
+        statusLabels.forEach(label => {
+            if (!label.classList.contains('status-success')) {
+                allUploaded = false;
+                label.style.border = "1px solid red";
+            }
+        });
+
+        if (!allUploaded) {
+            alert("Falta adjuntar evidencia de laboratorio o soporte visual en la última sección.");
+            return;
+        }
+
         const btn = document.getElementById('finalizarBtn');
-        btn.innerText = "Enviando...";
+        btn.innerText = "Enviando respuestas...";
         btn.disabled = true;
 
         const respuestas = [
@@ -212,10 +255,8 @@
         };
 
         try {
-            // El truco para Google Sheets: enviamos y no esperamos respuesta por el CORS
             await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(finalData) });
             
-            // Simulamos un pequeño delay para que el usuario sienta el envío
             setTimeout(() => {
                 document.getElementById('step3').classList.remove('active');
                 document.getElementById('step4').classList.add('active');
@@ -225,6 +266,7 @@
         } catch (e) {
             alert("Error al guardar texto");
             btn.disabled = false;
+            btn.innerText = "Finalizar y Generar PDF";
         }
     }
 </script>
