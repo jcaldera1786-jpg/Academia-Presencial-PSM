@@ -3,95 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evaluación de Estereoquímica - PSM</title>
+    <title>Evaluación de Isomería - PSM</title>
     
-    <script type="text/javascript" src="https://jsme-editor.github.io/dist/jsme/jsme.nocache.js"></script>
-    
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/kekule/dist/themes/default/kekule.css" />
+    <script src="https://unpkg.com/kekule/dist/kekule.js?modules=chemWidget,algorithm"></script>
+
     <style>
         :root { --psm-blue: #003366; --psm-gold: #b8860b; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; padding: 10px; }
-        .container { max-width: 700px; margin: 20px auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border-top: 8px solid var(--psm-blue); }
-        .header { margin-bottom: 20px; }
-        .input-group { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
-        input { flex: 1; min-width: 200px; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
-        .instrucciones { background: #fff9c4; padding: 15px; border-radius: 8px; border-left: 5px solid var(--psm-gold); text-align: left; font-size: 0.95rem; margin-bottom: 20px; }
-        #jsme_container { width: 100%; height: 400px; background: #fafafa; border: 1px solid #ccc; border-radius: 8px; }
-        .btn-enviar { background: #28a745; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1.1rem; margin-top: 20px; transition: 0.3s; }
-        .btn-enviar:hover { background: #218838; }
+        body { font-family: sans-serif; background: #f0f2f5; padding: 10px; text-align: center; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 15px; border-top: 8px solid var(--psm-blue); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .input-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        input { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px; }
+        #composer { width: 100%; height: 400px; border: 1px solid #ccc; border-radius: 8px; background: #fff; }
+        .btn { background: #28a745; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; font-size: 1.1rem; margin-top: 20px; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">
-        <h2>Examen de Isomería</h2>
-        <p><b>Prof. José Ángel Caldera</b></p>
-    </div>
+    <h2>Examen de Isomería y Estereoquímica</h2>
+    <p><b>Prof. José Ángel Caldera</b></p>
 
     <div class="input-group">
         <input type="text" id="nombre" placeholder="Nombre y Apellido">
-        <input type="text" id="cedula" placeholder="Cédula de Identidad">
+        <input type="text" id="cedula" placeholder="Cédula">
     </div>
 
-    <div class="instrucciones">
-        <strong>Reto:</strong> Dibuje la estructura del <b>(S)-2-butanol</b>. 
-        Asegúrese de indicar la estereoquímica con la cuña (wedge) correcta en el grupo -OH.
+    <div style="background: #fff9c4; padding: 15px; border-radius: 8px; text-align: left; border-left: 5px solid var(--psm-gold); margin-bottom: 15px;">
+        <strong>Reto:</strong> Dibuje el <b>(S)-2-butanol</b>. Use las herramientas de enlaces para indicar la estereoquímica correcta.
     </div>
 
-    <div id="jsme_container"></div>
+    <div id="composer" data-widget="Kekule.ChemWidget.Composer" data-chem-obj=""></div>
 
-    <button class="btn-enviar" onclick="enviarDatos()">✅ Enviar Evaluación</button>
-    <p id="mensaje" style="margin-top: 10px; font-weight: bold;"></p>
+    <button class="btn" onclick="enviar()">✅ Enviar Evaluación</button>
 </div>
 
 <script>
-    var editorQuimico;
+    function enviar() {
+        var composer = Kekule.Widget.getWidgetById('composer');
+        var mol = composer.exportObjs(Kekule.Molecule)[0];
+        var smiles = Kekule.IO.saveFormatData(mol, 'smi');
+        var nombre = document.getElementById('nombre').value;
+        var cedula = document.getElementById('cedula').value;
 
-    // Función obligatoria que JSME busca al cargar
-    function jsmeOnLoad() {
-        editorQuimico = new JSME.Jsme("jsme_container", "100%", "400px", {
-            "options" : "stereo,hydrogens"
-        });
-    }
-
-    function enviarDatos() {
-        const n = document.getElementById('nombre').value;
-        const c = document.getElementById('cedula').value;
-        
-        if (!editorQuimico) {
-            alert("Error: El editor no cargó.");
+        if (!nombre || !cedula || !smiles) {
+            alert("Por favor complete sus datos y el dibujo.");
             return;
         }
 
-        const estructura = editorQuimico.smiles();
+        // Su URL de Google Apps Script
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwPsysDh255aIdyonjBX1SvGqQG9lNJzXH__Is_aJ_wWeikxdFpIkG0ryFg2QCQJF3E4g/exec';
 
-        if (!n || !c || !estructura) {
-            alert("Por favor rellene todos los campos y dibuje la molécula.");
-            return;
-        }
-
-        document.getElementById('mensaje').innerText = "⏳ Enviando...";
-
-        // Tu URL de Google Sheets
-        const URL_GOOGLE = 'https://script.google.com/macros/s/AKfycbwPsysDh255aIdyonjBX1SvGqQG9lNJzXH__Is_aJ_wWeikxdFpIkG0ryFg2QCQJF3E4g/exec';
-
-        fetch(URL_GOOGLE, {
+        fetch(scriptURL, {
             method: 'POST',
             mode: 'no-cors',
             body: JSON.stringify({
-                nombre: n,
-                cedula: c,
+                nombre: nombre,
+                cedula: cedula,
                 pregunta: "(S)-2-butanol",
-                smiles: estructura
+                smiles: smiles
             })
         }).then(() => {
-            alert("¡Éxito! Su examen ha sido recibido.");
-            document.getElementById('mensaje').innerText = "✅ Enviado con éxito.";
-            document.getElementById('mensaje').style.color = "green";
-        }).catch(e => {
-            alert("Error al enviar. Intente de nuevo.");
-            console.error(e);
-        });
+            alert("✅ Evaluación enviada con éxito.");
+        }).catch(() => alert("Error al enviar."));
     }
 </script>
 
