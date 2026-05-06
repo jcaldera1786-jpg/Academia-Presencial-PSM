@@ -9,69 +9,77 @@
 
     <style>
         :root { --psm-blue: #003366; --psm-gold: #b8860b; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; padding: 15px; text-align: center; }
-        .container { max-width: 650px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 10px solid var(--psm-blue); }
-        input { width: 90%; padding: 12px; margin: 5px 0; border: 1px solid #ccc; border-radius: 6px; }
-        /* El contenedor debe tener estas dimensiones para que el minimalista no se rompa */
-        #jsme_container { width: 100%; height: 400px; margin: 20px auto; }
-        .btn-send { background: #28a745; color: white; border: none; padding: 15px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; padding: 10px; margin: 0; text-align: center; }
+        .container { max-width: 650px; margin: 15px auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 10px solid var(--psm-blue); }
+        .input-group { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+        input { flex: 1; min-width: 200px; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
+        .instrucciones { background: #fff9c4; padding: 15px; border-radius: 8px; border-left: 5px solid var(--psm-gold); text-align: left; margin-bottom: 20px; font-size: 0.9rem; }
+        #jsme_container { width: 100%; height: 400px; border: 1px solid #ccc; border-radius: 10px; background: #fff; }
+        .btn-enviar { background: #28a745; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; font-size: 1.1rem; margin-top: 20px; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Examen de Isomería y Estereoquímica</h2>
+    <h2>Examen de Isomería</h2>
     <p><b>Prof. José Ángel Caldera</b></p>
 
-    <input type="text" id="student_name" placeholder="Nombre y Apellido">
-    <input type="text" id="student_id" placeholder="Cédula">
+    <div class="input-group">
+        <input type="text" id="nombre" placeholder="Nombre Completo">
+        <input type="text" id="cedula" placeholder="Cédula">
+    </div>
 
-    <div style="background: #fff9c4; padding: 10px; border-radius: 6px; text-align: left; border-left: 5px solid var(--psm-gold); margin: 15px 0;">
-        <strong>Reto:</strong> Dibuje el <b>(S)-2-butanol</b> indicando la cuña correcta.
+    <div class="instrucciones">
+        <strong>Reto:</strong> Dibuje el <b>(S)-2-butanol</b>. 
+        <br>Use las herramientas laterales para indicar la estereoquímica.
     </div>
 
     <div id="jsme_container"></div>
 
-    <button class="btn-send" onclick="enviarExamen()">✅ Enviar Evaluación</button>
+    <button class="btn-enviar" onclick="enviarExamen()">✅ Enviar Evaluación</button>
 </div>
 
 <script>
     var jsmeApplet;
 
-    // PATRÓN MINIMALISTA: JSME busca esta función al terminar de cargar los archivos .cache.js
+    // Esta función es la que JSME busca automáticamente para "despertar"
     function jsmeOnLoad() {
-        console.log("JSME Engine iniciado...");
-        // Esta línea es la que crea el objeto en el DOM
         jsmeApplet = new JSME.Jsme("jsme_container", "100%", "400px", {
             "options" : "stereo,hydrogens"
         });
     }
 
     function enviarExamen() {
-        if (!jsmeApplet) {
-            alert("El editor no ha cargado aún.");
-            return;
-        }
-        var smiles = jsmeApplet.smiles();
-        var nombre = document.getElementById('student_name').value;
+        const nombre = document.getElementById('nombre').value;
+        const cedula = document.getElementById('cedula').value;
         
-        if (!nombre || !smiles) {
-            alert("Complete los datos y el dibujo.");
+        if (!jsmeApplet) {
+            alert("El editor no ha cargado. Por favor, refresque la página.");
             return;
         }
 
-        // URL de tu Script de Google para Química Orgánica
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwPsysDh255aIdyonjBX1SvGqQG9lNJzXH__Is_aJ_wWeikxdFpIkG0ryFg2QCQJF3E4g/exec';
+        const smiles = jsmeApplet.smiles();
         
+        if (!nombre || !cedula || !smiles) {
+            alert("Por favor complete sus datos y el dibujo.");
+            return;
+        }
+
+        // URL de su Google Script para Química Orgánica
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwPsysDh255aIdyonjBX1SvGqQG9lNJzXH__Is_aJ_wWeikxdFpIkG0ryFg2QCQJF3E4g/exec';
+
         fetch(scriptURL, {
             method: 'POST',
             mode: 'no-cors',
             body: JSON.stringify({
-                name: nombre,
-                cedula: document.getElementById('student_id').value,
+                nombre: nombre,
+                cedula: cedula,
+                pregunta: "(S)-2-butanol",
                 smiles: smiles
             })
-        }).then(() => alert("Respuesta registrada."));
+        }).then(() => {
+            alert("✅ Evaluación enviada con éxito.");
+        });
     }
 </script>
 
