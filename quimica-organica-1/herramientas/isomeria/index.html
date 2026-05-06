@@ -2,43 +2,69 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Evaluación de Estereoquímica - PSM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gran Reto Isomérico - Prof. Caldera</title>
     <style>
         :root { --psm-blue: #003366; --psm-gold: #b8860b; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; padding: 10px; text-align: center; }
-        .container { max-width: 550px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 10px solid var(--psm-blue); }
-        .input-group { margin-bottom: 15px; text-align: left; }
-        input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        #cuadro_smiles { background: #e8f5e9; padding: 15px; border: 2px solid #2e7d32; border-radius: 8px; font-weight: bold; min-height: 25px; margin: 15px 0; word-break: break-all; }
-        .btn-send { background: #28a745; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 10px; text-align: center; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border-top: 10px solid var(--psm-blue); }
+        
+        .progreso { font-size: 0.9rem; color: var(--psm-blue); font-weight: bold; margin-bottom: 10px; }
+        .caja-reto { background: #fff9c4; padding: 15px; border-radius: 10px; border-left: 6px solid var(--psm-gold); text-align: left; margin-bottom: 20px; min-height: 80px; }
+        
+        .input-datos { display: flex; gap: 10px; margin-bottom: 15px; }
+        input { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; }
+        
+        #cuadro_smiles { background: #e8f5e9; padding: 12px; border: 2px solid #2e7d32; border-radius: 8px; font-family: monospace; font-size: 14px; margin-bottom: 15px; min-height: 20px; }
+        
+        .controles { display: flex; justify-content: space-between; gap: 10px; }
+        .btn { padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; flex: 1; transition: 0.3s; }
+        .btn-editor { background: var(--psm-gold); color: white; }
+        .btn-enviar { background: #28a745; color: white; }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Examen de Isomería</h2>
+    <h2 style="margin-top:0;">Evaluación: Reto Isomérico</h2>
     <p><b>Prof. José Ángel Caldera</b></p>
 
-    <div class="input-group">
-        <input type="text" id="nombre" placeholder="Nombre y Apellido">
-    </div>
-    <div class="input-group">
-        <input type="text" id="cedula" placeholder="Cédula de Identidad">
+    <div class="input-datos">
+        <input type="text" id="nombre" placeholder="Nombre Apellido">
+        <input type="text" id="cedula" placeholder="Cédula">
     </div>
 
-    <button onclick="window.open('editor.html','EditorQuimico','width=420,height=480')" style="background:var(--psm-gold); color:white; border:none; padding:10px; border-radius:5px; cursor:pointer; width:100%;">
-        🎨 Abrir Editor para dibujar (S)-2-butanol
+    <div class="progreso">Pregunta <span id="num_preg">1</span> de 5</div>
+
+    <div class="caja-reto">
+        <strong id="titulo_reto">Reto 1:</strong>
+        <p id="desc_reto" style="margin:5px 0;">Dibuje el <b>(R)-2-Clorobutano</b>.</p>
+    </div>
+
+    <button class="btn btn-editor" onclick="window.open('editor.html','EditorQuimico','width=420,height=500')">
+        🎨 Abrir Editor para este Reto
     </button>
 
-    <p>Estructura capturada:</p>
-    <div id="cuadro_smiles">Aún no hay dibujo...</div>
+    <p style="margin-bottom:5px; font-size:0.8rem;">Código capturado:</p>
+    <div id="cuadro_smiles">Esperando dibujo...</div>
     <input type="hidden" id="smiles_input">
 
-    <button class="btn-send" onclick="enviarFinal()">✅ Guardar y Enviar Evaluación</button>
+    <div class="controles">
+        <button class="btn btn-enviar" id="btn_final" onclick="procesarEnvio()">✅ Enviar Respuesta</button>
+    </div>
 </div>
 
 <script>
-    // Escucha el SMILES desde la ventana flotante
+    let preguntaActual = 0;
+    const retos = [
+        { nombre: "(R)-2-Clorobutano", desc: "Dibuje el <b>(R)-2-Clorobutano</b>. Cuide la prioridad CIP." },
+        { nombre: "(Z)-2-Bromo-2-penteno", desc: "Dibuje el isómero <b>(Z)</b> del 2-bromo-2-penteno." },
+        { nombre: "trans-1,2-Dimetilciclohexano", desc: "Dibuje el <b>trans</b>-1,2-dimetilciclohexano en forma plana." },
+        { nombre: "(2S,3R)-3-Bromo-2-butanol", desc: "Dibuje el <b>(2S,3R)-3-bromo-2-butanol</b>. Dos centros quirales." },
+        { nombre: "Ácido (S)-Láctico", desc: "Dibuje el ácido <b>(S)-2-hidroxipropanoico</b>." }
+    ];
+
     window.addEventListener("message", function(event) {
         if (event.data && event.data.smiles) {
             document.getElementById("cuadro_smiles").innerText = event.data.smiles;
@@ -46,31 +72,48 @@
         }
     }, false);
 
-    function enviarFinal() {
+    function procesarEnvio() {
         const nombre = document.getElementById("nombre").value;
         const cedula = document.getElementById("cedula").value;
         const smiles = document.getElementById("smiles_input").value;
 
-        if(!nombre || !cedula || !smiles) {
-            alert("Por favor complete todos los campos.");
+        if(!nombre || !cedula || !smiles || smiles === "") {
+            alert("⚠️ Complete sus datos y el dibujo antes de enviar.");
             return;
         }
 
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyd-rq5hxc8284cXogD6gjRFt7HC-Z8sQpxO4eK-Bpskzy4oVSUqguKZMSULZMYxSbTqQ/exec'; // <--- PEGA TU URL AQUÍ
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzxCNyaTRMC6zew-bFigf73NGMFFE2eibHK0fVXzButmnly7sCvVYgbquD7iz-LpL4-Jg/exec'; 
 
-        fetch(scriptURL, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: JSON.stringify({
-                type: "EVALUACION_SMILES",
-                id: cedula,
-                name: nombre,
-                preguntaCorrecta: "(S)-2-butanol",
-                smiles: smiles
-            })
-        }).then(() => {
-            alert("Enviado. Los datos aparecerán en el Drive del Profesor.");
-            location.reload();
+        const payload = {
+            "type": "EVALUACION_SMILES",
+            "id": cedula,
+            "name": nombre,
+            "preguntaCorrecta": retos[preguntaActual].nombre,
+            "smiles": smiles
+        };
+
+        const btn = document.getElementById("btn_final");
+        btn.disabled = true;
+        btn.innerText = "⏳ Guardando...";
+
+        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) })
+        .then(() => {
+            alert("✅ Respuesta " + (preguntaActual + 1) + " guardada.");
+            preguntaActual++;
+            
+            if(preguntaActual < retos.length) {
+                // Actualizar interfaz para el siguiente reto
+                document.getElementById("num_preg").innerText = preguntaActual + 1;
+                document.getElementById("titulo_reto").innerText = "Reto " + (preguntaActual + 1) + ":";
+                document.getElementById("desc_reto").innerHTML = retos[preguntaActual].desc;
+                document.getElementById("cuadro_smiles").innerText = "Esperando dibujo...";
+                document.getElementById("smiles_input").value = "";
+                btn.disabled = false;
+                btn.innerText = "✅ Enviar Respuesta";
+            } else {
+                alert("🎉 ¡Has completado el examen! Todas las respuestas están en el Drive del Profesor.");
+                location.reload();
+            }
         });
     }
 </script>
