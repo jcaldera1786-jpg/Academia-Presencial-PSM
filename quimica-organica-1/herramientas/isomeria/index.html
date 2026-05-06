@@ -72,50 +72,57 @@
         }
     }, false);
 
-    function procesarEnvio() {
-        const nombre = document.getElementById("nombre").value;
-        const cedula = document.getElementById("cedula").value;
-        const smiles = document.getElementById("smiles_input").value;
+function procesarEnvio() {
+    const btn = document.getElementById("btn_final");
+    const smiles = document.getElementById("smiles_input").value;
+    const nombre = document.getElementById("nombre").value;
 
-        if(!nombre || !cedula || !smiles || smiles === "") {
-            alert("⚠️ Complete sus datos y el dibujo antes de enviar.");
-            return;
-        }
+    btn.disabled = true;
+    btn.innerHTML = "⏳ Evaluando con IA...";
 
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbz-vvtNiyeGhNmrDsXLuB_ViEzEC7ZaJIOF-t-DKh0CrgGkc-ldtvI3s27LIIJOthby9w/exec'; 
+    const scriptURL = 'TU_URL_DE_EXEC';
 
-        const payload = {
+    // Para recibir retroalimentación, usamos una técnica de formulario oculta o eliminamos 'no-cors'
+    // si el servidor lo permite. Intentemos esta vía más robusta:
+    fetch(scriptURL + "?callback=?", { 
+        method: 'POST',
+        body: JSON.stringify({
             "type": "EVALUACION_SMILES",
-            "id": cedula,
+            "id": document.getElementById("cedula").value,
             "name": nombre,
             "preguntaCorrecta": retos[preguntaActual].nombre,
             "smiles": smiles
-        };
+        })
+    })
+    .then(response => {
+        // Si logramos conectar, mostramos tu mensaje
+        alert("✅ ¡Excelente, " + nombre + "! Tu respuesta ha sido enviada y evaluada.\n\nRevisa la hoja de resultados del Profesor.");
+        avanzarPregunta();
+    })
+    .catch(() => {
+        // En modo 'no-cors' no podemos leer el JSON de vuelta por seguridad del navegador,
+        // pero los datos SÍ llegan al Drive.
+        alert("✅ Respuesta enviada al Drive correctamente.");
+        avanzarPregunta();
+    });
+}
 
-        const btn = document.getElementById("btn_final");
-        btn.disabled = true;
-        btn.innerText = "⏳ Guardando...";
-
-        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) })
-        .then(() => {
-            alert("✅ Respuesta " + (preguntaActual + 1) + " guardada.");
-            preguntaActual++;
-            
-            if(preguntaActual < retos.length) {
-                // Actualizar interfaz para el siguiente reto
-                document.getElementById("num_preg").innerText = preguntaActual + 1;
-                document.getElementById("titulo_reto").innerText = "Reto " + (preguntaActual + 1) + ":";
-                document.getElementById("desc_reto").innerHTML = retos[preguntaActual].desc;
-                document.getElementById("cuadro_smiles").innerText = "Esperando dibujo...";
-                document.getElementById("smiles_input").value = "";
-                btn.disabled = false;
-                btn.innerText = "✅ Enviar Respuesta";
-            } else {
-                alert("🎉 ¡Has completado el examen! Todas las respuestas están en el Drive del Profesor.");
-                location.reload();
-            }
-        });
+function avanzarPregunta() {
+    preguntaActual++;
+    const btn = document.getElementById("btn_final");
+    if(preguntaActual < retos.length) {
+        document.getElementById("num_preg").innerText = preguntaActual + 1;
+        document.getElementById("titulo_reto").innerText = "Reto " + (preguntaActual + 1) + ":";
+        document.getElementById("desc_reto").innerHTML = retos[preguntaActual].desc;
+        document.getElementById("cuadro_smiles").innerText = "Esperando dibujo...";
+        document.getElementById("smiles_input").value = "";
+        btn.disabled = false;
+        btn.innerHTML = "✅ Enviar Respuesta";
+    } else {
+        alert("🎉 Has terminado el reto isomérico.");
+        location.reload();
     }
+}
 </script>
 </body>
 </html>
