@@ -6,12 +6,17 @@
     <title>Evaluación de Estereoquímica - PSM</title>
     <style>
         :root { --psm-blue: #003366; --psm-gold: #b8860b; }
-        body { font-family: sans-serif; background: #f4f7f6; padding: 20px; text-align: center; }
-        .container { max-width: 500px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 10px solid var(--psm-blue); }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-        .btn-editor { background: var(--psm-gold); color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; margin: 15px 0; }
-        .btn-send { background: #28a745; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
-        #smiles_display { background: #eee; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 0.8rem; min-height: 20px; word-break: break-all; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; padding: 15px; margin: 0; text-align: center; }
+        .container { max-width: 500px; margin: 20px auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 10px solid var(--psm-blue); }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: var(--psm-blue); }
+        input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        
+        .caja-herramienta { background: #e3f2fd; padding: 15px; border-radius: 10px; border: 1px dashed var(--psm-blue); margin: 20px 0; }
+        .btn-abrir { background: var(--psm-gold); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; margin-bottom: 10px; }
+        
+        .smiles-input { background: #fff; border: 2px solid var(--psm-gold); color: #333; font-family: monospace; font-weight: bold; }
+        .btn-enviar { background: #28a745; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; font-size: 1.1rem; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -20,59 +25,46 @@
     <h2>Examen de Isomería</h2>
     <p><b>Prof. José Ángel Caldera</b></p>
 
-    <input type="text" id="nombre" placeholder="Nombre y Apellido">
-    <input type="text" id="cedula" placeholder="Cédula">
-
-    <div style="background: #fff9c4; padding: 10px; border-radius: 8px; text-align: left; font-size: 0.9rem;">
-        <strong>Paso 1:</strong> Haga clic en el botón dorado para abrir el editor.<br>
-        <strong>Paso 2:</strong> Dibuje el <b>(S)-2-butanol</b> y cierre el editor.<br>
-        <strong>Paso 3:</strong> Verifique su estructura abajo y envíe.
+    <div class="input-group">
+        <label>Nombre y Apellido:</label>
+        <input type="text" id="nombre" placeholder="Ej: Juan Pérez">
     </div>
 
-    <button class="btn-editor" onclick="abrirEditor()">🎨 Abrir Editor de Estructuras</button>
-    
-    <p>Estructura capturada (SMILES):</p>
-    <div id="smiles_display">Esperando dibujo...</div>
-    <input type="hidden" id="smiles_input">
+    <div class="input-group">
+        <label>Cédula:</label>
+        <input type="text" id="cedula" placeholder="V-12345678">
+    </div>
 
-    <button class="btn-send" onclick="enviarExamen()">✅ Enviar Evaluación a Drive</button>
+    <div class="caja-herramienta">
+        <p><strong>Reto:</strong> Dibuje el <b>(S)-2-butanol</b></p>
+        
+        <a href="https://jsme-editor.github.io/dist/JSME_minimal.html" target="_blank" class="btn-abrir">
+            1. Abrir Editor Químico ↗
+        </a>
+        
+        <p style="font-size: 0.85rem; color: #555;">
+            Dibuja la molécula, pulsa el botón <b>SMILES</b> en el editor, <b>Copia</b> el código que aparece y <b>Pégalo</b> aquí abajo:
+        </p>
+
+        <input type="text" id="smiles_rta" class="smiles-input" placeholder="Pegue aquí el código SMILES">
+    </div>
+
+    <button class="btn-enviar" onclick="enviarExamen()">✅ Enviar Evaluación Final</button>
 </div>
 
 <script>
-    let ventanaEditor;
-
-    function abrirEditor() {
-        // Abrimos la página oficial del editor minimalista que ya sabemos que funciona
-        const url = "https://jsme-editor.github.io/dist/JSME_minimal.html";
-        const specs = "width=450,height=500,left=100,top=100";
-        ventanaEditor = window.open(url, "EditorJSME", specs);
-
-        // Monitoreamos cuando el usuario cierra la ventana para pedirle el SMILES
-        const timer = setInterval(function() {
-            if (ventanaEditor.closed) {
-                clearInterval(timer);
-                alert("¿Terminó su dibujo? Por favor, pegue el código SMILES que copió del editor (Botón SMILES en el editor).");
-                let smilesManual = prompt("Pegue aquí el SMILES generado:");
-                if (smilesManual) {
-                    document.getElementById('smiles_display').innerText = smilesManual;
-                    document.getElementById('smiles_input').value = smilesManual;
-                }
-            }
-        }, 1000);
-    }
-
     function enviarExamen() {
         const nombre = document.getElementById('nombre').value;
         const cedula = document.getElementById('cedula').value;
-        const smiles = document.getElementById('smiles_input').value;
+        const smiles = document.getElementById('smiles_rta').value;
 
-        if (!nombre || !smiles) {
-            alert("Por favor complete los datos y el dibujo.");
+        if (!nombre || !cedula || !smiles) {
+            alert("Por favor, complete todos los campos incluyendo el SMILES del dibujo.");
             return;
         }
 
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwPsysDh255aIdyonjBX1SvGqQG9lNJzXH__Is_aJ_wWeikxdFpIkG0ryFg2QCQJF3E4g/exec';
-        
+
         fetch(scriptURL, {
             method: 'POST',
             mode: 'no-cors',
@@ -82,7 +74,10 @@
                 pregunta: "(S)-2-butanol",
                 smiles: smiles
             })
-        }).then(() => alert("✅ Evaluación enviada con éxito."));
+        }).then(() => {
+            alert("¡Éxito! Su examen ha sido enviado correctamente.");
+            location.reload(); // Limpia el examen para el siguiente
+        }).catch(err => alert("Error al enviar. Verifique su conexión."));
     }
 </script>
 
