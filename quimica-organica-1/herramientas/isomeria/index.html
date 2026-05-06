@@ -2,87 +2,77 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Examen de Isomería - PSM</title>
+    <title>Evaluación de Estereoquímica - PSM</title>
     <style>
-        :root { --psm-blue: #003366; }
-        body { font-family: sans-serif; background: #f4f7f6; text-align: center; padding: 20px; }
-        .container { max-width: 500px; margin: auto; background: white; padding: 25px; border-radius: 15px; border-top: 8px solid var(--psm-blue); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .btn-flotante { background: #b8860b; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; margin: 15px 0; }
-        #cuadro_smiles { background: #e8f5e9; padding: 15px; border: 2px solid #2e7d32; border-radius: 8px; font-weight: bold; color: #1b5e20; min-height: 20px; margin: 10px 0; }
-        .btn-enviar { background: #28a745; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        :root { --psm-blue: #003366; --psm-gold: #b8860b; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; padding: 10px; text-align: center; }
+        .container { max-width: 550px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 10px solid var(--psm-blue); }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        #cuadro_smiles { background: #e8f5e9; padding: 15px; border: 2px solid #2e7d32; border-radius: 8px; font-weight: bold; min-height: 25px; margin: 15px 0; word-break: break-all; }
+        .btn-send { background: #28a745; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Evaluación de Estereoquímica</h2>
+    <h2>Examen de Isomería</h2>
     <p><b>Prof. José Ángel Caldera</b></p>
-    
-    <input type="text" id="nombre" placeholder="Nombre y Apellido" style="width:90%; padding:10px; margin-bottom:10px;">
 
-    <div style="text-align:left; background:#fff9c4; padding:10px; border-radius:8px; font-size:14px;">
-        <strong>Reto:</strong> Dibuje el <b>(S)-2-butanol</b> en la ventana emergente.
+    <div class="input-group">
+        <input type="text" id="nombre" placeholder="Nombre y Apellido">
+    </div>
+    <div class="input-group">
+        <input type="text" id="cedula" placeholder="Cédula de Identidad">
     </div>
 
-    <button class="btn-flotante" onclick="abrirVentana()">🎨 Abrir Editor Flotante</button>
+    <button onclick="window.open('editor.html','EditorQuimico','width=420,height=480')" style="background:var(--psm-gold); color:white; border:none; padding:10px; border-radius:5px; cursor:pointer; width:100%;">
+        🎨 Abrir Editor para dibujar (S)-2-butanol
+    </button>
 
     <p>Estructura capturada:</p>
     <div id="cuadro_smiles">Aún no hay dibujo...</div>
+    <input type="hidden" id="smiles_input">
 
-    <button class="btn-enviar" onclick="enviarFinal()">✅ Enviar a Drive</button>
+    <button class="btn-send" onclick="enviarFinal()">✅ Guardar y Enviar Evaluación</button>
 </div>
 
 <script>
-    function abrirVentana() {
-        // Abre tu editor local en una ventana flotante pequeña
-        window.open("editor.html", "EditorQuimico", "width=420,height=450,scrollbars=no");
-    }
-
-    // EL RECEPTOR: Escucha los mensajes que vienen de la ventana flotante
+    // Escucha el SMILES desde la ventana flotante
     window.addEventListener("message", function(event) {
-    // IMPORTANTE: Imprimimos en consola para rastrear si el mensaje llega
-    console.log("Mensaje recibido desde el editor:", event.data);
-
-    if (event.data && typeof event.data.smiles !== 'undefined') {
-        const cuadro = document.getElementById("cuadro_smiles");
-        
-        if (event.data.smiles === "") {
-            cuadro.innerText = "Dibujo borrado... esperando trazo.";
-            cuadro.style.color = "orange";
-        } else {
-            cuadro.innerText = event.data.smiles;
-            cuadro.style.color = "#1b5e20"; // Verde éxito
-            // Guardamos el dato para el envío final
+        if (event.data && event.data.smiles) {
+            document.getElementById("cuadro_smiles").innerText = event.data.smiles;
             document.getElementById("smiles_input").value = event.data.smiles;
         }
-    }
-}, false);
+    }, false);
 
     function enviarFinal() {
-        const smiles = document.getElementById("smiles_input").value;
         const nombre = document.getElementById("nombre").value;
-        
-        if(!smiles || !nombre) {
-            alert("Por favor, asegúrese de haber dibujado la molécula y escrito su nombre.");
+        const cedula = document.getElementById("cedula").value;
+        const smiles = document.getElementById("smiles_input").value;
+
+        if(!nombre || !cedula || !smiles) {
+            alert("Por favor complete todos los campos.");
             return;
         }
 
-        // Tu URL de Google Apps Script
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwPsysDh255aIdyonjBX1SvGqQG9lNJzXH__Is_aJ_wWeikxdFpIkG0ryFg2QCQJF3E4g/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwzgA6GuPJxEP1PTCByJKa4tiEn5-mbUyVKM4Gx49Hobg8ExGi_Xnq4IdiPmD6daRikyQ/exec'; // <--- PEGA TU URL AQUÍ
 
         fetch(scriptURL, {
             method: 'POST',
             mode: 'no-cors',
             body: JSON.stringify({
-                nombre: nombre,
-                cedula: document.getElementById('cedula').value,
+                type: "EVALUACION_SMILES",
+                id: cedula,
+                name: nombre,
+                preguntaCorrecta: "(S)-2-butanol",
                 smiles: smiles
             })
         }).then(() => {
-            alert("✅ ¡Evaluación recibida! Ya puede cerrar las ventanas.");
+            alert("Enviado. Los datos aparecerán en el Drive del Profesor.");
+            location.reload();
         });
     }
 </script>
-
 </body>
 </html>
