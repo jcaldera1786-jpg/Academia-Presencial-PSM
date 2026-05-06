@@ -34,27 +34,47 @@
 
 <script>
     function abrirVentana() {
-        // Abrimos tu nuevo archivo local
-        window.open("editor.html", "EditorQuimico", "width=420,height=450,scrollbars=no,resizable=no");
+        // Abre tu editor local en una ventana flotante pequeña
+        window.open("editor.html", "EditorQuimico", "width=420,height=450,scrollbars=no");
     }
 
-    // ESCUCHADOR DE DATOS: Aquí es donde ocurre la magia
+    // EL RECEPTOR: Escucha los mensajes que vienen de la ventana flotante
     window.addEventListener("message", function(event) {
-        // Si el mensaje trae un SMILES, lo ponemos en el cuadro
+        // Si recibimos un mensaje con el SMILES, lo guardamos
         if (event.data && event.data.smiles) {
-            document.getElementById("cuadro_smiles").innerText = event.data.smiles;
+            // Actualizamos el cuadro visual para el estudiante
+            const cuadro = document.getElementById("cuadro_smiles"); 
+            cuadro.innerText = event.data.smiles;
+            cuadro.style.color = "#1b5e20"; // Cambia a verde oscuro al recibir datos
+            
+            // También lo guardamos en un campo oculto para el envío final
+            document.getElementById("smiles_input").value = event.data.smiles;
         }
     }, false);
 
     function enviarFinal() {
-        const smiles = document.getElementById("cuadro_smiles").innerText;
+        const smiles = document.getElementById("smiles_input").value;
         const nombre = document.getElementById("nombre").value;
-        if(smiles === "Aún no hay dibujo..." || !nombre) {
-            alert("Por favor, complete el dibujo y su nombre.");
+        
+        if(!smiles || !nombre) {
+            alert("Por favor, asegúrese de haber dibujado la molécula y escrito su nombre.");
             return;
         }
-        // Tu lógica de fetch a Google Sheets aquí...
-        alert("Enviando " + smiles + " a la base de datos.");
+
+        // Tu URL de Google Apps Script
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwPsysDh255aIdyonjBX1SvGqQG9lNJzXH__Is_aJ_wWeikxdFpIkG0ryFg2QCQJF3E4g/exec';
+
+        fetch(scriptURL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({
+                nombre: nombre,
+                cedula: document.getElementById('cedula').value,
+                smiles: smiles
+            })
+        }).then(() => {
+            alert("✅ ¡Evaluación recibida! Ya puede cerrar las ventanas.");
+        });
     }
 </script>
 

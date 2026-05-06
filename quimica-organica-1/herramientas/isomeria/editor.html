@@ -5,26 +5,30 @@
     <script type="text/javascript" src="jsme/jsme.nocache.js"></script>
     <script>
         var jsmeApplet;
+
         function jsmeOnLoad() {
-            // JSApplet es la forma minimalista que encontraste
+            // Inicializa el editor minimalista
             jsmeApplet = new JSApplet.JSME("jsme_container", "380px", "340px", {
                 "options" : "stereo,hydrogens"
             });
-            
-            // Cada vez que el estudiante dibuje algo, enviamos el SMILES al padre (tu examen)
-            jsmeApplet.setNotifyStructureChangeJSfunction("enviarAlPadre");
+
+            // ESTA ES LA MAGIA: Avisa a la función "enviarAlExamen" ante cualquier cambio
+            jsmeApplet.setNotifyStructureChangeJSfunction("enviarAlExamen");
         }
 
-        function enviarAlPadre() {
+        function enviarAlExamen() {
             var smiles = jsmeApplet.smiles();
-            window.opener.postMessage({ "smiles": smiles }, "*");
+            // Envía el SMILES a la ventana que lo abrió (tu examen)
+            if (window.opener) {
+                window.opener.postMessage({ "smiles": smiles }, "*");
+            }
         }
     </script>
 </head>
-<body style="margin:0; overflow:hidden;">
+<body style="margin:0; background:#fff; overflow:hidden;">
     <div id="jsme_container"></div>
-    <p style="font-family:sans-serif; font-size:12px; text-align:center; color:gray;">
-        El dibujo se guarda automáticamente en el examen.
-    </p>
+    <div style="font-family:sans-serif; font-size:11px; text-align:center; padding:5px; background:#f0f0f0;">
+        El dibujo se actualiza automáticamente en el examen.
+    </div>
 </body>
 </html>
