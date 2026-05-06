@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Evaluación de Estereoquímica - PSM</title>
+    <script type="text/javascript" src="../../../jsme/jsme.nocache.js"></script>
+    <style>
+        :root { --psm-blue: #003366; --psm-gold: #b8860b; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; padding: 20px; text-align: center; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 10px solid var(--psm-blue); }
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        input { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; }
+        #jsme_container { width: 100%; height: 450px; margin: 20px auto; border: 2px solid var(--psm-blue); background: white; }
+        .btn-send { background: #28a745; color: white; border: none; padding: 15px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Examen de Isomería y Estereoquímica</h2>
+    <p><b>Prof. José Ángel Caldera</b></p>
+
+    <div class="input-group">
+        <input type="text" id="student_name" placeholder="Nombre y Apellido">
+        <input type="text" id="student_id" placeholder="Cédula">
+    </div>
+
+    <div style="background: #fff9c4; padding: 15px; border-radius: 6px; text-align: left; border-left: 5px solid var(--psm-gold); margin-bottom: 20px;">
+        <strong>Reto:</strong> Dibuje la estructura del <b>(S)-2-butanol</b>.<br>
+        • Use la herramienta de enlaces para la cadena principal.<br>
+        • Para la <b>estereoquímica</b>, haga clic repetido sobre el enlace del -OH hasta obtener la <b>cuña (wedge)</b> correcta.
+    </div>
+
+    <div id="jsme_container"></div>
+
+    <button class="btn-send" onclick="enviarExamen()">✅ Guardar y Enviar Evaluación</button>
+    <p id="status" style="margin-top:15px; font-weight:bold; color:#666;"></p>
+</div>
+
+<script>
+    var jsmeApplet;
+
+    // Esta función se activa automáticamente al cargar la librería local
+    function jsmeOnLoad() {
+        jsmeApplet = new JSME.Jsme("jsme_container", "100%", "450px", {
+            "options" : "stereo,hydrogens"
+        });
+    }
+
+    function enviarExamen() {
+        const name = document.getElementById('student_name').value;
+        const id = document.getElementById('student_id').value;
+        
+        if (!jsmeApplet) {
+            alert("Error: El editor químico no se ha cargado.");
+            return;
+        }
+
+        const smiles = jsmeApplet.smiles();
+
+        if (!name || !id || !smiles) {
+            alert("Por favor, complete sus datos y realice el dibujo antes de enviar.");
+            return;
+        }
+
+        document.getElementById('status').innerText = "⏳ Enviando respuesta...";
+
+        // Tu URL de Google Apps Script para recibir los datos
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwPsysDh255aIdyonjBX1SvGqQG9lNJzXH__Is_aJ_wWeikxdFpIkG0ryFg2QCQJF3E4g/exec';
+
+        fetch(scriptURL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({
+                id: id,
+                name: name,
+                type: "EVALUACION_QUIMICA",
+                pregunta: "(S)-2-butanol",
+                resultado_smiles: smiles
+            })
+        }).then(() => {
+            document.getElementById('status').innerText = "✅ ¡Evaluación enviada con éxito!";
+            document.getElementById('status').style.color = "green";
+            alert("Su respuesta ha sido registrada satisfactoriamente.");
+        }).catch(err => {
+            document.getElementById('status').innerText = "❌ Error al enviar. Intente de nuevo.";
+            console.error(err);
+        });
+    }
+</script>
+
+</body>
+</html>
