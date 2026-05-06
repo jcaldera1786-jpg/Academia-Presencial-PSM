@@ -40,17 +40,23 @@
 
     // EL RECEPTOR: Escucha los mensajes que vienen de la ventana flotante
     window.addEventListener("message", function(event) {
-        // Si recibimos un mensaje con el SMILES, lo guardamos
-        if (event.data && event.data.smiles) {
-            // Actualizamos el cuadro visual para el estudiante
-            const cuadro = document.getElementById("cuadro_smiles"); 
+    // IMPORTANTE: Imprimimos en consola para rastrear si el mensaje llega
+    console.log("Mensaje recibido desde el editor:", event.data);
+
+    if (event.data && typeof event.data.smiles !== 'undefined') {
+        const cuadro = document.getElementById("cuadro_smiles");
+        
+        if (event.data.smiles === "") {
+            cuadro.innerText = "Dibujo borrado... esperando trazo.";
+            cuadro.style.color = "orange";
+        } else {
             cuadro.innerText = event.data.smiles;
-            cuadro.style.color = "#1b5e20"; // Cambia a verde oscuro al recibir datos
-            
-            // También lo guardamos en un campo oculto para el envío final
+            cuadro.style.color = "#1b5e20"; // Verde éxito
+            // Guardamos el dato para el envío final
             document.getElementById("smiles_input").value = event.data.smiles;
         }
-    }, false);
+    }
+}, false);
 
     function enviarFinal() {
         const smiles = document.getElementById("smiles_input").value;
