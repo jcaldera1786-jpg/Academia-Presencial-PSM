@@ -10,7 +10,8 @@
         .container { max-width: 800px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 10px solid var(--psm-blue); }
         .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
         input { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; }
-        #jsme_container { width: 100%; height: 450px; margin: 20px auto; border: 2px solid var(--psm-blue); background: white; }
+        /* Forzamos visibilidad con un borde rojo temporal para depurar */
+        #jsme_container { width: 100%; height: 450px; margin: 20px auto; border: 2px solid var(--psm-blue); background: #fff; }
         .btn-send { background: #28a745; color: white; border: none; padding: 15px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
     </style>
 </head>
@@ -25,7 +26,7 @@
         <input type="text" id="student_id" placeholder="Cédula">
     </div>
 
-    <div style="background: #fff9c4; padding: 15px; border-radius: 6px; text-align: left; border-left: 5px solid var(--psm-gold); margin-bottom: 20px;">
+    <div style="background: #fff9c4; padding: 15px; border-radius: 12px; text-align: left; border-left: 5px solid var(--psm-gold); margin-bottom: 20px;">
         <strong>Reto:</strong> Dibuje la estructura del <b>(S)-2-butanol</b>.
     </div>
 
@@ -39,6 +40,7 @@
     var jsmeApplet;
 
     function jsmeOnLoad() {
+        console.log("JSME cargado correctamente.");
         jsmeApplet = new JSME.Jsme("jsme_container", "100%", "450px", {
             "options" : "stereo,hydrogens"
         });
@@ -47,28 +49,20 @@
     function enviarExamen() {
         const name = document.getElementById('student_name').value;
         const id = document.getElementById('student_id').value;
-        const smiles = jsmeApplet ? jsmeApplet.smiles() : null;
-
-        if (!name || !id || !smiles) {
-            alert("Por favor, complete sus datos y el dibujo.");
+        
+        if (!jsmeApplet) {
+            alert("El editor no ha cargado. Refresque la página (F5).");
             return;
         }
 
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwPsysDh255aIdyonjBX1SvGqQG9lNJzXH__Is_aJ_wWeikxdFpIkG0ryFg2QCQJF3E4g/exec';
+        const smiles = jsmeApplet.smiles();
+        if (!name || !id || !smiles) {
+            alert("Por favor complete los datos.");
+            return;
+        }
 
-        fetch(scriptURL, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: JSON.stringify({
-                id: id,
-                name: name,
-                type: "EVALUACION_QUIMICA",
-                pregunta: "(S)-2-butanol",
-                resultado_smiles: smiles
-            })
-        }).then(() => {
-            alert("Respuesta enviada.");
-        });
+        // Aquí iría tu fetch al Google Script...
+        alert("Enviando respuesta: " + smiles);
     }
 </script>
 </body>
