@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>Evaluación de Estereoquímica - PSM</title>
-    <script type="text/javascript" src="jsme/jsme.nocache.js"></script>
+    
+    <script type="text/javascript" src="https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/jsme/jsme.nocache.js"></script>
+    
     <style>
         :root { --psm-blue: #003366; --psm-gold: #b8860b; }
         body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; padding: 20px; text-align: center; }
         .container { max-width: 800px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 10px solid var(--psm-blue); }
         .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
         input { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; }
-        /* Forzamos visibilidad con un borde rojo temporal para depurar */
-        #jsme_container { width: 100%; height: 450px; margin: 20px auto; border: 2px solid var(--psm-blue); background: #fff; }
+        #jsme_container { width: 100%; height: 450px; margin: 20px auto; border: 2px solid var(--psm-blue); background: white; min-height: 450px; }
         .btn-send { background: #28a745; color: white; border: none; padding: 15px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
     </style>
 </head>
@@ -39,8 +40,8 @@
 <script>
     var jsmeApplet;
 
+    // Esta función DEBE llamarse exactamente así
     function jsmeOnLoad() {
-        console.log("JSME cargado correctamente.");
         jsmeApplet = new JSME.Jsme("jsme_container", "100%", "450px", {
             "options" : "stereo,hydrogens"
         });
@@ -51,18 +52,18 @@
         const id = document.getElementById('student_id').value;
         
         if (!jsmeApplet) {
-            alert("El editor no ha cargado. Refresque la página (F5).");
+            alert("El editor no ha cargado. Por favor, refresque la página.");
             return;
         }
 
         const smiles = jsmeApplet.smiles();
         if (!name || !id || !smiles) {
-            alert("Por favor complete los datos.");
+            alert("Complete sus datos y el dibujo.");
             return;
         }
 
-        // Aquí iría tu fetch al Google Script...
-        alert("Enviando respuesta: " + smiles);
+        alert("¡Listo! Enviando respuesta: " + smiles);
+        // Aquí sigue tu lógica de Google Sheets
     }
 </script>
 </body>
