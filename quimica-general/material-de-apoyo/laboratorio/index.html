@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía de Laboratorio - Dr. José Caldera</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 40px auto; padding: 20px; background-color: #f4f4f9; }
+        .container { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 15px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        h2 { color: #2980b9; margin-top: 30px; }
+        h3 { color: #16a085; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
+        th { background-color: #3498db; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        .formula { background: #e8f6f3; padding: 15px; border-left: 5px solid #1abc9c; font-family: 'Courier New', Courier, monospace; font-weight: bold; margin: 20px 0; }
+        .footer { margin-top: 50px; font-size: 0.9em; color: #7f8c8d; border-top: 1px solid #eee; pt: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Guía de Laboratorio: Propiedades de Transporte y Comportamiento Coligativo </h1>
+        <p><strong>Cátedra:</strong> Química I | <strong>Responsable:</strong> Dr. José Ángel Caldera Luzardo</p>
+        <p><strong>Institución:</strong> Instituto Universitario Politécnico "Santiago Mariño" (PSM)</p>
+
+        <hr>
+
+        <h2>1. JUSTIFICACIÓN ACADÉMICA</h2>
+        <p>Esta práctica cumple con el programa analítico vigente (2012-1), específicamente con las <strong>Unidades III (Soluciones)</strong> y <strong>IV (Estados de la Materia)</strong>. Se enfoca en la preparación de soluciones por gravimetría y su posterior validación mediante propiedades físicas. El uso del <strong>Viscosímetro Biobase BDV-2N</strong> permite al estudiante familiarizarse con el control de calidad reológico y la predicción termodinámica.</p>
+
+        <h2>2. OBJETIVOS</h2>
+        <ul>
+            <li><strong>Preparar</strong> soluciones acuosas de sacarosa por triplicado, calculando la molalidad teórica (<em>m<sub>t</sub></em>) por pesada.</li>
+            <li><strong>Determinar</strong> la densidad experimental y derivar la molalidad experimental (<em>m<sub>e</sub></em>).</li>
+            <li><strong>Validar</strong> la preparación utilizando la viscosidad como criterio de arbitraje ante desviaciones.</li>
+            <li><strong>Predecir</strong> el ascenso ebulloscópico (ΔT<sub>e</sub>) basado en el modelo de mejor ajuste validado.</li>
+        </ul>
+
+        <h2>3. METODOLOGÍA Y REGISTRO DE DATOS</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Muestra</th>
+                    <th>Conc. (%)</th>
+                    <th>m (Teórica)</th>
+                    <th>Densidad (g/mL)</th>
+                    <th>Viscosidad (cP)</th>
+                    <th>Torque (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Agua</td><td>0%</td><td>0.00</td><td>0.997</td><td>0.89</td><td>---</td></tr>
+                <tr><td>Solución 1</td><td>5%</td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>Solución 2</td><td>10%</td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>Solución 3</td><td>20%</td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>Solución 4</td><td>30%</td><td></td><td></td><td></td><td></td></tr>
+            </tbody>
+        </table>
+
+        <h2>4. MÓDULO DE VALIDACIÓN Y CÁLCULO PREDICTIVO</h2>
+        <h3>A. Comparación de Molalidades</h3>
+        <p>El estudiante debe contrastar la molalidad de la pesada (<em>m<sub>t</sub></em>) con la derivada de la densidad (<em>m<sub>e</sub></em>). La <strong>viscosidad</strong> actuará como "juez":</p>
+        <ul>
+            <li>Si la viscosidad > teórica: Indica solución concentrada por error en pesada o evaporación.</li>
+            <li>Si la viscosidad es correcta pero la densidad no: Error en la medición de volumen o pesaje de alícuotas.</li>
+        </ul>
+
+        <h3>B. Predicción Ebulloscópica</h3>
+        <div class="formula">
+            ΔT<sub>e</sub> = K<sub>e</sub> · m <br>
+            (Donde K<sub>e</sub> agua = 0.52 °C/m)
+        </div>
+
+        <h2>5. ANÁLISIS DE CORRELACIÓN (Post-Laboratorio)</h2>
+        <ol>
+            <li><strong>Gráfica η vs m:</strong> El intercepto debe aproximarse a 0.89 cP (agua pura a 25°C). Desviaciones indican error de calibración.</li>
+            <li><strong>Gráfica η vs ΔT<sub>e</sub>:</strong> Demuestra que la fricción interna es un indicador físico del cambio en el punto de ebullición.</li>
+        </ol>
+
+        <h2>6. EJERCICIO DE REALIDAD INDUSTRIAL</h2>
+        <p>En una planta de almíbares, se detecta una viscosidad de 1.80 cP. Si los estándares indican que a esa viscosidad el punto de ebullición debe ser 100.34 °C, determine si una muestra que hierve a 100.15 °C cumple con las especificaciones, justificando según la relación viscosidad-concentración.</p>
+
+        <div class="footer">
+            <p><strong>Bibliografía:</strong> Chang, R. (2002). Química. McGraw-Hill. | Programa Analítico PSM (2011). | Manual Biobase BDV-2N.</p>
+        </div>
+    </div>
+</body>
+</html>
