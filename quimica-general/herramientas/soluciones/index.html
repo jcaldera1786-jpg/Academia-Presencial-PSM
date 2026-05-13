@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZUFORCA: Simulador de Ingeniería</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+            background: url('https://raw.githubusercontent.com/username/repo/main/watermarked_img_7941888582514131150.png') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        /* Efecto Glassmorphism */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 25px;
+            width: 90%;
+            max-width: 500px;
+            color: white;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .header { display: flex; justify-content: space-between; font-size: 0.8em; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 10px; margin-bottom: 15px; }
+        
+        .problem-text { font-size: 1.1em; margin-bottom: 20px; line-height: 1.5; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; }
+
+        textarea, input {
+            width: 100%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 10px; color: white; padding: 12px; box-sizing: border-box; margin-bottom: 15px; font-size: 1em;
+        }
+
+        button {
+            width: 100%; padding: 15px; border-radius: 10px; border: none;
+            background: linear-gradient(45deg, #00d2ff, #3a7bd5); color: white;
+            font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+
+        button:hover { transform: scale(1.02); box-shadow: 0 0 15px #00d2ff; }
+
+        .feedback { margin-top: 15px; padding: 10px; border-radius: 8px; font-size: 0.9em; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="glass-panel">
+    <div class="header">
+        <span>RACHA: <b id="racha">0</b>/5</span>
+        <span id="modulo-txt">MÓDULO: CARGANDO...</span>
+    </div>
+
+    <div id="enunciado" class="problem-text">Inicializando reactor...</div>
+
+    <label>Análisis de la IA (Tu Procedimiento):</label>
+    <textarea id="logic" placeholder="Ej: Calculo moles de soluto, identifico reactivo limitante..."></textarea>
+
+    <label>Resultado Numérico:</label>
+    <input type="number" id="valor" step="0.0001" placeholder="0.0000">
+
+    <button onclick="evaluar()">EVALUAR MI LÓGICA</button>
+
+    <div id="feedback" class="feedback"></div>
+</div>
+
+<script>
+    // --- CONFIGURACIÓN DEL PROFESOR ---
+    const MODULO_ACTIVO = 2; // 1:Fisicas, 2:Quimicas, 3:Reacciones, 4:Coligativas
+    // ----------------------------------
+
+    let racha = 0;
+    let meta = 0;
+
+    const DB = {
+        acidos: [{n:"H2SO4", mm:98, p:2}, {n:"HCl", mm:36.5, p:1}],
+        bases: [{n:"NaOH", mm:40, oh:1}, {n:"Al(OH)3", mm:78, oh:3}],
+        sales: ["NaCl", "KNO3", "MgSO4"]
+    };
+
+    function generar() {
+        let txt = "";
+        const m = Math.floor(Math.random() * 3) + 1; // Aleatoriedad base
+        
+        if (MODULO_ACTIVO === 2) {
+            document.getElementById('modulo-txt').innerText = "UNIDADES QUÍMICAS";
+            const a = DB.acidos[Math.floor(Math.random()*2)];
+            const vol = (Math.random()*750 + 250).toFixed(0);
+            const molaridad = (Math.random()*1.5 + 0.1).toFixed(2);
+            meta = molaridad; // Para este ejemplo simple
+            txt = `Determine cuántos gramos de <b>${a.n}</b> se requieren para preparar ${vol}ml de una solución ${molaridad}M.`;
+            // Nota: Aquí la meta sería el cálculo de masa. 
+        } 
+        // Lógica de los demás módulos se expande aquí...
+
+        document.getElementById('enunciado').innerHTML = txt;
+        if(window.MathJax) MathJax.typeset();
+    }
+
+    function evaluar() {
+        const val = parseFloat(document.getElementById('valor').value);
+        const log = document.getElementById('logic').value.toLowerCase();
+        const fb = document.getElementById('feedback');
+        
+        fb.style.display = "block";
+        const numOk = Math.abs(val - meta) < (meta * 0.03);
+        const logicOk = log.length > 15;
+
+        if(numOk && logicOk) {
+            racha++;
+            fb.style.background = "rgba(46, 204, 113, 0.3)";
+            fb.innerHTML = "<b>¡Excelente!</b> Racha incrementada. Procedimiento validado.";
+        } else {
+            racha = 0;
+            fb.style.background = "rgba(231, 76, 60, 0.3)";
+            fb.innerHTML = "<b>Error de ingeniería:</b> Revisa tus factores de conversión.";
+        }
+        
+        document.getElementById('racha').innerText = racha;
+        setTimeout(generar, 3000);
+    }
+
+    window.onload = generar;
+</script>
+</body>
+</html>

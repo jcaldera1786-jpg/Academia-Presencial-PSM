@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reto de Nomenclatura - Dr. José Ángel Caldera</title>
+    <!-- Librería para renderizar SMILES -->
+    <script src="https://unpkg.com/smiles-drawer@2.0.1/dist/smiles-drawer.min.js"></script>
+    <!-- Tu base de datos externa -->
+    <script src="banco_quimica.js"></script>
+    <style>
+        :root { --primary: #003870; --success: #28a745; --error: #dc3545; --bg: #f4f7f6; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); width: 100%; max-width: 650px; text-align: center; }
+        .hidden { display: none; }
+        #canvas-container { background: #fff; border: 2px solid #eaeaea; border-radius: 10px; margin: 20px 0; min-height: 300px; display: flex; align-items: center; justify-content: center; }
+        input { width: 90%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 18px; margin-bottom: 15px; outline: none; }
+        input:focus { border-color: var(--primary); }
+        .btn { background: var(--primary); color: white; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; transition: 0.3s; }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        .feedback { padding: 20px; border-radius: 8px; margin-top: 15px; text-align: left; line-height: 1.5; font-size: 0.95em; }
+        .streak-info { font-weight: bold; color: var(--primary); margin-bottom: 10px; font-size: 1.1em; }
+    </style>
+</head>
+<body>
+
+<!-- Pantalla de Inicio -->
+<div class="card" id="login-screen">
+    <h2 style="color: var(--primary);">Nomenclatura Orgánica II</h2>
+    <p>Ingresa tus datos para registrar el intento en el sistema (SAIA/PSM):</p>
+    <input type="text" id="nombre" placeholder="Nombre y Apellido completo">
+    <input type="text" id="cedula" placeholder="Cédula de Identidad / ID">
+    <button class="btn" onclick="comenzarReto()">Iniciar Desafío</button>
+</div>
+
+<!-- Pantalla del Quiz -->
+<div class="card hidden" id="quiz-screen">
+    <div class="streak-info">
+        Racha de 100%: <span id="racha-val">0</span>/5 | 
+        Pregunta <span id="num-pregunta">1</span> de 8
+    </div>
+    
+    <div id="canvas-container">
+        <canvas id="mol-canvas" width="550" height="350"></canvas>
+    </div>
+
+    <input type="text" id="respuesta" placeholder="Nombre IUPAC o Tradicional..." autocomplete="off">
+    
+    <button class="btn" id="btn-comprobar" onclick="evaluarRespuesta()">Comprobar Respuesta</button>
+    
+    <div id="feedback-area" class="feedback hidden"></div>
+    
+    <button class="btn hidden" id="btn-siguiente" onclick="proximaPregunta()" style="background: #6c757d; margin-top: 10px;">Continuar</button>
+</div>
+
+<script>
+    let preguntasSession = [];
+    let indiceActual = 0;
+    let aciertosTotales = 0;
+    let rachaActual = localStorage.getItem('racha_quimica_psm') || 0;
+    const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbztTY8S015A7Lnid8DwHhkmLvke5_32Kg_cIIqyT8hPeMe7WZszEbif2eY56ercF5E/exec";
+
+    // CONFIGURACIÓN CORREGIDA PARA EVITAR CONDENSACIÓN COOH
+    const options = { 
+        width: 550, 
+        height: 350, 
+        bondThickness: 1.5, 
+        fontSizeLarge: 14,
+        compactDrawing: false // Forza el dibujo extendido de los grupos funcionales
+    };
+    const smid = new SmilesDrawer.Drawer(options);
+
+    document.getElementById('racha-val').innerText = rachaActual;
+
+    function comenzarReto() {
+        const n = document.getElementById('nombre').value;
+        const c = document.getElementById('cedula').value;
+        if(!n || !c) return alert("Por favor, completa tus datos.");
+        
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        
+        preguntasSession = DATA_QUIMICA.sort(() => 0.5 - Math.random()).slice(0, 8);
+        renderizarMol();
+    }
+
+    function renderizarMol() {
+        const item = preguntasSession[indiceActual];
+        document.getElementById('num-pregunta').innerText = indiceActual + 1;
+        document.getElementById('respuesta').value = "";
+        document.getElementById('respuesta').disabled = false;
+        document.getElementById('feedback-area').classList.add('hidden');
+        document.getElementById('btn-siguiente').classList.add('hidden');
+        document.getElementById('btn-comprobar').classList.remove('hidden');
+
+        SmilesDrawer.parse(item.smiles, (tree) => {
+            smid.draw(tree, "mol-canvas", "light", false);
+        });
+    }
+
+function evaluarRespuesta() {
+        const inputRaw = document.getElementById('respuesta').value;
+        const item = preguntasSession[indiceActual];
+        
+        // Normalización: quitamos tildes, espacios y guiones para comparar el fondo, 
+        // pero mantenemos la exigencia de las letras correctas.
+        const normalizar = (str) => str.toLowerCase()
+                                       .normalize("NFD")
+                                       .replace(/[\u0300-\u036f]/g, "")
+                                       .replace(/[-\s]/g, "") 
+                                       .trim();
+
+        const inputLimpio = normalizar(inputRaw);
+        const esCorrecto = item.nombres.some(n => normalizar(n) === inputLimpio);
+        
+        const fb = document.getElementById('feedback-area');
+        fb.classList.remove('hidden');
+        document.getElementById('respuesta').disabled = true;
+        document.getElementById('btn-comprobar').classList.add('hidden');
+        document.getElementById('btn-siguiente').classList.remove('hidden');
+
+        if(esCorrecto) {
+            aciertosTotales++;
+            fb.style.background = "#d4edda"; 
+            fb.style.color = "#155724";
+            fb.innerHTML = `<b>¡Correcto!</b><br>${item.explicacion}`;
+        } else {
+            fb.style.background = "#f8d7da"; 
+            fb.style.color = "#721c24";
+            // Aquí le mostramos todas las opciones que tú consideras válidas
+            // para que el aprendiz compare y aprenda de su error ortográfico.
+            const opcionesValidas = item.nombres.join(' o ');
+            fb.innerHTML = `<b>Incorrecto.</b> Nombres aceptados: <u>${opcionesValidas}</u><br><small><b>Análisis:</b> ${item.explicacion}</small>`;
+        }
+    }
+
+    function proximaPregunta() {
+        indiceActual++;
+        if(indiceActual < 8) {
+            renderizarMol();
+        } else {
+            finalizarYEnviar();
+        }
+    }
+
+function finalizarYEnviar() {
+        // 1. Calculamos el porcentaje
+        const porcentajeAcierto = Math.round((aciertosTotales / 8) * 100);
+
+        // 2. Manejo de la racha
+        if(aciertosTotales === 8) {
+            rachaActual++;
+            localStorage.setItem('racha_quimica_psm', rachaActual);
+        } else {
+            rachaActual = 0;
+            localStorage.setItem('racha_quimica_psm', 0);
+        }
+
+        // 3. Empaquetamos los datos
+        // IMPORTANTE: Usamos 'nota' y 'estudiante' porque son los que tu Script ya reconoce.
+        // Pero en 'nota' mandamos el porcentaje con el símbolo %.
+        const datosEnvio = {
+            fecha: new Date().toLocaleString(),
+            estudiante: document.getElementById('nombre').value,
+            cedula: document.getElementById('cedula').value,
+            nota: porcentajeAcierto + "%", // Aquí forzamos que llegue como porcentaje
+            racha: rachaActual
+        };
+
+        // 4. Envío al Webhook
+        fetch(WEBHOOK_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify(datosEnvio)
+        });
+
+        // 5. Aviso al usuario
+        const mensajeFinal = rachaActual >= 5 
+            ? `¡RETO COMPLETADO! Nota: ${porcentajeAcierto}%. Has logrado 5 rachas perfectas.` 
+            : `Intento finalizado. Nota: ${porcentajeAcierto}%. Racha: ${rachaActual}/5.`;
+
+        alert(mensajeFinal);
+        location.reload(); 
+    }
+</script>
+</body>
+</html>
