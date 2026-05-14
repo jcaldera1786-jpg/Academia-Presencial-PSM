@@ -77,15 +77,14 @@
 <body>
 
 <div class="glass-panel">
-    <!-- REGISTRO INICIAL -->
     <div id="registro">
         <h2 style="text-align:center; margin-bottom:5px; letter-spacing:2px;">ZUFORCA</h2>
         <p style="text-align:center; color:var(--gold); font-size:0.9em; margin-bottom:25px; font-weight:bold;">SISTEMA DE EVALUACIÓN DE INGENIERÍA</p>
         
         <div class="instruction-box">
             <b>PROTOCOLO DE EXAMEN:</b><br>
-            • Problemas de Molaridad, Molalidad, Normalidad y Razonamiento.<br>
-            • Describa su desarrollo lógico incluyendo cálculos en este espacio, sea lo mas exacto posible.<br>
+            • Problemas de Molaridad, Normalidad, Mezclas y Casos de Campo.<br>
+            • Describa el desarrollo lógico. incluya datos y calculos lo mas ecxacto posible.<br>
             • Objetivo: <b>10 ciclos perfectos</b> para acreditación.
         </div>
 
@@ -94,7 +93,6 @@
         <button onclick="iniciar()">ACTIVAR REACTOR</button>
     </div>
 
-    <!-- SIMULADOR ACTIVO -->
     <div id="simulador" style="display:none;">
         <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">
             <span>ESTUDIANTE: <b id="label-estudiante" style="color:var(--accent-blue);"></b></span>
@@ -112,7 +110,6 @@
         <div style="text-align:center; font-size:0.8em; margin-top:15px; opacity:0.6;">EJERCICIO <span id="progreso">1</span> DE 8</div>
     </div>
 
-    <!-- PANTALLA DE RESULTADOS -->
     <div id="final-screen">
         <h3 id="resultado-titulo" style="font-size:1.8em; margin-bottom:10px;"></h3>
         <p id="resultado-detalle" style="opacity:0.9;"></p>
@@ -126,7 +123,6 @@
 </div>
 
 <script>
-<script>
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwoUJ3BGCBnER8kYnmDbNvW_HMLCAMCg-0CeWIxH-7vUdUG4GA2rWc0tAMkY4kgrqOC/exec";
     
     let ejercicioActual = 1;
@@ -137,7 +133,6 @@
     const totalProblemas = 8;
     const datosUser = { nombre: "", id: "" };
 
-    // MATRIZ QUÍMICA ROBUSTA (ZUFORCA EXPERT)
     const ELEMENTOS = {
         hidroxidos: [
             {n:"Al(OH)_3", mm:78.00, v:3}, {n:"Fe(OH)_3", mm:106.86, v:3},
@@ -153,9 +148,23 @@
         acidos: [
             {n:"H_2SO_4", mm:98.08, v:2}, {n:"H_3PO_4", mm:97.99, v:3},
             {n:"HClO_4", mm:100.46, v:1}, {n:"HNO_3", mm:63.01, v:1},
-            {n:"H_2C_2O_4", mm:90.03, v:2} // Ácido oxálico
+            {n:"H_2C_2O_4", mm:90.03, v:2}
         ]
     };
+
+    function iniciar() {
+        const n = document.getElementById('user-name').value;
+        const i = document.getElementById('user-id').value;
+        if(n && i) {
+            datosUser.nombre = n; datosUser.id = i;
+            document.getElementById('label-estudiante').innerText = i;
+            document.getElementById('registro').style.display = 'none';
+            document.getElementById('simulador').style.display = 'block';
+            generar();
+        } else {
+            alert("Por favor, ingrese sus datos.");
+        }
+    }
 
     function generar() {
         const todas = [...ELEMENTOS.hidroxidos, ...ELEMENTOS.sales, ...ELEMENTOS.acidos];
@@ -171,35 +180,34 @@
         let texto = "";
 
         switch(tipo) {
-            case 0: // Molaridad Estándar
+            case 0: 
                 metaVal = parseFloat((conc * (v_ml/1000) * comp.mm).toFixed(2));
                 texto = `Se requiere preparar <b>${v_ml} ml</b> de una solución de <b>\\(${comp.n}\\)</b> a <b>${conc} M</b>. ¿Qué masa del compuesto se debe pesar?`;
                 break;
-            case 1: // Normalidad (Crítico para valencias de Fe, Al, Ni)
+            case 1: 
                 const eq = comp.mm / comp.v;
                 metaVal = parseFloat((conc * (v_ml/1000) * eq).toFixed(2));
-                texto = `Calcule los gramos de <b>\\(${comp.n}\\)</b> necesarios para obtener <b>${v_ml} ml</b> de una solución <b>${conc} N</b>. (Ojo con el peso equivalente).`;
+                texto = `Calcule los gramos de <b>\\(${comp.n}\\)</b> necesarios para obtener <b>${v_ml} ml</b> de una solución <b>${conc} N</b>.`;
                 break;
-            case 2: // Neutralización Estequiométrica
+            case 2:
                 const acido = ELEMENTOS.acidos[Math.floor(Math.random()*ELEMENTOS.acidos.length)];
                 const base = ELEMENTOS.hidroxidos[Math.floor(Math.random()*ELEMENTOS.hidroxidos.length)];
                 const v_base = 250;
-                // Va * Na = Vb * Nb -> Na = (Vb*Nb)/Va
                 metaVal = parseFloat(((v_base * conc) / v_ml).toFixed(2));
-                texto = `En una titulación en <b>ZUFORCA</b>, <b>${v_ml} ml</b> de <b>\\(${acido.n}\\)</b> neutralizan exactamente a <b>${v_base} ml</b> de <b>\\(${base.n}\\)</b> ${conc} N. ¿Molaridad del ácido?`;
+                texto = `En una titulación, <b>${v_ml} ml</b> de <b>\\(${acido.n}\\)</b> neutralizan exactamente a <b>${v_base} ml</b> de <b>\\(${base.n}\\)</b> ${conc} N. ¿Normalidad del ácido?`;
                 break;
-            case 3: // Caso de Campo (Aluminio/Suelos)
+            case 3:
                 const hectareas = (Math.random()*5 + 1).toFixed(1);
                 const dosis = (Math.random()*100 + 50).toFixed(0);
                 metaVal = parseFloat((hectareas * dosis).toFixed(2));
                 texto = `Para remediar un suelo rico en aluminio, se deben aplicar <b>${dosis} kg/Ha</b> de enmienda. ¿Cuántos kg se requieren para <b>${hectareas} Ha</b>?`;
                 break;
-            case 4: // Formulación de Detergentes (Sales de Hierro/Níquel)
+            case 4:
                 const factor = (Math.random()*15 + 5).toFixed(1);
                 metaVal = parseFloat((v_ml * factor / 1000).toFixed(2));
-                texto = `Un aditivo de <b>\\(${comp.n}\\)</b> se dosifica a <b>${factor} g/L</b>. Si el reactor de mezcla tiene <b>${v_ml} ml</b> de capacidad, ¿cuántos gramos de sal aporta?`;
+                texto = `Un aditivo de <b>\\(${comp.n}\\)</b> se dosifica a <b>${factor} g/L</b>. Si el reactor tiene <b>${v_ml} ml</b> de capacidad, ¿cuántos gramos de sal aporta?`;
                 break;
-            case 5: // Pureza y Conversión
+            case 5:
                 const pureza = (Math.random()*20 + 70).toFixed(0);
                 const masa_teorica = (conc * (v_ml/1000) * comp.mm);
                 metaVal = parseFloat((masa_teorica / (pureza/100)).toFixed(2));
@@ -211,67 +219,6 @@
         document.getElementById('logic').value = "";
         document.getElementById('feedback').style.display = 'none';
         document.getElementById('progreso').innerText = ejercicioActual;
-        if (window.MathJax) MathJax.typesetPromise();
-    };
-    
-    function iniciar() {
-        const n = document.getElementById('user-name').value;
-        const i = document.getElementById('user-id').value;
-        if(n && i) {
-            datosUser.nombre = n; datosUser.id = i;
-            document.getElementById('label-estudiante').innerText = i;
-            document.getElementById('registro').style.display = 'none';
-            document.getElementById('simulador').style.display = 'block';
-            generar();
-        } else {
-            alert("Por favor, ingrese sus datos para el registro en Drive.");
-        }
-    }
-
-    function generar() {
-        let candidatos = DB.filter(a => (historialCompuestos[a.n] || 0) < 2);
-        if (candidatos.length === 0) { historialCompuestos = {}; candidatos = DB; }
-        const comp = candidatos[Math.floor(Math.random()*candidatos.length)];
-        historialCompuestos[comp.n] = (historialCompuestos[comp.n] || 0) + 1;
-
-        // Tipos: 0: M, 1: m, 2: N, 3: Razonamiento
-        let tipo;
-        do { tipo = Math.floor(Math.random() * 4); } while (tipo === ultimoTipo);
-        ultimoTipo = tipo;
-
-        const v_ml = (Math.random()*600 + 200).toFixed(0);
-        const conc = (Math.random()*0.7 + 0.15).toFixed(2);
-        
-        let texto = "";
-        if (tipo === 0) {
-            metaVal = parseFloat((conc * (v_ml/1000) * comp.mm).toFixed(2));
-            texto = `Se requiere preparar <b>${v_ml} ml</b> de una solución de <b>\\(${comp.n}\\)</b> con una concentración <b>${conc} M</b>. ¿Cuántos gramos se deben pesar?`;
-        } else if (tipo === 1) {
-            metaVal = parseFloat((conc * (v_ml/1000) * comp.mm).toFixed(2));
-            texto = `Determine la masa de <b>\\(${comp.n}\\)</b> necesaria para disolver en <b>${v_ml} g</b> de solvente puro y alcanzar una molalidad de <b>${conc} m</b>.`;
-        } else if (tipo === 2) {
-            const eq = comp.mm / comp.v;
-            metaVal = parseFloat((conc * (v_ml/1000) * eq).toFixed(2));
-            texto = `En el laboratorio de <b>ZUFORCA</b> se solicita preparar <b>${v_ml} ml</b> de <b>\\(${comp.n}\\)</b> a <b>${conc} N</b>. Calcule los gramos necesarios.`;
-        } else {
-            // PROBLEMA DE RAZONAMIENTO (Tipo Café/Logística)
-            const cucharadas = Math.floor(Math.random() * 10) + 5;
-            const g_por_cuch = 8;
-            const tazas = Math.floor(Math.random() * 15) + 10;
-            const vol_taza = 60;
-            const remanente = Math.floor(Math.random() * 30) + 10;
-            const vol_total = (tazas * vol_taza) + remanente;
-            const masa_total = cucharadas * g_por_cuch;
-            
-            metaVal = parseFloat((masa_total / (vol_total/1000)).toFixed(2)); // g/L
-            texto = `Se prepara café agregando <b>${cucharadas} cucharadas</b> (de ${g_por_cuch}g c/u). Se sirven <b>${tazas} tazas</b> de ${vol_taza}ml, quedando <b>${remanente}ml</b> en la jarra. Asumiendo disolución total, ¿cuál es la concentración en <b>g/L</b>?`;
-        }
-
-        document.getElementById('enunciado').innerHTML = texto;
-        document.getElementById('logic').value = "";
-        document.getElementById('feedback').style.display = 'none';
-        document.getElementById('progreso').innerText = ejercicioActual;
-
         if (window.MathJax) MathJax.typesetPromise();
     }
 
@@ -291,14 +238,13 @@
             aciertosIntento++;
             fb.style.background = 'rgba(46, 204, 113, 0.2)';
             fb.style.color = '#2ecc71';
-            fb.innerText = "ANÁLISIS APROBADO. El valor coincide con los parámetros de ingeniería.";
-            setTimeout(siguientePaso, 1500);
+            fb.innerText = "ANÁLISIS APROBADO. Valor correcto.";
         } else {
             fb.style.background = 'rgba(231, 76, 60, 0.2)';
             fb.style.color = '#ff7675';
-            fb.innerText = "FALLO EN EL PROCESO. Revise sus conversiones y el despeje final.";
-            setTimeout(siguientePaso, 2500);
+            fb.innerText = "FALLO TÉCNICO. Valor esperado cerca de: " + metaVal;
         }
+        setTimeout(siguientePaso, 2000);
     }
 
     function siguientePaso() {
@@ -313,39 +259,24 @@
     function finalizar() {
         document.getElementById('simulador').style.display = 'none';
         document.getElementById('final-screen').style.display = 'block';
-        
         const esPerfecto = (aciertosIntento === totalProblemas);
         if(esPerfecto) {
             rachaPerfecta++;
             document.getElementById('resultado-titulo').innerText = "¡CICLO COMPLETO!";
             document.getElementById('resultado-titulo').style.color = "var(--success)";
-            document.getElementById('mensaje-racha').innerHTML = `ESTADO DE ACREDITACIÓN:<br><span style="color:var(--gold); font-size:1.8em; font-weight:bold;">${rachaPerfecta} / 10</span>`;
         } else {
             rachaPerfecta = 0;
-            document.getElementById('resultado-titulo').innerText = "RECHAZADO";
+            document.getElementById('resultado-titulo').innerText = "CICLO FALLIDO";
             document.getElementById('resultado-titulo').style.color = "var(--danger)";
-            document.getElementById('mensaje-racha').innerText = "La racha se ha reiniciado. Se requiere 100% de precisión técnica.";
         }
-        
         document.getElementById('racha-total').innerText = rachaPerfecta;
+        document.getElementById('mensaje-racha').innerHTML = `Racha actual: ${rachaPerfecta}/10`;
         registrarEnDrive(aciertosIntento, rachaPerfecta);
     }
 
     function registrarEnDrive(aciertos, racha) {
-        const payload = {
-            nombre: datosUser.nombre,
-            id: datosUser.id,
-            aciertos: aciertos + "/" + totalProblemas,
-            racha: racha,
-            detalle: "Sesión Finalizada"
-        };
-
-        fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            cache: 'no-cache',
-            body: JSON.stringify(payload)
-        }).then(() => console.log("Datos sincronizados con Drive."));
+        const payload = { nombre: datosUser.nombre, id: datosUser.id, aciertos: aciertos, racha: racha };
+        fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
     }
 
     function siguienteIntento() {
