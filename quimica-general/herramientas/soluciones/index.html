@@ -4,11 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZUFORCA: Simulador de Ingeniería</title>
-    <script id="MathJax-script" async src="
-        [https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js]
-        (https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js)"></script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    
+    <!-- CONFIGURACIÓN DE MATHJAX PARA RENDERIZADO DE FÓRMULAS -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+
     <style>
         :root {
             --glass-bg: rgba(15, 25, 35, 0.75);
@@ -23,7 +30,8 @@
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: url('fondo-soluciones.png') no-repeat center center fixed;
+            /* Priorizamos la ruta absoluta para evitar fallos de carga */
+            background: #0a0f14 url('https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/quimica-general/herramientas/soluciones/fondo-soluciones.png') no-repeat center center fixed;
             background-size: cover;
             color: white;
         }
@@ -38,7 +46,6 @@
             width: 90%;
             max-width: 550px;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
-            transition: transform 0.3s ease;
         }
 
         .header { 
@@ -66,8 +73,13 @@
             box-sizing: border-box; margin-bottom: 20px; font-size: 1em;
             outline: none; transition: 0.3s;
         }
-        textarea:focus { border: 2px solid #3498db; box-shadow: 0 0 10px rgba(52, 152, 219, 0.5); }
-        input:focus, textarea:focus { border-color: var(--accent-blue); background: rgba(255,255,255,0.12); }
+
+        /* Foco visual para estudiantes con TDAH */
+        input:focus, textarea:focus { 
+            border: 2px solid var(--accent-blue); 
+            background: rgba(255,255,255,0.12);
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+        }
 
         button {
             width: 100%; padding: 16px; border-radius: 12px; border: none;
@@ -76,7 +88,7 @@
             text-transform: uppercase; letter-spacing: 1px;
         }
 
-        button:hover { background: #2980b9; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4); }
+        button:hover { background: #2980b9; transform: translateY(-2px); }
 
         .instruction-box {
             background: rgba(52, 152, 219, 0.15);
@@ -103,16 +115,16 @@
         <p style="text-align:center; font-size:0.9em; color:#aaa; margin-bottom:25px;">Módulo de Ingeniería Química</p>
         
         <div class="instruction-box">
-            <b>INSTRUCCIÓN DOCENTE:</b> Describe tu razonamiento lógico paso a paso. En esta academia, el <i>cómo</i> llegas al resultado es tan importante como el número final.
+            <b>IDENTIDAD DOCENTE:</b> En esta academia, el <i>cómo</i> razonas es el alma de la ingeniería. Describe tu lógica antes de dar el número.
         </div>
 
         <label>Nombre del Estudiante:</label>
-        <input type="text" id="user-name">
+        <input type="text" id="user-name" placeholder="Ej: Juan Pérez">
         
         <label>Cédula de Identidad:</label>
-        <input type="text" id="user-id">
+        <input type="text" id="user-id" placeholder="V-12345678">
         
-        <button onclick="iniciarSimulador()">INICIAR REACTOR ACADÉMICO</button>
+        <button onclick="iniciarSimulador()">ACTIVAR REACTOR ACADÉMICO</button>
     </div>
 
     <!-- PANTALLA 2: EJERCICIOS -->
@@ -122,15 +134,15 @@
             <span>RACHA: <b id="racha">0</b>/5</span>
         </div>
 
-        <div id="enunciado" class="problem-text">Generando reto...</div>
+        <div id="enunciado" class="problem-text">Inicializando sistemas...</div>
 
-        <label>ANÁLISIS LÓGICO (Tu procedimiento):</label>
-        <textarea id="logic" rows="4"></textarea>
+        <label>ANÁLISIS LÓGICO (Describe tu proceso):</label>
+        <textarea id="logic" rows="4" placeholder="Ej: Primero calculo los moles multiplicando M x V..."></textarea>
 
-        <label id="label-valor">VALOR NUMÉRICO (Gramos):</label>
-        <input type="number" id="valor" step="0.01">
+        <label id="label-valor">RESULTADO (Gramos):</label>
+        <input type="number" id="valor" step="0.01" placeholder="0.00">
 
-        <button onclick="evaluar()">EVALUAR INGENIERÍA</button>
+        <button onclick="evaluar()">EVALUAR DESEMPEÑO</button>
         <div id="feedback" class="feedback"></div>
     </div>
 </div>
@@ -142,9 +154,11 @@
 
     const DB = {
         acidos: [
-            {n:"H_2SO_4", mm:98.08, p:2}, 
-            {n:"HCl", mm:36.46, p:1},
-            {n:"HNO_3", mm:63.01, p:1}
+            {n:"H_2SO_4", mm:98.08}, 
+            {n:"HCl", mm:36.46},
+            {n:"HNO_3", mm:63.01},
+            {n:"NaOH", mm:40.00},
+            {n:"KOH", mm:56.10}
         ]
     };
 
@@ -152,7 +166,7 @@
         const nom = document.getElementById('user-name').value;
         const ci = document.getElementById('user-id').value;
 
-        if(nom.length > 3 && ci.length > 4) {
+        if(nom.length > 2 && ci.length > 4) {
             estudiante.nombre = nom;
             estudiante.id = ci;
             document.getElementById('display-id').innerText = `ID: ${ci}`;
@@ -160,7 +174,7 @@
             document.getElementById('pantalla-ejercicio').style.display = 'block';
             generar();
         } else {
-            alert("Por favor, introduce datos válidos para el registro.");
+            alert("Por favor, ingrese sus datos completos para el registro de ZUFORCA.");
         }
     }
 
@@ -169,19 +183,22 @@
         document.getElementById('logic').value = "";
         document.getElementById('feedback').style.display = "none";
 
-        const a = DB.acidos[Math.floor(Math.random()*DB.acidos.length)];
-        const vol = (Math.random()*750 + 250).toFixed(0);
-        const molaridad = (Math.random()*1.2 + 0.1).toFixed(2);
+        const comp = DB.acidos[Math.floor(Math.random()*DB.acidos.length)];
+        const vol = (Math.random()*800 + 200).toFixed(0);
+        const molaridad = (Math.random()*0.9 + 0.1).toFixed(2);
         
-        meta = (molaridad * (vol/1000) * a.mm).toFixed(2);
+        meta = (molaridad * (vol/1000) * comp.mm).toFixed(2);
         
-        // Datos resaltados para ayudar a la atención
-        const enunciadoHTML = `Se requiere preparar una solución de <span class='highlight'>$${a.n}$</span>. 
-        Calcule cuántos <span class='highlight'>gramos</span> del soluto son necesarios para obtener 
+        const enunciadoHTML = `Se requiere preparar una solución de <span class='highlight'>$${comp.n}$</span>. 
+        Calcule cuántos <span class='highlight'>gramos</span> son necesarios para obtener 
         <span class='highlight'>${vol} ml</span> a una concentración de <span class='highlight'>${molaridad} M</span>.`;
         
         document.getElementById('enunciado').innerHTML = enunciadoHTML;
-        if(window.MathJax) MathJax.typesetPromise();
+        
+        // Disparador de MathJax para renderizar la fórmula
+        if(window.MathJax && window.MathJax.typesetPromise) {
+            MathJax.typesetPromise();
+        }
     }
 
     function evaluar() {
@@ -191,28 +208,28 @@
         
         fb.style.display = "block";
         
-        // Tolerancia aumentada al 10% para reducir frustración
+        // Margen de error del 10% para apoyar la discapacidad cognitiva
         const numOk = Math.abs(val - meta) < (meta * 0.10);
-        const tieneLogica = log.length > 15 && (log.includes("mol") || log.includes("masa") || log.includes("peso"));
+        const tieneLogica = log.length > 15 && (log.includes("mol") || log.includes("masa") || log.includes("peso") || log.includes("gramos"));
 
         if(numOk && tieneLogica) {
             racha++;
-            fb.style.background = "rgba(46, 204, 113, 0.3)";
-            fb.innerHTML = "<b>¡BRILLANTE!</b> Has demostrado atención y dominio. ¡Reactor estable!";
-            setTimeout(generar, 2500);
+            fb.style.background = "rgba(46, 204, 113, 0.4)";
+            fb.innerHTML = "<b>¡EXCELENTE CONCENTRACIÓN!</b> Has conectado la lógica con el resultado. ¡Sigue así!";
+            setTimeout(generar, 3000);
         } 
         else if (tieneLogica && !numOk) {
-            fb.style.background = "rgba(241, 196, 15, 0.3)";
-            fb.innerHTML = "<b>ANÁLISIS VÁLIDO:</b> Tu lógica es buena, pero revisa tus cálculos numéricos. ¡Eleva tu atención en los decimales!";
+            fb.style.background = "rgba(241, 196, 15, 0.4)";
+            fb.innerHTML = "<b>MUY BUEN ANÁLISIS:</b> Tu razonamiento es correcto, pero hubo un detalle en el cálculo final. ¡Revisa los decimales, tú puedes!";
         }
         else if (!tieneLogica && numOk) {
-            fb.style.background = "rgba(52, 152, 219, 0.3)";
-            fb.innerHTML = "<b>CÁLCULO CORRECTO:</b> Pero en ZUFORCA valoramos tu pensamiento. Describe tu proceso en el cuadro de análisis.";
+            fb.style.background = "rgba(52, 152, 219, 0.4)";
+            fb.innerHTML = "<b>ACIERTAS EL NÚMERO:</b> Pero recuerda que en ZUFORCA valoramos tu proceso. Explica brevemente cómo lo lograste.";
         }
         else {
             racha = 0;
-            fb.style.background = "rgba(231, 76, 60, 0.3)";
-            fb.innerHTML = `<b>RESPIRA Y REVISA:</b> Vamos de nuevo. Multiplica Molaridad x Volumen(L) x Masa Molecular. El valor esperado era ~${meta}g`;
+            fb.style.background = "rgba(231, 76, 60, 0.4)";
+            fb.innerHTML = "<b>VAMOS A INTENTARLO DE NUEVO:</b> Con calma. Recuerda: Gramos = M x V(L) x Masa Molecular. ¡Confío en tu capacidad!";
         }
         
         document.getElementById('racha').innerText = racha;
