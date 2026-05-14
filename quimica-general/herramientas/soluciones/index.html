@@ -222,11 +222,17 @@
         if (window.MathJax) MathJax.typesetPromise();
     }
 
-    function evaluar() {
+function evaluar() {
         const texto = document.getElementById('logic').value;
         const fb = document.getElementById('feedback');
+        const btn = document.getElementById('btn-evaluar');
         const numerosEncontrados = texto.match(/\d+[.,]\d+/g) || texto.match(/\d+/g) || [];
         let exito = false;
+
+        // Desactivar botón para evitar múltiples clics durante la espera
+        btn.disabled = true;
+        btn.style.opacity = "0.5";
+        btn.innerText = "ESPERANDO REVISIÓN...";
 
         numerosEncontrados.forEach(num => {
             let n = parseFloat(num.replace(',', '.'));
@@ -238,15 +244,21 @@
             aciertosIntento++;
             fb.style.background = 'rgba(46, 204, 113, 0.2)';
             fb.style.color = '#2ecc71';
-            fb.innerText = "ANÁLISIS APROBADO. Valor correcto.";
+            fb.innerHTML = `<b>ANÁLISIS APROBADO.</b><br>El valor técnico detectado es correcto. El reactor avanzará en 15 segundos.`;
         } else {
             fb.style.background = 'rgba(231, 76, 60, 0.2)';
             fb.style.color = '#ff7675';
-            fb.innerText = "FALLO TÉCNICO. Valor esperado cerca de: " + metaVal;
+            fb.innerHTML = `<b>FALLO EN EL PROCESO.</b><br>Revisen sus conversiones. El valor esperado era cercano a <b>${metaVal}</b>.<br>Analicen el error, el sistema reiniciará en 15 segundos.`;
         }
-        setTimeout(siguientePaso, 2000);
-    }
 
+        // Ajuste a 15 segundos (15000 ms)
+        setTimeout(() => {
+            btn.disabled = false;
+            btn.style.opacity = "1";
+            btn.innerText = "ANALIZAR PROCESO";
+            siguientePaso();
+        }, 15000); 
+    }
     function siguientePaso() {
         if(ejercicioActual < totalProblemas) {
             ejercicioActual++;
