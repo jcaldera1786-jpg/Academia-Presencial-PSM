@@ -7,178 +7,104 @@
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
-        :root {
-            --glass-bg: rgba(15, 25, 35, 0.75);
-            --accent-blue: #3498db;
-            --success-green: #2ecc71;
-            --error-red: #e74c3c;
-            --warning-yellow: #f1c40f;
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+            background: url('https://raw.githubusercontent.com/username/repo/main/watermarked_img_7941888582514131150.png') no-repeat center center fixed;
+            background-size: cover;
         }
 
-body {
-    margin: 0; padding: 0;
-    display: flex; justify-content: center; align-items: center;
-    min-height: 100vh;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    /* Cambiamos la ruta a una relativa explícita */
-    background: #0a0f14 url('./fondo-soluciones.png') no-repeat center center fixed;
-    background-size: cover;
-    color: white;
-}
+        /* Efecto Glassmorphism */
         .glass-panel {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 25px;
-            padding: 35px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 25px;
             width: 90%;
-            max-width: 550px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
-            transition: transform 0.3s ease;
+            max-width: 500px;
+            color: white;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
 
-        .header { 
-            display: flex; justify-content: space-between; 
-            font-size: 0.85em; border-bottom: 1px solid rgba(255,255,255,0.1); 
-            padding-bottom: 15px; margin-bottom: 20px;
-            text-transform: uppercase; letter-spacing: 1px; font-weight: bold;
-        }
+        .header { display: flex; justify-content: space-between; font-size: 0.8em; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 10px; margin-bottom: 15px; }
         
-        .problem-text { 
-            font-size: 1.15em; line-height: 1.6;
-            background: rgba(255,255,255,0.05); 
-            padding: 20px; border-radius: 15px; margin-bottom: 25px;
-            border-left: 5px solid var(--accent-blue);
+        .problem-text { font-size: 1.1em; margin-bottom: 20px; line-height: 1.5; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; }
+
+        textarea, input {
+            width: 100%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 10px; color: white; padding: 12px; box-sizing: border-box; margin-bottom: 15px; font-size: 1em;
         }
-
-        .highlight { color: #00d2ff; font-weight: bold; }
-
-        label { display: block; margin-bottom: 8px; font-size: 0.9em; color: #bbb; font-weight: 600; }
-
-        input, textarea {
-            width: 100%; background: rgba(255,255,255,0.07); 
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 12px; color: white; padding: 14px; 
-            box-sizing: border-box; margin-bottom: 20px; font-size: 1em;
-            outline: none; transition: 0.3s;
-        }
-
-        input:focus, textarea:focus { border-color: var(--accent-blue); background: rgba(255,255,255,0.12); }
 
         button {
-            width: 100%; padding: 16px; border-radius: 12px; border: none;
-            background: var(--accent-blue); color: white;
+            width: 100%; padding: 15px; border-radius: 10px; border: none;
+            background: linear-gradient(45deg, #00d2ff, #3a7bd5); color: white;
             font-weight: bold; cursor: pointer; transition: 0.3s;
-            text-transform: uppercase; letter-spacing: 1px;
         }
 
-        button:hover { background: #2980b9; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4); }
+        button:hover { transform: scale(1.02); box-shadow: 0 0 15px #00d2ff; }
 
-        .instruction-box {
-            background: rgba(52, 152, 219, 0.15);
-            padding: 15px; border-radius: 10px; border: 1px dashed var(--accent-blue);
-            margin-bottom: 20px; font-size: 0.85em; line-height: 1.4;
-        }
-
-        .feedback { 
-            margin-top: 20px; padding: 15px; border-radius: 12px; 
-            text-align: center; font-weight: 500; display: none;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .feedback { margin-top: 15px; padding: 10px; border-radius: 8px; font-size: 0.9em; display: none; }
     </style>
 </head>
 <body>
 
-<div class="glass-panel" id="main-panel">
-    
-    <!-- PANTALLA 1: REGISTRO -->
-    <div id="pantalla-registro">
-        <h2 style="text-align:center; margin-bottom:10px;">ZUFORCA</h2>
-        <p style="text-align:center; font-size:0.9em; color:#aaa; margin-bottom:25px;">Módulo de Ingeniería Química</p>
-        
-        <div class="instruction-box">
-            <b>INSTRUCCIÓN DOCENTE:</b> Describe tu razonamiento lógico paso a paso. En esta academia, el <i>cómo</i> llegas al resultado es tan importante como el número final.
-        </div>
-
-        <label>Nombre del Estudiante:</label>
-        <input type="text" id="user-name">
-        
-        <label>Cédula de Identidad:</label>
-        <input type="text" id="user-id">
-        
-        <button onclick="iniciarSimulador()">INICIAR REACTOR ACADÉMICO</button>
+<div class="glass-panel">
+    <div class="header">
+        <span>RACHA: <b id="racha">0</b>/5</span>
+        <span id="modulo-txt">MÓDULO: CARGANDO...</span>
     </div>
 
-    <!-- PANTALLA 2: EJERCICIOS -->
-    <div id="pantalla-ejercicio" style="display:none;">
-        <div class="header">
-            <span id="display-id">ID: ---</span>
-            <span>RACHA: <b id="racha">0</b>/5</span>
-        </div>
+    <div id="enunciado" class="problem-text">Inicializando reactor...</div>
 
-        <div id="enunciado" class="problem-text">Generando reto...</div>
+    <label>Análisis de la IA (Tu Procedimiento):</label>
+    <textarea id="logic" placeholder="Ej: Calculo moles de soluto, identifico reactivo limitante..."></textarea>
 
-        <label>ANÁLISIS LÓGICO (Tu procedimiento):</label>
-        <textarea id="logic" rows="4"></textarea>
+    <label>Resultado Numérico:</label>
+    <input type="number" id="valor" step="0.0001" placeholder="0.0000">
 
-        <label id="label-valor">VALOR NUMÉRICO (Gramos):</label>
-        <input type="number" id="valor" step="0.01">
+    <button onclick="evaluar()">EVALUAR MI LÓGICA</button>
 
-        <button onclick="evaluar()">EVALUAR INGENIERÍA</button>
-        <div id="feedback" class="feedback"></div>
-    </div>
+    <div id="feedback" class="feedback"></div>
 </div>
 
 <script>
+    // --- CONFIGURACIÓN DEL PROFESOR ---
+    const MODULO_ACTIVO = 2; // 1:Fisicas, 2:Quimicas, 3:Reacciones, 4:Coligativas
+    // ----------------------------------
+
     let racha = 0;
     let meta = 0;
-    const estudiante = { nombre: "", id: "" };
 
     const DB = {
-        acidos: [
-            {n:"H_2SO_4", mm:98.08, p:2}, 
-            {n:"HCl", mm:36.46, p:1},
-            {n:"HNO_3", mm:63.01, p:1}
-        ]
+        acidos: [{n:"H2SO4", mm:98, p:2}, {n:"HCl", mm:36.5, p:1}],
+        bases: [{n:"NaOH", mm:40, oh:1}, {n:"Al(OH)3", mm:78, oh:3}],
+        sales: ["NaCl", "KNO3", "MgSO4"]
     };
 
-    function iniciarSimulador() {
-        const nom = document.getElementById('user-name').value;
-        const ci = document.getElementById('user-id').value;
-
-        if(nom.length > 3 && ci.length > 4) {
-            estudiante.nombre = nom;
-            estudiante.id = ci;
-            document.getElementById('display-id').innerText = `ID: ${ci}`;
-            document.getElementById('pantalla-registro').style.display = 'none';
-            document.getElementById('pantalla-ejercicio').style.display = 'block';
-            generar();
-        } else {
-            alert("Por favor, introduce datos válidos para el registro.");
-        }
-    }
-
     function generar() {
-        document.getElementById('valor').value = "";
-        document.getElementById('logic').value = "";
-        document.getElementById('feedback').style.display = "none";
+        let txt = "";
+        const m = Math.floor(Math.random() * 3) + 1; // Aleatoriedad base
+        
+        if (MODULO_ACTIVO === 2) {
+            document.getElementById('modulo-txt').innerText = "UNIDADES QUÍMICAS";
+            const a = DB.acidos[Math.floor(Math.random()*2)];
+            const vol = (Math.random()*750 + 250).toFixed(0);
+            const molaridad = (Math.random()*1.5 + 0.1).toFixed(2);
+            meta = molaridad; // Para este ejemplo simple
+            txt = `Determine cuántos gramos de <b>${a.n}</b> se requieren para preparar ${vol}ml de una solución ${molaridad}M.`;
+            // Nota: Aquí la meta sería el cálculo de masa. 
+        } 
+        // Lógica de los demás módulos se expande aquí...
 
-        const a = DB.acidos[Math.floor(Math.random()*DB.acidos.length)];
-        const vol = (Math.random()*750 + 250).toFixed(0);
-        const molaridad = (Math.random()*1.2 + 0.1).toFixed(2);
-        
-        meta = (molaridad * (vol/1000) * a.mm).toFixed(2);
-        
-        // Datos resaltados para ayudar a la atención
-        const enunciadoHTML = `Se requiere preparar una solución de <span class='highlight'>$${a.n}$</span>. 
-        Calcule cuántos <span class='highlight'>gramos</span> del soluto son necesarios para obtener 
-        <span class='highlight'>${vol} ml</span> a una concentración de <span class='highlight'>${molaridad} M</span>.`;
-        
-        document.getElementById('enunciado').innerHTML = enunciadoHTML;
-        if(window.MathJax) MathJax.typesetPromise();
+        document.getElementById('enunciado').innerHTML = txt;
+        if(window.MathJax) MathJax.typeset();
     }
 
     function evaluar() {
@@ -187,33 +113,24 @@ body {
         const fb = document.getElementById('feedback');
         
         fb.style.display = "block";
-        
-        // Tolerancia aumentada al 10% para reducir frustración
-        const numOk = Math.abs(val - meta) < (meta * 0.10);
-        const tieneLogica = log.length > 15 && (log.includes("mol") || log.includes("masa") || log.includes("peso"));
+        const numOk = Math.abs(val - meta) < (meta * 0.03);
+        const logicOk = log.length > 15;
 
-        if(numOk && tieneLogica) {
+        if(numOk && logicOk) {
             racha++;
             fb.style.background = "rgba(46, 204, 113, 0.3)";
-            fb.innerHTML = "<b>¡BRILLANTE!</b> Has demostrado atención y dominio. ¡Reactor estable!";
-            setTimeout(generar, 2500);
-        } 
-        else if (tieneLogica && !numOk) {
-            fb.style.background = "rgba(241, 196, 15, 0.3)";
-            fb.innerHTML = "<b>ANÁLISIS VÁLIDO:</b> Tu lógica es buena, pero revisa tus cálculos numéricos. ¡Eleva tu atención en los decimales!";
-        }
-        else if (!tieneLogica && numOk) {
-            fb.style.background = "rgba(52, 152, 219, 0.3)";
-            fb.innerHTML = "<b>CÁLCULO CORRECTO:</b> Pero en ZUFORCA valoramos tu pensamiento. Describe tu proceso en el cuadro de análisis.";
-        }
-        else {
+            fb.innerHTML = "<b>¡Excelente!</b> Racha incrementada. Procedimiento validado.";
+        } else {
             racha = 0;
             fb.style.background = "rgba(231, 76, 60, 0.3)";
-            fb.innerHTML = `<b>RESPIRA Y REVISA:</b> Vamos de nuevo. Multiplica Molaridad x Volumen(L) x Masa Molecular. El valor esperado era ~${meta}g`;
+            fb.innerHTML = "<b>Error de ingeniería:</b> Revisa tus factores de conversión.";
         }
         
         document.getElementById('racha').innerText = racha;
+        setTimeout(generar, 3000);
     }
+
+    window.onload = generar;
 </script>
 </body>
 </html>
