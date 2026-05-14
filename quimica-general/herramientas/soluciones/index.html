@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZUFORCA: Módulo de Ingeniería</title>
+    <title>ZUFORCA: Módulo de Ingeniería Química</title>
     
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -43,6 +43,7 @@
         .problem-text { 
             background: rgba(255,255,255,0.08); padding: 18px; 
             border-radius: 12px; margin: 15px 0; border-left: 5px solid var(--accent-blue);
+            min-height: 80px;
         }
 
         textarea {
@@ -59,6 +60,7 @@
 
         .feedback-box {
             margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 0.85em; display: none;
+            text-align: center;
         }
 
         .footer-credits {
@@ -73,18 +75,18 @@
 <div class="glass-panel">
     <div id="registro">
         <h2 style="text-align:center; margin-bottom:5px;">ZUFORCA</h2>
-        <p style="text-align:center; color:var(--gold); font-size:0.9em; margin-bottom:20px;">SISTEMA DE ANÁLISIS DE PROCESOS</p>
+        <p style="text-align:center; color:var(--gold); font-size:0.9em; margin-bottom:20px;">REACTOR DE SOLUCIONES MULTIMODAL</p>
         
         <div class="instruction-box">
-            <b>REGLAS DEL REACTOR:</b><br>
-            1. Describa el procedimiento e incluya el resultado numérico en el texto.<br>
-            2. El sistema analizará su lógica y valor final.<br>
-            3. Requiere <b>10 intentos perfectos</b> (8/8 cada uno) para certificar.
+            <b>DESAFÍO DE INGENIERÍA:</b><br>
+            1. Los problemas rotan entre <b>Molaridad, Molalidad y Normalidad</b>.<br>
+            2. Incluya su procedimiento y el <b>valor final</b> en el cuadro de texto.<br>
+            3. Racha requerida: <b>10 ciclos perfectos</b> (8/8).
         </div>
 
         <input type="text" id="user-name" placeholder="Nombre completo" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:none; background:rgba(255,255,255,0.1); color:white;">
         <input type="text" id="user-id" placeholder="Cédula" style="width:100%; padding:12px; margin-bottom:20px; border-radius:8px; border:none; background:rgba(255,255,255,0.1); color:white;">
-        <button onclick="iniciar()">ACTIVAR REACTOR</button>
+        <button onclick="iniciar()">INICIAR EVALUACIÓN</button>
     </div>
 
     <div id="simulador" style="display:none;">
@@ -95,20 +97,20 @@
         
         <div id="enunciado" class="problem-text"></div>
         
-        <label style="font-size:0.9em; opacity:0.9;">Procedimiento y Resultado Final:</label>
-        <textarea id="logic" rows="5" placeholder="Escriba aquí su desarrollo y el valor final en gramos..."></textarea>
+        <label style="font-size:0.9em; opacity:0.9;">Procedimiento y Valor Final:</label>
+        <textarea id="logic" rows="5" placeholder="Escriba aquí el desarrollo y el resultado..."></textarea>
         
         <div id="feedback" class="feedback-box"></div>
         
-        <button id="btn-evaluar" onclick="evaluar()">ANALIZAR INGENIERÍA</button>
+        <button id="btn-evaluar" onclick="evaluar()">ANALIZAR RESPUESTA</button>
         <div style="text-align:center; font-size:0.75em; margin-top:10px; opacity:0.7;">EJERCICIO <span id="progreso">1</span> DE 8</div>
     </div>
 
     <div id="final-screen">
         <h3 id="resultado-titulo"></h3>
         <p id="resultado-detalle"></p>
-        <div id="mensaje-racha"></div>
-        <button onclick="siguienteIntento()">CONTINUAR CICLO</button>
+        <div id="mensaje-racha" style="margin:20px 0;"></div>
+        <button onclick="siguienteIntento()">CONTINUAR RUTA</button>
     </div>
 </div>
 
@@ -121,13 +123,15 @@
     let aciertosIntento = 0;
     let rachaPerfecta = 0;
     let metaVal = 0;
-    let historial = {};
+    let historialCompuestos = {};
+    let ultimoTipo = -1; // Para evitar repetir el tipo de problema seguido
     const totalProblemas = 8;
     const datosUser = { nombre: "", id: "" };
 
     const DB = [
-        {n:"H_2SO_4", mm:98.08}, {n:"HCl", mm:36.46}, {n:"HNO_3", mm:63.01}, 
-        {n:"NaOH", mm:40.00}, {n:"KOH", mm:56.10}, {n:"CH_3COOH", mm:60.05}
+        {n:"H_2SO_4", mm:98.08, v:2}, {n:"HCl", mm:36.46, v:1}, 
+        {n:"HNO_3", mm:63.01, v:1}, {n:"NaOH", mm:40.00, v:1}, 
+        {n:"KOH", mm:56.10, v:1}, {n:"CH_3COOH", mm:60.05, v:1}
     ];
 
     function iniciar() {
@@ -143,17 +147,34 @@
     }
 
     function generar() {
-        let candidatos = DB.filter(a => (historial[a.n] || 0) < 2);
-        if (candidatos.length === 0) { historial = {}; candidatos = DB; }
-        
+        // Seleccionar compuesto evitando repetición excesiva
+        let candidatos = DB.filter(a => (historialCompuestos[a.n] || 0) < 2);
+        if (candidatos.length === 0) { historialCompuestos = {}; candidatos = DB; }
         const comp = candidatos[Math.floor(Math.random()*candidatos.length)];
-        historial[comp.n] = (historial[comp.n] || 0) + 1;
+        historialCompuestos[comp.n] = (historialCompuestos[comp.n] || 0) + 1;
 
-        const vol = (Math.random()*750 + 250).toFixed(0);
-        const molaridad = (Math.random()*0.8 + 0.2).toFixed(2);
-        metaVal = parseFloat((molaridad * (vol/1000) * comp.mm).toFixed(2));
+        // Seleccionar tipo de problema (0: Molaridad, 1: Molalidad, 2: Normalidad)
+        let tipo;
+        do { tipo = Math.floor(Math.random() * 3); } while (tipo === ultimoTipo);
+        ultimoTipo = tipo;
+
+        const val1 = (Math.random()*750 + 250).toFixed(0); // Volumen o Masa solvente
+        const conc = (Math.random()*0.8 + 0.2).toFixed(2); // Concentración deseada
         
-        document.getElementById('enunciado').innerHTML = `Prepare <b>${vol} ml</b> de una solución de <b>\\(${comp.n}\\)</b> a <b>${molaridad} M</b>.`;
+        let texto = "";
+        if (tipo === 0) { // Molaridad
+            metaVal = parseFloat((conc * (val1/1000) * comp.mm).toFixed(2));
+            texto = `Determine los gramos de <b>\\(${comp.n}\\)</b> necesarios para preparar <b>${val1} ml</b> de solución <b>${conc} M</b>.`;
+        } else if (tipo === 1) { // Molalidad
+            metaVal = parseFloat((conc * (val1/1000) * comp.mm).toFixed(2));
+            texto = `Calcule cuántos gramos de <b>\\(${comp.n}\\)</b> se deben disolver en <b>${val1} g</b> de agua para obtener una concentración <b>${conc} m</b>.`;
+        } else { // Normalidad
+            const eq = comp.mm / comp.v;
+            metaVal = parseFloat((conc * (val1/1000) * eq).toFixed(2));
+            texto = `¿Cuántos gramos de <b>\\(${comp.n}\\)</b> se requieren para <b>${val1} ml</b> de una solución <b>${conc} N</b>?`;
+        }
+
+        document.getElementById('enunciado').innerHTML = texto;
         document.getElementById('logic').value = "";
         document.getElementById('feedback').style.display = 'none';
         document.getElementById('progreso').innerText = ejercicioActual;
@@ -164,8 +185,6 @@
     function evaluar() {
         const texto = document.getElementById('logic').value;
         const fb = document.getElementById('feedback');
-        
-        // Extraer números del texto para validar el resultado
         const numerosEncontrados = texto.match(/\d+[.,]\d+/g) || [];
         let exito = false;
 
@@ -174,19 +193,18 @@
             if(Math.abs(n - metaVal) < (metaVal * 0.05)) exito = true;
         });
 
+        fb.style.display = 'block';
         if(exito) {
             aciertosIntento++;
-            fb.style.display = 'block';
             fb.style.background = 'rgba(46, 204, 113, 0.2)';
             fb.style.color = '#2ecc71';
-            fb.innerText = "Análisis correcto. Proceda al siguiente.";
+            fb.innerText = "¡Ingeniería correcta! Pasando al siguiente nivel...";
             setTimeout(siguientePaso, 1500);
         } else {
-            fb.style.display = 'block';
             fb.style.background = 'rgba(231, 76, 60, 0.2)';
             fb.style.color = '#ff7675';
-            fb.innerText = "Error en el cálculo o procedimiento. Revise el peso molecular y despeje.";
-            setTimeout(siguientePaso, 2000);
+            fb.innerText = "Error detectado. Revise unidades y el tipo de concentración (M, m o N).";
+            setTimeout(siguientePaso, 2500);
         }
     }
 
@@ -206,12 +224,14 @@
         
         if(porc === 100) {
             rachaPerfecta++;
-            document.getElementById('resultado-titulo').innerText = "¡INTENTO PERFECTO!";
-            document.getElementById('mensaje-racha').innerHTML = `RACHA: <span style="color:var(--gold); font-size:1.5em;">${rachaPerfecta}/10</span>`;
+            document.getElementById('resultado-titulo').innerText = "¡CERTIFICACIÓN DE CICLO!";
+            document.getElementById('resultado-titulo').style.color = "var(--success)";
+            document.getElementById('mensaje-racha').innerHTML = `RACHA CONSECUTIVA: <span style="color:var(--gold); font-size:1.6em;">${rachaPerfecta}/10</span>`;
         } else {
             rachaPerfecta = 0;
-            document.getElementById('resultado-titulo').innerText = "CICLO FALLIDO";
-            document.getElementById('mensaje-racha').innerText = "Racha reiniciada. Se requiere 100% de precisión.";
+            document.getElementById('resultado-titulo').innerText = "CICLO RECHAZADO";
+            document.getElementById('resultado-titulo').style.color = "#e74c3c";
+            document.getElementById('mensaje-racha').innerText = "La racha ha vuelto a 0. Se requiere dominio absoluto.";
         }
         document.getElementById('racha-total').innerText = rachaPerfecta;
     }
