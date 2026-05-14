@@ -3,165 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZUFORCA: Simulador de Ingeniería</title>
+    <title>ZUFORCA: Máster en Ingeniería Química</title>
     
-    <!-- CARGA DE LIBRERÍAS (Versión Robusta) -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <style>
         :root {
-            --glass-bg: rgba(15, 25, 35, 0.75);
+            --glass-bg: rgba(15, 25, 35, 0.88);
             --accent-blue: #3498db;
+            --success: #2ecc71;
+            --gold: #f1c40f;
         }
 
         body {
-            margin: 0; padding: 0;
+            margin: 0; min-height: 100vh;
             display: flex; justify-content: center; align-items: center;
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             background: #0a0f14 url('https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/quimica-general/herramientas/soluciones/fondo-soluciones.png') no-repeat center center fixed;
-            background-size: cover;
-            color: white;
+            background-size: cover; color: white;
         }
 
         .glass-panel {
             background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 25px;
-            padding: 35px;
-            width: 90%;
-            max-width: 550px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px; padding: 30px;
+            width: 90%; max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .header { 
-            display: flex; justify-content: space-between; 
-            font-size: 0.85em; border-bottom: 1px solid rgba(255,255,255,0.1); 
-            padding-bottom: 15px; margin-bottom: 20px;
-            text-transform: uppercase; letter-spacing: 1px; font-weight: bold;
-        }
-        
         .problem-text { 
-            font-size: 1.15em; line-height: 1.6;
-            background: rgba(255,255,255,0.05); 
-            padding: 20px; border-radius: 15px; margin-bottom: 25px;
-            border-left: 5px solid var(--accent-blue);
+            background: rgba(255,255,255,0.05); padding: 15px; 
+            border-radius: 12px; margin: 20px 0; border-left: 4px solid var(--accent-blue);
+            font-size: 1.1em;
         }
-
-        .highlight { color: #00d2ff; font-weight: bold; }
-
-        label { display: block; margin-bottom: 8px; font-size: 0.9em; color: #bbb; font-weight: 600; }
 
         input, textarea {
-            width: 100%; background: rgba(255,255,255,0.07); 
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 12px; color: white; padding: 14px; 
-            box-sizing: border-box; margin-bottom: 20px; font-size: 1em;
-            outline: none; transition: 0.3s;
-        }
-
-        input:focus, textarea:focus { 
-            border: 2px solid var(--accent-blue); 
-            background: rgba(255,255,255,0.12);
-            box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+            width: 100%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px; color: white; padding: 12px; margin-bottom: 15px; box-sizing: border-box;
         }
 
         button {
-            width: 100%; padding: 16px; border-radius: 12px; border: none;
-            background: var(--accent-blue); color: white;
-            font-weight: bold; cursor: pointer; transition: 0.3s;
-            text-transform: uppercase; letter-spacing: 1px;
+            width: 100%; padding: 15px; border-radius: 8px; border: none;
+            background: var(--accent-blue); color: white; font-weight: bold; cursor: pointer;
+            text-transform: uppercase;
         }
 
-        .feedback { 
-            margin-top: 20px; padding: 15px; border-radius: 12px; 
-            text-align: center; font-weight: 500; display: none;
+        .stats-header {
+            display: flex; justify-content: space-between; font-size: 0.8em; 
+            margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1);
         }
+
+        .badge { color: var(--gold); font-weight: bold; }
+        
+        #final-screen { text-align: center; display: none; }
     </style>
 </head>
 <body>
 
 <div class="glass-panel">
-    <div id="pantalla-registro">
-        <h2 style="text-align:center;">ZUFORCA</h2>
-        <p style="text-align:center; color:#aaa;">Módulo de Ingeniería Química</p>
-        <label>Nombre del Estudiante:</label>
-        <input type="text" id="user-name">
+    <!-- PANTALLA DE REGISTRO -->
+    <div id="registro">
+        <h2 style="text-align:center; margin-bottom: 5px;">ZUFORCA</h2>
+        <p style="text-align:center; font-size: 0.9em; color: var(--gold);">RETO: RACHA DE 10 (100% PERFECTO)</p>
+        <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:8px; font-size:0.85em; margin-bottom:20px;">
+            Cada intento tiene <b>8 problemas</b>. Debes lograr el 100% en 10 intentos seguidos para la certificación.
+        </div>
+        <label>Nombre:</label>
+        <input type="text" id="user-name" placeholder="Tu nombre">
         <label>Cédula:</label>
-        <input type="text" id="user-id">
-        <button onclick="iniciar()">ACTIVAR REACTOR</button>
+        <input type="text" id="user-id" placeholder="Cédula de Identidad">
+        <button onclick="iniciar()">INICIAR CICLO DE INGENIERÍA</button>
     </div>
 
-    <div id="pantalla-ejercicio" style="display:none;">
-        <div class="header">
-            <span id="display-id">ID: ---</span>
-            <span>RACHA: <b id="racha">0</b>/5</span>
+    <!-- PANTALLA DE SIMULADOR -->
+    <div id="simulador" style="display:none;">
+        <div class="stats-header">
+            <span>ID: <b id="label-estudiante"></b></span>
+            <span>RACHA PERFECTA: <b id="racha-total" class="badge">0</b>/10</span>
+        </div>
+        <div style="text-align:right; font-size:0.75em; opacity:0.8;">
+            PROBLEMA: <b id="progreso">1</b>/8
         </div>
         <div id="enunciado" class="problem-text"></div>
-        <label>ANÁLISIS LÓGICO:</label>
-        <textarea id="logic" rows="3"></textarea>
-        <label>GRAMOS:</label>
+        <label>Razonamiento Químico:</label>
+        <textarea id="logic" rows="2" placeholder="Explique su cálculo aquí..."></textarea>
+        <label>Resultado (Gramos):</label>
         <input type="number" id="valor" step="0.01">
-        <button onclick="evaluar()">EVALUAR</button>
-        <div id="feedback" class="feedback"></div>
+        <button onclick="evaluar()">ENVIAR DATOS</button>
+    </div>
+
+    <!-- PANTALLA FINAL -->
+    <div id="final-screen">
+        <h3 id="resultado-titulo"></h3>
+        <p id="resultado-detalle"></p>
+        <div id="mensaje-racha" style="margin:15px 0; font-weight:bold;"></div>
+        <button onclick="siguienteIntento()">CONTINUAR DESAFÍO</button>
     </div>
 </div>
 
+<iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
 <script>
-    let racha = 0, meta = 0;
+    let ejercicioActual = 1;
+    let aciertosEnEsteIntento = 0;
+    let rachaPerfecta = 0;
+    let metaVal = 0;
+    const problemasPorIntento = 8;
+    const datosUser = { nombre: "", id: "" };
+
     const DB = {
         acidos: [
             {n:"H_2SO_4", mm:98.08}, {n:"HCl", mm:36.46},
-            {n:"HNO_3", mm:63.01}, {n:"NaOH", mm:40.00}
+            {n:"HNO_3", mm:63.01}, {n:"NaOH", mm:40.00}, 
+            {n:"KOH", mm:56.10}, {n:"CH_3COOH", mm:60.05}
         ]
     };
 
     function iniciar() {
-        if(document.getElementById('user-id').value.length > 4) {
-            document.getElementById('display-id').innerText = "ID: " + document.getElementById('user-id').value;
-            document.getElementById('pantalla-registro').style.display = 'none';
-            document.getElementById('pantalla-ejercicio').style.display = 'block';
+        const n = document.getElementById('user-name').value;
+        const i = document.getElementById('user-id').value;
+        if(n.length > 3 && i.length > 5) {
+            datosUser.nombre = n; datosUser.id = i;
+            document.getElementById('label-estudiante').innerText = i;
+            document.getElementById('registro').style.display = 'none';
+            document.getElementById('simulador').style.display = 'block';
             generar();
+        } else {
+            alert("Identificación requerida para registro en Drive.");
         }
     }
 
     function generar() {
         const comp = DB.acidos[Math.floor(Math.random()*DB.acidos.length)];
-        const vol = (Math.random()*800 + 200).toFixed(0);
-        const molaridad = (Math.random()*0.9 + 0.1).toFixed(2);
-        meta = (molaridad * (vol/1000) * comp.mm).toFixed(2);
+        const vol = (Math.random()*750 + 250).toFixed(0);
+        const molaridad = (Math.random()*0.8 + 0.2).toFixed(2);
+        metaVal = (molaridad * (vol/1000) * comp.mm).toFixed(2);
         
-        // Cambio clave: Usamos \( \) en lugar de $ para máxima compatibilidad
-        document.getElementById('enunciado').innerHTML = `Prepare una solución de <span class='highlight'>\\(${comp.n}\\)</span>. Calcule los <span class='highlight'>gramos</span> para <span class='highlight'>${vol} ml</span> a <span class='highlight'>${molaridad} M</span>.`;
-        
+        document.getElementById('enunciado').innerHTML = `Prepare una solución de <b style="color:var(--accent-blue);">\\(${comp.n}\\)</b>. Determine los gramos necesarios para <b style="color:var(--accent-blue);">${vol} ml</b> a <b style="color:var(--accent-blue);">${molaridad} M</b>.`;
         document.getElementById('valor').value = "";
-        document.getElementById('feedback').style.display = "none";
+        document.getElementById('logic').value = "";
+        document.getElementById('progreso').innerText = ejercicioActual;
 
-        // Forzamos el renderizado manual
-        if (window.MathJax) {
-            MathJax.typesetPromise();
-        }
+        if (window.MathJax) MathJax.typesetPromise();
     }
 
     function evaluar() {
         const val = parseFloat(document.getElementById('valor').value);
-        const fb = document.getElementById('feedback');
-        fb.style.display = "block";
+        // Margen de error del 5% para exigir precisión científica
+        if(Math.abs(val - metaVal) < (metaVal * 0.05)) aciertosEnEsteIntento++;
 
-        if(Math.abs(val - meta) < (meta * 0.1)) {
-            racha++;
-            fb.style.background = "rgba(46, 204, 113, 0.4)";
-            fb.innerHTML = "¡CORRECTO! Reactor estable.";
-            setTimeout(generar, 2000);
+        if(ejercicioActual < problemasPorIntento) {
+            ejercicioActual++;
+            generar();
         } else {
-            racha = 0;
-            fb.style.background = "rgba(231, 76, 60, 0.4)";
-            fb.innerHTML = "REVISA: El valor era ~" + meta + "g. Reiniciando racha.";
+            finalizarIntento();
         }
-        document.getElementById('racha').innerText = racha;
+    }
+
+    function finalizarIntento() {
+        document.getElementById('simulador').style.display = 'none';
+        document.getElementById('final-screen').style.display = 'block';
+        
+        const porcentaje = (aciertosEnEsteIntento / problemasPorIntento) * 100;
+        const titulo = document.getElementById('resultado-titulo');
+        const msgRacha = document.getElementById('mensaje-racha');
+
+        if(porcentaje === 100) {
+            rachaPerfecta++;
+            titulo.innerText = "¡INTENTO PERFECTO!";
+            titulo.style.color = "var(--success)";
+            msgRacha.innerText = `Racha actual: ${rachaPerfecta}/10`;
+            msgRacha.style.color = "var(--gold)";
+        } else {
+            rachaPerfecta = 0;
+            titulo.innerText = "INTENTO FALLIDO";
+            titulo.style.color = "#e74c3c";
+            msgRacha.innerText = "Racha reiniciada a 0/10. La precisión es vital en ZUFORCA.";
+        }
+
+        document.getElementById('resultado-detalle').innerText = `Aciertos: ${aciertosEnEsteIntento} de ${problemasPorIntento} (${porcentaje.toFixed(1)}%)`;
+        document.getElementById('racha-total').innerText = rachaPerfecta;
+        
+        enviarADrive(porcentaje, rachaPerfecta);
+    }
+
+    function siguienteIntento() {
+        ejercicioActual = 1;
+        aciertosEnEsteIntento = 0;
+        document.getElementById('final-screen').style.display = 'none';
+        document.getElementById('simulador').style.display = 'block';
+        generar();
+    }
+
+    function enviarADrive(porc, racha) {
+        // REEMPLAZAR ESTA URL CON LA DE SU FORMULARIO
+        const formURL = "https://docs.google.com/forms/d/e/SU_ID_AQUI/formResponse";
+        const form = document.createElement("form");
+        form.method = "POST"; form.action = formURL; form.target = "hidden_iframe";
+
+        const campos = {
+            "entry.1": datosUser.nombre, 
+            "entry.2": datosUser.id,
+            "entry.3": porc + "%",
+            "entry.4": "Racha: " + racha
+        };
+
+        for (let key in campos) {
+            const input = document.createElement("input");
+            input.type = "hidden"; input.name = key; input.value = campos[key];
+            form.appendChild(input);
+        }
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
     }
 </script>
 </body>
