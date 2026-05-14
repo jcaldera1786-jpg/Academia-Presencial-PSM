@@ -5,24 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZUFORCA: Simulador de Ingeniería</title>
     
-    <!-- CONFIGURACIÓN DE MATHJAX PARA RENDERIZADO DE FÓRMULAS -->
-    <script>
-        window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']]
-            }
-        };
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- CARGA DE LIBRERÍAS (Versión Robusta) -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <style>
         :root {
             --glass-bg: rgba(15, 25, 35, 0.75);
             --accent-blue: #3498db;
-            --success-green: #2ecc71;
-            --error-red: #e74c3c;
-            --warning-yellow: #f1c40f;
         }
 
         body {
@@ -30,7 +20,6 @@
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            /* Priorizamos la ruta absoluta para evitar fallos de carga */
             background: #0a0f14 url('https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/quimica-general/herramientas/soluciones/fondo-soluciones.png') no-repeat center center fixed;
             background-size: cover;
             color: white;
@@ -74,7 +63,6 @@
             outline: none; transition: 0.3s;
         }
 
-        /* Foco visual para estudiantes con TDAH */
         input:focus, textarea:focus { 
             border: 2px solid var(--accent-blue); 
             background: rgba(255,255,255,0.12);
@@ -88,150 +76,91 @@
             text-transform: uppercase; letter-spacing: 1px;
         }
 
-        button:hover { background: #2980b9; transform: translateY(-2px); }
-
-        .instruction-box {
-            background: rgba(52, 152, 219, 0.15);
-            padding: 15px; border-radius: 10px; border: 1px dashed var(--accent-blue);
-            margin-bottom: 20px; font-size: 0.85em; line-height: 1.4;
-        }
-
         .feedback { 
             margin-top: 20px; padding: 15px; border-radius: 12px; 
             text-align: center; font-weight: 500; display: none;
-            animation: fadeIn 0.5s ease;
         }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-<div class="glass-panel" id="main-panel">
-    
-    <!-- PANTALLA 1: REGISTRO -->
+<div class="glass-panel">
     <div id="pantalla-registro">
-        <h2 style="text-align:center; margin-bottom:10px;">ZUFORCA</h2>
-        <p style="text-align:center; font-size:0.9em; color:#aaa; margin-bottom:25px;">Módulo de Ingeniería Química</p>
-        
-        <div class="instruction-box">
-            <b>IDENTIDAD DOCENTE:</b> En esta academia, el <i>cómo</i> razonas es el alma de la ingeniería. Describe tu lógica antes de dar el número.
-        </div>
-
+        <h2 style="text-align:center;">ZUFORCA</h2>
+        <p style="text-align:center; color:#aaa;">Módulo de Ingeniería Química</p>
         <label>Nombre del Estudiante:</label>
-        <input type="text" id="user-name" placeholder="Ej: Juan Pérez">
-        
-        <label>Cédula de Identidad:</label>
-        <input type="text" id="user-id" placeholder="V-12345678">
-        
-        <button onclick="iniciarSimulador()">ACTIVAR REACTOR ACADÉMICO</button>
+        <input type="text" id="user-name">
+        <label>Cédula:</label>
+        <input type="text" id="user-id">
+        <button onclick="iniciar()">ACTIVAR REACTOR</button>
     </div>
 
-    <!-- PANTALLA 2: EJERCICIOS -->
     <div id="pantalla-ejercicio" style="display:none;">
         <div class="header">
             <span id="display-id">ID: ---</span>
             <span>RACHA: <b id="racha">0</b>/5</span>
         </div>
-
-        <div id="enunciado" class="problem-text">Inicializando sistemas...</div>
-
-        <label>ANÁLISIS LÓGICO (Describe tu proceso):</label>
-        <textarea id="logic" rows="4" placeholder="Ej: Primero calculo los moles multiplicando M x V..."></textarea>
-
-        <label id="label-valor">RESULTADO (Gramos):</label>
-        <input type="number" id="valor" step="0.01" placeholder="0.00">
-
-        <button onclick="evaluar()">EVALUAR DESEMPEÑO</button>
+        <div id="enunciado" class="problem-text"></div>
+        <label>ANÁLISIS LÓGICO:</label>
+        <textarea id="logic" rows="3"></textarea>
+        <label>GRAMOS:</label>
+        <input type="number" id="valor" step="0.01">
+        <button onclick="evaluar()">EVALUAR</button>
         <div id="feedback" class="feedback"></div>
     </div>
 </div>
 
 <script>
-    let racha = 0;
-    let meta = 0;
-    const estudiante = { nombre: "", id: "" };
-
+    let racha = 0, meta = 0;
     const DB = {
         acidos: [
-            {n:"H_2SO_4", mm:98.08}, 
-            {n:"HCl", mm:36.46},
-            {n:"HNO_3", mm:63.01},
-            {n:"NaOH", mm:40.00},
-            {n:"KOH", mm:56.10}
+            {n:"H_2SO_4", mm:98.08}, {n:"HCl", mm:36.46},
+            {n:"HNO_3", mm:63.01}, {n:"NaOH", mm:40.00}
         ]
     };
 
-    function iniciarSimulador() {
-        const nom = document.getElementById('user-name').value;
-        const ci = document.getElementById('user-id').value;
-
-        if(nom.length > 2 && ci.length > 4) {
-            estudiante.nombre = nom;
-            estudiante.id = ci;
-            document.getElementById('display-id').innerText = `ID: ${ci}`;
+    function iniciar() {
+        if(document.getElementById('user-id').value.length > 4) {
+            document.getElementById('display-id').innerText = "ID: " + document.getElementById('user-id').value;
             document.getElementById('pantalla-registro').style.display = 'none';
             document.getElementById('pantalla-ejercicio').style.display = 'block';
             generar();
-        } else {
-            alert("Por favor, ingrese sus datos completos para el registro de ZUFORCA.");
         }
     }
 
     function generar() {
-        document.getElementById('valor').value = "";
-        document.getElementById('logic').value = "";
-        document.getElementById('feedback').style.display = "none";
-
         const comp = DB.acidos[Math.floor(Math.random()*DB.acidos.length)];
         const vol = (Math.random()*800 + 200).toFixed(0);
         const molaridad = (Math.random()*0.9 + 0.1).toFixed(2);
-        
         meta = (molaridad * (vol/1000) * comp.mm).toFixed(2);
         
-        const enunciadoHTML = `Se requiere preparar una solución de <span class='highlight'>$${comp.n}$</span>. 
-        Calcule cuántos <span class='highlight'>gramos</span> son necesarios para obtener 
-        <span class='highlight'>${vol} ml</span> a una concentración de <span class='highlight'>${molaridad} M</span>.`;
+        // Cambio clave: Usamos \( \) en lugar de $ para máxima compatibilidad
+        document.getElementById('enunciado').innerHTML = `Prepare una solución de <span class='highlight'>\\(${comp.n}\\)</span>. Calcule los <span class='highlight'>gramos</span> para <span class='highlight'>${vol} ml</span> a <span class='highlight'>${molaridad} M</span>.`;
         
-        document.getElementById('enunciado').innerHTML = enunciadoHTML;
-        
-        // Disparador de MathJax para renderizar la fórmula
-        if(window.MathJax && window.MathJax.typesetPromise) {
+        document.getElementById('valor').value = "";
+        document.getElementById('feedback').style.display = "none";
+
+        // Forzamos el renderizado manual
+        if (window.MathJax) {
             MathJax.typesetPromise();
         }
     }
 
     function evaluar() {
         const val = parseFloat(document.getElementById('valor').value);
-        const log = document.getElementById('logic').value.toLowerCase();
         const fb = document.getElementById('feedback');
-        
         fb.style.display = "block";
-        
-        // Margen de error del 10% para apoyar la discapacidad cognitiva
-        const numOk = Math.abs(val - meta) < (meta * 0.10);
-        const tieneLogica = log.length > 15 && (log.includes("mol") || log.includes("masa") || log.includes("peso") || log.includes("gramos"));
 
-        if(numOk && tieneLogica) {
+        if(Math.abs(val - meta) < (meta * 0.1)) {
             racha++;
             fb.style.background = "rgba(46, 204, 113, 0.4)";
-            fb.innerHTML = "<b>¡EXCELENTE CONCENTRACIÓN!</b> Has conectado la lógica con el resultado. ¡Sigue así!";
-            setTimeout(generar, 3000);
-        } 
-        else if (tieneLogica && !numOk) {
-            fb.style.background = "rgba(241, 196, 15, 0.4)";
-            fb.innerHTML = "<b>MUY BUEN ANÁLISIS:</b> Tu razonamiento es correcto, pero hubo un detalle en el cálculo final. ¡Revisa los decimales, tú puedes!";
-        }
-        else if (!tieneLogica && numOk) {
-            fb.style.background = "rgba(52, 152, 219, 0.4)";
-            fb.innerHTML = "<b>ACIERTAS EL NÚMERO:</b> Pero recuerda que en ZUFORCA valoramos tu proceso. Explica brevemente cómo lo lograste.";
-        }
-        else {
+            fb.innerHTML = "¡CORRECTO! Reactor estable.";
+            setTimeout(generar, 2000);
+        } else {
             racha = 0;
             fb.style.background = "rgba(231, 76, 60, 0.4)";
-            fb.innerHTML = "<b>VAMOS A INTENTARLO DE NUEVO:</b> Con calma. Recuerda: Gramos = M x V(L) x Masa Molecular. ¡Confío en tu capacidad!";
+            fb.innerHTML = "REVISA: El valor era ~" + meta + "g. Reiniciando racha.";
         }
-        
         document.getElementById('racha').innerText = racha;
     }
 </script>
