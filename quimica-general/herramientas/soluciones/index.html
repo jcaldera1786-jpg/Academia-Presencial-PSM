@@ -3,68 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZUFORCA: Módulo de Ingeniería Química</title>
+    <title>ZUFORCA: Reactor de Ingeniería Química</title>
     
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <style>
         :root {
-            --glass-bg: rgba(10, 20, 30, 0.55); 
+            --glass-bg: rgba(10, 20, 30, 0.65); 
             --accent-blue: #3498db;
             --success: #2ecc71;
             --gold: #f1c40f;
+            --danger: #e74c3c;
         }
 
         body {
             margin: 0; min-height: 100vh;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #0a0f14 url('https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/quimica-general/herramientas/soluciones/fondo-soluciones.png') no-repeat center center fixed;
             background-size: cover; color: white;
         }
 
         .glass-panel {
             background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 25px; padding: 35px;
-            width: 90%; max-width: 550px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+            width: 90%; max-width: 600px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
         }
 
         .instruction-box {
             background: rgba(241, 196, 15, 0.1);
             border: 1px dashed var(--gold);
             padding: 15px; border-radius: 12px;
-            margin-bottom: 20px; font-size: 0.85em; color: #eee;
+            margin-bottom: 20px; font-size: 0.85em; line-height: 1.4;
         }
 
         .problem-text { 
-            background: rgba(255,255,255,0.08); padding: 18px; 
-            border-radius: 12px; margin: 15px 0; border-left: 5px solid var(--accent-blue);
-            min-height: 80px;
+            background: rgba(255,255,255,0.1); padding: 20px; 
+            border-radius: 12px; margin: 15px 0; border-left: 6px solid var(--accent-blue);
+            font-size: 1.1em; min-height: 100px;
         }
 
         textarea {
-            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 8px; color: white; padding: 12px; margin-bottom: 12px; box-sizing: border-box;
-            font-family: inherit; font-size: 1em;
+            width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px; color: white; padding: 15px; margin-bottom: 12px; 
+            box-sizing: border-box; font-family: inherit; font-size: 1em; resize: none;
         }
 
         button {
-            width: 100%; padding: 16px; border-radius: 10px; border: none;
-            background: var(--accent-blue); color: white; font-weight: bold; cursor: pointer;
-            text-transform: uppercase; transition: 0.3s;
+            width: 100%; padding: 18px; border-radius: 12px; border: none;
+            background: var(--accent-blue); color: white; font-weight: bold; 
+            cursor: pointer; text-transform: uppercase; transition: all 0.3s;
+            letter-spacing: 1px;
         }
 
+        button:hover { background: #2980b9; transform: translateY(-2px); }
+
         .feedback-box {
-            margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 0.85em; display: none;
-            text-align: center;
+            margin-top: 10px; padding: 12px; border-radius: 10px; 
+            font-size: 0.9em; display: none; text-align: center;
         }
 
         .footer-credits {
-            margin-top: 20px; font-size: 0.75em; color: rgba(255,255,255,0.5); text-align: center;
+            margin-top: 25px; font-size: 0.8em; color: rgba(255,255,255,0.6); text-align: center;
         }
 
         #final-screen { text-align: center; display: none; }
@@ -73,58 +77,63 @@
 <body>
 
 <div class="glass-panel">
+    <!-- REGISTRO INICIAL -->
     <div id="registro">
-        <h2 style="text-align:center; margin-bottom:5px;">ZUFORCA</h2>
-        <p style="text-align:center; color:var(--gold); font-size:0.9em; margin-bottom:20px;">REACTOR DE SOLUCIONES MULTIMODAL</p>
+        <h2 style="text-align:center; margin-bottom:5px; letter-spacing:2px;">ZUFORCA</h2>
+        <p style="text-align:center; color:var(--gold); font-size:0.9em; margin-bottom:25px; font-weight:bold;">SISTEMA DE EVALUACIÓN DE INGENIERÍA</p>
         
         <div class="instruction-box">
-            <b>DESAFÍO DE INGENIERÍA:</b><br>
-            1. Los problemas rotan entre <b>Molaridad, Molalidad y Normalidad</b>.<br>
-            2. Incluya su procedimiento y el <b>valor final</b> en el cuadro de texto.<br>
-            3. Racha requerida: <b>10 ciclos perfectos</b> (8/8).
+            <b>PROTOCOLO DE EXAMEN:</b><br>
+            • Problemas de Molaridad, Molalidad, Normalidad y Razonamiento.<br>
+            • Escriba su desarrollo y el <b>resultado numérico</b> en el cuadro.<br>
+            • Objetivo: <b>10 ciclos perfectos</b> para acreditación.
         </div>
 
-        <input type="text" id="user-name" placeholder="Nombre completo" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:none; background:rgba(255,255,255,0.1); color:white;">
-        <input type="text" id="user-id" placeholder="Cédula" style="width:100%; padding:12px; margin-bottom:20px; border-radius:8px; border:none; background:rgba(255,255,255,0.1); color:white;">
-        <button onclick="iniciar()">INICIAR EVALUACIÓN</button>
+        <input type="text" id="user-name" placeholder="Nombre y Apellido" style="width:100%; padding:14px; margin-bottom:12px; border-radius:8px; border:none; background:rgba(255,255,255,0.1); color:white; outline:none;">
+        <input type="text" id="user-id" placeholder="Cédula de Identidad" style="width:100%; padding:14px; margin-bottom:20px; border-radius:8px; border:none; background:rgba(255,255,255,0.1); color:white; outline:none;">
+        <button onclick="iniciar()">ACTIVAR REACTOR</button>
     </div>
 
+    <!-- SIMULADOR ACTIVO -->
     <div id="simulador" style="display:none;">
-        <div style="display:flex; justify-content:space-between; font-size:0.8em; margin-bottom:10px;">
-            <span>ID: <b id="label-estudiante"></b></span>
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">
+            <span>ESTUDIANTE: <b id="label-estudiante" style="color:var(--accent-blue);"></b></span>
             <span>RACHA: <b id="racha-total" style="color:var(--gold);">0</b>/10</span>
         </div>
         
         <div id="enunciado" class="problem-text"></div>
         
-        <label style="font-size:0.9em; opacity:0.9;">Procedimiento y Valor Final:</label>
-        <textarea id="logic" rows="5" placeholder="Escriba aquí el desarrollo y el resultado..."></textarea>
+        <label style="font-size:0.9em; opacity:0.8; margin-bottom:8px; display:block;">Desarrollo técnico y Resultado:</label>
+        <textarea id="logic" rows="6" placeholder="Ej: Masa = moles * PM... Resultado: 15.4 g"></textarea>
         
         <div id="feedback" class="feedback-box"></div>
         
-        <button id="btn-evaluar" onclick="evaluar()">ANALIZAR RESPUESTA</button>
-        <div style="text-align:center; font-size:0.75em; margin-top:10px; opacity:0.7;">EJERCICIO <span id="progreso">1</span> DE 8</div>
+        <button id="btn-evaluar" onclick="evaluar()">ANALIZAR PROCESO</button>
+        <div style="text-align:center; font-size:0.8em; margin-top:15px; opacity:0.6;">EJERCICIO <span id="progreso">1</span> DE 8</div>
     </div>
 
+    <!-- PANTALLA DE RESULTADOS -->
     <div id="final-screen">
-        <h3 id="resultado-titulo"></h3>
-        <p id="resultado-detalle"></p>
-        <div id="mensaje-racha" style="margin:20px 0;"></div>
-        <button onclick="siguienteIntento()">CONTINUAR RUTA</button>
+        <h3 id="resultado-titulo" style="font-size:1.8em; margin-bottom:10px;"></h3>
+        <p id="resultado-detalle" style="opacity:0.9;"></p>
+        <div id="mensaje-racha" style="margin:25px 0; padding:15px; background:rgba(255,255,255,0.05); border-radius:15px;"></div>
+        <button id="btn-siguiente-ciclo" onclick="siguienteIntento()">INICIAR NUEVO CICLO</button>
     </div>
 </div>
 
 <div class="footer-credits">
-    Herramienta de <b>ZUFORCA</b> | Dirección Pedagógica: <b>Dr. José Ángel Caldera L.</b>
+    Desarrollado por <b>ZUFORCA</b> | Dirección: <b>Dr. José Ángel Caldera L.</b>
 </div>
 
 <script>
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwoUJ3BGCBnER8kYnmDbNvW_HMLCAMCg-0CeWIxH-7vUdUG4GA2rWc0tAMkY4kgrqOC/exec";
+    
     let ejercicioActual = 1;
     let aciertosIntento = 0;
     let rachaPerfecta = 0;
     let metaVal = 0;
     let historialCompuestos = {};
-    let ultimoTipo = -1; // Para evitar repetir el tipo de problema seguido
+    let ultimoTipo = -1;
     const totalProblemas = 8;
     const datosUser = { nombre: "", id: "" };
 
@@ -143,35 +152,48 @@
             document.getElementById('registro').style.display = 'none';
             document.getElementById('simulador').style.display = 'block';
             generar();
+        } else {
+            alert("Por favor, ingrese sus datos para el registro en Drive.");
         }
     }
 
     function generar() {
-        // Seleccionar compuesto evitando repetición excesiva
         let candidatos = DB.filter(a => (historialCompuestos[a.n] || 0) < 2);
         if (candidatos.length === 0) { historialCompuestos = {}; candidatos = DB; }
         const comp = candidatos[Math.floor(Math.random()*candidatos.length)];
         historialCompuestos[comp.n] = (historialCompuestos[comp.n] || 0) + 1;
 
-        // Seleccionar tipo de problema (0: Molaridad, 1: Molalidad, 2: Normalidad)
+        // Tipos: 0: M, 1: m, 2: N, 3: Razonamiento
         let tipo;
-        do { tipo = Math.floor(Math.random() * 3); } while (tipo === ultimoTipo);
+        do { tipo = Math.floor(Math.random() * 4); } while (tipo === ultimoTipo);
         ultimoTipo = tipo;
 
-        const val1 = (Math.random()*750 + 250).toFixed(0); // Volumen o Masa solvente
-        const conc = (Math.random()*0.8 + 0.2).toFixed(2); // Concentración deseada
+        const v_ml = (Math.random()*600 + 200).toFixed(0);
+        const conc = (Math.random()*0.7 + 0.15).toFixed(2);
         
         let texto = "";
-        if (tipo === 0) { // Molaridad
-            metaVal = parseFloat((conc * (val1/1000) * comp.mm).toFixed(2));
-            texto = `Determine los gramos de <b>\\(${comp.n}\\)</b> necesarios para preparar <b>${val1} ml</b> de solución <b>${conc} M</b>.`;
-        } else if (tipo === 1) { // Molalidad
-            metaVal = parseFloat((conc * (val1/1000) * comp.mm).toFixed(2));
-            texto = `Calcule cuántos gramos de <b>\\(${comp.n}\\)</b> se deben disolver en <b>${val1} g</b> de agua para obtener una concentración <b>${conc} m</b>.`;
-        } else { // Normalidad
+        if (tipo === 0) {
+            metaVal = parseFloat((conc * (v_ml/1000) * comp.mm).toFixed(2));
+            texto = `Se requiere preparar <b>${v_ml} ml</b> de una solución de <b>\\(${comp.n}\\)</b> con una concentración <b>${conc} M</b>. ¿Cuántos gramos se deben pesar?`;
+        } else if (tipo === 1) {
+            metaVal = parseFloat((conc * (v_ml/1000) * comp.mm).toFixed(2));
+            texto = `Determine la masa de <b>\\(${comp.n}\\)</b> necesaria para disolver en <b>${v_ml} g</b> de solvente puro y alcanzar una molalidad de <b>${conc} m</b>.`;
+        } else if (tipo === 2) {
             const eq = comp.mm / comp.v;
-            metaVal = parseFloat((conc * (val1/1000) * eq).toFixed(2));
-            texto = `¿Cuántos gramos de <b>\\(${comp.n}\\)</b> se requieren para <b>${val1} ml</b> de una solución <b>${conc} N</b>?`;
+            metaVal = parseFloat((conc * (v_ml/1000) * eq).toFixed(2));
+            texto = `En el laboratorio de <b>ZUFORCA</b> se solicita preparar <b>${v_ml} ml</b> de <b>\\(${comp.n}\\)</b> a <b>${conc} N</b>. Calcule los gramos necesarios.`;
+        } else {
+            // PROBLEMA DE RAZONAMIENTO (Tipo Café/Logística)
+            const cucharadas = Math.floor(Math.random() * 10) + 5;
+            const g_por_cuch = 8;
+            const tazas = Math.floor(Math.random() * 15) + 10;
+            const vol_taza = 60;
+            const remanente = Math.floor(Math.random() * 30) + 10;
+            const vol_total = (tazas * vol_taza) + remanente;
+            const masa_total = cucharadas * g_por_cuch;
+            
+            metaVal = parseFloat((masa_total / (vol_total/1000)).toFixed(2)); // g/L
+            texto = `Se prepara café agregando <b>${cucharadas} cucharadas</b> (de ${g_por_cuch}g c/u). Se sirven <b>${tazas} tazas</b> de ${vol_taza}ml, quedando <b>${remanente}ml</b> en la jarra. Asumiendo disolución total, ¿cuál es la concentración en <b>g/L</b>?`;
         }
 
         document.getElementById('enunciado').innerHTML = texto;
@@ -185,7 +207,7 @@
     function evaluar() {
         const texto = document.getElementById('logic').value;
         const fb = document.getElementById('feedback');
-        const numerosEncontrados = texto.match(/\d+[.,]\d+/g) || [];
+        const numerosEncontrados = texto.match(/\d+[.,]\d+/g) || texto.match(/\d+/g) || [];
         let exito = false;
 
         numerosEncontrados.forEach(num => {
@@ -198,12 +220,12 @@
             aciertosIntento++;
             fb.style.background = 'rgba(46, 204, 113, 0.2)';
             fb.style.color = '#2ecc71';
-            fb.innerText = "¡Ingeniería correcta! Pasando al siguiente nivel...";
+            fb.innerText = "ANÁLISIS APROBADO. El valor coincide con los parámetros de ingeniería.";
             setTimeout(siguientePaso, 1500);
         } else {
             fb.style.background = 'rgba(231, 76, 60, 0.2)';
             fb.style.color = '#ff7675';
-            fb.innerText = "Error detectado. Revise unidades y el tipo de concentración (M, m o N).";
+            fb.innerText = "FALLO EN EL PROCESO. Revise sus conversiones y el despeje final.";
             setTimeout(siguientePaso, 2500);
         }
     }
@@ -220,20 +242,39 @@
     function finalizar() {
         document.getElementById('simulador').style.display = 'none';
         document.getElementById('final-screen').style.display = 'block';
-        const porc = (aciertosIntento/totalProblemas)*100;
         
-        if(porc === 100) {
+        const esPerfecto = (aciertosIntento === totalProblemas);
+        if(esPerfecto) {
             rachaPerfecta++;
-            document.getElementById('resultado-titulo').innerText = "¡CERTIFICACIÓN DE CICLO!";
+            document.getElementById('resultado-titulo').innerText = "¡CICLO COMPLETO!";
             document.getElementById('resultado-titulo').style.color = "var(--success)";
-            document.getElementById('mensaje-racha').innerHTML = `RACHA CONSECUTIVA: <span style="color:var(--gold); font-size:1.6em;">${rachaPerfecta}/10</span>`;
+            document.getElementById('mensaje-racha').innerHTML = `ESTADO DE ACREDITACIÓN:<br><span style="color:var(--gold); font-size:1.8em; font-weight:bold;">${rachaPerfecta} / 10</span>`;
         } else {
             rachaPerfecta = 0;
-            document.getElementById('resultado-titulo').innerText = "CICLO RECHAZADO";
-            document.getElementById('resultado-titulo').style.color = "#e74c3c";
-            document.getElementById('mensaje-racha').innerText = "La racha ha vuelto a 0. Se requiere dominio absoluto.";
+            document.getElementById('resultado-titulo').innerText = "RECHAZADO";
+            document.getElementById('resultado-titulo').style.color = "var(--danger)";
+            document.getElementById('mensaje-racha').innerText = "La racha se ha reiniciado. Se requiere 100% de precisión técnica.";
         }
+        
         document.getElementById('racha-total').innerText = rachaPerfecta;
+        registrarEnDrive(aciertosIntento, rachaPerfecta);
+    }
+
+    function registrarEnDrive(aciertos, racha) {
+        const payload = {
+            nombre: datosUser.nombre,
+            id: datosUser.id,
+            aciertos: aciertos + "/" + totalProblemas,
+            racha: racha,
+            detalle: "Sesión Finalizada"
+        };
+
+        fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            cache: 'no-cache',
+            body: JSON.stringify(payload)
+        }).then(() => console.log("Datos sincronizados con Drive."));
     }
 
     function siguienteIntento() {
