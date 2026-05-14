@@ -15,16 +15,16 @@
             --warning-yellow: #f1c40f;
         }
 
-        body {
-            margin: 0; padding: 0;
-            display: flex; justify-content: center; align-items: center;
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: url('fondo-soluciones.png') no-repeat center center fixed;
-            background-size: cover;
-            color: white;
-        }
-
+body {
+    margin: 0; padding: 0;
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* Cambiamos la ruta a una relativa explícita */
+    background: #0a0f14 url('./fondo-soluciones.png') no-repeat center center fixed;
+    background-size: cover;
+    color: white;
+}
         .glass-panel {
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
