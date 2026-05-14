@@ -10,7 +10,7 @@
 
     <style>
         :root {
-            --glass-bg: rgba(10, 20, 30, 0.6); 
+            --glass-bg: rgba(10, 20, 30, 0.55); 
             --accent-blue: #3498db;
             --success: #2ecc71;
             --gold: #f1c40f;
@@ -27,19 +27,25 @@
         .glass-panel {
             background: var(--glass-bg);
             backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 25px; padding: 35px;
             width: 90%; max-width: 550px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.7);
         }
 
+        .instruction-box {
+            background: rgba(241, 196, 15, 0.1);
+            border: 1px dashed var(--gold);
+            padding: 15px; border-radius: 12px;
+            margin-bottom: 20px; font-size: 0.85em;
+            line-height: 1.4; color: #eee;
+        }
+
         .problem-text { 
             background: rgba(255,255,255,0.08); padding: 18px; 
             border-radius: 12px; margin: 15px 0; border-left: 5px solid var(--accent-blue);
-        }
-
-        .instrucciones {
-            font-size: 0.85em; color: #ccc; margin-bottom: 15px; font-style: italic;
+            font-size: 1.05em;
         }
 
         input, textarea {
@@ -48,13 +54,15 @@
         }
 
         button {
-            width: 100%; padding: 15px; border-radius: 8px; border: none;
+            width: 100%; padding: 16px; border-radius: 10px; border: none;
             background: var(--accent-blue); color: white; font-weight: bold; cursor: pointer;
-            text-transform: uppercase;
+            text-transform: uppercase; transition: 0.3s;
         }
 
+        button:hover { background: #2980b9; transform: scale(1.02); }
+
         .footer-credits {
-            margin-top: 20px; font-size: 0.75em; color: rgba(255,255,255,0.6); text-align: center;
+            margin-top: 20px; font-size: 0.75em; color: rgba(255,255,255,0.5); text-align: center;
         }
 
         #final-screen { text-align: center; display: none; }
@@ -63,48 +71,56 @@
 <body>
 
 <div class="glass-panel">
-    <!-- REGISTRO -->
+    <!-- PANTALLA DE INICIO CON INSTRUCCIONES -->
     <div id="registro">
-        <h2 style="text-align:center; margin-bottom:5px;">ZUFORCA</h2>
-        <p style="text-align:center; color:var(--gold); font-size:0.9em; margin-bottom:25px;">SISTEMA DE EVALUACIÓN CONTINUA</p>
-        <label>Nombre:</label>
-        <input type="text" id="user-name">
-        <label>Cédula:</label>
-        <input type="text" id="user-id">
-        <button onclick="iniciar()">ACTIVAR SIMULADOR</button>
+        <h2 style="text-align:center; margin-bottom:5px; letter-spacing: 2px;">ZUFORCA</h2>
+        <p style="text-align:center; color:var(--gold); font-size:0.9em; margin-bottom:20px;">SISTEMA DE EVALUACIÓN QUÍMICA</p>
+        
+        <div class="instruction-box">
+            <b>REGLAS DEL DESAFÍO:</b><br>
+            1. Debe completar <b>8 ejercicios</b> por cada intento.<br>
+            2. Se requiere una racha de <b>10 intentos perfectos (100%)</b> para certificar.<br>
+            3. Es obligatorio describir el <b>procedimiento lógico</b> en el cuadro de análisis.<br>
+            4. Un solo error reinicia su racha a cero.
+        </div>
+
+        <input type="text" id="user-name" placeholder="Nombre completo">
+        <input type="text" id="user-id" placeholder="Cédula de Identidad">
+        <button onclick="iniciar()">ACTIVAR REACTOR</button>
     </div>
 
-    <!-- SIMULADOR -->
+    <!-- PANTALLA DE SIMULADOR -->
     <div id="simulador" style="display:none;">
-        <div style="display:flex; justify-content:space-between; font-size:0.8em; opacity:0.8;">
-            <span id="label-estudiante"></span>
+        <div style="display:flex; justify-content:space-between; font-size:0.8em; opacity:0.8; margin-bottom:10px;">
+            <span>ID: <b id="label-estudiante"></b></span>
             <span>RACHA: <b id="racha-total" style="color:var(--gold);">0</b>/10</span>
         </div>
+        
         <div id="enunciado" class="problem-text"></div>
         
-        <p class="instrucciones">Debe describir el procedimiento lógico para llegar a la solución y colocar el valor final en el cuadro numérico.</p>
+        <label style="font-size:0.9em; opacity:0.9;">Análisis del Procedimiento:</label>
+        <textarea id="logic" rows="3" placeholder="Describa su lógica de cálculo aquí..."></textarea>
         
-        <label>Análisis del Procedimiento:</label>
-        <textarea id="logic" rows="3" placeholder="Ej: despeje de masa, cálculo de moles..."></textarea>
+        <label style="font-size:0.9em; opacity:0.9;">Resultado Final (Gramos):</label>
+        <input type="number" id="valor" step="0.01" placeholder="0.00">
         
-        <label>Resultado Final (Gramos):</label>
-        <input type="number" id="valor" step="0.01">
-        
-        <button onclick="evaluar()">ENVIAR PARA ANÁLISIS</button>
-        <div style="text-align:center; font-size:0.7em; margin-top:10px;">EJERCICIO <span id="progreso">1</span> DE 8</div>
+        <button onclick="evaluar()">EVALUAR INGENIERÍA</button>
+        <div style="text-align:center; font-size:0.75em; margin-top:10px; opacity:0.7;">
+            PROBLEMA <span id="progreso">1</span> DE 8
+        </div>
     </div>
 
     <!-- PANTALLA FINAL -->
     <div id="final-screen">
-        <h3 id="resultado-titulo"></h3>
-        <p id="resultado-detalle"></p>
-        <div id="mensaje-racha" style="margin:15px 0;"></div>
+        <h3 id="resultado-titulo" style="font-size:1.6em;"></h3>
+        <p id="resultado-detalle" style="font-size:1.1em;"></p>
+        <div id="mensaje-racha" style="margin:20px 0; font-weight:bold; padding:15px; background:rgba(255,255,255,0.05); border-radius:10px;"></div>
         <button onclick="siguienteIntento()">INICIAR NUEVO CICLO</button>
     </div>
 </div>
 
 <div class="footer-credits">
-    Herramienta de <b>ZUFORCA</b> | Diseño Pedagógico y Dirección: <b>Dr. José Ángel Caldera L.</b>
+    Herramienta de <b>ZUFORCA</b> | Dirección Pedagógica: <b>Dr. José Ángel Caldera L.</b>
 </div>
 
 <script>
@@ -124,12 +140,14 @@
     function iniciar() {
         const n = document.getElementById('user-name').value;
         const i = document.getElementById('user-id').value;
-        if(n && i) {
+        if(n.length > 3 && i.length > 5) {
             datosUser.nombre = n; datosUser.id = i;
             document.getElementById('label-estudiante').innerText = i;
             document.getElementById('registro').style.display = 'none';
             document.getElementById('simulador').style.display = 'block';
             generar();
+        } else {
+            alert("Por favor, ingrese sus datos para el registro académico.");
         }
     }
 
@@ -144,7 +162,7 @@
         const molaridad = (Math.random()*0.8 + 0.2).toFixed(2);
         metaVal = (molaridad * (vol/1000) * comp.mm).toFixed(2);
         
-        document.getElementById('enunciado').innerHTML = `Prepare <b style="color:var(--accent-blue);">${vol} ml</b> de una solución de <b style="color:var(--accent-blue);">\\(${comp.n}\\)</b> a <b style="color:var(--accent-blue);">${molaridad} M</b>.`;
+        document.getElementById('enunciado').innerHTML = `Prepare <b style="color:var(--accent-blue);">${vol} ml</b> de una solución de <b style="color:var(--accent-blue);">\\(${comp.n}\\)</b> a una concentración de <b style="color:var(--accent-blue);">${molaridad} M</b>.`;
         document.getElementById('valor').value = "";
         document.getElementById('logic').value = "";
         document.getElementById('progreso').innerText = ejercicioActual;
@@ -171,19 +189,22 @@
         
         if(porc === 100) {
             rachaPerfecta++;
-            document.getElementById('resultado-titulo').innerText = "¡EXCELENCIA!";
-            document.getElementById('mensaje-racha').innerHTML = `Racha: <b>${rachaPerfecta}/10</b>`;
+            document.getElementById('resultado-titulo').innerText = "¡INTENTO PERFECTO!";
+            document.getElementById('resultado-titulo').style.color = "var(--success)";
+            document.getElementById('mensaje-racha').innerHTML = `RACHA ACTUAL: <span style="color:var(--gold); font-size:1.4em;">${rachaPerfecta}/10</span>`;
         } else {
             rachaPerfecta = 0;
-            document.getElementById('resultado-titulo').innerText = "PRECISIÓN INSUFICIENTE";
-            document.getElementById('mensaje-racha').innerText = "Racha reiniciada.";
+            document.getElementById('resultado-titulo').innerText = "PRECISIÓN FALLIDA";
+            document.getElementById('resultado-titulo').style.color = "#e74c3c";
+            document.getElementById('mensaje-racha').innerText = "Racha reiniciada a 0. Se requiere 100% de efectividad.";
         }
-        document.getElementById('resultado-detalle').innerText = `Aciertos: ${aciertosIntento}/${totalProblemas}`;
+        document.getElementById('resultado-detalle').innerText = `Lograste ${aciertosIntento} de ${totalProblemas} aciertos.`;
         document.getElementById('racha-total').innerText = rachaPerfecta;
     }
 
     function siguienteIntento() {
         ejercicioActual = 1; aciertosIntento = 0;
+        historial = {};
         document.getElementById('final-screen').style.display = 'none';
         document.getElementById('simulador').style.display = 'block';
         generar();
