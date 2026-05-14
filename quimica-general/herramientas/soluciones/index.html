@@ -126,23 +126,94 @@
 </div>
 
 <script>
+<script>
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwoUJ3BGCBnER8kYnmDbNvW_HMLCAMCg-0CeWIxH-7vUdUG4GA2rWc0tAMkY4kgrqOC/exec";
     
     let ejercicioActual = 1;
     let aciertosIntento = 0;
     let rachaPerfecta = 0;
     let metaVal = 0;
-    let historialCompuestos = {};
-    let ultimoTipo = -1;
+    let historialTipos = [];
     const totalProblemas = 8;
     const datosUser = { nombre: "", id: "" };
 
-    const DB = [
-        {n:"H_2SO_4", mm:98.08, v:2}, {n:"HCl", mm:36.46, v:1}, 
-        {n:"HNO_3", mm:63.01, v:1}, {n:"NaOH", mm:40.00, v:1}, 
-        {n:"KOH", mm:56.10, v:1}, {n:"CH_3COOH", mm:60.05, v:1}
-    ];
+    // MATRIZ QUÍMICA ROBUSTA (ZUFORCA EXPERT)
+    const ELEMENTOS = {
+        hidroxidos: [
+            {n:"Al(OH)_3", mm:78.00, v:3}, {n:"Fe(OH)_3", mm:106.86, v:3},
+            {n:"Fe(OH)_2", mm:89.86, v:2}, {n:"Ni(OH)_2", mm:92.70, v:2},
+            {n:"Mg(OH)_2", mm:58.31, v:2}, {n:"Ca(OH)_2", mm:74.09, v:2},
+            {n:"LiOH", mm:23.95, v:1}
+        ],
+        sales: [
+            {n:"FeCl_3", mm:162.2, v:3}, {n:"NiSO_4", mm:154.7, v:2},
+            {n:"Al_2(SO_4)_3", mm:342.15, v:6}, {n:"KClO_4", mm:138.55, v:1},
+            {n:"NaClO", mm:74.44, v:1}, {n:"Ba(ClO_3)_2", mm:304.2, v:2}
+        ],
+        acidos: [
+            {n:"H_2SO_4", mm:98.08, v:2}, {n:"H_3PO_4", mm:97.99, v:3},
+            {n:"HClO_4", mm:100.46, v:1}, {n:"HNO_3", mm:63.01, v:1},
+            {n:"H_2C_2O_4", mm:90.03, v:2} // Ácido oxálico
+        ]
+    };
 
+    function generar() {
+        const todas = [...ELEMENTOS.hidroxidos, ...ELEMENTOS.sales, ...ELEMENTOS.acidos];
+        const comp = todas[Math.floor(Math.random()*todas.length)];
+
+        let tipo;
+        do { tipo = Math.floor(Math.random() * 6); } while (historialTipos.includes(tipo));
+        historialTipos.push(tipo);
+        if(historialTipos.length > 3) historialTipos.shift();
+
+        const v_ml = (Math.random()*800 + 200).toFixed(0);
+        const conc = (Math.random()*0.9 + 0.1).toFixed(2);
+        let texto = "";
+
+        switch(tipo) {
+            case 0: // Molaridad Estándar
+                metaVal = parseFloat((conc * (v_ml/1000) * comp.mm).toFixed(2));
+                texto = `Se requiere preparar <b>${v_ml} ml</b> de una solución de <b>\\(${comp.n}\\)</b> a <b>${conc} M</b>. ¿Qué masa del compuesto se debe pesar?`;
+                break;
+            case 1: // Normalidad (Crítico para valencias de Fe, Al, Ni)
+                const eq = comp.mm / comp.v;
+                metaVal = parseFloat((conc * (v_ml/1000) * eq).toFixed(2));
+                texto = `Calcule los gramos de <b>\\(${comp.n}\\)</b> necesarios para obtener <b>${v_ml} ml</b> de una solución <b>${conc} N</b>. (Ojo con el peso equivalente).`;
+                break;
+            case 2: // Neutralización Estequiométrica
+                const acido = ELEMENTOS.acidos[Math.floor(Math.random()*ELEMENTOS.acidos.length)];
+                const base = ELEMENTOS.hidroxidos[Math.floor(Math.random()*ELEMENTOS.hidroxidos.length)];
+                const v_base = 250;
+                // Va * Na = Vb * Nb -> Na = (Vb*Nb)/Va
+                metaVal = parseFloat(((v_base * conc) / v_ml).toFixed(2));
+                texto = `En una titulación en <b>ZUFORCA</b>, <b>${v_ml} ml</b> de <b>\\(${acido.n}\\)</b> neutralizan exactamente a <b>${v_base} ml</b> de <b>\\(${base.n}\\)</b> ${conc} N. ¿Molaridad del ácido?`;
+                break;
+            case 3: // Caso de Campo (Aluminio/Suelos)
+                const hectareas = (Math.random()*5 + 1).toFixed(1);
+                const dosis = (Math.random()*100 + 50).toFixed(0);
+                metaVal = parseFloat((hectareas * dosis).toFixed(2));
+                texto = `Para remediar un suelo rico en aluminio, se deben aplicar <b>${dosis} kg/Ha</b> de enmienda. ¿Cuántos kg se requieren para <b>${hectareas} Ha</b>?`;
+                break;
+            case 4: // Formulación de Detergentes (Sales de Hierro/Níquel)
+                const factor = (Math.random()*15 + 5).toFixed(1);
+                metaVal = parseFloat((v_ml * factor / 1000).toFixed(2));
+                texto = `Un aditivo de <b>\\(${comp.n}\\)</b> se dosifica a <b>${factor} g/L</b>. Si el reactor de mezcla tiene <b>${v_ml} ml</b> de capacidad, ¿cuántos gramos de sal aporta?`;
+                break;
+            case 5: // Pureza y Conversión
+                const pureza = (Math.random()*20 + 70).toFixed(0);
+                const masa_teorica = (conc * (v_ml/1000) * comp.mm);
+                metaVal = parseFloat((masa_teorica / (pureza/100)).toFixed(2));
+                texto = `Se necesita preparar <b>${v_ml} ml</b> de <b>\\(${comp.n}\\)</b> ${conc} M. Si el reactivo tiene una <b>pureza del ${pureza}%</b>, ¿cuánta masa real se debe pesar?`;
+                break;
+        }
+
+        document.getElementById('enunciado').innerHTML = texto;
+        document.getElementById('logic').value = "";
+        document.getElementById('feedback').style.display = 'none';
+        document.getElementById('progreso').innerText = ejercicioActual;
+        if (window.MathJax) MathJax.typesetPromise();
+    };
+    
     function iniciar() {
         const n = document.getElementById('user-name').value;
         const i = document.getElementById('user-id').value;
