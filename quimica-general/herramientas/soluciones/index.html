@@ -23,7 +23,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #0a0f14 url('https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/quimica-general/herramientas/soluciones/fondo-soluciones.png') no-repeat center center fixed;
             background-size: cover; color: white;
-            transition: background 0.8s ease; /* Transición suave para el cambio de fondo */
+            transition: background 0.8s ease;
         }
 
         .glass-panel {
@@ -33,6 +33,7 @@
             border-radius: 25px; padding: 35px;
             width: 90%; max-width: 600px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            transition: background 0.5s ease;
         }
 
         .instruction-box {
@@ -98,7 +99,7 @@
         <div style="display:flex; flex-direction:column; font-size:0.85em; margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px; gap:5px;">
             <div style="display:flex; justify-content:space-between;">
                 <span>ESTUDIANTE: <b id="label-estudiante" style="color:var(--accent-blue);"></b></span>
-                <span>RACHA ACTUAL: <b id="racha-total" style="color:var(--gold);">0</b></span>
+                <span>RACHA MÁXIMA: <b id="racha-total" style="color:var(--gold);">0</b></span>
             </div>
             <div>
                 <span>RANGO: <b id="label-nivel" style="text-transform:uppercase;"></b></span>
@@ -133,14 +134,13 @@
     
     let ejercicioActual = 1;
     let aciertosIntento = 0;
-    let rachaPerfecta = 0;
+    let rachaPerfecta = 0; // Esta representará la racha máxima histórica del alumno
     let metaVal = 0;
     let historialTipos = [];
     const totalProblemas = 8;
     const datosUser = { nombre: "", id: "" };
     let nivelActualLabel = "";
 
-    // CONFIGURACIÓN DE ESCALA DE RANGOS PROFESIONALES ZUFORCA
     const RANGOS = [
         { min: 0,  label: "Preparador de Soluciones", color: "#bdc3c7", bg: "url('https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/quimica-general/herramientas/soluciones/fondo-soluciones.png')" },
         { min: 10, label: "Asistente de Laboratorio", color: "#2ecc71", bg: "rgba(22, 160, 133, 0.4)" },
@@ -175,9 +175,8 @@
             datosUser.nombre = n; datosUser.id = i;
             const btnActivar = document.getElementById('btn-activar');
             btnActivar.disabled = true;
-            btnActivar.innerText = "SINCRONIZANDO EXPENDIENTE...";
+            btnActivar.innerText = "SINCRONIZANDO EXPEDIENTE...";
 
-            // Consultar racha histórica guardada en Drive antes de iniciar
             await consultarProgresoNube(i);
 
             document.getElementById('label-estudiante').innerText = n;
@@ -193,10 +192,9 @@
 
     async function consultarProgresoNube(cedula) {
         try {
-            // Se realiza un fetch rápido usando la acción parametrizada en el GET
             const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getProgreso&cedula=${cedula}`);
             const data = await response.json();
-            rachaPerfecta = data.racha || 0;
+            rachaPerfecta = parseInt(data.racha) || 0;
         } catch (e) {
             console.log("Creando nuevo registro local provisional...");
             rachaPerfecta = 0;
@@ -204,7 +202,6 @@
     }
 
     function actualizarInterfazRango() {
-        // Encontrar el rango correspondiente recorriendo en reversa la matriz
         const rangoDefinido = [...RANGOS].reverse().find(r => rachaPerfecta >= r.min);
         nivelActualLabel = rangoDefinido.label;
         
@@ -212,13 +209,14 @@
         labelNivel.innerText = nivelActualLabel;
         labelNivel.style.color = rangoDefinido.color;
         
-        // Manejo dinámico de imágenes de fondo o colores planos según el nivel
+        const panel = document.querySelector('.glass-panel');
         if(rangoDefinido.bg.includes('url')) {
             document.body.style.backgroundImage = rangoDefinido.bg;
+            panel.style.background = "var(--glass-bg)"; // Resetear a glass base
         } else {
             document.body.style.backgroundImage = "none";
             document.body.style.backgroundColor = "#0a0f14";
-            document.querySelector('.glass-panel').style.background = rangoDefinido.bg;
+            panel.style.background = rangoDefinido.bg; // Aplicar color del rango
         }
         document.getElementById('racha-total').innerText = rachaPerfecta;
     }
@@ -228,68 +226,92 @@
         const comp = todas[Math.floor(Math.random()*todas.length)];
 
         let tipo;
-        const v_ml = (Math.random()*800 + 200).toFixed(0);
-        const conc = (Math.random()*0.9 + 0.1).toFixed(2);
         let texto = "";
 
-        // SELECTOR DINÁMICO DE EJERCICIOS POR NIVEL METÓDICO
+        const valorAzar = parseFloat((Math.random() * 750 + 250).toFixed(2)); 
+        const conc = parseFloat((Math.random() * 0.85 + 0.15).toFixed(4)); 
+        const ge = parseFloat((Math.random() * 0.4 + 1.1).toFixed(3)); 
+
+        const unidadesVolumen = ["ml", "L", "dL", "m3", "mm3"];
+        const unidadesMasa = ["g", "kg", "dg", "dag"]; 
+        
+        const uVol = unidadesVolumen[Math.floor(Math.random() * unidadesVolumen.length)];
+        const uMas = unidadesMasa[Math.floor(Math.random() * unidadesMasa.length)];
+
+        let volumenEnLitros = 0;
+        switch(uVol) {
+            case "ml":  volumenEnLitros = valorAzar / 1000; break;
+            case "L":   volumenEnLitros = valorAzar; break;
+            case "dL":  volumenEnLitros = valorAzar / 10; break;
+            case "m3":  volumenEnLitros = valorAzar * 1000; break; 
+            case "mm3": volumenEnLitros = valorAzar / 1000000; break; 
+        }
+
+        let masaEnGramos = 0;
+        switch(uMas) {
+            case "g":   masaEnGramos = valorAzar; break;
+            case "kg":  masaEnGramos = valorAzar * 1000; break;
+            case "dg":  masaEnGramos = valorAzar / 10; break; 
+            case "dag": masaEnGramos = valorAzar * 10; break; 
+        }
+
         if (rachaPerfecta < 10) {
-            // ================= NIVEL 1: PREPARADOR DE SOLUCIONES (Físicas y Químicas Básicas) =================
             do { tipo = Math.floor(Math.random() * 3); } while (historialTipos.includes(tipo));
             historialTipos.push(tipo);
             if(historialTipos.length > 2) historialTipos.shift();
 
             if(tipo === 0) {
-                metaVal = parseFloat((conc * (v_ml/1000) * comp.mm).toFixed(2));
-                texto = `<b>[NIVEL 1]</b> Se requiere preparar <b>${v_ml} ml</b> de una solución de <b>\\(${comp.n}\\)</b> a <b>${conc} M</b>. ¿Qué masa (g) del compuesto se debe pesar?`;
+                metaVal = parseFloat((conc * volumenEnLitros * comp.mm).toFixed(4));
+                texto = `<b>[NIVEL 1]</b> Un operador reporta la necesidad de preparar un volumen de <b>${valorAzar} ${uVol}</b> de <b>\\(${comp.n}\\)</b> concentrado a <b>${conc} M</b>. Calcule la masa exacta <b>en gramos (g)</b> que se debe pesar.`;
             } else if(tipo === 1) {
                 const eq = comp.mm / comp.v;
-                metaVal = parseFloat((conc * (v_ml/1000) * eq).toFixed(2));
-                texto = `<b>[NIVEL 1]</b> Calcule los gramos de <b>\\(${comp.n}\\)</b> necesarios para obtener <b>${v_ml} ml</b> de una solución de concentración analítica <b>${conc} N</b>.`;
+                metaVal = parseFloat((conc * volumenEnLitros * eq).toFixed(4));
+                texto = `<b>[NIVEL 1]</b> En la estación de control se requiere un lote de <b>${valorAzar} ${uVol}</b> de una solución normalizada de <b>\\(${comp.n}\\)</b> a <b>${conc} N</b>. Determine los <b>gramos (g)</b> puros del soluto necesarios.`;
             } else {
-                metaVal = parseFloat((conc * 10).toFixed(2)); // Casos de m/m indirecto adaptado
-                texto = `<b>[NIVEL 1]</b> Se dispone de una muestra concentrada. Calcule la masa soluta total requerida para un lote físico al <b>${conc}% m/m</b> si la masa final estipulada es de 1000g.`;
+                metaVal = parseFloat(((conc / 100) * masaEnGramos).toFixed(4));
+                texto = `<b>[NIVEL 1]</b> Calcule la masa neta de reactivo comercial <b>en gramos (g)</b> necesaria para formular una solución física al <b>${conc}% m/m</b>, sabiendo que la masa total estipulada para el lote final es de <b>${valorAzar} ${uMas}</b>.`;
             }
 
         } else if (rachaPerfecta < 20) {
-            // ================= NIVEL 2: ASISTENTE DE LABORATORIO (Mezclas, Rendimientos, Purezas) =================
             do { tipo = Math.floor(Math.random() * 2); } while (historialTipos.includes(tipo));
             historialTipos.push(tipo);
             
-            const pureza = (Math.random()*20 + 75).toFixed(0);
             if(tipo === 0) {
-                const masa_teorica = (conc * (v_ml/1000) * comp.mm);
-                metaVal = parseFloat((masa_teorica / (pureza/100)).toFixed(2));
-                texto = `<b>[NIVEL 2]</b> Se necesita preparar <b>${v_ml} ml</b> de <b>\\(${comp.n}\\)</b> ${conc} M. Si el reactivo industrial en almacén tiene una <b>pureza del ${pureza}%</b>, ¿cuánta masa real (g) se debe pesar?`;
+                const volEnMililitros = volumenEnLitros * 1000;
+                const masaSolucionGramos = volEnMililitros * ge;
+                metaVal = parseFloat(((conc / 100) * masaSolucionGramos).toFixed(4));
+                texto = `<b>[NIVEL 2]</b> En los laboratorios de ZUFORCA se requiere preparar un tanque operativo de <b>${valorAzar} ${uVol}</b> de una emulsión de <b>\\(${comp.n}\\)</b> concentrada al <b>${(conc*10).toFixed(2)}% m/m</b>. Si el fluido base posee una <b>gravedad específica (GE) de ${ge}</b>, determine la masa de soluto puro <b>en gramos (g)</b> que debe incorporarse.`;
             } else {
-                const v2 = (Math.random()*300 + 100).toFixed(0);
-                const c2 = (Math.random()*0.4 + 0.1).toFixed(2);
-                metaVal = parseFloat((((parseFloat(v_ml)*parseFloat(conc)) + (parseFloat(v2)*parseFloat(c2))) / (parseFloat(v_ml) + parseFloat(v2))).toFixed(2));
-                texto = `<b>[NIVEL 2]</b> En el laboratorio de control se mezclan <b>${v_ml} ml</b> de <b>\\(${comp.n}\\)</b> ${conc} M con <b>${v2} ml</b> de otra solución idéntica pero a concentración <b>${c2} M</b>. Calcule la Molaridad de la mezcla final.`;
+                const valorAzar2 = parseFloat((Math.random() * 300 + 50).toFixed(2));
+                const c2 = (Math.random() * 0.5 + 0.1).toFixed(4);
+                metaVal = parseFloat((((volumenEnLitros * conc) + (valorAzar2 * c2)) / (volumenEnLitros + valorAzar2)).toFixed(4));
+                texto = `<b>[NIVEL 2]</b> Se interconectan dos líneas de alimentación: la primera inyecta <b>${valorAzar} ${uVol}</b> de una solución de <b>\\(${comp.n}\\)</b> ${conc} M, y la segunda aporta <b>${valorAzar2} L</b> del mismo sistema a <b>${c2} M</b>. Calcule la Molaridad (M) de equilibrio de la mezcla resultante.`;
             }
 
         } else if (rachaPerfecta < 30) {
-            // ================= NIVEL 3: ASISTENTE AVANZADO - ESTEQUIOMETRISTA (Reactivo Limitante e Indirectos) =================
-            const masaR1 = (Math.random() * 40 + 10).toFixed(1);
-            const rendimiento = (Math.random() * 15 + 80).toFixed(0);
-            metaVal = parseFloat((masaR1 * 0.82 * (rendimiento/100)).toFixed(2)); // Factor analítico balanceado predicho
-            texto = `<b>[NIVEL 3]</b> Durante la evaluación de un precipitado químico derivado de <b>\\(${comp.n}\\)</b>, se procesan <b>${masaR1} g</b> del analito con un reactivo limitante estequiométrico. Si la eficiencia del proceso real reporta un <b>${rendimiento}% de rendimiento</b>, prediga la masa (g) final obtenida teóricamente en el balance base.`;
+            // CORREGIDO: Estequiometría real basada en el Compuesto (Reacción de precipitación hipotética 1:1 en moles con una sal de Plata)
+            const masaR1 = parseFloat((Math.random() * 50 + 15).toFixed(2));
+            const rendimiento = parseFloat((Math.random() * 12 + 85).toFixed(1));
+            const pesoCloruroPlata = 143.32; 
+            
+            // Factor estequiométrico variable real = (PM_Producto / PM_Reactivo)
+            metaVal = parseFloat(((masaR1 / comp.mm) * pesoCloruroPlata * (rendimiento / 100)).toFixed(4)); 
+            texto = `<b>[NIVEL 3]</b> Durante un análisis estequiométrico en planta, se hacen reaccionar por completo <b>${masaR1} g</b> de <b>\\(${comp.n}\\)</b> disuelto. Si el sistema precipita cloruro de plata \\((AgCl, PM: 143.32 g/mol)\\) bajo una relación estequiométrica molar teórica 1:1 y el proceso opera con un <b>${rendimiento}% de rendimiento</b>, determine los <b>gramos (g)</b> reales de precipitado obtenidos.`;
 
         } else if (rachaPerfecta < 40) {
-            // ================= NIVEL 4: INGENIERO DE MEZCLAS (Sistemas > 2 Componentes y Reacciones) =================
-            const v1 = 500; const c1 = 0.75;
-            const v2 = 250; const c2 = 0.35;
-            metaVal = parseFloat(((v1*c1 + v2*c2) / (v1 + v2)).toFixed(3));
-            texto = `<b>[NIVEL 4]</b> Un sistema compuesto requiere la adición balanceada de tres corrientes. Si se acoplan <b>${v1} ml</b> de <b>\\(${comp.n}\\)</b> a <b>${c1} M</b> con una solución secundaria de <b>${v2} ml</b> a <b>${c2} M</b> y se afora el sistema con agua desionizada hasta completar un volumen operativo de balance exacto de 1L, calcule la concentración molar definitiva de la mezcla reactiva.`;
+            const m3Operativos = (Math.random() * 0.5 + 0.1).toFixed(3); 
+            const c1 = 0.850; const c2 = 0.250;
+            const litrosM3 = m3Operativos * 1000;
+            metaVal = parseFloat((((litrosM3 * c1) + (150 * c2)) / (litrosM3 + 150)).toFixed(4));
+            texto = `<b>[NIVEL 4]</b> Una unidad de mezcla semi-continua combina un volumen crítico de <b>${m3Operativos} m3</b> de <b>\\(${comp.n}\\)</b> a <b>0.850 M</b> con una dosificación complementaria de <b>150 L</b> estabilizada a <b>0.250 M</b>. Calcule la Molaridad (M) definitiva del sistema una vez homogeneizado.`;
 
         } else {
-            // ================= NIVEL 5: MAESTRO DE MEZCLAS (Reactores de Flujo Continuo e Industrial) =================
-            const flujo = (Math.random() * 10 + 5).toFixed(1); 
-            const tiempo = (Math.random() * 45 + 30).toFixed(0); 
-            const purezaIndustrial = 88;
-            metaVal = parseFloat(((flujo * tiempo * 0.45 * comp.mm) / (purezaIndustrial / 100)).toFixed(1));
-            
-            texto = `<b>[RETO MAESTRO DE MEZCLAS]</b> Un reactor industrial de flujo continuo opera a una velocidad constante de entrada de <b>${flujo} L/min</b> estabilizado a una concentración de balance de 0.45 M de <b>\\(${comp.n}\\)</b>. Si la materia prima dosificada cuenta con un <b>${purezaIndustrial}% de pureza</b>, determine la masa total (g) balanceada requerida en la tolva para asegurar el régimen permanente durante un lapso crítico de <b>${tiempo} minutos</b>.`;
+            const flujoDL = (Math.random() * 80 + 20).toFixed(1); 
+            const tiempoMin = (Math.random() * 90 + 30).toFixed(0); 
+            const purezaIndustrial = 82.4;
+            const flujoLotes = flujoDL / 10;
+            metaVal = parseFloat(((flujoLotes * tiempoMin * conc * comp.mm) / (purezaIndustrial / 100)).toFixed(2));
+            texto = `<b>[RETO MAESTRO DE MEZCLAS]</b> Una torre de absorción continua procesa un efluente químico con un régimen de flujo constante de <b>${flujoDL} dL/min</b> calibrado a una concentración de balance de <b>${conc} M</b> de <b>\\(${comp.n}\\)</b>. Si la materia prima industrial de alimentación posee un <b>${purezaIndustrial}% de pureza</b>, determine la masa total indispensable <b>en gramos (g)</b> que debe dosificarse en continuo para operar el sistema sin alteraciones durante <b>${tiempoMin} minutos</b>.`;
         }
 
         document.getElementById('enunciado').innerHTML = texto;
@@ -306,7 +328,6 @@
         const numerosEncontrados = texto.match(/\d+[.,]\d+/g) || texto.match(/\d+/g) || [];
         let exito = false;
 
-        // Bloqueo preventivo pedagógico contra clics masivos de los muchachos
         btn.disabled = true;
         btn.style.opacity = "0.5";
         btn.innerText = "ESPERANDO REVISIÓN TÉCNICA...";
@@ -328,7 +349,6 @@
             fb.innerHTML = `<b>FALLO EN EL PROCESO.</b><br>Rango actual: ${nivelActualLabel}<br>El valor esperado era cercano a <b>${metaVal}</b>.<br>Analicen el error, el sistema reiniciará en 15 segundos.`;
         }
 
-        // 15 segundos exactos obligatorios para forzar la lectura del procedimiento
         setTimeout(() => {
             btn.disabled = false;
             btn.style.opacity = "1";
@@ -352,19 +372,20 @@
         const esPerfecto = (aciertosIntento === totalProblemas);
         
         if(esPerfecto) {
-            rachaPerfecta++;
+            rachaPerfecta++; // Sube la racha porque el intento fue impecable
             document.getElementById('resultado-titulo').innerText = "¡CICLO COMPLETO CON ÉXITO!";
             document.getElementById('resultado-titulo').style.color = "var(--success)";
             document.getElementById('resultado-detalle').innerText = "Todos los balances de masa del ciclo actual son válidos.";
         } else {
-            rachaPerfecta = 0; // Penalización por fallo en el examen completo
+            // CORREGIDO: Ya no vuelve a cero drásticamente la racha máxima guardada si fallan.
+            // Mantiene su rango histórico para que no haya frustración destructiva.
             document.getElementById('resultado-titulo').innerText = "CICLO FALLIDO";
             document.getElementById('resultado-titulo').style.color = "var(--danger)";
-            document.getElementById('resultado-detalle').innerText = "Se detectaron desviaciones críticas en los reactores.";
+            document.getElementById('resultado-detalle').innerText = `Se detectaron desviaciones críticas en los reactores (${aciertosIntento}/${totalProblemas} aciertos).`;
         }
         
         actualizarInterfazRango();
-        document.getElementById('mensaje-racha').innerHTML = `Racha registrada en base de datos: <b>${rachaPerfecta} ciclos perfectos</b>.<br>Rango actual: <b>${nivelActualLabel}</b>`;
+        document.getElementById('mensaje-racha').innerHTML = `Racha máxima en el servidor: <b>${rachaPerfecta} ciclos perfectos</b>.<br>Rango actual: <b>${nivelActualLabel}</b>`;
         registrarEnDrive(aciertosIntento, rachaPerfecta);
     }
 
