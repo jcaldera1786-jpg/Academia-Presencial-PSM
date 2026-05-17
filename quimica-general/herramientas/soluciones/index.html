@@ -1,129 +1,4 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZUFORCA: Reactor de Ingeniería Química</title>
-    
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-
-    <style>
-        :root {
-            --glass-bg: rgba(10, 20, 30, 0.65); 
-            --accent-blue: #3498db;
-            --success: #2ecc71;
-            --gold: #f1c40f;
-            --danger: #e74c3c;
-        }
-
-        body {
-            margin: 0; min-height: 100vh;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0a0f14 url('https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/quimica-general/herramientas/soluciones/fondo-soluciones.png') no-repeat center center fixed;
-            background-size: cover; color: white;
-        }
-
-        .glass-panel {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 25px; padding: 35px;
-            width: 90%; max-width: 600px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-        }
-
-        .instruction-box {
-            background: rgba(241, 196, 15, 0.1);
-            border: 1px dashed var(--gold);
-            padding: 15px; border-radius: 12px;
-            margin-bottom: 20px; font-size: 0.85em; line-height: 1.4;
-        }
-
-        .problem-text { 
-            background: rgba(255,255,255,0.1); padding: 20px; 
-            border-radius: 12px; margin: 15px 0; border-left: 6px solid var(--accent-blue);
-            font-size: 1.1em; min-height: 100px;
-        }
-
-        textarea {
-            width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 10px; color: white; padding: 15px; margin-bottom: 12px; 
-            box-sizing: border-box; font-family: inherit; font-size: 1em; resize: none;
-        }
-
-        button {
-            width: 100%; padding: 18px; border-radius: 12px; border: none;
-            background: var(--accent-blue); color: white; font-weight: bold; 
-            cursor: pointer; text-transform: uppercase; transition: all 0.3s;
-            letter-spacing: 1px;
-        }
-
-        button:hover { background: #2980b9; transform: translateY(-2px); }
-
-        .feedback-box {
-            margin-top: 10px; padding: 12px; border-radius: 10px; 
-            font-size: 0.9em; display: none; text-align: center;
-        }
-
-        .footer-credits {
-            margin-top: 25px; font-size: 0.8em; color: rgba(255,255,255,0.6); text-align: center;
-        }
-
-        #final-screen { text-align: center; display: none; }
-    </style>
-</head>
-<body>
-
-<div class="glass-panel">
-    <div id="registro">
-        <h2 style="text-align:center; margin-bottom:5px; letter-spacing:2px;">ZUFORCA</h2>
-        <p style="text-align:center; color:var(--gold); font-size:0.9em; margin-bottom:25px; font-weight:bold;">SISTEMA DE EVALUACIÓN DE INGENIERÍA</p>
-        
-        <div class="instruction-box">
-            <b>PROTOCOLO DE EXAMEN:</b><br>
-            • Problemas de Molaridad, Normalidad, Mezclas y Casos de Campo.<br>
-            • Describa el desarrollo lógico. incluya datos y calculos lo mas ecxacto posible.<br>
-            • Objetivo: <b>10 ciclos perfectos</b> para acreditación.
-        </div>
-
-        <input type="text" id="user-name" placeholder="Nombre y Apellido" style="width:100%; padding:14px; margin-bottom:12px; border-radius:8px; border:none; background:rgba(255,255,255,0.1); color:white; outline:none;">
-        <input type="text" id="user-id" placeholder="Cédula de Identidad" style="width:100%; padding:14px; margin-bottom:20px; border-radius:8px; border:none; background:rgba(255,255,255,0.1); color:white; outline:none;">
-        <button onclick="iniciar()">ACTIVAR REACTOR</button>
-    </div>
-
-    <div id="simulador" style="display:none;">
-        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">
-            <span>ESTUDIANTE: <b id="label-estudiante" style="color:var(--accent-blue);"></b></span>
-            <span>RACHA: <b id="racha-total" style="color:var(--gold);">0</b>/10</span>
-        </div>
-        
-        <div id="enunciado" class="problem-text"></div>
-        
-        <label style="font-size:0.9em; opacity:0.8; margin-bottom:8px; display:block;">Desarrollo técnico y Resultado:</label>
-        <textarea id="logic" rows="6" placeholder="Ej: Masa = moles * PM... Resultado: 15.4 g"></textarea>
-        
-        <div id="feedback" class="feedback-box"></div>
-        
-        <button id="btn-evaluar" onclick="evaluar()">ANALIZAR PROCESO</button>
-        <div style="text-align:center; font-size:0.8em; margin-top:15px; opacity:0.6;">EJERCICIO <span id="progreso">1</span> DE 8</div>
-    </div>
-
-    <div id="final-screen">
-        <h3 id="resultado-titulo" style="font-size:1.8em; margin-bottom:10px;"></h3>
-        <p id="resultado-detalle" style="opacity:0.9;"></p>
-        <div id="mensaje-racha" style="margin:25px 0; padding:15px; background:rgba(255,255,255,0.05); border-radius:15px;"></div>
-        <button id="btn-siguiente-ciclo" onclick="siguienteIntento()">INICIAR NUEVO CICLO</button>
-    </div>
-</div>
-
-<div class="footer-credits">
-    Desarrollado por <b>ZUFORCA</b> | Dirección: <b>Dr. José Ángel Caldera L.</b>
-</div>
-
-<script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwoUJ3BGCBnER8kYnmDbNvW_HMLCAMCg-0CeWIxH-7vUdUG4GA2rWc0tAMkY4kgrqOC/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyCSMSJp5dERj8qESM-iRv3mtA12HPEvdx_fdaDmrdF94-C9xaw12OpHrU2j725IFYF/exec";
     
     let ejercicioActual = 1;
     let aciertosIntento = 0;
@@ -132,6 +7,16 @@
     let historialTipos = [];
     const totalProblemas = 8;
     const datosUser = { nombre: "", id: "" };
+    let nivelActualLabel = "";
+
+    // CONFIGURACIÓN DE ESCALA DE RANGOS PROFESIONALES ZUFORCA
+    const RANGOS = [
+        { min: 0,  label: "Preparador de Soluciones", color: "#bdc3c7", bg: "url('https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/quimica-general/herramientas/soluciones/fondo-soluciones.png')" },
+        { min: 10, label: "Asistente de Laboratorio", color: "#2ecc71", bg: "rgba(22, 160, 133, 0.4)" },
+        { min: 20, label: "Asistente de Laboratorio Avanzado: Estequiometrista", color: "#e67e22", bg: "rgba(211, 84, 0, 0.4)" },
+        { min: 30, label: "Ingeniero de Mezclas", color: "#3498db", bg: "rgba(41, 128, 185, 0.4)" },
+        { min: 40, label: "Maestro de Mezclas", color: "#f1c40f", bg: "url('https://images.unsplash.com/photo-1581092335397-9583ee92d0bb?q=80&w=2070')" }
+    ];
 
     const ELEMENTOS = {
         hidroxidos: [
@@ -152,18 +37,59 @@
         ]
     };
 
-    function iniciar() {
+    async function iniciar() {
         const n = document.getElementById('user-name').value;
         const i = document.getElementById('user-id').value;
         if(n && i) {
             datosUser.nombre = n; datosUser.id = i;
-            document.getElementById('label-estudiante').innerText = i;
+            const btnActivar = document.getElementById('btn-activar');
+            btnActivar.disabled = true;
+            btnActivar.innerText = "SINCRONIZANDO EXPENDIENTE...";
+
+            // Consultar racha histórica guardada en Drive antes de iniciar
+            await consultarProgresoNube(i);
+
+            document.getElementById('label-estudiante').innerText = n;
+            actualizarInterfazRango();
+
             document.getElementById('registro').style.display = 'none';
             document.getElementById('simulador').style.display = 'block';
             generar();
         } else {
-            alert("Por favor, ingrese sus datos.");
+            alert("Por favor, ingrese sus datos completos.");
         }
+    }
+
+    async function consultarProgresoNube(cedula) {
+        try {
+            // Se realiza un fetch rápido usando la acción parametrizada en el GET
+            const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getProgreso&cedula=${cedula}`);
+            const data = await response.json();
+            rachaPerfecta = data.racha || 0;
+        } catch (e) {
+            console.log("Creando nuevo registro local provisional...");
+            rachaPerfecta = 0;
+        }
+    }
+
+    function actualizarInterfazRango() {
+        // Encontrar el rango correspondiente recorriendo en reversa la matriz
+        const rangoDefinido = [...RANGOS].reverse().find(r => rachaPerfecta >= r.min);
+        nivelActualLabel = rangoDefinido.label;
+        
+        const labelNivel = document.getElementById('label-nivel');
+        labelNivel.innerText = nivelActualLabel;
+        labelNivel.style.color = rangoDefinido.color;
+        
+        // Manejo dinámico de imágenes de fondo o colores planos según el nivel
+        if(rangoDefinido.bg.includes('url')) {
+            document.body.style.backgroundImage = rangoDefinido.bg;
+        } else {
+            document.body.style.backgroundImage = "none";
+            document.body.style.backgroundColor = "#0a0f14";
+            document.querySelector('.glass-panel').style.background = rangoDefinido.bg;
+        }
+        document.getElementById('racha-total').innerText = rachaPerfecta;
     }
 
     function generar() {
@@ -171,48 +97,68 @@
         const comp = todas[Math.floor(Math.random()*todas.length)];
 
         let tipo;
-        do { tipo = Math.floor(Math.random() * 6); } while (historialTipos.includes(tipo));
-        historialTipos.push(tipo);
-        if(historialTipos.length > 3) historialTipos.shift();
-
         const v_ml = (Math.random()*800 + 200).toFixed(0);
         const conc = (Math.random()*0.9 + 0.1).toFixed(2);
         let texto = "";
 
-        switch(tipo) {
-            case 0: 
+        // SELECTOR DINÁMICO DE EJERCICIOS POR NIVEL METÓDICO
+        if (rachaPerfecta < 10) {
+            // ================= NIVEL 1: PREPARADOR DE SOLUCIONES (Físicas y Químicas Básicas) =================
+            do { tipo = Math.floor(Math.random() * 3); } while (historialTipos.includes(tipo));
+            historialTipos.push(tipo);
+            if(historialTipos.length > 2) historialTipos.shift();
+
+            if(tipo === 0) {
                 metaVal = parseFloat((conc * (v_ml/1000) * comp.mm).toFixed(2));
-                texto = `Se requiere preparar <b>${v_ml} ml</b> de una solución de <b>\\(${comp.n}\\)</b> a <b>${conc} M</b>. ¿Qué masa del compuesto se debe pesar?`;
-                break;
-            case 1: 
+                texto = `<b>[NIVEL 1]</b> Se requiere preparar <b>${v_ml} ml</b> de una solución de <b>\\(${comp.n}\\)</b> a <b>${conc} M</b>. ¿Qué masa (g) del compuesto se debe pesar?`;
+            } else if(tipo === 1) {
                 const eq = comp.mm / comp.v;
                 metaVal = parseFloat((conc * (v_ml/1000) * eq).toFixed(2));
-                texto = `Calcule los gramos de <b>\\(${comp.n}\\)</b> necesarios para obtener <b>${v_ml} ml</b> de una solución <b>${conc} N</b>.`;
-                break;
-            case 2:
-                const acido = ELEMENTOS.acidos[Math.floor(Math.random()*ELEMENTOS.acidos.length)];
-                const base = ELEMENTOS.hidroxidos[Math.floor(Math.random()*ELEMENTOS.hidroxidos.length)];
-                const v_base = 250;
-                metaVal = parseFloat(((v_base * conc) / v_ml).toFixed(2));
-                texto = `En una titulación, <b>${v_ml} ml</b> de <b>\\(${acido.n}\\)</b> neutralizan exactamente a <b>${v_base} ml</b> de <b>\\(${base.n}\\)</b> ${conc} N. ¿Normalidad del ácido?`;
-                break;
-            case 3:
-                const hectareas = (Math.random()*5 + 1).toFixed(1);
-                const dosis = (Math.random()*100 + 50).toFixed(0);
-                metaVal = parseFloat((hectareas * dosis).toFixed(2));
-                texto = `Para remediar un suelo rico en aluminio, se deben aplicar <b>${dosis} kg/Ha</b> de enmienda. ¿Cuántos kg se requieren para <b>${hectareas} Ha</b>?`;
-                break;
-            case 4:
-                const factor = (Math.random()*15 + 5).toFixed(1);
-                metaVal = parseFloat((v_ml * factor / 1000).toFixed(2));
-                texto = `Un aditivo de <b>\\(${comp.n}\\)</b> se dosifica a <b>${factor} g/L</b>. Si el reactor tiene <b>${v_ml} ml</b> de capacidad, ¿cuántos gramos de sal aporta?`;
-                break;
-            case 5:
-                const pureza = (Math.random()*20 + 70).toFixed(0);
+                texto = `<b>[NIVEL 1]</b> Calcule los gramos de <b>\\(${comp.n}\\)</b> necesarios para obtener <b>${v_ml} ml</b> de una solución de concentración analítica <b>${conc} N</b>.`;
+            } else {
+                metaVal = parseFloat((conc * 10).toFixed(2)); // Casos de m/m indirecto adaptado
+                texto = `<b>[NIVEL 1]</b> Se dispone de una muestra concentrada. Calcule la masa soluta total requerida para un lote físico al <b>${conc}% m/m</b> si la masa final estipulada es de 1000g.`;
+            }
+
+        } else if (rachaPerfecta < 20) {
+            // ================= NIVEL 2: ASISTENTE DE LABORATORIO (Mezclas, Rendimientos, Purezas) =================
+            do { tipo = Math.floor(Math.random() * 2); } while (historialTipos.includes(tipo));
+            historialTipos.push(tipo);
+            
+            const pureza = (Math.random()*20 + 75).toFixed(0);
+            if(tipo === 0) {
                 const masa_teorica = (conc * (v_ml/1000) * comp.mm);
                 metaVal = parseFloat((masa_teorica / (pureza/100)).toFixed(2));
-                texto = `Se necesita preparar <b>${v_ml} ml</b> de <b>\\(${comp.n}\\)</b> ${conc} M. Si el reactivo tiene una <b>pureza del ${pureza}%</b>, ¿cuánta masa real se debe pesar?`;
-                break;
+                texto = `<b>[NIVEL 2]</b> Se necesita preparar <b>${v_ml} ml</b> de <b>\\(${comp.n}\\)</b> ${conc} M. Si el reactivo industrial en almacén tiene una <b>pureza del ${pureza}%</b>, ¿cuánta masa real (g) se debe pesar?`;
+            } else {
+                const v2 = (Math.random()*300 + 100).toFixed(0);
+                const c2 = (Math.random()*0.4 + 0.1).toFixed(2);
+                metaVal = parseFloat((((parseFloat(v_ml)*parseFloat(conc)) + (parseFloat(v2)*parseFloat(c2))) / (parseFloat(v_ml) + parseFloat(v2))).toFixed(2));
+                texto = `<b>[NIVEL 2]</b> En el laboratorio de control se mezclan <b>${v_ml} ml</b> de <b>\\(${comp.n}\\)</b> ${conc} M con <b>${v2} ml</b> de otra solución idéntica pero a concentración <b>${c2} M</b>. Calcule la Molaridad de la mezcla final.`;
+            }
+
+        } else if (rachaPerfecta < 30) {
+            // ================= NIVEL 3: ASISTENTE AVANZADO - ESTEQUIOMETRISTA (Reactivo Limitante e Indirectos) =================
+            const masaR1 = (Math.random() * 40 + 10).toFixed(1);
+            const rendimiento = (Math.random() * 15 + 80).toFixed(0);
+            metaVal = parseFloat((masaR1 * 0.82 * (rendimiento/100)).toFixed(2)); // Factor analítico balanceado predicho
+            texto = `<b>[NIVEL 3]</b> Durante la evaluación de un precipitado químico derivado de <b>\\(${comp.n}\\)</b>, se procesan <b>${masaR1} g</b> del analito con un reactivo limitante estequiométrico. Si la eficiencia del proceso real reporta un <b>${rendimiento}% de rendimiento</b>, prediga la masa (g) final obtenida teóricamente en el balance base.`;
+
+        } else if (rachaPerfecta < 40) {
+            // ================= NIVEL 4: INGENIERO DE MEZCLAS (Sistemas > 2 Componentes y Reacciones) =================
+            const v1 = 500; const c1 = 0.75;
+            const v2 = 250; const c2 = 0.35;
+            metaVal = parseFloat(((v1*c1 + v2*c2) / (v1 + v2)).toFixed(3));
+            texto = `<b>[NIVEL 4]</b> Un sistema compuesto requiere la adición balanceada de tres corrientes. Si se acoplan <b>${v1} ml</b> de <b>\\(${comp.n}\\)</b> a <b>${c1} M</b> con una solución secundaria de <b>${v2} ml</b> a <b>${c2} M</b> y se afora el sistema con agua desionizada hasta completar un volumen operativo de balance exacto de 1L, calcule la concentración molar definitiva de la mezcla reactiva.`;
+
+        } else {
+            // ================= NIVEL 5: MAESTRO DE MEZCLAS (Reactores de Flujo Continuo e Industrial) =================
+            const flujo = (Math.random() * 10 + 5).toFixed(1); 
+            const tiempo = (Math.random() * 45 + 30).toFixed(0); 
+            const purezaIndustrial = 88;
+            metaVal = parseFloat(((flujo * tiempo * 0.45 * comp.mm) / (purezaIndustrial / 100)).toFixed(1));
+            
+            texto = `<b>[RETO MAESTRO DE MEZCLAS]</b> Un reactor industrial de flujo continuo opera a una velocidad constante de entrada de <b>${flujo} L/min</b> estabilizado a una concentración de balance de 0.45 M de <b>\\(${comp.n}\\)</b>. Si la materia prima dosificada cuenta con un <b>${purezaIndustrial}% de pureza</b>, determine la masa total (g) balanceada requerida en la tolva para asegurar el régimen permanente durante un lapso crítico de <b>${tiempo} minutos</b>.`;
         }
 
         document.getElementById('enunciado').innerHTML = texto;
@@ -222,17 +168,17 @@
         if (window.MathJax) MathJax.typesetPromise();
     }
 
-function evaluar() {
+    function evaluar() {
         const texto = document.getElementById('logic').value;
         const fb = document.getElementById('feedback');
         const btn = document.getElementById('btn-evaluar');
         const numerosEncontrados = texto.match(/\d+[.,]\d+/g) || texto.match(/\d+/g) || [];
         let exito = false;
 
-        // Desactivar botón para evitar múltiples clics durante la espera
+        // Bloqueo preventivo pedagógico contra clics masivos de los muchachos
         btn.disabled = true;
         btn.style.opacity = "0.5";
-        btn.innerText = "ESPERANDO REVISIÓN...";
+        btn.innerText = "ESPERANDO REVISIÓN TÉCNICA...";
 
         numerosEncontrados.forEach(num => {
             let n = parseFloat(num.replace(',', '.'));
@@ -244,14 +190,14 @@ function evaluar() {
             aciertosIntento++;
             fb.style.background = 'rgba(46, 204, 113, 0.2)';
             fb.style.color = '#2ecc71';
-            fb.innerHTML = `<b>ANÁLISIS APROBADO.</b><br>El valor técnico detectado es correcto. El reactor avanzará en 15 segundos.`;
+            fb.innerHTML = `<b>ANÁLISIS APROBADO.</b><br>Rango: ${nivelActualLabel}<br>El valor detectado es correcto. El sistema avanzará en 15 segundos para revisión del desarrollo.`;
         } else {
             fb.style.background = 'rgba(231, 76, 60, 0.2)';
             fb.style.color = '#ff7675';
-            fb.innerHTML = `<b>FALLO EN EL PROCESO.</b><br>Revisen sus conversiones. El valor esperado era cercano a <b>${metaVal}</b>.<br>Analicen el error, el sistema reiniciará en 15 segundos.`;
+            fb.innerHTML = `<b>FALLO EN EL PROCESO.</b><br>Rango actual: ${nivelActualLabel}<br>El valor esperado era cercano a <b>${metaVal}</b>.<br>Analicen el error, el sistema reiniciará en 15 segundos.`;
         }
 
-        // Ajuste a 15 segundos (15000 ms)
+        // 15 segundos exactos obligatorios para forzar la lectura del procedimiento
         setTimeout(() => {
             btn.disabled = false;
             btn.style.opacity = "1";
@@ -259,6 +205,7 @@ function evaluar() {
             siguientePaso();
         }, 15000); 
     }
+
     function siguientePaso() {
         if(ejercicioActual < totalProblemas) {
             ejercicioActual++;
@@ -272,17 +219,21 @@ function evaluar() {
         document.getElementById('simulador').style.display = 'none';
         document.getElementById('final-screen').style.display = 'block';
         const esPerfecto = (aciertosIntento === totalProblemas);
+        
         if(esPerfecto) {
             rachaPerfecta++;
-            document.getElementById('resultado-titulo').innerText = "¡CICLO COMPLETO!";
+            document.getElementById('resultado-titulo').innerText = "¡CICLO COMPLETO CON ÉXITO!";
             document.getElementById('resultado-titulo').style.color = "var(--success)";
+            document.getElementById('resultado-detalle').innerText = "Todos los balances de masa del ciclo actual son válidos.";
         } else {
-            rachaPerfecta = 0;
+            rachaPerfecta = 0; // Penalización por fallo en el examen completo
             document.getElementById('resultado-titulo').innerText = "CICLO FALLIDO";
             document.getElementById('resultado-titulo').style.color = "var(--danger)";
+            document.getElementById('resultado-detalle').innerText = "Se detectaron desviaciones críticas en los reactores.";
         }
-        document.getElementById('racha-total').innerText = rachaPerfecta;
-        document.getElementById('mensaje-racha').innerHTML = `Racha actual: ${rachaPerfecta}/10`;
+        
+        actualizarInterfazRango();
+        document.getElementById('mensaje-racha').innerHTML = `Racha registrada en base de datos: <b>${rachaPerfecta} ciclos perfectos</b>.<br>Rango actual: <b>${nivelActualLabel}</b>`;
         registrarEnDrive(aciertosIntento, rachaPerfecta);
     }
 
