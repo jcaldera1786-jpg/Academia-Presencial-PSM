@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZUFORCA: Reactor de Ingeniería Chemical</title>
+    <title>ZUFORCA: Reactor de Ingeniería Química</title>
     
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -89,13 +89,13 @@
         <h2 style="text-align:center; margin-bottom:5px; letter-spacing:2px;">ZUFORCA</h2>
         <p style="text-align:center; color:var(--gold); font-size:0.9em; margin-bottom:25px; font-weight:bold;">SISTEMA DE EVALUACIÓN DE INGENIERÍA</p>
         
-<div class="instruction-box">
-    <b>PROTOCOLO DE EXAMEN (CARRERA TÉCNICA):</b><br>
-    • Ciclos dinámicos de 5 ejercicios para evaluación de procesos.<br>
-    • Se requiere completar <b>5 ciclos perfectos (25 ejercicios)</b> para ascender de rango.<br>
-    • Si falla un ciclo, mantendrá su rango pero se reiniciará la racha hacia el siguiente nivel.<br>
-    • Ingrese su cédula correctamente para sincronizar su expediente.
-</div>
+        <div class="instruction-box">
+            <b>PROTOCOLO DE EXAMEN (CARRERA TÉCNICA):</b><br>
+            • Ciclos dinámicos de 5 ejercicios para evaluación de procesos.<br>
+            • Se requiere completar <b>5 ciclos perfectos (25 ejercicios)</b> para ascender de rango.<br>
+            • Si falla un ciclo, mantendrá su rango pero se reiniciará la racha hacia el siguiente nivel.<br>
+            • Ingrese su cédula correctamente para sincronizar su expediente.
+        </div>
 
         <input type="text" id="user-name" placeholder="Nombre y Apellido" style="width:100%; padding:14px; margin-bottom:12px; border-radius:8px; border:none; background:rgba(255,255,255,0.1); color:white; outline:none;">
         <input type="text" id="user-id" placeholder="Cédula de Identidad" style="width:100%; padding:14px; margin-bottom:20px; border-radius:8px; border:none; background:rgba(255,255,255,0.1); color:white; outline:none;">
@@ -144,11 +144,10 @@
     let rachaPerfecta = 0;
     let metaVal = 0;
     let historialTipos = [];
-    const totalProblemas = 5; // Configurado a 5 ejercicios por intento
+    const totalProblemas = 5; 
     const datosUser = { nombre: "", id: "" };
     let nivelActualLabel = "";
 
-    // CONFIGURACIÓN DE ESCALA DE RANGOS PROFESIONALES ZUFORCA
     const RANGOS = [
         { min: 0,  label: "Preparador de Soluciones", color: "#bdc3c7", bg: "url('https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/quimica-general/herramientas/soluciones/fondo-soluciones.png')" },
         { min: 10, label: "Asistente de Laboratorio", color: "#2ecc71", bg: "rgba(22, 160, 133, 0.4)" },
@@ -345,48 +344,47 @@
         }
     }
 
-function finalizar() {
-    document.getElementById('simulador').style.display = 'none';
-    document.getElementById('final-screen').style.display = 'block';
-    const esPerfecto = (aciertosIntento === totalProblemas);
-    
-    if(esPerfecto) {
-        // Ahora cada ciclo perfecto suma 2 puntos. 
-        // Se requieren 5 ciclos perfectos (10 puntos) para cambiar de rango.
-        rachaPerfecta += 2; 
-        document.getElementById('resultado-titulo').innerText = "¡CICLO COMPLETO CON ÉXITO!";
-        document.getElementById('resultado-titulo').style.color = "var(--success)";
-        document.getElementById('resultado-detalle').innerText = "Todos los balances de masa del ciclo actual son válidos. ¡Aporte de +2 puntos a su racha!";
-    } else {
-        // SISTEMA DE CHECKPOINT PEDAGÓGICO:
-        // No vuelve a cero. Al fallar, se congela en el piso mínimo de su rango actual.
-        if (rachaPerfecta >= 40) {
-            rachaPerfecta = 40; 
-        } else if (rachaPerfecta >= 30) {
-            rachaPerfecta = 30; 
-        } else if (rachaPerfecta >= 20) {
-            rachaPerfecta = 20; 
-        } else if (rachaPerfecta >= 10) {
-            rachaPerfecta = 10; 
+    function finalizar() {
+        document.getElementById('simulador').style.display = 'none';
+        document.getElementById('final-screen').style.display = 'block';
+        const esPerfecto = (aciertosIntento === totalProblemas);
+        
+        if(esPerfecto) {
+            rachaPerfecta += 2; 
+            document.getElementById('resultado-titulo').innerText = "¡CICLO COMPLETO CON ÉXITO!";
+            document.getElementById('resultado-titulo').style.color = "var(--success)";
+            document.getElementById('resultado-detalle').innerText = "Todos los balances de masa del ciclo actual son válidos. ¡Aporte de +2 puntos a su racha!";
         } else {
-            rachaPerfecta = 0;  
+            if (rachaPerfecta >= 40) {
+                rachaPerfecta = 40; 
+            } else if (rachaPerfecta >= 30) {
+                rachaPerfecta = 30; 
+            } else if (rachaPerfecta >= 20) {
+                rachaPerfecta = 20; 
+            } else if (rachaPerfecta >= 10) {
+                rachaPerfecta = 10; 
+            } else {
+                rachaPerfecta = 0;  
+            }
+
+            document.getElementById('resultado-titulo').innerText = "CICLO REINICIADO";
+            document.getElementById('resultado-titulo').style.color = "var(--danger)";
+            document.getElementById('resultado-detalle').innerText = "Se detectaron desviaciones en los balances. La racha acumulada para el siguiente rango se ha reiniciado al piso base.";
         }
+        
+        actualizarInterfazRango();
+        
+        // Corrección de la lógica de ciclos faltantes
+        let residuo = rachaPerfecta % 10;
+        let puntosParaSiguiente = residuo === 0 ? 10 : 10 - residuo;
+        const ciclosFaltantes = puntosParaSiguiente / 2;
+        
+        // Si ya está en el nivel máximo, no muestra ciclos faltantes
+        let mensajeSiguiente = rachaPerfecta >= 40 ? "" : `<br><small>Faltan <b>${ciclosFaltantes} ciclos perfectos</b> para aspirar al siguiente rango industrial.</small>`;
 
-        document.getElementById('resultado-titulo').innerText = "CICLO REINICIADO";
-        document.getElementById('resultado-titulo').style.color = "var(--danger)";
-        document.getElementById('resultado-detalle').innerText = "Se detectaron desviaciones en los balances. La racha acumulada para el siguiente rango se ha reiniciado al piso base.";
+        document.getElementById('mensaje-racha').innerHTML = `Puntaje acumulado en la nube: <b>${rachaPerfecta} puntos de racha</b>.<br>Rango actual: <b>${nivelActualLabel}</b>.${mensajeSiguiente}`;
+        registrarEnDrive(aciertosIntento, rachaPerfecta);
     }
-    
-    actualizarInterfazRango();
-    
-    // Cálculo visual para decirle cuántos ciclos le faltan para el siguiente nivel (cada nivel son bloques de 10 puntos)
-    const puntosParaSiguiente = 10 - (rachaPerfecta % 10);
-    const ciclosFaltantes = puntosParaSiguiente === 10 ? 0 : puntosParaSiguiente / 2;
-    let mensajeSiguiente = ciclosFaltantes > 0 ? `<br><small>Faltan <b>${ciclosFaltantes} ciclos perfectos</b> para aspirar al siguiente rango industrial.</small>` : "";
-
-    document.getElementById('mensaje-racha').innerHTML = `Puntaje acumulado en la nube: <b>${rachaPerfecta} puntos de racha</b>.<br>Rango actual: <b>${nivelActualLabel}</b>.${mensajeSiguiente}`;
-    registrarEnDrive(aciertosIntento, rachaPerfecta);
-}
 
     function registrarEnDrive(aciertos, racha) {
         const payload = { nombre: datosUser.nombre, id: datosUser.id, aciertos: aciertos, racha: racha };
@@ -396,6 +394,7 @@ function finalizar() {
     function siguienteIntento() {
         ejercicioActual = 1;
         aciertosIntento = 0;
+        historialTipos = []; // Corrección: Limpieza del historial para evitar bucles aleatorios
         document.getElementById('final-screen').style.display = 'none';
         document.getElementById('simulador').style.display = 'block';
         generar();
