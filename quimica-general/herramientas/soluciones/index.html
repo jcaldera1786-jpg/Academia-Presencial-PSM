@@ -399,6 +399,22 @@
         document.getElementById('simulador').style.display = 'block';
         generar();
     }
-</script>
+    
+// ... aquí terminan sus funciones actuales del simulador ...
+
+    // 🧪 FUNCIÓN DE CONTROL DE ACCESO PARA AUDITORÍA
+    function validarAuditoria() {
+        const claveAcceso = prompt("SISTEMA CONTROL ZUFORCA:\nIngrese la clave de seguridad para activar la auditoría:");
+        const CLAVE_MAESTRA = "LUZ2026"; // Puede cambiar esta clave cuando desee
+
+        if (claveAcceso === CLAVE_MAESTRA) {
+            aciertosIntento = 5;
+            finalizar();
+        } else if (claveAcceso !== null) {
+            alert("ACCESO DENEGADO:\nCredenciales de ingeniería inválidas. El reactor continuará en modo estándar.");
+        }
+    }
+
+</script> 
 </body>
 </html>
