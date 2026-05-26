@@ -230,13 +230,13 @@
         document.getElementById('racha-total').innerText = rachaPerfecta;
     }
 
-    function generar() {
+function generar() {
         const todas = [...ELEMENTOS.hidroxidos, ...ELEMENTOS.sales, ...ELEMENTOS.acidos];
         const comp = todas[Math.floor(Math.random()*todas.length)];
 
         let tipo;
-        const v_ml = parseFloat((Math.random()*600 + 200).toFixed(0)); // Volúmenes entre 200 y 800 mL
-        const conc = parseFloat((Math.random()*0.7 + 0.15).toFixed(2)); // Concentraciones entre 0.15 y 0.85 M o N
+        const v_ml = parseFloat((Math.random()*600 + 200).toFixed(0)); // 200 a 800 mL
+        const conc = parseFloat((Math.random()*0.7 + 0.15).toFixed(2)); // 0.15 a 0.85 M o N
         let texto = "";
 
         // ==========================================
@@ -255,8 +255,8 @@
                 metaVal = parseFloat((conc * (v_ml/1000) * eq).toFixed(2));
                 texto = `<b>[NIVEL 1 - NORMALIDAD]</b> Calcule la masa en gramos de <b>\\(${comp.n}\\)</b> necesarios para obtener un volumen neto de <b>${v_ml} mL</b> de una solución con una concentración analítica de <b>${conc} N</b>. (PM = ${comp.mm} g/mol, valencia = ${comp.v}).`;
             } else {
-                const masa_agua = parseFloat((Math.random()*300 + 200).toFixed(0)); // 200 a 500g agua
-                const molalidad = parseFloat((Math.random()*0.5 + 0.1).toFixed(2)); // 0.1 a 0.6 m
+                const masa_agua = parseFloat((Math.random()*300 + 200).toFixed(0));
+                const molalidad = parseFloat((Math.random()*0.5 + 0.1).toFixed(2));
                 metaVal = parseFloat((molalidad * (masa_agua / 1000) * comp.mm).toFixed(2));
                 texto = `<b>[NIVEL 1 - MOLALIDAD]</b> En un matraz de laboratorio se disuelven cristales puros de <b>\\(${comp.n}\\)</b> en exactamente <b>${masa_agua} g</b> de agua destilada. Si la disolución resultante alcanza una concentración de <b>${molalidad} m</b> (molal), determine cuántos gramos del soluto se añadieron. (PM = ${comp.mm} g/mol).`;
             }
@@ -265,108 +265,117 @@
         // NIVEL 2: ASISTENTE DE LABORATORIO (Racha 10 a 18)
         // ==========================================
         } else if (rachaPerfecta < 20) {
-            do { tipo = Math.floor(Math.random() * 3); } while (historialTipos.includes(tipo));
+            do { tipo = Math.floor(Math.random() * 4); } while (historialTipos.includes(tipo));
             historialTipos.push(tipo);
             if(historialTipos.length > 2) historialTipos.shift();
 
-            const pureza = parseFloat((Math.random()*15 + 80).toFixed(0)); // Pureza 80% a 95%
+            const pureza = parseFloat((Math.random()*15 + 80).toFixed(0)); // Riqueza 80% a 95%
 
             if(tipo === 0) {
-                // Sólido Impuro
                 const masa_teorica = (conc * (v_ml/1000) * comp.mm);
                 metaVal = parseFloat((masa_teorica / (pureza/100)).toFixed(2));
                 texto = `<b>[NIVEL 2 - PUREZA SÓLIDA]</b> Un asistente de planta debe formular <b>${v_ml} mL</b> de una solución <b>${conc} M</b> de <b>\\(${comp.n}\\)</b>. Si el lote de materia prima en almacén presenta un porcentaje de <b>pureza del ${pureza}%</b>, calcule la masa bruta real (g) que debe pesarse para compensar las impurezas inertes. (PM = ${comp.mm} g/mol).`;
             } else if(tipo === 1) {
-                // Mezcla de dos soluciones del mismo soluto
                 const v2 = parseFloat((Math.random()*300 + 100).toFixed(0));
                 const c2 = parseFloat((Math.random()*0.4 + 0.1).toFixed(2));
                 metaVal = parseFloat((((v_ml * conc) + (v2 * c2)) / (v_ml + v2)).toFixed(2));
                 texto = `<b>[NIVEL 2 - MEZCLA SIMPLE]</b> En un recipiente de control de procesos se combinan dos corrientes del mismo analito: <b>${v_ml} mL</b> de <b>\\(${comp.n}\\)</b> a <b>${conc} M</b> con un segundo volumen de <b>${v2} mL</b> a una concentración de <b>${c2} M</b>. Considerando volúmenes aditivos, prediga la Molaridad (M) final de la mezcla homogénea.`;
-            } else {
-                // Reactivo Líquido Concentrado con Densidad y Pureza
-                const densidad = parseFloat((Math.random()*0.3 + 1.15).toFixed(2)); // Densidad 1.15 a 1.45 g/mL
+            } else if(tipo === 2) {
+                const densidad = parseFloat((Math.random()*0.3 + 1.15).toFixed(2));
                 const masa_soluto_necesaria = conc * (v_ml / 1000) * comp.mm;
                 const masa_solucion_necesaria = masa_soluto_necesaria / (pureza / 100);
-                metaVal = parseFloat((categorizeLiquidVolume(masa_solucion_necesaria, densidad)).toFixed(2));
-                texto = `<b>[NIVEL 2 - REACTIVO LÍQUIDO]</b> Se dispone de un reactivo comercial líquido concentrado de <b>\\(${comp.n}\\)</b> con una <b>densidad de ${densidad} g/mL</b> y una riqueza en masa del <b>${pureza}%</b>. ¿Qué volumen (mL) de este ácido o base concentrada se debe pipetear para preparar un aforo de <b>${v_ml} mL</b> a una concentración final de <b>${conc} M</b>? (PM = ${comp.mm} g/mol).`;
+                metaVal = parseFloat((masa_solucion_necesaria / densidad).toFixed(2));
+                texto = `<b>[NIVEL 2 - REACTIVO LÍQUIDO]</b> Se dispone de un reactivo comercial líquido concentrado de <b>\\(${comp.n}\\)</b> con una <b>densidad de ${densidad} g/mL</b> y una riqueza en masa del <b>${pureza}%</b>. ¿Qué volumen (mL) de este reactivo concentrado se debe medir para preparar un aforo final de <b>${v_ml} mL</b> a una concentración de <b>${conc} M</b>? (PM = ${comp.mm} g/mol).`;
+            } else {
+                // Variante adicional: Dilución simple a partir de stock conocido
+                const c_stock = parseFloat((conc * 4).toFixed(2));
+                metaVal = parseFloat(((conc * v_ml) / c_stock).toFixed(2));
+                texto = `<b>[NIVEL 2 - BALANCES DE DILUCIÓN]</b> En el laboratorio se requiere preparar un aforo final de <b>${v_ml} mL</b> de <b>\\(${comp.n}\\)</b> a una concentración operativa de <b>${conc} M</b>. Si en la estantería se dispone de una solución stock concentrada a <b>${c_stock} M</b>, calcule el volumen (mL) de la solución stock que debe alícuotarse.`;
             }
 
         // ==========================================
         // NIVEL 3: ASISTENTE AVANZADO: ESTEQUIOMETRISTA (Racha 20 a 28)
         // ==========================================
         } else if (rachaPerfecta < 30) {
-            do { tipo = Math.floor(Math.random() * 2); } while (historialTipos.includes(tipo));
+            do { tipo = Math.floor(Math.random() * 3); } while (historialTipos.includes(tipo));
             historialTipos.push(tipo);
+            if(historialTipos.length > 2) historialTipos.shift();
 
             if(tipo === 0) {
-                // Tres soluciones mezcladas con unidades mixtas (Molaridad y Normalidad)
-                const v1 = 100; const c1 = conc; // Molar
+                const v1 = 100; const c1 = conc;
                 const v2 = 150; const c2 = parseFloat((conc * 1.5).toFixed(2)); // En Normalidad
-                const v3 = 200; const c3 = 0.2; // Molar
-                
-                // Convertir todo a equivalentes totales
+                const v3 = 200; const c3 = 0.2;
                 const eq1 = (v1 / 1000) * c1 * comp.v;
-                const eq2 = (v2 / 1000) * c2; // Ya es Normal, eq = V * N
+                const eq2 = (v2 / 1000) * c2;
                 const eq3 = (v3 / 1000) * c3 * comp.v;
                 const vol_total_litros = (v1 + v2 + v3) / 1000;
-                
-                metaVal = parseFloat(( (eq1 + eq2 + eq3) / vol_total_litros ).toFixed(3));
-                texto = `<b>[NIVEL 3 - UNIDADES MIXTAS]</b> En el laboratorio de control se unifican tres remanentes de <b>\\(${comp.n}\\)</b>: 100 mL a <b>${c1} M</b>, 150 mL a <b>${c2} N</b> y 200 mL a <b>0.1 M</b> (asuma que el analito cede sus ${comp.v} cargas reactivas). Determine la <b>Normalidad (N) final</b> resultante del sistema unificado de mezclas (Volúmenes aditivos).`;
-            } else {
-                // Mezcla de soluciones con densidades diferentes (Sin volúmenes aditivos)
+                metaVal = parseFloat(((eq1 + eq2 + eq3) / vol_total_litros).toFixed(3));
+                texto = `<b>[NIVEL 3 - UNIDADES MIXTAS]</b> En el laboratorio de control se unifican tres remanentes de <b>\\(${comp.n}\\)</b>: 100 mL a <b>${c1} M</b>, 150 mL a <b>${c2} N</b> y 200 mL a <b>0.1 M</b> (asuma que el analito libera sus ${comp.v} cargas reactivas). Determine la <b>Normalidad (N) final</b> resultante del sistema de mezclas (Volúmenes aditivos).`;
+            } else if(tipo === 1) {
                 const v1 = 200; const m1 = 2.0; const d1 = 1.12;
                 const v2 = 300; const m2 = 0.5; const d2 = 1.03;
-                const vol_final_real = 485; // Fenómeno de contracción de volumen volumétrico
-                
+                const vol_final_real = 485;
                 const moles_totales = (v1/1000 * m1) + (v2/1000 * m2);
                 metaVal = parseFloat((moles_totales / (vol_final_real / 1000)).toFixed(3));
-                
-                texto = `<b>[NIVEL 3 - MEZCLA REALISTA NO ADITIVA]</b> Un proceso químico integra 200 mL de <b>\\(${comp.n}\\)</b> 2.0 M (densidad ${d1} g/mL) con 300 mL de la misma sustancia a 0.5 M (densidad ${d2} g/mL). Al interactuar los campos intermoleculares, el volumen real final medido en la probeta es de exactamente <b>485 mL</b> debido a efectos de contracción. Halle la <b>Molaridad real definitiva</b> de la solución.`;
+                texto = `<b>[NIVEL 3 - MEZCLA REALISTA NO ADITIVA]</b> Un proceso químico integra 200 mL de <b>\\(${comp.n}\\)</b> 2.0 M (densidad ${d1} g/mL) con 300 mL de la misma sustancia a 0.5 M (densidad ${d2} g/mL). Al interactuar las fuerzas intermoleculares, el volumen real final medido en el domo es de exactamente <b>485 mL</b> debido a efectos de contracción. Halle la <b>Molaridad real definitiva</b>.`;
+            } else {
+                // Variante adicional: Cálculo de molalidad a partir de datos de densidad de solución comercial
+                const densidad_sol = 1.18;
+                const porcentaje_masa = 30; // 30% m/m
+                const masa_solucion_total = 1000; // base de cálculo 1 kg
+                const masa_soluto = masa_solucion_total * (porcentaje_masa / 100);
+                const masa_solvente_kg = (masa_solucion_total - masa_soluto) / 1000;
+                const moles_soluto = masa_soluto / comp.mm;
+                metaVal = parseFloat((moles_soluto / masa_solvente_kg).toFixed(2));
+                texto = `<b>[NIVEL 3 - DE PORCENTAJE A MOLALIDAD]</b> Una línea de suministro alimenta un tanque con una disolución concentrada de <b>\\(${comp.n}\\)</b> al <b>${porcentaje_masa}% en masa</b> con una densidad de ${densidad_sol} g/mL. Realice la conversión de unidades analíticas y calcule la <b>Molalidad (m, mol/kg) real</b> de dicha corriente. (PM = ${comp.mm} g/mol).`;
             }
 
         // ==========================================
-        // NIVEL 4: INGENIERO DE MEZCLAS (Racha 30 a 38)
+        // NIVEL 4: INGENIERO DE MEZCLAS (Racha 30 a 38) -> ¡Aquí está la solución clave!
         // ==========================================
         } else if (rachaPerfecta < 40) {
-            do { tipo = Math.floor(Math.random() * 2); } while (historialTipos.includes(tipo));
+            do { tipo = Math.floor(Math.random() * 3); } while (historialTipos.includes(tipo));
             historialTipos.push(tipo);
+            if(historialTipos.length > 2) historialTipos.shift();
 
             if(tipo === 0) {
-                // Sistema dinámico de flujos continuos en planta (Tres corrientes)
                 const f1 = 8.0;  const m1 = 0.3;
                 const f2 = 12.0; const m2 = 0.1;
                 const f3 = 5.0;  const m3 = 0.6;
-                
                 metaVal = parseFloat((((f1*m1) + (f2*m2) + (f3*m3)) / (f1 + f2 + f3)).toFixed(3));
                 texto = `<b>[NIVEL 4 - DINÁMICA DE FLUJOS EN PLANTA]</b> Una unidad de mezcla continua en ZUFORCA unifica tres corrientes estacionarias del reactivo industrial <b>\\(${comp.n}\\)</b> para estabilizar una descarga. Corriente 1: <b>${f1} L/min</b> a 0.3 M. Corriente 2: <b>${f2} L/min</b> a 0.1 M. Corriente 3: <b>${f3} L/min</b> a 0.6 M. Calcule la <b>Molaridad (M) de régimen permanente</b> en la tubería de descarga terminal.`;
-            } else {
-                // Propiedades coligativas - Descenso crioscópico experimental
-                const masa_soluto = parseFloat((Math.random() * 15 + 10).toFixed(1)); // 10 a 25g
+            } else if(tipo === 1) {
+                const masa_soluto = parseFloat((Math.random() * 15 + 10).toFixed(1));
                 const masa_solvente_g = 500;
-                const Kc = 1.86; // Constante crioscópica del agua (°C/m)
-                
+                const Kc = 1.86;
                 const molalidad = (masa_soluto / comp.mm) / (masa_solvente_g / 1000);
-                metaVal = parseFloat((molalidad * Kc).toFixed(2)); // Magnitud del descenso
-                
-                texto = `<b>[NIVEL 4 - PROPIEDADES COLIGATIVAS]</b> Para evaluar la estabilidad térmica de un fluido de transferencia de calor, se disuelven <b>${masa_soluto} g</b> de una muestra pura de <b>\\(${comp.n}\\)</b> en <b>500 g de agua destilada</b>. Considerando un comportamiento ideal de la solución y sabiendo que la constante crioscópica del agua es $K_c = 1.86\\text{ °C/m}$, determine el valor absoluto del <b>descenso del punto de congelación (\\(\\Delta T_c\\) en °C)</b> de la mezcla. (PM = ${comp.mm} g/mol).`;
+                metaVal = parseFloat((molalidad * Kc).toFixed(2));
+                texto = `<b>[NIVEL 4 - PROPIEDADES COLIGATIVAS]</b> Para evaluar la estabilidad térmica de un fluido de transferencia de calor, se disuelven <b>${masa_soluto} g</b> de una muestra pura de <b>\\(${comp.n}\\)</b> en <b>500 g de agua destilada</b>. Considerando un comportamiento ideal, y sabiendo que la constante crioscópica del agua es \\(K_c = 1.86\\text{ }^{\\circ}\\text{C/m}\\), determine el valor absoluto del <b>descenso del punto de congelación (\\(\\Delta T_c\\) en \\(^{\\circ}\\)C)</b> de la mezcla. (PM = ${comp.mm} g/mol).`;
+            } else {
+                // Nueva Variante: Mezcla multifase de 4 soluciones con aforo definitivo a volumen fijo
+                const v1 = 50;  const c1 = 0.4;
+                const v2 = 80;  const c2 = 0.3;
+                const v3 = 120; const c3 = 0.1;
+                const v4 = 200; const c4 = 0.05;
+                const v_aforo_litros = 1.0; // Se lleva a 1 Litro final exacto con agua destilada
+                const moles_totales = (v1*c1 + v2*c2 + v3*c3 + v4*c4) / 1000;
+                metaVal = parseFloat((moles_totales / v_aforo_litros).toFixed(4));
+                texto = `<b>[NIVEL 4 - BALANCES CON CORRIENTES MÚLTIPLES]</b> En un nodo de mezcla se combinan las siguientes corrientes líquidas de <b>\\(${comp.n}\\)</b>: 50 mL de 0.4 M, 80 mL de 0.3 M, 120 mL de 0.1 M y 200 mL de 0.05 M. Si todo el sistema conjunto se transfiere a un tanque de compensación y se afora con agua desionizada hasta completar un volumen volumétrico operativo de **1.0 Litro exacto**, determine la **Molaridad (M) final** del lote industrial.`;
             }
 
         // ==========================================
         // RETO MAESTRO DE MEZCLAS (Racha >= 40)
         // ==========================================
         } else {
-            // El Gran Problema Integrador Avanzado (Cuatro soluciones con purezas diferentes)
             const v1 = 200; const m1 = 0.4; const p1 = 0.85;
             const v2 = 150; const m2 = 0.7; const p2 = 0.90;
             const v3 = 100; const m3 = 0.1; const p3 = 0.95;
             const v4 = 250; const m4 = 0.05; const p4 = 0.98;
-            const vol_final_operativo = 690; // mL medidos no aditivos
-
-            // Cálculo matemático de los moles reales corregidos por pureza de origen
+            const vol_final_operativo = 690;
             const moles_reales = ((v1/1000*m1)*p1) + ((v2/1000*m2)*p2) + ((v3/1000*m3)*p3) + ((v4/1000*m4)*p4);
             metaVal = parseFloat((moles_reales / (vol_final_operativo / 1000)).toFixed(3));
 
-            texto = `<b>[RETO MAESTRO INTEGRADOR DE PLANTA]</b> En un reactor maestro de ZUFORCA se vacían cuatro tanques remanentes de <b>\\(${comp.n}\\)</b> que provienen de materias primas con purezas degradadas. Tanque 1: 200 mL de 0.4 M (reactivo original al 85% de pureza). Tanque 2: 150 mL de 0.7 M (reactivo al 90%). Tanque 3: 100 mL de 0.1 M (reactivo al 95%). Tanque 4: 250 mL de 0.05 M (reactivo al 98%). El indicador de nivel del domo reporta un volumen real no aditivo de <b>690 mL</b>. Calcule la <b>Molaridad (M) real definitiva</b> del compuesto químico unificado. (PM = ${comp.mm} g/mol).`;
+            texto = `<b>[RETO MAESTRO INTEGRADOR DE PLANTA]</b> En un reactor maestro de ZUFORCA se vacían cuatro tanques remanentes de <b>\\(${comp.n}\\)</b> que provienen de materias primas con purezas degradadas. Tanque 1: 200 mL de 0.4 M (reactivo original al 85% de pureza). Tanque 2: 150 mL de 0.7 M (reactivo al 90%). Tanque 3: 100 mL de 0.1 M (reactivo al 95%). Tanque 4: 250 mL de 0.05 M (reactivo al 98%). El indicador de nivel del domo reporta un volumen real no aditivo de <b>690 mL</b> debido a fuerzas intermoleculares. Calcule la <b>Molaridad (M) real definitiva</b> del compuesto químico unificado. (PM = ${comp.mm} g/mol).`;
         }
 
         document.getElementById('enunciado').innerHTML = texto;
@@ -375,7 +384,6 @@
         document.getElementById('progreso').innerText = ejercicioActual;
         if (window.MathJax) MathJax.typesetPromise();
     }
-
     // Función auxiliar para el cálculo físico del volumen de reactivo líquido comercial
     function categorizeLiquidVolume(masaSolucion, densidad) {
         return masaSolucion / densidad;
