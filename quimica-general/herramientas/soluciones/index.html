@@ -340,7 +340,7 @@ const RANGOS = [
                 
                 metaVal = parseFloat(masa_bruta_final_requerida.toFixed(2));
                 
-                texto = `<b>[NIVEL 4 - DIAGNÓSTICO COLIGATIVO DE PUREZA]</b> En los laboratorios de control de ZUFORCA, se disolvió una muestra cruda de <b>${masa_bruta_pesada} g</b> de <b>\\(${comp.n}\\)</b> en <b>400 g de agua destilada</b> para verificar su degradación. El ensayo crioscópico experimental registró un valor absoluto de descenso térmico de <b>\\(\\Delta T_c = ${delta_Tc_experimental}\\text{ }^{\\circ}\\text{C}\\)</b>.<br>Determine primero la <b>pureza real (%)</b> de la materia prima ($K_c = 1.86\\text{ }^{\\circ}\\text{C/m}$). Posteriormente, calcule cuántos **gramos brutos** de ese mismo lote de materia prima degradada se deben pesar para formular un aforo neto de <b>${v_aforo_planta} mL</b> a una concentración industrial exacta de <b>${c_solucion_deseada} M</b>. (PM = ${comp.mm} g/mol).`;
+                texto = '<b>[NIVEL 4 - DIAGNÓSTICO COLIGATIVO DE PUREZA]</b> En los laboratorios de control de ZUFORCA, se disolvió una muestra cruda de <b>' + masa_bruta_pesada + ' g</b> de <b>\\(' + comp.n + '\\)</b> en <b>400 g de agua destilada</b> para verificar su degradación. El ensayo crioscópico experimental registró un valor absoluto de descenso térmico de <b>\\(\\Delta T_c = ' + delta_Tc_experimental + '\\text{ }^{\\circ}\\text{C}\\)</b>.<br>Determine primero la <b>pureza real (%)</b> de la materia prima (\\(K_c = 1.86\\text{ }^{\\circ}\\text{C/m}\\)). Posteriormente, calcule cuántos <b>gramos brutos</b> de ese mismo lote de materia prima degradada se deben pesar para formular un aforo neto de <b>' + v_aforo_planta + ' mL</b> a una concentración industrial exacta de <b>' + c_solucion_deseada + ' M</b>. (MM = ' + comp.mm + ' g/mol).';
 
             } else if(tipo === 1) {
                 // Variante 2: Flujos continuos en tuberías de descarga de ZUFORCA
@@ -350,15 +350,25 @@ const RANGOS = [
                 const m2 = parseFloat((Math.random()*0.1 + 0.08).toFixed(2));
                 
                 metaVal = parseFloat((((f1*m1) + (f2*m2)) / (f1 + f2)).toFixed(3));
-                texto = `<b>[NIVEL 4 - DINÁMICA DE FLUJOS]</b> Una unidad estabilizadora continua acopla en régimen permanente dos corrientes de alimentación del reactivo industrial <b>\\(${comp.n}\\)</b>. Corriente A: <b>${f1} L/min</b> calibrada a <b>${m1} M</b>. Corriente B: <b>${f2} L/min</b> calibrada a <b>${m2} M</b>. Calcule la <b>Molaridad (M) terminal permanente</b> del flujo unificado de descarga.`;
+                
+                texto = '<b>[NIVEL 4 - DINÁMICA DE FLUJOS]</b> Una unidad estabilizadora continua acopla en régimen permanente dos corrientes de alimentación del reactivo industrial <b>\\(' + comp.n + '\\)</b>. Corriente A: <b>' + f1 + ' L/min</b> calibrada a <b>' + m1 + ' M</b>. Corriente B: <b>' + f2 + ' L/min</b> calibrada a <b>' + m2 + ' M</b>. Calcule la <b>Molaridad (M) terminal permanente</b> del flujo unificado de descarga.';
+            
             } else {
-                // Variante 3: Balances multifase con volumen de aforo rígido
-                const v1 = parseFloat((Math.random()*30 + 30).toFixed(0)); const v2 = parseFloat((Math.random()*40 + 50).toFixed(0));
-                const c1 = 0.5; const c2 = 0.2; const v_aforo = 1.0;
+                // Variante 3: Balances multifase con volumen de aforo rígido (¡OPTIMIZADO Y ALEATORIO!)
+                const v1 = parseFloat((Math.random()*30 + 30).toFixed(0)); // Entre 30 y 60 mL
+                const v2 = parseFloat((Math.random()*40 + 50).toFixed(0)); // Entre 50 y 90 mL
+                
+                // Hacemos dinámicas las concentraciones para romper el patrón monótono
+                const c1 = parseFloat((Math.random()*0.3 + 0.4).toFixed(2)); // Entre 0.40 M y 0.70 M
+                const c2 = parseFloat((Math.random()*0.2 + 0.1).toFixed(2)); // Entre 0.10 M y 0.30 M
+                const v_aforo = 1.0; // 1.0 Litro exacto
+                
                 const moles_totales = (v1*c1 + v2*c2) / 1000;
                 metaVal = parseFloat((moles_totales / v_aforo).toFixed(4));
-                texto = `<b>[NIVEL 4 - BALANCES MULTI-CORRIENTE]</b> En un nodo mezclador se interceptan dos corrientes operativas de <b>\\(${comp.n}\\)</b>: <b>${v1} mL</b> de concentración 0.5 M y <b>${v2} mL</b> de concentración 0.2 M. El caudal conjunto se transfiere a un tanque pulmón y se afora con agua desionizada hasta completar un volumen operativo rígido de <b>1.0 Litro exacto</b>. Determine la <b>Molaridad (M) final</b> de despacho.`;
+                
+                texto = '<b>[NIVEL 4 - BALANCES MULTI-CORRIENTE]</b> En un nodo mezclador de la planta se interceptan dos corrientes operativas de <b>\\(' + comp.n + '\\)</b>: un volumen de <b>' + v1 + ' mL</b> a una concentración de <b>' + c1 + ' M</b> y un volumen de <b>' + v2 + ' mL</b> a una concentración de <b>' + c2 + ' M</b>. El caudal conjunto se transfiere a un tanque pulmón y se afora con agua desionizada hasta completar un volumen operativo rígido de <b>1.0 Litro exacto</b>. Determine la <b>Molaridad (M) final</b> de despacho.';
             }
+        }
 
 // ==========================================
 // 🏆 ÉLITE DE SELECCIÓN: NIVEL 5 - ChemE-Bowl (Racha >= 50)
