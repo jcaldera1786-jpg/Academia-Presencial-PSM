@@ -152,14 +152,15 @@
     const datosUser = { nombre: "", id: "" };
     let nivelActualLabel = "";
 
-const RANGOS = [
-    { min: 0,  label: "Preparador de Soluciones Básico", color: "#bdc3c7", bg: "rgba(149, 165, 166, 0.2)" },
-    { min: 10, label: "Asistente de Laboratorio Químico", color: "#2ecc71", bg: "rgba(46, 204, 113, 0.2)" },
-    { min: 20, label: "Estequiometrista de Procesos Planta", color: "#e67e22", bg: "rgba(230, 126, 34, 0.2)" },
-    { min: 30, label: "Ingeniero Junior de Mezclas", color: "#3498db", bg: "rgba(52, 152, 219, 0.2)" },
-    { min: 40, label: "Maestro Operador: Control Coligativo", color: "#f1c40f", bg: "rgba(241, 196, 15, 0.2)" },
-    { min: 50, label: "🏆 ÉLITE DE SELECCIÓN: ChemE-Bowl", color: "#e74c3c", bg: "rgba(231, 76, 60, 0.3)" } // <-- ¡Bautizado!
-];
+    const RANGOS = [
+        { min: 0,  label: "Preparador de Soluciones Básico", color: "#bdc3c7", bg: "rgba(149, 165, 166, 0.2)" },
+        { min: 10, label: "Asistente de Laboratorio Químico", color: "#2ecc71", bg: "rgba(46, 204, 113, 0.2)" },
+        { min: 20, label: "Estequiometrista de Procesos Planta", color: "#e67e22", bg: "rgba(230, 126, 34, 0.2)" },
+        { min: 30, label: "Ingeniero Junior de Mezclas", color: "#3498db", bg: "rgba(52, 152, 219, 0.2)" },
+        { min: 40, label: "Maestro Operador: Control Coligativo", color: "#f1c40f", bg: "rgba(241, 196, 15, 0.2)" },
+        { min: 50, label: "🏆 ÉLITE DE SELECCIÓN: ChemE-Bowl", color: "#e74c3c", bg: "rgba(231, 76, 60, 0.3)" }
+    ];
+
     const ELEMENTOS = {
         hidroxidos: [
             {n:"Al(OH)_3", mm:78.00, v:3}, {n:"Fe(OH)_3", mm:106.86, v:3},
@@ -223,13 +224,12 @@ const RANGOS = [
     }
 
     function generar() {
-        // Variable global para los niveles 1 al 4
         const todas = [...ELEMENTOS.hidroxidos, ...ELEMENTOS.sales, ...ELEMENTOS.acidos];
         const comp = todas[Math.floor(Math.random() * todas.length)];
 
         let tipo;
-        const v_ml = parseFloat((Math.random() * 600 + 200).toFixed(0)); // 200 a 800 mL
-        const conc = parseFloat((Math.random() * 0.7 + 0.15).toFixed(2)); // 0.15 a 0.85 M o N
+        const v_ml = parseFloat((Math.random() * 600 + 200).toFixed(0)); 
+        const conc = parseFloat((Math.random() * 0.7 + 0.15).toFixed(2)); 
         let texto = "";
 
         // ====================================================
@@ -251,7 +251,7 @@ const RANGOS = [
                 const masa_agua = parseFloat((Math.random()*300 + 200).toFixed(0));
                 const molalidad = parseFloat((Math.random()*0.5 + 0.1).toFixed(2));
                 metaVal = parseFloat((molalidad * (masa_agua / 1000) * comp.mm).toFixed(2));
-                texto = `<b>[NIVEL 1 - MOLALIDAD]</b> Se disuelven cristales puros de <b>\\(${comp.n}\\)</b> en exactamente <b>${masa_agua} g</b> de agua destilada. Si la disolución resultante alcanza una concentration de <b>${molalidad} m</b>, determine cuántos gramos del soluto se añadieron.`;
+                texto = `<b>[NIVEL 1 - MOLALIDAD]</b> Se disuelven cristales puros de <b>\\(${comp.n}\\)</b> en exactamente <b>${masa_agua} g</b> de agua destilada. Si la disolución resultante alcanza una concentración de <b>${molalidad} m</b>, determine cuántos gramos del soluto se añadieron.`;
             }
 
         // ====================================================
@@ -281,7 +281,7 @@ const RANGOS = [
             } else {
                 const c_stock = parseFloat((conc * 4).toFixed(2));
                 metaVal = parseFloat(((conc * v_ml) / c_stock).toFixed(2));
-                texto = `<b>[NIVEL 2 - BALANCES DE DILUCIÓN]</b> Se requiere preparar un aforo final de <b>${v_ml} mL</b> de <b>\\(${comp.n}\\)</b> a una concentration de <b>${conc} M</b> a partir de una solución stock concentrada a <b>${c_stock} M</b>. Calcule el volumen de alícuota stock necesario.`;
+                texto = `<b>[NIVEL 2 - BALANCES DE DILUCIÓN]</b> Se requiere preparar un aforo final de <b>${v_ml} mL</b> de <b>\\(${comp.n}\\)</b> a una concentración de <b>${conc} M</b> a partir de una solución stock concentrada a <b>${c_stock} M</b>. Calcule el volumen de alícuota stock necesario.`;
             }
 
         // ====================================================
@@ -377,7 +377,6 @@ const RANGOS = [
             let enfoqueModelos = Math.floor(Math.random() * 3); 
 
             if (enfoqueModelos === 0) {
-                // ENFOQUE MODELO 1: BALANCES MULTI-ETAPA (TIPO FELDER)
                 const reactivosPlanta = [
                     { nombre: "HNO₃ (Ácido Nítrico)", pm: 63.01 },
                     { nombre: "H₂SO₄ (Ácido Sulfúrico)", pm: 98.08 },
@@ -415,7 +414,6 @@ const RANGOS = [
                         'Determine rigurosamente primero la pureza real del lote crudo y calcule la <b>Molaridad (M) definitiva del analito</b> en el tanque de empaque terminal. (MM = ' + compN5.pm + ' g/mol).';    
             
             } else if (enfoqueModelos === 1) {
-                // ENFOQUE MODELO 2: BALANCES MULTI-CORRIENTE DINÁMICOS
                 const reactivosPlanta = [
                     { nombre: "FeCl_3", pm: 162.2 },
                     { nombre: "H_3PO_4", pm: 97.99 },
@@ -460,7 +458,6 @@ const RANGOS = [
                         'El indicador digital del domo reporta un volumen real definitivo de <b>' + v_real + ' mL</b> debido a las contracciones moleculares físicas de la mezcla. Calcule la <b>Molaridad (M) real de despacho</b> del lote industrial unificado. (MM = ' + compN5.pm + ' g/mol).';
             
             } else {
-                // ENFOQUE MODELO 3: DISEÑO CINÉTICO DE REACTORES CONTINUOS
                 const reactivosPlanta = [
                     { nombre: "NaOH (Hidróxido de Sodio)", pm: 40.00 },
                     { nombre: "KOH (Hidróxido de Potasio)", pm: 56.11 },
@@ -492,24 +489,6 @@ const RANGOS = [
         }
 
         // RENDERIZADO GENERAL EN INTERFAZ
-        document.getElementById('num-ejercicio').innerText = ejercicioActual; // Nota: en su html se llama 'progreso' en la etiqueta baja, pero respeta el renderizado
-        document.getElementById('enunciado').innerHTML = texto;
-        document.getElementById('logic').value = "";
-        document.getElementById('feedback').style.display = 'none';
-        document.getElementById('progreso').innerText = ejercicioActual;
-        if (window.MathJax) MathJax.typesetPromise();
-    }
-    
-} else if (enfoqueModelos === 1) {
-        const comp = ELEMENTOS.acidos[0];
-        metaVal = 0.5; 
-        texto = `<b>[NIVEL 5 - ChemE-Bowl (VAN NESS)]</b> En desarrollo de balance molecular. Escriba 0.5 para pruebas de laboratorio docente del Dr. Caldera.`;
-
-    } else {
-        metaVal = 0.8; 
-        texto = `<b>[NIVEL 5 - ChemE-Bowl (FOGLER)]</b> En desarrollo de contracción térmica cinética. Escriba 0.8 para pruebas de laboratorio docente del Dr. Caldera.`;
-    }
-}
         document.getElementById('enunciado').innerHTML = texto;
         document.getElementById('logic').value = "";
         document.getElementById('feedback').style.display = 'none';
@@ -530,7 +509,7 @@ const RANGOS = [
 
         numerosEncontrados.forEach(num => {
             let n = parseFloat(num.replace(',', '.'));
-            if(Math.abs(n - metaVal) < (metaVal * 0.04)) exito = true; // Margen de tolerancia del 4%
+            if(Math.abs(n - metaVal) < (metaVal * 0.04)) exito = true; 
         });
 
         fb.style.display = 'block';
