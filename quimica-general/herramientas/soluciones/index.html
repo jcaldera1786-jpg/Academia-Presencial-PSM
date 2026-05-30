@@ -466,35 +466,38 @@ const RANGOS = [
     
     } else {
         // ----------------------------------------------------
-        // ENFOQUE MODELO 3: DISEÑO CINÉTICO DE REACTORES CONTINUOS
+        // ENFOQUE MODELO 3: DISEÑO CINÉTICO DE REACTORES CONTINUOS (¡EXPANDIDO!)
         // ----------------------------------------------------
         const reactivosPlanta = [
-            { nombre: "NaOH", pm: 40.00 },
-            { nombre: "KOH", pm: 56.11 },
-            { nombre: "Na₂CO₃", pm: 105.99 }
+            { nombre: "NaOH (Hidróxido de Sodio)", pm: 40.00 },
+            { nombre: "KOH (Hidróxido de Potasio)", pm: 56.11 },
+            { nombre: "Na₂CO₃ (Carbonato de Sodio)", pm: 105.99 },
+            { nombre: "Ca(OH)₂ (Hidróxido de Calcio)", pm: 74.09 },
+            { nombre: "NH₃ (Amoníaco Anhidro)", pm: 17.03 },
+            { nombre: "K₂CO₃ (Carbonato de Potasio)", pm: 138.21 },
+            { nombre: "LiOH (Hidróxido de Litio)", pm: 23.95 },
+            { nombre: "Ba(OH)₂ (Hidróxido de Bario)", pm: 171.34 }
         ];
         const comp = reactivosPlanta[Math.floor(Math.random() * reactivosPlanta.length)];
 
-        // Parámetros dinámicos del flujo continuo y dosificación
-        const caudal_disolvente = parseFloat((Math.random() * 15 + 45).toFixed(1)); // 45.0 a 60.0 L/min
-        const dosificacion_bruta_kg = parseFloat((Math.random() * 2 + 5).toFixed(2)); // 5.00 a 7.00 kg/min bruto
-        const pureza_lote_base = parseFloat((Math.random() * 8 + 88).toFixed(1)); // 88.0% a 96.0% de pureza
-        const porc_conversion_cinetica = parseFloat((Math.random() * 10 + 80).toFixed(0)); // 80% a 90% de conversión
+        const caudal_disolvente = parseFloat((Math.random() * 15 + 45).toFixed(1)); 
+        const dosificacion_bruta_kg = parseFloat((Math.random() * 2 + 5).toFixed(2)); 
+        const pureza_lote_base = parseFloat((Math.random() * 8 + 88).toFixed(1)); 
+        const porc_conversion_cinetica = parseFloat((Math.random() * 10 + 80).toFixed(0)); 
 
-        // Cálculos estequiométricos internos para el balance analítico
-        const masa_pura_base_g = (dosificacion_bruta_kg * 1000) * (pureza_lote_base / 100); // g/min puros
-        const moles_base_entrada = masa_pura_base_g / comp.pm; // mol/min
-        const moles_base_reaccionan = moles_base_entrada * (porc_conversion_cinetica / 100); // mol/min consumidos
-        const moles_base_remanentes = moles_base_entrada - moles_base_reaccionan; // mol/min que salen sin reaccionar
+        const masa_pura_base_g = (dosificacion_bruta_kg * 1000) * (pureza_lote_base / 100); 
+        const moles_base_entrada = masa_pura_base_g / comp.pm; 
+        const moles_base_reaccionan = moles_base_entrada * (porc_conversion_cinetica / 100); 
+        const moles_base_remanentes = moles_base_entrada - moles_base_reaccionan; 
 
-        // La concentración final se calcula en base al caudal de salida permanente
         metaVal = parseFloat((moles_base_remanentes / caudal_disolvente).toFixed(4));
 
         texto = '<b>[NIVEL 5 - DISEÑO CINÉTICO DE REACTORES CONTINUOS]</b><br>' +
                 'Una unidad de neutralización industrial de ZUFORCA opera en estado estacionario y régimen permanente. Al reactor ingresa un caudal constante de <b>' + caudal_disolvente + ' L/min</b> de un efluente acuoso libre de soluto, alimentándose simultáneamente una tolva automatizada que dosifica <b>' + dosificacion_bruta_kg + ' kg/min</b> de una muestra cruda e impura de <b>\\(' + comp.nombre + '\\)</b> con una <b>pureza del ' + pureza_lote_base + '%</b>.<br>' +
                 'Si el perfil térmico interno restringe la cinética del proceso, alcanzándose un **porcentaje de conversión reactiva de apenas el ' + porc_conversion_cinetica + '%** de la base alimentada, calcule la <b>Molaridad (M) residual definitiva de la base</b> en la corriente continua de descarga. Suponga que la densidad de la corriente permanece constante y que no hay expansión volumétrica durante el mezclado reactivo. (MM = ' + comp.pm + ' g/mol).';
     }
-}    
+}
+    
 } else if (enfoqueModelos === 1) {
         const comp = ELEMENTOS.acidos[0];
         metaVal = 0.5; 
