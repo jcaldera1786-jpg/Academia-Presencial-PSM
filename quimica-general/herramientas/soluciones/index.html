@@ -371,35 +371,46 @@ if (enfoqueModelos === 0) {
         // ----------------------------------------------------
         // ENFOQUE MODELO 1: BALANCES MULTI-ETAPA (TIPO FELDER)
         // ----------------------------------------------------
-        const comp = ELEMENTOS.acidos[Math.floor(Math.random() * ELEMENTOS.acidos.length)]; 
         
-        // 1. DATOS COLIGATIVOS (Corriente 1)
-        const masa_bruta_A = parseFloat((Math.random() * 20 + 40).toFixed(1)); 
-        const masa_solvente_g = 500; 
-        const pureza_real_A = parseFloat((Math.random() * 10 + 85).toFixed(0)); 
+        // Base de datos interna y exclusiva para el Nivel 5 (Evita conflictos con el resto del script)
+        const reactivosPlanta = [
+            { nombre: "HNO₃ (Ácido Nítrico)", pm: 63.01 },
+            { nombre: "H₂SO₄ (Ácido Sulfúrico)", pm: 98.08 },
+            { nombre: "HCl (Ácido Clorhídrico)", pm: 36.46 },
+            { nombre: "CH₃COOH (Ácido Acético)", pm: 60.05 },
+            { nombre: "H₃PO₄ (Ácido Fosfórico)", pm: 97.99 }
+        ];
+
+        // Selecciona un reactivo al azar de la lista interna
+        const comp = reactivosPlanta[Math.floor(Math.random() * reactivosPlanta.length)];
+        
+        // 1. DATOS COLIGATIVOS ALEATORIOS (Corriente 1)
+        const masa_bruta_A = parseFloat((Math.random() * 20 + 40).toFixed(1)); // Entre 40.0 y 60.0 g
+        const masa_solvente_g = 500; // 500 g de solvente
+        const pureza_real_A = parseFloat((Math.random() * 10 + 85).toFixed(0)); // Entre 85% y 95%
         const Ke_solvente = 2.53; 
         
-        // Cálculos internos de control
+        // Operaciones analíticas basadas en el reactivo seleccionado
         const masa_pura_A = masa_bruta_A * (pureza_real_A / 100);
-        const moles_reales_A = masa_pura_A / comp.mm;
+        const moles_reales_A = masa_pura_A / comp.pm; // <--- Usa la propiedad .pm interna segura
         const molalidad_A = moles_reales_A / (masa_solvente_g / 1000);
         const delta_Te = parseFloat((molalidad_A * Ke_solvente).toFixed(3)); 
         
-        // 2. REACTOR Y CONVERSIÓN (Corriente 2)
-        const porc_conversion = parseFloat((Math.random() * 15 + 75).toFixed(0)); 
+        // 2. REACTOR Y CONVERSIÓN ALEATORIA (Corriente 2)
+        const porc_conversion = parseFloat((Math.random() * 15 + 75).toFixed(0)); // Entre 75% y 90%
         const moles_Q_producidos = moles_reales_A * (porc_conversion / 100);
         
-        // 3. SEPARACIÓN Y PURIFICACIÓN TERMINAL
-        const vol_tanque_empaque_L = parseFloat((Math.random() * 0.5 + 1.0).toFixed(2)); 
+        // 3. SEPARACIÓN Y PURIFICACIÓN TERMINAL (Volumen aleatorio)
+        const vol_tanque_empaque_L = parseFloat((Math.random() * 0.5 + 1.0).toFixed(2)); // Entre 1.00 y 1.50 L
         
-        // Valor meta final que evaluará el sistema
+        // Valor meta final calculado con precisión para la validación
         metaVal = parseFloat((moles_Q_producidos / vol_tanque_empaque_L).toFixed(3));
         
-        // CONCATENACIÓN CASTA ESTÁNDAR (Previene caídas de renderizado en el navegador)
+        // CONCATENACIÓN PLANA INMUNE A CAÍDAS DE RENDERIZADO
         texto = '<b>[NIVEL 5 - ChemE-Bowl (FELDER MULTI-ETAPA)]</b><br>' +
                 'En la planta piloto de ZUFORCA se evalúa un proceso continuo de síntesis. ' +
-                'La <b>Corriente 1</b> se prepara disolviendo <b>' + masa_bruta_A + ' g</b> de materia prima cruda <b>\\(' + comp.n + '\\)</b> ' +
-                'en <b>' + masa_solvente_g + ' g</b> de un solvente orgánico ($K_e = ' + Ke_solvente + '\\text{ }^{\\circ}\\text{C/m}$, PM teórico = ' + comp.mm + ' g/mol). ' +
+                'La <b>Corriente 1</b> se prepara disolviendo <b>' + masa_bruta_A + ' g</b> de materia prima cruda <b>' + comp.nombre + '</b> ' +
+                'en <b>' + masa_solvente_g + ' g</b> de un solvente orgánico ($K_e = ' + Ke_solvente + '\\text{ }^{\\circ}\\text{C/m}$, PM teórico = ' + comp.pm + ' g/mol). ' +
                 'El sensor térmico registra un ascenso ebulloscópico real de <b>\\(\\Delta T_e = ' + delta_Te + '\\text{ }^{\\circ}\\text{C}\\)</b>.<br>' +
                 'Esta corriente acondicionada se introduce a un reactor químico junto con una <b>Corriente 2</b> que suministra un reactivo complementario en exceso. ' +
                 'En el reactor se suscita una reacción con un <b>porcentaje de conversión del ' + porc_conversion + '%</b> respecto al reactivo limitante.<br>' +
