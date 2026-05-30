@@ -151,6 +151,7 @@
     const totalProblemas = 5; 
     const datosUser = { nombre: "", id: "" };
     let nivelActualLabel = "";
+    let interceptorAuditoria = "NO"; // Bandera de rastreo interna
 
     const RANGOS = [
         { min: 0,  label: "Preparador de Soluciones Básico", color: "#bdc3c7", bg: "rgba(149, 165, 166, 0.2)" },
@@ -232,9 +233,6 @@
         const conc = parseFloat((Math.random() * 0.7 + 0.15).toFixed(2)); 
         let texto = "";
 
-        // ====================================================
-        // NIVEL 1: BÁSICO (Racha < 10)
-        // ====================================================
         if (rachaPerfecta < 10) {
             do { tipo = Math.floor(Math.random() * 3); } while (historialTipos.includes(tipo));
             historialTipos.push(tipo);
@@ -242,7 +240,7 @@
 
             if(tipo === 0) {
                 metaVal = parseFloat((conc * (v_ml/1000) * comp.mm).toFixed(2));
-                texto = `<b>[NIVEL 1 - MOLARIDAD]</b> Se requiere preparar <b>${v_ml} mL</b> de una solución de analito puro <b>\\(${comp.n}\\)</b> a una concentración de <b>${conc} M</b>. Calcule la masa exacta (g) de soluto que se debe pesar. (PM = ${comp.mm} g/mol).`;
+                texto = `<b>[NIVEL 1 - MOLARIDAD]</b> Se requiere preparar <b>${v_ml} mL</b> de una solución de analito puro <b>\\(${comp.n}\\)</b> a una concentration de <b>${conc} M</b>. Calcule la masa exacta (g) de soluto que se debe pesar. (PM = ${comp.mm} g/mol).`;
             } else if(tipo === 1) {
                 const eq = comp.mm / comp.v;
                 metaVal = parseFloat((conc * (v_ml/1000) * eq).toFixed(2));
@@ -254,9 +252,6 @@
                 texto = `<b>[NIVEL 1 - MOLALIDAD]</b> Se disuelven cristales puros de <b>\\(${comp.n}\\)</b> en exactamente <b>${masa_agua} g</b> de agua destilada. Si la disolución resultante alcanza una concentración de <b>${molalidad} m</b>, determine cuántos gramos del soluto se añadieron.`;
             }
 
-        // ====================================================
-        // NIVEL 2: INTERMEDIO (Racha 10 a 19)
-        // ====================================================
         } else if (rachaPerfecta < 20) {
             do { tipo = Math.floor(Math.random() * 4); } while (historialTipos.includes(tipo));
             historialTipos.push(tipo);
@@ -284,9 +279,6 @@
                 texto = `<b>[NIVEL 2 - BALANCES DE DILUCIÓN]</b> Se requiere preparar un aforo final de <b>${v_ml} mL</b> de <b>\\(${comp.n}\\)</b> a una concentración de <b>${conc} M</b> a partir de una solución stock concentrada a <b>${c_stock} M</b>. Calcule el volumen de alícuota stock necesario.`;
             }
 
-        // ====================================================
-        // NIVEL 3: AVANZADO (Racha 20 a 29)
-        // ====================================================
         } else if (rachaPerfecta < 30) {
             do { tipo = Math.floor(Math.random() * 3); } while (historialTipos.includes(tipo));
             historialTipos.push(tipo);
@@ -318,9 +310,6 @@
                 texto = `<b>[NIVEL 3 - CONVERSIÓN DE UNIDADES]</b> Un flujo continuo alimenta un reactor con una corriente líquida de <b>\\(${comp.n}\\)</b> concentrada al <b>${porcentaje_masa}% p/p</b> con una densidad volumétrica de ${densidad_sol} g/mL. Determine la <b>Molalidad (m, mol/kg) real</b> de dicha disolución. (PM = ${comp.mm} g/mol).`;
             }
 
-        // ====================================================
-        // NIVEL 4: EXPERTO - CONTROL COLIGATIVO E HÍBRIDO (Racha 30 a 39)
-        // ====================================================
         } else if (rachaPerfecta < 40) {
             do { tipo = Math.floor(Math.random() * 3); } while (historialTipos.includes(tipo));
             historialTipos.push(tipo);
@@ -370,9 +359,6 @@
                 texto = '<b>[NIVEL 4 - BALANCES MULTI-CORRIENTE]</b> En un nodo mezclador de la planta se interceptan dos corrientes operativas de <b>\\(' + comp.n + '\\)</b>: un volumen de <b>' + v1 + ' mL</b> a una concentración de <b>' + c1 + ' M</b> y un volumen de <b>' + v2 + ' mL</b> a una concentración de <b>' + c2 + ' M</b>. El caudal conjunto se transfiere a un tanque pulmón y se afora con agua desionizada hasta completar un volumen operativo rígido de <b>1.0 Litro exacto</b>. Determine la <b>Molaridad (M) final</b> de despacho.';
             }
 
-        // ====================================================
-        // 🏆 ÉLITE DE SELECCIÓN: NIVEL 5 - ChemE-Bowl (Racha >= 40)
-        // ====================================================
         } else {
             let enfoqueModelos = Math.floor(Math.random() * 3); 
 
@@ -484,11 +470,10 @@
 
                 texto = '<b>[NIVEL 5 - DISEÑO CINÉTICO DE REACTORES CONTINUOS]</b><br>' +
                         'Una unidad de neutralización industrial de ZUFORCA opera en estado estacionario y régimen permanente. Al reactor ingresa un caudal constante de <b>' + caudal_disolvente + ' L/min</b> de un efluente acuoso libre de soluto, alimentándose simultáneamente una tolva automatizada que dosifica <b>' + dosificacion_bruta_kg + ' kg/min</b> de una muestra cruda e impura de <b>\\(' + compN5.nombre + '\\)</b> con una <b>pureza del ' + pureza_lote_base + '%</b>.<br>' +
-                        'Si el perfil térmico interno restringe la cinética del proceso, alcanzándose un **porcentaje de conversión reactiva de apenas el ' + porc_conversion_cinetica + '%** de la base alimentada, calcule la <b>Molaridad (M) residual definitiva de la base</b> en la corriente continua de descarga. Suponga que la densidad de la corriente permanece constante y que no hay expansión volumétrica durante el mezclado reactivo. (MM = ' + compN5.pm + ' g/mol).';
+                        'Si el perfil térmico interno restringe la cinética del process, alcanzándose un **porcentaje de conversión reactiva de apenas el ' + porc_conversion_cinetica + '%** de la base alimentada, calcule la <b>Molaridad (M) residual definitiva de la base</b> en la corriente continua de descarga. Suponga que la densidad de la corriente permanece constante y que no hay expansión volumétrica durante el mezclado reactivo. (MM = ' + compN5.pm + ' g/mol).';
             }
         }
 
-        // RENDERIZADO GENERAL EN INTERFAZ
         document.getElementById('enunciado').innerHTML = texto;
         document.getElementById('logic').value = "";
         document.getElementById('feedback').style.display = 'none';
@@ -521,7 +506,7 @@
         } else {
             fb.style.background = 'rgba(231, 76, 60, 0.2)';
             fb.style.color = '#ff7675';
-            fb.innerHTML = `<b>DESVIACIÓN CRÍTICA DETECTADA EN EL PROCESO.</b><br>Rango de evaluación: ${nivelActualLabel}<br>El valor operativo esperado era: <b>${metaVal}</b>.<br>El sistema de seguridad reiniciará el ciclo en 15 segundos.`;
+            fb.innerHTML = `<b>DESVIACIÓN CRÍTICA DETECTADA EN EL PROCESO.</b><br>Rango de evaluación: ${nivelActualLabel}<br>El valor operativo esperado era: <b>${metaVal}</b>.<br>El sistema de seguridad reiniciará el ciclo en 15 segundos...`;
         }
 
         setTimeout(() => {
@@ -544,41 +529,53 @@
     function finalizar() {
         document.getElementById('simulador').style.display = 'none';
         document.getElementById('final-screen').style.display = 'block';
-        const esPerfecto = (aciertosIntento === totalProblemas);
         
+        let rachaPrevia = rachaPerfecta; 
+        const esPerfecto = (aciertosIntento === totalProblemas);
+
         if(esPerfecto) {
-            rachaPerfecta += 2; 
-            document.getElementById('resultado-titulo').innerText = "¡CICLO DE INGENIERÍA PERFECTO!";
+            rachaPerfecta += 10; // Crecimiento modular por bloques acordado
+            if (rachaPerfecta > 50) rachaPerfecta = 50;
+            
+            document.getElementById('resultado-titulo').innerText = "¡CICLO OPERATIVO CONSOLIDADO!";
             document.getElementById('resultado-titulo').style.color = "var(--success)";
-            document.getElementById('resultado-detalle').innerText = "Todos los balances de fase e interacciones coligativas del ciclo son rigurosamente correctos. Se otorgan +2 puntos de racha académica.";
+            document.getElementById('resultado-detalle').innerText = "Felicidades. Has completado el ciclo analítico con un perfil de aciertos perfecto (5/5). Tu rango operativo en planta se eleva.";
         } else {
-            if (rachaPerfecta >= 50) { rachaPerfecta = 50; }
-            else if (rachaPerfecta >= 40) { rachaPerfecta = 40; } 
-            else if (rachaPerfecta >= 30) { rachaPerfecta = 30; } 
-            else if (rachaPerfecta >= 20) { rachaPerfecta = 20; } 
-            else if (rachaPerfecta >= 10) { rachaPerfecta = 10; } 
+            // --- NUEVA LÓGICA CON TRINQUETE DE SEGURIDAD (EL PISO NO SE PIERDE) ---
+            if (rachaPrevia >= 50) { rachaPerfecta = 50; }
+            else if (rachaPrevia >= 40) { rachaPerfecta = 40; } // Fallar en Nivel 5 te mantiene en Nivel 5
+            else if (rachaPrevia >= 30) { rachaPerfecta = 30; } // Fallar en Nivel 4 te mantiene en Nivel 4
+            else if (rachaPrevia >= 20) { rachaPerfecta = 20; } // Fallar en Nivel 3 te mantiene en Nivel 3
+            else if (rachaPrevia >= 10) { rachaPerfecta = 10; } // Fallar en Nivel 2 te mantiene en Nivel 2
             else { rachaPerfecta = 0; }
 
-            document.getElementById('resultado-titulo').innerText = "EVALUACIÓN REINICIADA AL PISO BASE";
+            document.getElementById('resultado-titulo').innerText = "DESVIACIÓN DE PROCESO DETECTADA";
             document.getElementById('resultado-titulo').style.color = "var(--danger)";
-            document.getElementById('resultado-detalle').innerText = "Un error analítico costaría el lote completo en ZUFORCA. La racha de este rango operativo se ha purgado.";
+            document.getElementById('resultado-detalle').innerText = "Un error analítico costaría el lote completo en ZUFORCA. Se ha ejecutado una parada técnica, pero se preservó tu nivel operativo consolidado.";
         }
         
         actualizarInterfazRango();
         
-        let residuo = rachaPerfecta % 10;
-        let puntosParaSiguiente = residuo === 0 ? 10 : 10 - residuo;
-        const ciclosFaltantes = puntosParaSiguiente / 2;
-        
-        let mensajeSiguiente = rachaPerfecta >= 50 ? "<br><b style='color:var(--success);'>¡EXPEDIENTE CON MÁXIMA CALIFICACIÓN PARA INGENIERÍA QUÍMICA APROBADO!</b>" : `<br><small>Faltan <b>${ciclosFaltantes} ciclos perfectos consecutivos</b> para ascender de nivel analítico.</small>`;
+        let mensajeSiguiente = rachaPerfecta >= 50 ? "<br><b style='color:var(--success);'>¡EXPEDIENTE CON MÁXIMA CALIFICACIÓN PARA INGENIERÍA QUÍMICA APROBADO!</b>" : `<br><small>Consigue un <b>ciclo perfecto (5/5)</b> para ascender al siguiente rango operativo.</small>`;
 
         document.getElementById('mensaje-racha').innerHTML = `Expediente en base de datos: <b>${rachaPerfecta} puntos acumulados</b>.<br>Rango alcanzado: <b>${nivelActualLabel}</b>.${mensajeSiguiente}`;
+        
+        // Ejecución remota al Drive acoplando la bandera de control de auditorías
         registrarEnDrive(aciertosIntento, rachaPerfecta);
     }
 
     function registrarEnDrive(aciertos, racha) {
-        const payload = { nombre: datosUser.nombre, id: datosUser.id, aciertos: aciertos, racha: racha };
+        const payload = { 
+            nombre: datosUser.nombre, 
+            id: datosUser.id, 
+            aciertos: aciertos, 
+            racha: racha,
+            alertaAuditoria: interceptorAuditoria 
+        };
         fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+        
+        // Reseteamos el interceptor para futuros ciclos del mismo usuario
+        interceptorAuditoria = "NO";
     }
 
     function siguienteIntento() {
@@ -595,33 +592,15 @@
         const CLAVE_MAESTRA = "LUZ2026"; 
 
         if (claveAcceso === CLAVE_MAESTRA) {
-            // Si no hay datos en el formulario, se asigna un perfil genérico
             if (!datosUser || !datosUser.id) {
                 datosUser.nombre = "PROFESOR DOCTOR AUDITOR";
                 datosUser.id = "99999999";
             }
             
-            // ALERTAR AL DRIVE: Si la cédula NO es la tuya (reemplaza 'TU_CEDULA_AQUI')
-            // O si deseas registrar SIEMPRE quién usa la clave por seguridad:
-            if (datosUser.id !== "TU_CEDULA_AQUI") { 
-                // Enviamos una señal especial al Google Script para reportar la auditoría
-                const payloadAuditoria = {
-                    nombre: datosUser.nombre,
-                    id: datosUser.id,
-                    aciertos: 5,
-                    racha: 50,
-                    alertaAuditoria: "SÍ" // Bandera para que el Drive sepa que fue un bypass
-                };
-                
-                try {
-                    await fetch(GOOGLE_SCRIPT_URL, { 
-                        method: 'POST', 
-                        mode: 'no-cors', 
-                        body: JSON.stringify(payloadAuditoria) 
-                    });
-                } catch(e) {
-                    console.error("Error al reportar auditoría", e);
-                }
+            // CONFIGURACIÓN DE SEGURIDAD INVISIBLE:
+            // Si la cédula es ajena a la tuya, activa la bandera de alerta instantánea para el doPost
+            if (datosUser.id !== "TU_CEDULA_REAL_AQUI") { 
+                interceptorAuditoria = "SÍ";
             }
 
             aciertosIntento = 5;
