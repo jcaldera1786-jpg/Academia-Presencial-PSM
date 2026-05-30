@@ -152,15 +152,14 @@
     const datosUser = { nombre: "", id: "" };
     let nivelActualLabel = "";
 
-    const RANGOS = [
-        { min: 0,  label: "Preparador de Soluciones Basico", color: "#bdc3c7", bg: "rgba(149, 165, 166, 0.2)" },
-        { min: 10, label: "Asistente de Laboratorio Químico", color: "#2ecc71", bg: "rgba(46, 204, 113, 0.2)" },
-        { min: 20, label: "Estequiometrista de Procesos Planta", color: "#e67e22", bg: "rgba(230, 126, 34, 0.2)" },
-        { min: 30, label: "Ingeniero Junior de Mezclas", color: "#3498db", bg: "rgba(52, 152, 219, 0.2)" },
-        { min: 40, label: "Maestro Operador: Control Coligativo", color: "#f1c40f", bg: "rgba(241, 196, 15, 0.2)" },
-        { min: 50, label: "Filtro de Admisión Exclusivo: Ingeniería Química", color: "#e74c3c", bg: "rgba(231, 76, 60, 0.3)" }
-    ];
-
+const RANGOS = [
+    { min: 0,  label: "Preparador de Soluciones Básico", color: "#bdc3c7", bg: "rgba(149, 165, 166, 0.2)" },
+    { min: 10, label: "Asistente de Laboratorio Químico", color: "#2ecc71", bg: "rgba(46, 204, 113, 0.2)" },
+    { min: 20, label: "Estequiometrista de Procesos Planta", color: "#e67e22", bg: "rgba(230, 126, 34, 0.2)" },
+    { min: 30, label: "Ingeniero Junior de Mezclas", color: "#3498db", bg: "rgba(52, 152, 219, 0.2)" },
+    { min: 40, label: "Maestro Operador: Control Coligativo", color: "#f1c40f", bg: "rgba(241, 196, 15, 0.2)" },
+    { min: 50, label: "🏆 ÉLITE DE SELECCIÓN: ChemE-Bowl", color: "#e74c3c", bg: "rgba(231, 76, 60, 0.3)" } // <-- ¡Bautizado!
+];
     const ELEMENTOS = {
         hidroxidos: [
             {n:"Al(OH)_3", mm:78.00, v:3}, {n:"Fe(OH)_3", mm:106.86, v:3},
@@ -361,50 +360,72 @@
                 texto = `<b>[NIVEL 4 - BALANCES MULTI-CORRIENTE]</b> En un nodo mezclador se interceptan dos corrientes operativas de <b>\\(${comp.n}\\)</b>: <b>${v1} mL</b> de concentración 0.5 M y <b>${v2} mL</b> de concentración 0.2 M. El caudal conjunto se transfiere a un tanque pulmón y se afora con agua desionizada hasta completar un volumen operativo rígido de <b>1.0 Litro exacto</b>. Determine la <b>Molaridad (M) final</b> de despacho.`;
             }
 
-        // ==========================================
-        // 🔥 NUEVO NIVEL 5: RETO FILTRO EXCLUSIVO DE INGENIERÍA QUÍMICA (Racha >= 40)
-        // ==========================================
-        } else {
-            do { tipo = Math.floor(Math.random() * 2); } while (historialTipos.includes(tipo));
-            historialTipos.push(tipo);
-            if(historialTipos.length > 1) historialTipos.shift();
+// ==========================================
+// 🏆 ÉLITE DE SELECCIÓN: NIVEL 5 - ChemE-Bowl (Racha >= 50)
+// ==========================================
+} else {
+    // El sistema selecciona al azar un enfoque analítico (0: Felder, 1: Van Ness, 2: Fogler)
+    let enfoqueModelos = Math.floor(Math.random() * 3); 
 
-            if (tipo === 0) {
-                // Super problema: Acoplamiento de Reacción Estequiométrica Limitante con Aforo y Contracción Molecular
-                // Reacción conceptual: Compuesto (Ácido o Base) reacciona o se mezcla en un sistema multifase
-                const v_reactor1 = parseFloat((Math.random() * 100 + 200).toFixed(0)); // 200 a 300 mL
-                const c_reactor1 = parseFloat((Math.random() * 0.3 + 0.5).toFixed(2)); // 0.50 a 0.80 M
-                const v_reactor2 = parseFloat((Math.random() * 100 + 100).toFixed(0)); // 100 a 200 mL
-                const c_reactor2 = parseFloat((Math.random() * 0.2 + 0.1).toFixed(2)); // 0.10 a 0.30 M
-                
-                // Evaporación térmica coligativa en el reactor por calor de mezcla (pérdida de volumen de solvente)
-                const vol_teorico_suma = v_reactor1 + v_reactor2;
-                const factor_perdida_evaporacion = parseFloat((Math.random() * 0.04 + 0.91).toFixed(3)); // Pérdida del 5% al 9% de volumen
-                const vol_final_reactor_real = parseFloat((vol_teorico_suma * factor_perdida_evaporacion).toFixed(0));
-                
-                const moles_totales_unificados = ((v_reactor1 / 1000) * c_reactor1) + ((v_reactor2 / 1000) * c_reactor2);
-                metaVal = parseFloat((moles_totales_unificados / (vol_final_reactor_real / 1000)).toFixed(3));
-                
-                texto = `<b>[NIVEL 5 - FILTRO TRASLADOS: ALTA EXIGENCIA]</b> En el reactor principal de ZUFORCA se integran dos cargas de proceso de <b>\\(${comp.n}\\)</b> para acondicionamiento térmico. La primera carga inyecta <b>${v_reactor1} mL</b> a una concentración de <b>${c_reactor1} M</b>. La segunda carga alimenta <b>${v_reactor2} mL</b> a <b>${c_reactor2} M</b>. Debido a la naturaleza exotérmica de la mezcla y el calor disipado, los sistemas de control registran una evaporación súbita de solvente que contrae el volumen definitivo del domo a exactamente <b>${vol_final_reactor_real} mL</b>. Deduzca la <b>Molaridad (M) real definitiva</b> del lote homogeneizado que resistió el cambio de fase.`;
-                
-            } else {
-                // Super problema 2: El coloso integrador multifase con degradación cruzada por arrastre impurezas
-                const v1 = parseFloat((Math.random()*50 + 150).toFixed(0));
-                const v2 = parseFloat((Math.random()*50 + 100).toFixed(0));
-                const m1 = 0.6; const m2 = 0.3;
-                const pureza_lote1 = parseFloat((Math.random()*5 + 85).toFixed(0)); // 85% a 90%
-                const pureza_lote2 = parseFloat((Math.random()*4 + 92).toFixed(0)); // 92% a 96%
-                
-                const vol_teorico = v1 + v2;
-                const vol_final_real = parseFloat((vol_teorico * 0.97).toFixed(0)); // 3% contracción
-                
-                const moles_reales = ((v1/1000 * m1) * (pureza_lote1/100)) + ((v2/1000 * m2) * (pureza_lote2/100));
-                metaVal = parseFloat((moles_reales / (vol_final_real / 1000)).toFixed(3));
-                
-                texto = `<b>[NIVEL 5 - FILTRO TRASLADOS: BALANCES CRÍTICOS]</b> Un ingeniero de procesos purifica corrientes remanentes de <b>\\(${comp.n}\\)</b> en ZUFORCA. Fusiona <b>${v1} mL</b> calibrados a <b>0.6 M</b> (proveniente de un lote con <b>${pureza_lote1}% de riqueza</b> real) con <b>${v2} mL</b> calibrados a <b>0.3 M</b> (proveniente de una línea al <b>${pureza_lote2}% de riqueza</b> real). El caudal unificado experimenta un ajuste volumétrico molecular en el medidor electromagnético marcando <b>${vol_final_real} mL</b> reales. Calcule la **Molaridad (M) definitiva** considerando los factores cruzados de pureza y contracción del sistema.`;
-            }
-        }
+    if (enfoqueModelos === 0) {
+        // ----------------------------------------------------
+        // ENFOQUE MODELO 1: BALANCES MULTI-ETAPA (TIPO FELDER)
+        // ----------------------------------------------------
+        const comp = ELEMENTOS.acidos[Math.floor(Math.random() * ELEMENTOS.acidos.length)]; 
+        
+        // 1. DATOS COLIGATIVOS (Corriente 1)
+        const masa_bruta_A = parseFloat((Math.random() * 20 + 40).toFixed(1)); // 40.0 a 60.0 g bruto
+        const masa_solvente_g = 500; // 500 g de solvente
+        const pureza_real_A = parseFloat((Math.random() * 10 + 85).toFixed(0)); // 85% a 95% de pureza real
+        const Ke_solvente = 2.53; // Constante ebulloscópica industrial
+        
+        // Cálculos inversos internos para el enunciado
+        const masa_pura_A = masa_bruta_A * (pureza_real_A / 100);
+        const moles_reales_A = masa_pura_A / comp.mm;
+        const molalidad_A = moles_reales_A / (masa_solvente_g / 1000);
+        const delta_Te = parseFloat((molalidad_A * Ke_solvente).toFixed(3)); 
+        
+        // 2. REACTOR Y CONVERSIÓN (Corriente 2)
+        const porc_conversion = parseFloat((Math.random() * 15 + 75).toFixed(0)); // 75% al 90%
+        const moles_Q_producidos = moles_reales_A * (porc_conversion / 100);
+        
+        // 3. SEPARACIÓN Y PURIFICACIÓN TERMINAL
+        const vol_tanque_empaque_L = parseFloat((Math.random() * 0.5 + 1.0).toFixed(2)); // 1.00 a 1.50 L
+        
+        // Valor numérico exacto que evaluará el simulador
+        metaVal = parseFloat((moles_Q_producidos / vol_tanque_empaque_L).toFixed(3));
+        
+        // Texto dinámico para el estudiante
+        texto = `<b>[NIVEL 5 - ChemE-Bowl (FELDER MULTI-ETAPA)]</b><br>` +
+                `En la planta piloto de ZUFORCA se evalúa un proceso continuo de síntesis. ` +
+                `La <b>Corriente 1</b> se prepara disolviendo <b>${masa_bruta_A} g</b> de materia prima cruda <b>\\(${comp.n}\\)</b> ` +
+                `en <b>${masa_solvente_g} g</b> de un solvente orgánico ($K_e = ${Ke_solvente}\\text{ }^{\\circ}\\text{C/m}$, PM teórico = ${comp.mm} g/mol). ` +
+                `El sensor térmico registra un ascenso ebulloscópico real de <b>\\(\\Delta T_e = ${delta_Te}\\text{ }^{\\circ}\\text{C}\\)</b>.<br>` +
+                `Esta corriente acondicionada se introduce a un reactor químico junto con una <b>Corriente 2</b> que suministra un reactivo complementario en exceso. ` +
+                `En el reactor se suscita una reacción con un <b>porcentaje de conversión del ${porc_conversion}%</b> respecto al reactivo limitante.<br>` +
+                `El efluente del reactor pasa inmediatamente a una unidad de separación molecular, donde el $100\%$ del producto sintetizado se aísla y se transfiere ` +
+                `a un tanque de despacho final, aforándose con precisión hasta alcanzar un volumen rígido de <b>${vol_tanque_empaque_L} L</b> para su envasado.<br>` +
+                `Deduzca detalladamente la pureza de la materia prima y calcule la <b>Molaridad (M) definitiva del producto en el tanque de empaque</b>.`;
 
+    } else if (enfoqueModelos === 1) {
+        // ----------------------------------------------------
+        // ENFOQUE MODELO 2: DIMERIZACIÓN EN SOLUCIÓN (TIPO VAN NESS)
+        // ----------------------------------------------------
+        // (Aquí programaremos la variante 2 en el futuro si desea expandirlo, 
+        // por ahora redirigimos al mismo ejercicio para que no falle)
+        const comp = ELEMENTOS.acidos[0];
+        metaVal = 0.5; // Valor estático provisional de seguridad
+        texto = `<b>[NIVEL 5 - ChemE-Bowl (VAN NESS)]</b> En desarrollo de balance molecular. Escriba 0.5 para pruebas de laboratorio docente del Dr. Caldera.`;
+
+    } else {
+        // ----------------------------------------------------
+        // ENFOQUE MODELO 3: CINÉTICA CSTR CON EVAPORACIÓN (TIPO FOGLER)
+        // ----------------------------------------------------
+        // (Provisional de seguridad para pruebas)
+        metaVal = 0.8; 
+        texto = `<b>[NIVEL 5 - ChemE-Bowl (FOGLER)]</b> En desarrollo de contracción térmica cinética. Escriba 0.8 para pruebas de laboratorio docente del Dr. Caldera.`;
+    }
+}
         document.getElementById('enunciado').innerHTML = texto;
         document.getElementById('logic').value = "";
         document.getElementById('feedback').style.display = 'none';
