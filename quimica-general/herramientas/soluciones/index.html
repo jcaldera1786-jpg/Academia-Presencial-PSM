@@ -406,19 +406,19 @@ if (enfoqueModelos === 0) {
         // Valor meta final calculado con precisión para la validación
         metaVal = parseFloat((moles_Q_producidos / vol_tanque_empaque_L).toFixed(3));
         
-        // CONCATENACIÓN PLANA INMUNE A CAÍDAS DE RENDERIZADO
+// CONCATENACIÓN BLINDADA PARA MATHJAX (Inmune a fallos de renderizado)
         texto = '<b>[NIVEL 5 - ChemE-Bowl (FELDER MULTI-ETAPA)]</b><br>' +
                 'En la planta piloto de ZUFORCA se evalúa un proceso continuo de síntesis. ' +
                 'La <b>Corriente 1</b> se prepara disolviendo <b>' + masa_bruta_A + ' g</b> de materia prima cruda <b>' + comp.nombre + '</b> ' +
-                'en <b>' + masa_solvente_g + ' g</b> de un solvente orgánico ($K_e = ' + Ke_solvente + '\\text{ }^{\\circ}\\text{C/m}$, PM teórico = ' + comp.pm + ' g/mol). ' +
+                'en <b>' + masa_solvente_g + ' g</b> de un solvente orgánico (\\(K_e = ' + Ke_solvente + '\\text{ }^{\\circ}\\text{C/m}\\), PM teórico = ' + comp.pm + ' g/mol). ' +
                 'El sensor térmico registra un ascenso ebulloscópico real de <b>\\(\\Delta T_e = ' + delta_Te + '\\text{ }^{\\circ}\\text{C}\\)</b>.<br>' +
                 'Esta corriente acondicionada se introduce a un reactor químico junto con una <b>Corriente 2</b> que suministra un reactivo complementario en exceso. ' +
                 'En el reactor se suscita una reacción con un <b>porcentaje de conversión del ' + porc_conversion + '%</b> respecto al reactivo limitante.<br>' +
                 'El efluente del reactor pasa inmediatamente a una unidad de separación molecular, donde el 100% del producto sintetizado se aísla y se transfiere ' +
                 'a un tanque de despacho final, aforándose con precisión hasta alcanzar un volumen rígido de <b>' + vol_tanque_empaque_L + ' L</b> para su envasado.<br>' +
-                'Deduzca detalladamente la pureza de la materia prima y calcule la <b>Molaridad (M) definitiva del producto en el tanque de empaque</b>.';
+                'Deduzca detalladamente la pureza de la materia prima y calcule la <b>Molaridad (M) definitiva del producto en el tanque de empaque</b>.';    
     
-    } else if (enfoqueModelos === 1) {
+} else if (enfoqueModelos === 1) {
         const comp = ELEMENTOS.acidos[0];
         metaVal = 0.5; 
         texto = `<b>[NIVEL 5 - ChemE-Bowl (VAN NESS)]</b> En desarrollo de balance molecular. Escriba 0.5 para pruebas de laboratorio docente del Dr. Caldera.`;
