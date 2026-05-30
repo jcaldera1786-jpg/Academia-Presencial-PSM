@@ -223,17 +223,18 @@ const RANGOS = [
     }
 
     function generar() {
+        // Variable global para los niveles 1 al 4
         const todas = [...ELEMENTOS.hidroxidos, ...ELEMENTOS.sales, ...ELEMENTOS.acidos];
-        const comp = todas[Math.floor(Math.random()*todas.length)];
+        const comp = todas[Math.floor(Math.random() * todas.length)];
 
         let tipo;
-        const v_ml = parseFloat((Math.random()*600 + 200).toFixed(0)); // 200 a 800 mL
-        const conc = parseFloat((Math.random()*0.7 + 0.15).toFixed(2)); // 0.15 a 0.85 M o N
+        const v_ml = parseFloat((Math.random() * 600 + 200).toFixed(0)); // 200 a 800 mL
+        const conc = parseFloat((Math.random() * 0.7 + 0.15).toFixed(2)); // 0.15 a 0.85 M o N
         let texto = "";
 
-        // ==========================================
-        // NIVEL 1, 2 Y 3 (Preservados e idénticos a su lógica dinámica anterior)
-        // ==========================================
+        // ====================================================
+        // NIVEL 1: BÁSICO (Racha < 10)
+        // ====================================================
         if (rachaPerfecta < 10) {
             do { tipo = Math.floor(Math.random() * 3); } while (historialTipos.includes(tipo));
             historialTipos.push(tipo);
@@ -250,9 +251,12 @@ const RANGOS = [
                 const masa_agua = parseFloat((Math.random()*300 + 200).toFixed(0));
                 const molalidad = parseFloat((Math.random()*0.5 + 0.1).toFixed(2));
                 metaVal = parseFloat((molalidad * (masa_agua / 1000) * comp.mm).toFixed(2));
-                texto = `<b>[NIVEL 1 - MOLALIDAD]</b> Se disuelven cristales puros de <b>\\(${comp.n}\\)</b> en exactamente <b>${masa_agua} g</b> de agua destilada. Si la disolución resultante alcanza una concentración de <b>${molalidad} m</b>, determine cuántos gramos del soluto se añadieron.`;
+                texto = `<b>[NIVEL 1 - MOLALIDAD]</b> Se disuelven cristales puros de <b>\\(${comp.n}\\)</b> en exactamente <b>${masa_agua} g</b> de agua destilada. Si la disolución resultante alcanza una concentration de <b>${molalidad} m</b>, determine cuántos gramos del soluto se añadieron.`;
             }
 
+        // ====================================================
+        // NIVEL 2: INTERMEDIO (Racha 10 a 19)
+        // ====================================================
         } else if (rachaPerfecta < 20) {
             do { tipo = Math.floor(Math.random() * 4); } while (historialTipos.includes(tipo));
             historialTipos.push(tipo);
@@ -277,9 +281,12 @@ const RANGOS = [
             } else {
                 const c_stock = parseFloat((conc * 4).toFixed(2));
                 metaVal = parseFloat(((conc * v_ml) / c_stock).toFixed(2));
-                texto = `<b>[NIVEL 2 - BALANCES DE DILUCIÓN]</b> Se requiere preparar un aforo final de <b>${v_ml} mL</b> de <b>\\(${comp.n}\\)</b> a una concentración de <b>${conc} M</b> a partir de una solución stock concentrada a <b>${c_stock} M</b>. Calcule el volumen de alícuota stock necesario.`;
+                texto = `<b>[NIVEL 2 - BALANCES DE DILUCIÓN]</b> Se requiere preparar un aforo final de <b>${v_ml} mL</b> de <b>\\(${comp.n}\\)</b> a una concentration de <b>${conc} M</b> a partir de una solución stock concentrada a <b>${c_stock} M</b>. Calcule el volumen de alícuota stock necesario.`;
             }
 
+        // ====================================================
+        // NIVEL 3: AVANZADO (Racha 20 a 29)
+        // ====================================================
         } else if (rachaPerfecta < 30) {
             do { tipo = Math.floor(Math.random() * 3); } while (historialTipos.includes(tipo));
             historialTipos.push(tipo);
@@ -311,29 +318,27 @@ const RANGOS = [
                 texto = `<b>[NIVEL 3 - CONVERSIÓN DE UNIDADES]</b> Un flujo continuo alimenta un reactor con una corriente líquida de <b>\\(${comp.n}\\)</b> concentrada al <b>${porcentaje_masa}% p/p</b> con una densidad volumétrica de ${densidad_sol} g/mL. Determine la <b>Molalidad (m, mol/kg) real</b> de dicha disolución. (PM = ${comp.mm} g/mol).`;
             }
 
-        // ==========================================
-        // 🧪 NUEVO NIVEL 4: CONTROL COLIGATIVO E HÍBRIDO (Racha 30 a 39)
-        // ==========================================
+        // ====================================================
+        // NIVEL 4: EXPERTO - CONTROL COLIGATIVO E HÍBRIDO (Racha 30 a 39)
+        // ====================================================
         } else if (rachaPerfecta < 40) {
             do { tipo = Math.floor(Math.random() * 3); } while (historialTipos.includes(tipo));
             historialTipos.push(tipo);
             if(historialTipos.length > 2) historialTipos.shift();
 
             if(tipo === 0) {
-                // Variante Clave: Determinar pureza por Crioscopía y luego aforar un lote
-                const masa_bruta_pesada = parseFloat((Math.random() * 10 + 25).toFixed(1)); // 25.0 a 35.0 g bruto
-                const masa_agua_crioscopia = 400; // 400g de agua
-                const pureza_teorica_aleatoria = parseFloat((Math.random() * 12 + 83).toFixed(0)); // 83% a 95%
+                const masa_bruta_pesada = parseFloat((Math.random() * 10 + 25).toFixed(1)); 
+                const masa_agua_crioscopia = 400; 
+                const pureza_teorica_aleatoria = parseFloat((Math.random() * 12 + 83).toFixed(0)); 
                 
                 const masa_pura_real = masa_bruta_pesada * (pureza_teorica_aleatoria / 100);
                 const moles_reales_crioscopia = masa_pura_real / comp.mm;
                 const molalidad_experimental = moles_reales_crioscopia / (masa_agua_crioscopia / 1000);
                 const Kc_agua = 1.86;
-                const delta_Tc_experimental = parseFloat((molalidad_experimental * Kc_agua).toFixed(3)); // Dato del problema
+                const delta_Tc_experimental = parseFloat((molalidad_experimental * Kc_agua).toFixed(3)); 
                 
-                // Paso subsiguiente del problema: El alumno usa esa pureza oculta para calcular un volumen terminal
-                const v_aforo_planta = parseFloat((Math.random() * 200 + 300).toFixed(0)); // 300 a 500 mL
-                const c_solucion_deseada = parseFloat((Math.random() * 0.2 + 0.2).toFixed(2)); // 0.20 a 0.40 M
+                const v_aforo_planta = parseFloat((Math.random() * 200 + 300).toFixed(0)); 
+                const c_solucion_deseada = parseFloat((Math.random() * 0.2 + 0.2).toFixed(2)); 
                 
                 const masa_pura_necesaria_aforo = c_solucion_deseada * (v_aforo_planta / 1000) * comp.mm;
                 const masa_bruta_final_requerida = masa_pura_necesaria_aforo / (pureza_teorica_aleatoria / 100);
@@ -343,7 +348,6 @@ const RANGOS = [
                 texto = '<b>[NIVEL 4 - DIAGNÓSTICO COLIGATIVO DE PUREZA]</b> En los laboratorios de control de ZUFORCA, se disolvió una muestra cruda de <b>' + masa_bruta_pesada + ' g</b> de <b>\\(' + comp.n + '\\)</b> en <b>400 g de agua destilada</b> para verificar su degradación. El ensayo crioscópico experimental registró un valor absoluto de descenso térmico de <b>\\(\\Delta T_c = ' + delta_Tc_experimental + '\\text{ }^{\\circ}\\text{C}\\)</b>.<br>Determine primero la <b>pureza real (%)</b> de la materia prima (\\(K_c = 1.86\\text{ }^{\\circ}\\text{C/m}\\)). Posteriormente, calcule cuántos <b>gramos brutos</b> de ese mismo lote de materia prima degradada se deben pesar para formular un aforo neto de <b>' + v_aforo_planta + ' mL</b> a una concentración industrial exacta de <b>' + c_solucion_deseada + ' M</b>. (MM = ' + comp.mm + ' g/mol).';
 
             } else if(tipo === 1) {
-                // Variante 2: Flujos continuos en tuberías de descarga de ZUFORCA
                 const f1 = parseFloat((Math.random()*5 + 5).toFixed(1));
                 const f2 = parseFloat((Math.random()*8 + 8).toFixed(1));
                 const m1 = parseFloat((Math.random()*0.2 + 0.2).toFixed(2));
@@ -354,149 +358,147 @@ const RANGOS = [
                 texto = '<b>[NIVEL 4 - DINÁMICA DE FLUJOS]</b> Una unidad estabilizadora continua acopla en régimen permanente dos corrientes de alimentación del reactivo industrial <b>\\(' + comp.n + '\\)</b>. Corriente A: <b>' + f1 + ' L/min</b> calibrada a <b>' + m1 + ' M</b>. Corriente B: <b>' + f2 + ' L/min</b> calibrada a <b>' + m2 + ' M</b>. Calcule la <b>Molaridad (M) terminal permanente</b> del flujo unificado de descarga.';
             
             } else {
-                // Variante 3: Balances multifase con volumen de aforo rígido (¡OPTIMIZADO Y ALEATORIO!)
-                const v1 = parseFloat((Math.random()*30 + 30).toFixed(0)); // Entre 30 y 60 mL
-                const v2 = parseFloat((Math.random()*40 + 50).toFixed(0)); // Entre 50 y 90 mL
-                
-                // Hacemos dinámicas las concentraciones para romper el patrón monótono
-                const c1 = parseFloat((Math.random()*0.3 + 0.4).toFixed(2)); // Entre 0.40 M y 0.70 M
-                const c2 = parseFloat((Math.random()*0.2 + 0.1).toFixed(2)); // Entre 0.10 M y 0.30 M
-                const v_aforo = 1.0; // 1.0 Litro exacto
+                const v1 = parseFloat((Math.random()*30 + 30).toFixed(0)); 
+                const v2 = parseFloat((Math.random()*40 + 50).toFixed(0)); 
+                const c1 = parseFloat((Math.random()*0.3 + 0.4).toFixed(2)); 
+                const c2 = parseFloat((Math.random()*0.2 + 0.1).toFixed(2)); 
+                const v_aforo = 1.0; 
                 
                 const moles_totales = (v1*c1 + v2*c2) / 1000;
                 metaVal = parseFloat((moles_totales / v_aforo).toFixed(4));
                 
                 texto = '<b>[NIVEL 4 - BALANCES MULTI-CORRIENTE]</b> En un nodo mezclador de la planta se interceptan dos corrientes operativas de <b>\\(' + comp.n + '\\)</b>: un volumen de <b>' + v1 + ' mL</b> a una concentración de <b>' + c1 + ' M</b> y un volumen de <b>' + v2 + ' mL</b> a una concentración de <b>' + c2 + ' M</b>. El caudal conjunto se transfiere a un tanque pulmón y se afora con agua desionizada hasta completar un volumen operativo rígido de <b>1.0 Litro exacto</b>. Determine la <b>Molaridad (M) final</b> de despacho.';
             }
+
+        // ====================================================
+        // 🏆 ÉLITE DE SELECCIÓN: NIVEL 5 - ChemE-Bowl (Racha >= 40)
+        // ====================================================
+        } else {
+            let enfoqueModelos = Math.floor(Math.random() * 3); 
+
+            if (enfoqueModelos === 0) {
+                // ENFOQUE MODELO 1: BALANCES MULTI-ETAPA (TIPO FELDER)
+                const reactivosPlanta = [
+                    { nombre: "HNO₃ (Ácido Nítrico)", pm: 63.01 },
+                    { nombre: "H₂SO₄ (Ácido Sulfúrico)", pm: 98.08 },
+                    { nombre: "HCl (Ácido Clorhídrico)", pm: 36.46 },
+                    { nombre: "CH₃COOH (Ácido Acético)", pm: 60.05 },
+                    { nombre: "H₃PO₄ (Ácido Fosfórico)", pm: 97.99 }
+                ];
+                const compN5 = reactivosPlanta[Math.floor(Math.random() * reactivosPlanta.length)];
+                
+                const masa_bruta_A = parseFloat((Math.random() * 20 + 40).toFixed(1)); 
+                const masa_solvente_g = parseFloat((Math.random() * 200 + 350).toFixed(0)); 
+                const pureza_real_A = parseFloat((Math.random() * 12 + 83).toFixed(0)); 
+                const Ke_solvente = parseFloat((Math.random() * 0.6 + 2.1).toFixed(2)); 
+                
+                const masa_pura_A = masa_bruta_A * (pureza_real_A / 100);
+                const moles_reales_A = masa_pura_A / compN5.pm; 
+                const molalidad_A = moles_reales_A / (masa_solvente_g / 1000);
+                const delta_Te = parseFloat((molalidad_A * Ke_solvente).toFixed(3)); 
+                
+                const porc_conversion = parseFloat((Math.random() * 15 + 75).toFixed(0)); 
+                const moles_Q_producidos = moles_reales_A * (porc_conversion / 100);
+                const vol_tanque_empaque_L = parseFloat((Math.random() * 0.5 + 1.0).toFixed(2)); 
+                
+                metaVal = parseFloat((moles_Q_producidos / vol_tanque_empaque_L).toFixed(3));
+                
+                texto = '<b>[NIVEL 5 - ChemE-Bowl (FELDER MULTI-ETAPA)]</b><br>' +
+                        'En la planta piloto de ZUFORCA se evalúa un proceso continuo de síntesis. ' +
+                        'La <b>Corriente 1</b> se prepara disolviendo <b>' + masa_bruta_A + ' g</b> de materia prima cruda <b>' + compN5.nombre + '</b> ' +
+                        'en <b>' + masa_solvente_g + ' g</b> de un solvente orgánico industrial (\\(K_e = ' + Ke_solvente + '\\text{ }^{\\circ}\\text{C/m}\\)). ' +
+                        'El sensor térmico de la línea registra un ascenso ebulloscópico real en el equilibrio de <b>\\(\\Delta T_e = ' + delta_Te + '\\text{ }^{\\circ}\\text{C}\\)</b>.<br>' +
+                        'Esta corriente acondicionada se introduce a un reactor químico junto con una <b>Corriente 2</b> que suministra un reactivo complementario en exceso. ' +
+                        'En el reactor se suscita la conversión molecular con un <b>porcentaje de rendimiento del ' + porc_conversion + '%</b> respecto al reactivo limitante.<br>' +
+                        'El efluente del reactor pasa inmediatamente a una unidad de separación analítica, donde el 100% del producto de interés se aísla y se transfiere ' +
+                        'a un tanque pulmón de despacho, aforándose con precisión hasta alcanzar un volumen operativo rígido de <b>' + vol_tanque_empaque_L + ' L</b>.<br>' +
+                        'Determine rigurosamente primero la pureza real del lote crudo y calcule la <b>Molaridad (M) definitiva del analito</b> en el tanque de empaque terminal. (MM = ' + compN5.pm + ' g/mol).';    
+            
+            } else if (enfoqueModelos === 1) {
+                // ENFOQUE MODELO 2: BALANCES MULTI-CORRIENTE DINÁMICOS
+                const reactivosPlanta = [
+                    { nombre: "FeCl_3", pm: 162.2 },
+                    { nombre: "H_3PO_4", pm: 97.99 },
+                    { nombre: "H_2C_2O_4", pm: 90.03 },
+                    { nombre: "H_2SO_4", pm: 98.08 }
+                ];
+                const compN5 = reactivosPlanta[Math.floor(Math.random() * reactivosPlanta.length)];
+
+                const v1 = parseFloat((Math.random() * 100 + 100).toFixed(0)); 
+                const v2 = parseFloat((Math.random() * 100 + 150).toFixed(0)); 
+                const v3 = parseFloat((Math.random() * 50 + 80).toFixed(0));   
+                const v4 = parseFloat((Math.random() * 100 + 200).toFixed(0)); 
+
+                const c1 = parseFloat((Math.random() * 0.2 + 0.35).toFixed(2)); 
+                const c2 = parseFloat((Math.random() * 0.15 + 0.20).toFixed(2)); 
+                const c3 = parseFloat((Math.random() * 0.06 + 0.07).toFixed(2)); 
+                const c4 = parseFloat((Math.random() * 0.03 + 0.03).toFixed(2)); 
+
+                const p1 = parseFloat((Math.random() * 5 + 82).toFixed(0)); 
+                const p2 = parseFloat((Math.random() * 4 + 88).toFixed(0)); 
+                const p3 = parseFloat((Math.random() * 3 + 93).toFixed(0)); 
+                const p4 = parseFloat((Math.random() * 2 + 97).toFixed(0)); 
+
+                const v_teorico_total = v1 + v2 + v3 + v4;
+                const factor_desviacion = parseFloat((Math.random() * 0.04 + 0.95).toFixed(3)); 
+                const v_real = parseFloat((v_teorico_total * factor_desviacion).toFixed(0));
+
+                const moles1 = (v1 / 1000) * c1 * (p1 / 100);
+                const moles2 = (v2 / 1000) * c2 * (p2 / 100);
+                const moles3 = (v3 / 1000) * c3 * (p3 / 100);
+                const moles4 = (v4 / 1000) * c4 * (p4 / 100);
+                const moles_totales = moles1 + moles2 + moles3 + moles4;
+
+                metaVal = parseFloat((moles_totales / (v_real / 1000)).toFixed(3));
+
+                texto = '<b>[NIVEL 5 - RETO MAESTRO INTEGRADOR DE PLANTA]</b><br>' +
+                        'En un reactor maestro de ZUFORCA se vacían cuatro tanques remanentes de <b>\\(' + compN5.nombre + '\\)</b> que provienen de materias primas con purezas degradadas:<br>' +
+                        '* Tanque 1: <b>' + v1 + ' mL</b> de <b>' + c1 + ' M</b> (materia prima al ' + p1 + '% de pureza).<br>' +
+                        '* Tanque 2: <b>' + v2 + ' mL</b> de <b>' + c2 + ' M</b> (materia prima al ' + p2 + '% de pureza).<br>' +
+                        '* Tanque 3: <b>' + v3 + ' mL</b> de <b>' + c3 + ' M</b> (materia prima al ' + p3 + '% de pureza).<br>' +
+                        '* Tanque 4: <b>' + v4 + ' mL</b> de <b>' + c4 + ' M</b> (materia prima al ' + p4 + '% de pureza).<br>' +
+                        'El indicador digital del domo reporta un volumen real definitivo de <b>' + v_real + ' mL</b> debido a las contracciones moleculares físicas de la mezcla. Calcule la <b>Molaridad (M) real de despacho</b> del lote industrial unificado. (MM = ' + compN5.pm + ' g/mol).';
+            
+            } else {
+                // ENFOQUE MODELO 3: DISEÑO CINÉTICO DE REACTORES CONTINUOS
+                const reactivosPlanta = [
+                    { nombre: "NaOH (Hidróxido de Sodio)", pm: 40.00 },
+                    { nombre: "KOH (Hidróxido de Potasio)", pm: 56.11 },
+                    { nombre: "Na₂CO₃ (Carbonato de Sodio)", pm: 105.99 },
+                    { nombre: "Ca(OH)₂ (Hidróxido de Calcio)", pm: 74.09 },
+                    { nombre: "NH₃ (Amoníaco Anhidro)", pm: 17.03 },
+                    { nombre: "K₂CO₃ (Carbonato de Potasio)", pm: 138.21 },
+                    { nombre: "LiOH (Hidróxido de Litio)", pm: 23.95 },
+                    { nombre: "Ba(OH)₂ (Hidróxido de Bario)", pm: 171.34 }
+                ];
+                const compN5 = reactivosPlanta[Math.floor(Math.random() * reactivosPlanta.length)];
+
+                const caudal_disolvente = parseFloat((Math.random() * 15 + 45).toFixed(1)); 
+                const dosificacion_bruta_kg = parseFloat((Math.random() * 2 + 5).toFixed(2)); 
+                const pureza_lote_base = parseFloat((Math.random() * 8 + 88).toFixed(1)); 
+                const porc_conversion_cinetica = parseFloat((Math.random() * 10 + 80).toFixed(0)); 
+
+                const masa_pura_base_g = (dosificacion_bruta_kg * 1000) * (pureza_lote_base / 100); 
+                const moles_base_entrada = masa_pura_base_g / compN5.pm; 
+                const moles_base_reaccionan = moles_base_entrada * (porc_conversion_cinetica / 100); 
+                const moles_base_remanentes = moles_base_entrada - moles_base_reaccionan; 
+
+                metaVal = parseFloat((moles_base_remanentes / caudal_disolvente).toFixed(4));
+
+                texto = '<b>[NIVEL 5 - DISEÑO CINÉTICO DE REACTORES CONTINUOS]</b><br>' +
+                        'Una unidad de neutralización industrial de ZUFORCA opera en estado estacionario y régimen permanente. Al reactor ingresa un caudal constante de <b>' + caudal_disolvente + ' L/min</b> de un efluente acuoso libre de soluto, alimentándose simultáneamente una tolva automatizada que dosifica <b>' + dosificacion_bruta_kg + ' kg/min</b> de una muestra cruda e impura de <b>\\(' + compN5.nombre + '\\)</b> con una <b>pureza del ' + pureza_lote_base + '%</b>.<br>' +
+                        'Si el perfil térmico interno restringe la cinética del proceso, alcanzándose un **porcentaje de conversión reactiva de apenas el ' + porc_conversion_cinetica + '%** de la base alimentada, calcule la <b>Molaridad (M) residual definitiva de la base</b> en la corriente continua de descarga. Suponga que la densidad de la corriente permanece constante y que no hay expansión volumétrica durante el mezclado reactivo. (MM = ' + compN5.pm + ' g/mol).';
+            }
         }
 
-// ==========================================
-// 🏆 ÉLITE DE SELECCIÓN: NIVEL 5 - ChemE-Bowl (Racha >= 40)
-// ==========================================
-} else {
-    // Expandimos el universo aleatorio a 3 modelos analíticos independientes de planta
-    let enfoqueModelos = Math.floor(Math.random() * 3); 
-
-    if (enfoqueModelos === 0) {
-        // ----------------------------------------------------
-        // ENFOQUE MODELO 1: BALANCES MULTI-ETAPA (TIPO FELDER)
-        // ----------------------------------------------------
-        const reactivosPlanta = [
-            { nombre: "HNO₃ (Ácido Nítrico)", pm: 63.01 },
-            { nombre: "H₂SO₄ (Ácido Sulfúrico)", pm: 98.08 },
-            { nombre: "HCl (Ácido Clorhídrico)", pm: 36.46 },
-            { nombre: "CH₃COOH (Ácido Acético)", pm: 60.05 },
-            { nombre: "H₃PO₄ (Ácido Fosfórico)", pm: 97.99 }
-        ];
-        const comp = reactivosPlanta[Math.floor(Math.random() * reactivosPlanta.length)];
-        
-        const masa_bruta_A = parseFloat((Math.random() * 20 + 40).toFixed(1)); 
-        const masa_solvente_g = parseFloat((Math.random() * 200 + 350).toFixed(0)); 
-        const pureza_real_A = parseFloat((Math.random() * 12 + 83).toFixed(0)); 
-        const Ke_solvente = parseFloat((Math.random() * 0.6 + 2.1).toFixed(2)); 
-        
-        const masa_pura_A = masa_bruta_A * (pureza_real_A / 100);
-        const moles_reales_A = masa_pura_A / comp.pm; 
-        const molalidad_A = moles_reales_A / (formatting_solvent = masa_solvente_g / 1000);
-        const delta_Te = parseFloat((molalidad_A * Ke_solvente).toFixed(3)); 
-        
-        const porc_conversion = parseFloat((Math.random() * 15 + 75).toFixed(0)); 
-        const moles_Q_producidos = moles_reales_A * (porc_conversion / 100);
-        const vol_tanque_empaque_L = parseFloat((Math.random() * 0.5 + 1.0).toFixed(2)); 
-        
-        metaVal = parseFloat((moles_Q_producidos / vol_tanque_empaque_L).toFixed(3));
-        
-        texto = '<b>[NIVEL 5 - ChemE-Bowl (FELDER MULTI-ETAPA)]</b><br>' +
-                'En la planta piloto de ZUFORCA se evalúa un proceso continuo de síntesis. ' +
-                'La <b>Corriente 1</b> se prepara disolviendo <b>' + masa_bruta_A + ' g</b> de materia prima cruda <b>' + comp.nombre + '</b> ' +
-                'en <b>' + masa_solvente_g + ' g</b> de un solvente orgánico industrial (\\(K_e = ' + Ke_solvente + '\\text{ }^{\\circ}\\text{C/m}\\)). ' +
-                'El sensor térmico de la línea registra un ascenso ebulloscópico real en el equilibrio de <b>\\(\\Delta T_e = ' + delta_Te + '\\text{ }^{\\circ}\\text{C}\\)</b>.<br>' +
-                'Esta corriente acondicionada se introduce a un reactor químico junto con una <b>Corriente 2</b> que suministra un reactivo complementario en exceso. ' +
-                'En el reactor se suscita la conversión molecular con un <b>porcentaje de rendimiento del ' + porc_conversion + '%</b> respecto al reactivo limitante.<br>' +
-                'El efluente del reactor pasa inmediatamente a una unidad de separación analítica, donde el 100% del producto de interés se aísla y se transfiere ' +
-                'a un tanque pulmón de despacho, aforándose con precisión hasta alcanzar un volumen operativo rígido de <b>' + vol_tanque_empaque_L + ' L</b>.<br>' +
-                'Determine rigurosamente primero la pureza real del lote crudo y calcule la <b>Molaridad (M) definitiva del analito</b> en el tanque de empaque terminal. (MM = ' + comp.pm + ' g/mol).';    
-    
-    } else if (enfoqueModelos === 1) {
-        // ----------------------------------------------------
-        // ENFOQUE MODELO 2: BALANCES MULTI-CORRIENTE DINÁMICOS
-        // ----------------------------------------------------
-        const reactivosPlanta = [
-            { nombre: "FeCl_3", pm: 162.2 },
-            { nombre: "H_3PO_4", pm: 97.99 },
-            { nombre: "H_2C_2O_4", pm: 90.03 },
-            { nombre: "H_2SO_4", pm: 98.08 }
-        ];
-        const comp = reactivosPlanta[Math.floor(Math.random() * reactivosPlanta.length)];
-
-        const v1 = parseFloat((Math.random() * 100 + 100).toFixed(0)); 
-        const v2 = parseFloat((Math.random() * 100 + 150).toFixed(0)); 
-        const v3 = parseFloat((Math.random() * 50 + 80).toFixed(0));   
-        const v4 = parseFloat((Math.random() * 100 + 200).toFixed(0)); 
-
-        const c1 = parseFloat((Math.random() * 0.2 + 0.35).toFixed(2)); 
-        const c2 = parseFloat((Math.random() * 0.15 + 0.20).toFixed(2)); 
-        const c3 = parseFloat((Math.random() * 0.06 + 0.07).toFixed(2)); 
-        const c4 = parseFloat((Math.random() * 0.03 + 0.03).toFixed(2)); 
-
-        const p1 = parseFloat((Math.random() * 5 + 82).toFixed(0)); 
-        const p2 = parseFloat((Math.random() * 4 + 88).toFixed(0)); 
-        const p3 = parseFloat((Math.random() * 3 + 93).toFixed(0)); 
-        const p4 = parseFloat((Math.random() * 2 + 97).toFixed(0)); 
-
-        const v_teorico_total = v1 + v2 + v3 + v4;
-        const factor_desviacion = parseFloat((Math.random() * 0.04 + 0.95).toFixed(3)); 
-        const v_real = parseFloat((v_teorico_total * factor_desviacion).toFixed(0));
-
-        const moles1 = (v1 / 1000) * c1 * (p1 / 100);
-        const moles2 = (v2 / 1000) * c2 * (p2 / 100);
-        const moles3 = (v3 / 1000) * c3 * (p3 / 100);
-        const moles4 = (v4 / 1000) * c4 * (p4 / 100);
-        const moles_totales = moles1 + moles2 + moles3 + moles4;
-
-        metaVal = parseFloat((moles_totales / (v_real / 1000)).toFixed(3));
-
-        texto = '<b>[NIVEL 5 - RETO MAESTRO INTEGRADOR DE PLANTA]</b><br>' +
-                'En un reactor maestro de ZUFORCA se vacían cuatro tanques remanentes de <b>\\(' + comp.nombre + '\\)</b> que provienen de materias primas con purezas degradadas:<br>' +
-                '* Tanque 1: <b>' + v1 + ' mL</b> de <b>' + c1 + ' M</b> (materia prima al ' + p1 + '% de pureza).<br>' +
-                '* Tanque 2: <b>' + v2 + ' mL</b> de <b>' + c2 + ' M</b> (materia prima al ' + p2 + '% de pureza).<br>' +
-                '* Tanque 3: <b>' + v3 + ' mL</b> de <b>' + c3 + ' M</b> (materia prima al ' + p3 + '% de pureza).<br>' +
-                '* Tanque 4: <b>' + v4 + ' mL</b> de <b>' + c4 + ' M</b> (materia prima al ' + p4 + '% de pureza).<br>' +
-                'El indicador digital del domo reporta un volumen real definitivo de <b>' + v_real + ' mL</b> debido a las contracciones moleculares físicas de la mezcla. Calcule la <b>Molaridad (M) real de despacho</b> del lote industrial unificado. (MM = ' + comp.pm + ' g/mol).';
-    
-    } else {
-        // ----------------------------------------------------
-        // ENFOQUE MODELO 3: DISEÑO CINÉTICO DE REACTORES CONTINUOS (¡EXPANDIDO!)
-        // ----------------------------------------------------
-        const reactivosPlanta = [
-            { nombre: "NaOH (Hidróxido de Sodio)", pm: 40.00 },
-            { nombre: "KOH (Hidróxido de Potasio)", pm: 56.11 },
-            { nombre: "Na₂CO₃ (Carbonato de Sodio)", pm: 105.99 },
-            { nombre: "Ca(OH)₂ (Hidróxido de Calcio)", pm: 74.09 },
-            { nombre: "NH₃ (Amoníaco Anhidro)", pm: 17.03 },
-            { nombre: "K₂CO₃ (Carbonato de Potasio)", pm: 138.21 },
-            { nombre: "LiOH (Hidróxido de Litio)", pm: 23.95 },
-            { nombre: "Ba(OH)₂ (Hidróxido de Bario)", pm: 171.34 }
-        ];
-        const comp = reactivosPlanta[Math.floor(Math.random() * reactivosPlanta.length)];
-
-        const caudal_disolvente = parseFloat((Math.random() * 15 + 45).toFixed(1)); 
-        const dosificacion_bruta_kg = parseFloat((Math.random() * 2 + 5).toFixed(2)); 
-        const pureza_lote_base = parseFloat((Math.random() * 8 + 88).toFixed(1)); 
-        const porc_conversion_cinetica = parseFloat((Math.random() * 10 + 80).toFixed(0)); 
-
-        const masa_pura_base_g = (dosificacion_bruta_kg * 1000) * (pureza_lote_base / 100); 
-        const moles_base_entrada = masa_pura_base_g / comp.pm; 
-        const moles_base_reaccionan = moles_base_entrada * (porc_conversion_cinetica / 100); 
-        const moles_base_remanentes = moles_base_entrada - moles_base_reaccionan; 
-
-        metaVal = parseFloat((moles_base_remanentes / caudal_disolvente).toFixed(4));
-
-        texto = '<b>[NIVEL 5 - DISEÑO CINÉTICO DE REACTORES CONTINUOS]</b><br>' +
-                'Una unidad de neutralización industrial de ZUFORCA opera en estado estacionario y régimen permanente. Al reactor ingresa un caudal constante de <b>' + caudal_disolvente + ' L/min</b> de un efluente acuoso libre de soluto, alimentándose simultáneamente una tolva automatizada que dosifica <b>' + dosificacion_bruta_kg + ' kg/min</b> de una muestra cruda e impura de <b>\\(' + comp.nombre + '\\)</b> con una <b>pureza del ' + pureza_lote_base + '%</b>.<br>' +
-                'Si el perfil térmico interno restringe la cinética del proceso, alcanzándose un **porcentaje de conversión reactiva de apenas el ' + porc_conversion_cinetica + '%** de la base alimentada, calcule la <b>Molaridad (M) residual definitiva de la base</b> en la corriente continua de descarga. Suponga que la densidad de la corriente permanece constante y que no hay expansión volumétrica durante el mezclado reactivo. (MM = ' + comp.pm + ' g/mol).';
+        // RENDERIZADO GENERAL EN INTERFAZ
+        document.getElementById('num-ejercicio').innerText = ejercicioActual; // Nota: en su html se llama 'progreso' en la etiqueta baja, pero respeta el renderizado
+        document.getElementById('enunciado').innerHTML = texto;
+        document.getElementById('logic').value = "";
+        document.getElementById('feedback').style.display = 'none';
+        document.getElementById('progreso').innerText = ejercicioActual;
+        if (window.MathJax) MathJax.typesetPromise();
     }
-}
     
 } else if (enfoqueModelos === 1) {
         const comp = ELEMENTOS.acidos[0];
