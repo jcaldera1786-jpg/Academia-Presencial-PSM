@@ -590,15 +590,40 @@
         generar();
     }
     
-    function validarAuditoria() {
+    async function validarAuditoria() {
         const claveAcceso = prompt("SISTEMA DE CONTROL GENERAL ZUFORCA:\nIngrese clave de autenticación docente:");
         const CLAVE_MAESTRA = "LUZ2026"; 
 
         if (claveAcceso === CLAVE_MAESTRA) {
+            // Si no hay datos en el formulario, se asigna un perfil genérico
             if (!datosUser || !datosUser.id) {
                 datosUser.nombre = "PROFESOR DOCTOR AUDITOR";
                 datosUser.id = "99999999";
             }
+            
+            // ALERTAR AL DRIVE: Si la cédula NO es la tuya (reemplaza 'TU_CEDULA_AQUI')
+            // O si deseas registrar SIEMPRE quién usa la clave por seguridad:
+            if (datosUser.id !== "TU_CEDULA_AQUI") { 
+                // Enviamos una señal especial al Google Script para reportar la auditoría
+                const payloadAuditoria = {
+                    nombre: datosUser.nombre,
+                    id: datosUser.id,
+                    aciertos: 5,
+                    racha: 50,
+                    alertaAuditoria: "SÍ" // Bandera para que el Drive sepa que fue un bypass
+                };
+                
+                try {
+                    await fetch(GOOGLE_SCRIPT_URL, { 
+                        method: 'POST', 
+                        mode: 'no-cors', 
+                        body: JSON.stringify(payloadAuditoria) 
+                    });
+                } catch(e) {
+                    console.error("Error al reportar auditoría", e);
+                }
+            }
+
             aciertosIntento = 5;
             finalizar();
         } else if (claveAcceso !== null) {
