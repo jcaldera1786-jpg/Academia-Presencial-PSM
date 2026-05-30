@@ -364,40 +364,38 @@ const RANGOS = [
 // 🏆 ÉLITE DE SELECCIÓN: NIVEL 5 - ChemE-Bowl (Racha >= 50)
 // ==========================================
 } else {
-    // El sistema selecciona al azar un enfoque analítico (0: Felder, 1: Van Ness, 2: Fogler)
-// FORZAR A QUE SIEMPRE SALGA EL MODELO MULTI-ETAPA DE RECORRIDO COMPLETO
-let enfoqueModelos = 0; // <--- Cambie el Math.random() por un 0 directo
+    // Forzamos a 0 para que siempre corra el modelo analítico de ZUFORCA en sus pruebas
+    let enfoqueModelos = 0; 
 
-if (enfoqueModelos === 0) {
-    // ----------------------------------------------------
-    // ENFOQUE MODELO 1: BALANCES MULTI-ETAPA (TIPO FELDER)
-    // ----------------------------------------------------
-    const comp = ELEMENTOS.acidos[Math.floor(Math.random() * ELEMENTOS.acidos.length)]; 
-    // ... todo el resto del código analítico que ya tiene listo
+    if (enfoqueModelos === 0) {
+        // ----------------------------------------------------
+        // ENFOQUE MODELO 1: BALANCES MULTI-ETAPA (TIPO FELDER)
+        // ----------------------------------------------------
+        const comp = ELEMENTOS.acidos[Math.floor(Math.random() * ELEMENTOS.acidos.length)]; 
         
         // 1. DATOS COLIGATIVOS (Corriente 1)
-        const masa_bruta_A = parseFloat((Math.random() * 20 + 40).toFixed(1)); // 40.0 a 60.0 g bruto
-        const masa_solvente_g = 500; // 500 g de solvente
-        const pureza_real_A = parseFloat((Math.random() * 10 + 85).toFixed(0)); // 85% a 95% de pureza real
-        const Ke_solvente = 2.53; // Constante ebulloscópica industrial
+        const masa_bruta_A = parseFloat((Math.random() * 20 + 40).toFixed(1)); 
+        const masa_solvente_g = 500; 
+        const pureza_real_A = parseFloat((Math.random() * 10 + 85).toFixed(0)); 
+        const Ke_solvente = 2.53; 
         
-        // Cálculos inversos internos para el enunciado
+        // Cálculos internos de control
         const masa_pura_A = masa_bruta_A * (pureza_real_A / 100);
         const moles_reales_A = masa_pura_A / comp.mm;
         const molalidad_A = moles_reales_A / (masa_solvente_g / 1000);
         const delta_Te = parseFloat((molalidad_A * Ke_solvente).toFixed(3)); 
         
         // 2. REACTOR Y CONVERSIÓN (Corriente 2)
-        const porc_conversion = parseFloat((Math.random() * 15 + 75).toFixed(0)); // 75% al 90%
+        const porc_conversion = parseFloat((Math.random() * 15 + 75).toFixed(0)); 
         const moles_Q_producidos = moles_reales_A * (porc_conversion / 100);
         
         // 3. SEPARACIÓN Y PURIFICACIÓN TERMINAL
-        const vol_tanque_empaque_L = parseFloat((Math.random() * 0.5 + 1.0).toFixed(2)); // 1.00 a 1.50 L
+        const vol_tanque_empaque_L = parseFloat((Math.random() * 0.5 + 1.0).toFixed(2)); 
         
-        // Valor numérico exacto que evaluará el simulador
+        // Valor meta final corregido
         metaVal = parseFloat((moles_Q_producidos / vol_tanque_empaque_L).toFixed(3));
         
-        // Texto dinámico para el estudiante
+        // TEXTO FLUIDO CORREGIDO Y PROTEGIDO PARA MATHJAX
         texto = `<b>[NIVEL 5 - ChemE-Bowl (FELDER MULTI-ETAPA)]</b><br>` +
                 `En la planta piloto de ZUFORCA se evalúa un proceso continuo de síntesis. ` +
                 `La <b>Corriente 1</b> se prepara disolviendo <b>${masa_bruta_A} g</b> de materia prima cruda <b>\\(${comp.n}\\)</b> ` +
@@ -405,25 +403,16 @@ if (enfoqueModelos === 0) {
                 `El sensor térmico registra un ascenso ebulloscópico real de <b>\\(\\Delta T_e = ${delta_Te}\\text{ }^{\\circ}\\text{C}\\)</b>.<br>` +
                 `Esta corriente acondicionada se introduce a un reactor químico junto con una <b>Corriente 2</b> que suministra un reactivo complementario en exceso. ` +
                 `En el reactor se suscita una reacción con un <b>porcentaje de conversión del ${porc_conversion}%</b> respecto al reactivo limitante.<br>` +
-                `El efluente del reactor pasa inmediatamente a una unidad de separación molecular, donde el $100\%$ del producto sintetizado se aísla y se transfiere ` +
+                `El efluente del reactor pasa inmediatamente a una unidad de separación molecular, donde el 100% del producto sintetizado se aísla y se transfiere ` +
                 `a un tanque de despacho final, aforándose con precisión hasta alcanzar un volumen rígido de <b>${vol_tanque_empaque_L} L</b> para su envasado.<br>` +
                 `Deduzca detalladamente la pureza de la materia prima y calcule la <b>Molaridad (M) definitiva del producto en el tanque de empaque</b>.`;
 
     } else if (enfoqueModelos === 1) {
-        // ----------------------------------------------------
-        // ENFOQUE MODELO 2: DIMERIZACIÓN EN SOLUCIÓN (TIPO VAN NESS)
-        // ----------------------------------------------------
-        // (Aquí programaremos la variante 2 en el futuro si desea expandirlo, 
-        // por ahora redirigimos al mismo ejercicio para que no falle)
         const comp = ELEMENTOS.acidos[0];
-        metaVal = 0.5; // Valor estático provisional de seguridad
+        metaVal = 0.5; 
         texto = `<b>[NIVEL 5 - ChemE-Bowl (VAN NESS)]</b> En desarrollo de balance molecular. Escriba 0.5 para pruebas de laboratorio docente del Dr. Caldera.`;
 
     } else {
-        // ----------------------------------------------------
-        // ENFOQUE MODELO 3: CINÉTICA CSTR CON EVAPORACIÓN (TIPO FOGLER)
-        // ----------------------------------------------------
-        // (Provisional de seguridad para pruebas)
         metaVal = 0.8; 
         texto = `<b>[NIVEL 5 - ChemE-Bowl (FOGLER)]</b> En desarrollo de contracción térmica cinética. Escriba 0.8 para pruebas de laboratorio docente del Dr. Caldera.`;
     }
