@@ -534,34 +534,48 @@
         const esPerfecto = (aciertosIntento === totalProblemas);
 
         if(esPerfecto) {
-            rachaPerfecta += 10; // Crecimiento modular por bloques acordado
+            // Cada ciclo perfecto suma 10 puntos, consolidando el nivel
+            rachaPerfecta += 10; 
             if (rachaPerfecta > 50) rachaPerfecta = 50;
             
             document.getElementById('resultado-titulo').innerText = "¡CICLO OPERATIVO CONSOLIDADO!";
             document.getElementById('resultado-titulo').style.color = "var(--success)";
-            document.getElementById('resultado-detalle').innerText = "Felicidades. Has completado el ciclo analítico con un perfil de aciertos perfecto (5/5). Tu rango operativo en planta se eleva.";
+            document.getElementById('resultado-detalle').innerText = "Felicidades. Has completado el ciclo analítico con éxito. Tu rango operativo se eleva.";
         } else {
-            // --- NUEVA LÓGICA CON TRINQUETE DE SEGURIDAD (EL PISO NO SE PIERDE) ---
-            if (rachaPrevia >= 50) { rachaPerfecta = 50; }
-            else if (rachaPrevia >= 40) { rachaPerfecta = 40; } // Fallar en Nivel 5 te mantiene en Nivel 5
-            else if (rachaPrevia >= 30) { rachaPerfecta = 30; } // Fallar en Nivel 4 te mantiene en Nivel 4
-            else if (rachaPrevia >= 20) { rachaPerfecta = 20; } // Fallar en Nivel 3 te mantiene en Nivel 3
-            else if (rachaPrevia >= 10) { rachaPerfecta = 10; } // Fallar en Nivel 2 te mantiene en Nivel 2
+            // --- PROTECCIÓN DE NIVEL (TRINQUETE) ---
+            // Si falla, no vuelve a 0, se queda en el "piso" del nivel actual
+            if (rachaPrevia >= 40) { rachaPerfecta = 40; } 
+            else if (rachaPrevia >= 30) { rachaPerfecta = 30; } 
+            else if (rachaPrevia >= 20) { rachaPerfecta = 20; } 
+            else if (rachaPrevia >= 10) { rachaPerfecta = 10; } 
             else { rachaPerfecta = 0; }
 
             document.getElementById('resultado-titulo').innerText = "DESVIACIÓN DE PROCESO DETECTADA";
             document.getElementById('resultado-titulo').style.color = "var(--danger)";
-            document.getElementById('resultado-detalle').innerText = "Un error analítico costaría el lote completo en ZUFORCA. Se ha ejecutado una parada técnica, pero se preservó tu nivel operativo consolidado.";
+            document.getElementById('resultado-detalle').innerText = "Un error analítico costaría el lote completo en ZUFORCA. El nivel operativo alcanzado ha sido preservado.";
         }
         
         actualizarInterfazRango();
         
-        let mensajeSiguiente = rachaPerfecta >= 50 ? "<br><b style='color:var(--success);'>¡EXPEDIENTE CON MÁXIMA CALIFICACIÓN PARA INGENIERÍA QUÍMICA APROBADO!</b>" : `<br><small>Consigue un <b>ciclo perfecto (5/5)</b> para ascender al siguiente rango operativo.</small>`;
+        let mensajeSiguiente = rachaPerfecta >= 50 ? "<br><b style='color:var(--gold);'>¡ESTADO: ÉLITE ALCANZADO!</b>" : "<br><small>Inicia un nuevo ciclo para mantener o elevar tu rango.</small>";
 
-        document.getElementById('mensaje-racha').innerHTML = `Expediente en base de datos: <b>${rachaPerfecta} puntos acumulados</b>.<br>Rango alcanzado: <b>${nivelActualLabel}</b>.${mensajeSiguiente}`;
+        document.getElementById('mensaje-racha').innerHTML = `Expediente: <b>${rachaPerfecta} puntos</b>.<br>Rango: <b>${nivelActualLabel}</b>.${mensajeSiguiente}`;
         
-        // Ejecución remota al Drive acoplando la bandera de control de auditorías
         registrarEnDrive(aciertosIntento, rachaPerfecta);
+    }
+
+    function registrarEnDrive(aciertos, racha) {
+        const payload = { 
+            nombre: datosUser.nombre, 
+            id: datosUser.id, 
+            aciertos: aciertos, 
+            racha: racha 
+        };
+        fetch(GOOGLE_SCRIPT_URL, { 
+            method: 'POST', 
+            mode: 'no-cors', 
+            body: JSON.stringify(payload) 
+        });
     }
 
     function registrarEnDrive(aciertos, racha) {
