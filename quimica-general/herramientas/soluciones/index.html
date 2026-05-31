@@ -1,3 +1,646 @@
-<button id="btn-auditoria" onclick="validarAuditoria()" ... >
-    🧪 AUDITORÍA MAESTRA (ACCESO DOCENTE)
-</button>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZUFORCA: Reactor Avanzado de Ingeniería Química</title>
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --glass-bg: rgba(10, 20, 30, 0.75);
+            --accent-blue: #3498db;
+            --success: #2ecc71;
+            --gold: #f1c40f;
+            --danger: #e74c3c;
+            --purple: #9b59b6;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #050b10 url('https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/quimica-general/herramientas/soluciones/fondo-soluciones.png') no-repeat center center fixed;
+            background-size: cover; color: white;
+            transition: background 0.8s ease;
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 25px; padding: 35px;
+            width: 90%; max-width: 650px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+        }
+
+        .instruction-box {
+            background: rgba(241, 196, 15, 0.1);
+            border: 1px dashed var(--gold);
+            padding: 15px; border-radius: 12px;
+            margin-bottom: 20px; font-size: 0.85em; line-height: 1.4;
+        }
+
+        .problem-text { 
+            background: rgba(255,255,255,0.08);
+            padding: 20px; 
+            border-radius: 12px; margin: 15px 0; border-left: 6px solid var(--accent-blue);
+            font-size: 1.05em; min-height: 110px; line-height: 1.5;
+        }
+
+        textarea {
+            width: 100%;
+            background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px; color: white; padding: 15px; margin-bottom: 12px; 
+            box-sizing: border-box; font-family: inherit; font-size: 1em;
+            resize: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 18px; border-radius: 12px; border: none;
+            background: var(--accent-blue); color: white; font-weight: bold; 
+            cursor: pointer; text-transform: uppercase; transition: all 0.3s;
+            letter-spacing: 1px;
+        }
+
+        button:hover { background: #2980b9; transform: translateY(-2px); }
+
+        .feedback-box {
+            margin-top: 10px;
+            padding: 12px; border-radius: 10px; 
+            font-size: 0.9em; display: none; text-align: center;
+        }
+
+        .footer-credits {
+            margin-top: 25px;
+            font-size: 0.8em; color: rgba(255,255,255,0.6); text-align: center;
+        }
+
+        #final-screen { text-align: center; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="glass-panel">
+    <div id="registro">
+        <h2 style="text-align:center; margin-bottom:5px; letter-spacing:2px;">ZUFORCA</h2>
+        <p style="text-align:center; color:var(--gold); font-size:0.9em; margin-bottom:25px; font-weight:bold;">SISTEMA DE EVALUACIÓN Y ADMISIÓN DE INGENIERÍA</p>
+        
+        <div class="instruction-box">
+            <b>PROTOCOLO DE SELECCIÓN Y EVALUACIÓN INDUSTRIAL:</b><br>
+            • Ciclos automatizados de 5 problemas complejos para validación de aptitud técnica.<br>
+            • Racha de <b>0 a 39 puntos</b>: Evaluación de rangos de pregrado estándar.<br>
+            • Racha de <b>40 a 49 puntos</b>: Nivel Avanzado con acoplamiento de variables coligativas.<br>
+            • Racha <b>&ge; 50 puntos (NIVEL 5)</b>: Filtro riguroso y exclusivo para estudiantes que aspiran a traslados de otras Ingenierías hacia <b>Ingeniería Química</b>.
+        </div>
+
+        <input type="text" id="user-name" placeholder="Nombre y Apellido" style="width:100%; padding:14px; margin-bottom:12px; border-radius:8px; border:none; background:rgba(255,255,255,0.1); color:white; outline:none;">
+        <input type="text" id="user-id" placeholder="Cédula de Identidad" style="width:100%; padding:14px; margin-bottom:20px; border-radius:8px; border:none; background:rgba(255,255,255,0.1); color:white; outline:none;">
+        <button id="btn-activar" onclick="iniciar()">ACTIVAR REACTOR DE SELECCIÓN</button>
+    </div>
+
+    <div id="simulador" style="display:none;">
+        <div style="display:flex; flex-direction:column; font-size:0.85em; margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px; gap:5px;">
+            <div style="display:flex; justify-content:space-between;">
+                <span>POSTULANTE: <b id="label-estudiante" style="color:var(--accent-blue);"></b></span>
+                <span>RACHA ACUMULADA: <b id="racha-total" style="color:var(--gold);">0</b></span>
+            </div>
+            <div>
+                <span>ESTADO DE LOGÍSTICA: <b id="label-nivel" style="text-transform:uppercase;"></b></span>
+            </div>
+        </div>
+    
+        <div id="enunciado" class="problem-text"></div>
+        
+        <label style="font-size:0.9em; opacity:0.8; margin-bottom:8px; display:block;">Desarrollo técnico y balance terminal:</label>
+        <textarea id="logic" rows="6" placeholder="Ej: Molalidad = DTc / Kc... Pureza = X%... Molaridad final = Y M"></textarea>
+        
+        <div id="feedback" class="feedback-box"></div>
+        
+        <button id="btn-evaluar" onclick="evaluar()">ANALIZAR PROCESO</button>
+        <button id="btn-auditoria" onclick="validarAuditoria()" style="background:#8e44ad; color:white; margin-top:10px; padding:12px; font-size:0.85em; border-radius:12px; border:none; cursor:pointer; font-weight:bold; width:100%; text-transform:uppercase; letter-spacing:1px;">
+            🧪 AUDITORÍA MAESTRA (ACCESO DOCENTE)
+        </button>
+        <div style="text-align:center; font-size:0.8em; margin-top:15px; opacity:0.6;">EJERCICIO <span id="progreso">1</span> DE <span id="total-ejercicios-label">5</span></div>
+    </div>
+
+    <div id="final-screen">
+        <h3 id="resultado-titulo" style="font-size:1.6em; margin-bottom:10px;"></h3>
+        <p id="resultado-detalle" style="opacity:0.9;"></p>
+        <div id="mensaje-racha" style="margin:25px 0; padding:15px; background:rgba(255,255,255,0.05); border-radius:15px;"></div>
+        <button id="btn-siguiente-ciclo" onclick="siguienteIntento()">INICIAR SIGUIENTE CICLO DE EVALUACIÓN</button>
+    </div>
+</div>
+
+<div class="footer-credits">
+    Desarrollado por <b>ZUFORCA</b> | Dirección de Currículo: <b>Dr. José Ángel Caldera L.</b>
+</div>
+
+<script>
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwvI1MEpUrqSYWEE9PTr9HlU1w201eUj_MsJselF7F95DvBKZ1iAVqIHtxGWw69Ahdu/exec";
+    
+    let ejercicioActual = 1;
+    let aciertosIntento = 0;
+    let rachaPerfecta = 0;
+    let metaVal = 0;
+    let historialTipos = [];
+    const totalProblemas = 5; 
+    const datosUser = { nombre: "", id: "" };
+    let nivelActualLabel = "";
+
+    const RANGOS = [
+        { min: 0,  label: "Preparador de Soluciones Básico", color: "#bdc3c7", bg: "rgba(149, 165, 166, 0.2)" },
+        { min: 10, label: "Asistente de Laboratorio Químico", color: "#2ecc71", bg: "rgba(46, 204, 113, 0.2)" },
+        { min: 20, label: "Estequiometrista de Procesos Planta", color: "#e67e22", bg: "rgba(230, 126, 34, 0.2)" },
+        { min: 30, label: "Ingeniero Junior de Mezclas", color: "#3498db", bg: "rgba(52, 152, 219, 0.2)" },
+        { min: 40, label: "Maestro Operador: Control Coligativo", color: "#f1c40f", bg: "rgba(241, 196, 15, 0.2)" },
+        { min: 50, label: "🏆 ÉLITE DE SELECCIÓN: ChemE-Bowl", color: "#e74c3c", bg: "rgba(231, 76, 60, 0.3)" }
+    ];
+
+    const ELEMENTOS = {
+        hidroxidos: [
+            {n:"Al(OH)_3", mm:78.00, v:3}, {n:"Fe(OH)_3", mm:106.86, v:3},
+            {n:"Fe(OH)_2", mm:89.86, v:2}, {n:"Mg(OH)_2", mm:58.31, v:2},
+            {n:"Ca(OH)_2", mm:74.09, v:2}
+        ],
+        sales: [
+            {n:"FeCl_3", mm:162.2, v:3}, {n:"NiSO_4", mm:154.7, v:2},
+            {n:"Al_2(SO_4)_3", mm:342.15, v:6}, {n:"Ba(ClO_3)_2", mm:304.2, v:2}
+        ],
+        acidos: [
+            {n:"H_2SO_4", mm:98.08, v:2}, {n:"H_3PO_4", mm:97.99, v:3},
+            {n:"HClO_4", mm:100.46, v:1}, {n:"HNO_3", mm:63.01, v:1}
+        ]
+    };
+
+    async function iniciar() {
+        const n = document.getElementById('user-name').value;
+        const i = document.getElementById('user-id').value;
+        if(n && i) {
+            datosUser.nombre = n;
+            datosUser.id = i;
+            const btnActivar = document.getElementById('btn-activar');
+            btnActivar.disabled = true;
+            btnActivar.innerText = "ACCEDIENDO AL BANCO DE DATOS...";
+            
+            await consultarProgresoNube(i);
+            document.getElementById('label-estudiante').innerText = n;
+            document.getElementById('total-ejercicios-label').innerText = totalProblemas;
+            actualizarInterfazRango();
+
+            document.getElementById('registro').style.display = 'none';
+            document.getElementById('simulador').style.display = 'block';
+            generar();
+        } else {
+            alert("Ingrese credenciales válidas para el examen.");
+        }
+    }
+
+    async function consultarProgresoNube(cedula) {
+        try {
+            const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getProgreso&cedula=${cedula}`);
+            const data = await response.json();
+            rachaPerfecta = data.racha || 0;
+        } catch (e) {
+            rachaPerfecta = 0;
+        }
+    }
+
+    function actualizarInterfazRango() {
+        const rangoDefinido = [...RANGOS].reverse().find(r => rachaPerfecta >= r.min);
+        nivelActualLabel = rangoDefinido.label;
+        
+        const labelNivel = document.getElementById('label-nivel');
+        labelNivel.innerText = nivelActualLabel;
+        labelNivel.style.color = rangoDefinido.color;
+        
+        document.body.style.backgroundColor = "#050b10";
+        document.querySelector('.glass-panel').style.background = rangoDefinido.bg;
+        document.getElementById('racha-total').innerText = rachaPerfecta;
+    }
+
+    function generar() {
+        const todas = [...ELEMENTOS.hidroxidos, ...ELEMENTOS.sales, ...ELEMENTOS.acidos];
+        const comp = todas[Math.floor(Math.random() * todas.length)];
+
+        let tipo;
+        const v_ml = parseFloat((Math.random() * 600 + 200).toFixed(0)); 
+        const conc = parseFloat((Math.random() * 0.7 + 0.15).toFixed(2)); 
+        let texto = "";
+
+        // ====================================================
+        // NIVEL 1: BÁSICO (Racha < 10)
+        // ====================================================
+        if (rachaPerfecta < 10) {
+            do { tipo = Math.floor(Math.random() * 3); } while (historialTipos.includes(tipo));
+            historialTipos.push(tipo);
+            if(historialTipos.length > 2) historialTipos.shift();
+
+            if(tipo === 0) {
+                metaVal = parseFloat((conc * (v_ml/1000) * comp.mm).toFixed(2));
+                texto = `<b>[NIVEL 1 - MOLARIDAD]</b> Se requiere preparar <b>${v_ml} mL</b> de una solución de analito puro <b>\\(${comp.n}\\)</b> a una concentración de <b>${conc} M</b>. Calcule la masa exacta (g) de soluto que se debe pesar. (PM = ${comp.mm} g/mol).`;
+            } else if(tipo === 1) {
+                const eq = comp.mm / comp.v;
+                metaVal = parseFloat((conc * (v_ml/1000) * eq).toFixed(2));
+                texto = `<b>[NIVEL 1 - NORMALIDAD]</b> Calcule la masa en gramos de <b>\\(${comp.n}\\)</b> necesarios para obtener un volumen neto de <b>${v_ml} mL</b> de solución a una concentración analítica de <b>${conc} N</b>. (PM = ${comp.mm} g/mol, valencia = ${comp.v}).`;
+            } else {
+                const masa_agua = parseFloat((Math.random()*300 + 200).toFixed(0));
+                const molalidad = parseFloat((Math.random()*0.5 + 0.1).toFixed(2));
+                metaVal = parseFloat((molalidad * (masa_agua / 1000) * comp.mm).toFixed(2));
+                texto = `<b>[NIVEL 1 - MOLALIDAD]</b> Se disuelven cristales puros de <b>\\(${comp.n}\\)</b> en exactamente <b>${masa_agua} g</b> de agua destilada. Si la disolución resultante alcanza una concentración de <b>${molalidad} m</b>, determine cuántos gramos del soluto se añadieron.`;
+            }
+
+        // ====================================================
+        // NIVEL 2: INTERMEDIO (Racha 10 a 19)
+        // ====================================================
+        } else if (rachaPerfecta < 20) {
+            do { tipo = Math.floor(Math.random() * 4); } while (historialTipos.includes(tipo));
+            historialTipos.push(tipo);
+            if(historialTipos.length > 2) historialTipos.shift();
+            const pureza = parseFloat((Math.random()*15 + 80).toFixed(0));
+
+            if(tipo === 0) {
+                const masa_teorica = (conc * (v_ml/1000) * comp.mm);
+                metaVal = parseFloat((masa_teorica / (pureza/100)).toFixed(2));
+                texto = `<b>[NIVEL 2 - PUREZA SÓLIDA]</b> Un asistente formulador requiere preparar <b>${v_ml} mL</b> de una solución <b>${conc} M</b> de <b>\\(${comp.n}\\)</b>. Si la materia prima en stock presenta una <b>pureza del ${pureza}%</b>, determine la masa bruta real (g) que debe pesarse para mitigar las impurezas.`;
+            } else if(tipo === 1) {
+                const v2 = parseFloat((Math.random()*300 + 100).toFixed(0));
+                const c2 = parseFloat((Math.random()*0.4 + 0.1).toFixed(2));
+                metaVal = parseFloat((((v_ml * conc) + (v2 * c2)) / (v_ml + v2)).toFixed(2));
+                texto = `<b>[NIVEL 2 - MEZCLA SIMPLE]</b> En un nodo de control se combinan <b>${v_ml} mL</b> de <b>\\(${comp.n}\\)</b> a <b>${conc} M</b> con un segundo flujo de <b>${v2} mL</b> a una concentración de <b>${c2} M</b>. Calcule la Molaridad (M) de la mezcla homogénea uniforme resultante.`;
+            } else if(tipo === 2) {
+                const densidad = parseFloat((Math.random()*0.3 + 1.15).toFixed(2));
+                const masa_soluto_necesaria = conc * (v_ml / 1000) * comp.mm;
+                const masa_solucion_necesaria = masa_soluto_necesaria / (pureza / 100);
+                metaVal = parseFloat((masa_solucion_necesaria / densidad).toFixed(2));
+                texto = `<b>[NIVEL 2 - REACTIVO LÍQUIDO]</b> Se dispone de un reactivo líquido concentrado de <b>\\(${comp.n}\\)</b> con una <b>densidad de ${densidad} g/mL</b> y pureza en masa del <b>${pureza}%</b>. ¿Qué volumen (mL) de este reactivo comercial debe medirse para un aforo final de <b>${v_ml} mL</b> a una concentración de <b>${conc} M</b>? (PM = ${comp.mm} g/mol).`;
+            } else {
+                const c_stock = parseFloat((conc * 4).toFixed(2));
+                metaVal = parseFloat(((conc * v_ml) / c_stock).toFixed(2));
+                texto = `<b>[NIVEL 2 - BALANCES DE DILUCIÓN]</b> Se requiere preparar un aforo final de <b>${v_ml} mL</b> de <b>\\(${comp.n}\\)</b> a una concentración de <b>${conc} M</b> a partir de una solución stock concentrada a <b>${c_stock} M</b>. Calcule el volumen de alícuota stock necesario.`;
+            }
+
+        // ====================================================
+        // NIVEL 3: AVANZADO (Racha 20 a 29)
+        // ====================================================
+        } else if (rachaPerfecta < 30) {
+            do { tipo = Math.floor(Math.random() * 3); } while (historialTipos.includes(tipo));
+            historialTipos.push(tipo);
+            if(historialTipos.length > 2) historialTipos.shift();
+
+            if(tipo === 0) {
+                const v1_din = parseFloat((Math.random()*150 + 50).toFixed(0));
+                const v2_din = parseFloat((Math.random()*150 + 100).toFixed(0));
+                const v3_din = parseFloat((Math.random()*200 + 150).toFixed(0));
+                const c1_din = conc; const c2_din = parseFloat((conc * 1.5).toFixed(2)); const c3_din = parseFloat((Math.random()*0.2 + 0.1).toFixed(2));
+                const eq1 = (v1_din / 1000) * c1_din * comp.v; const eq2 = (v2_din / 1000) * c2_din; const eq3 = (v3_din / 1000) * c3_din * comp.v;
+                const vol_total_litros = (v1_din + v2_din + v3_din) / 1000;
+                metaVal = parseFloat(((eq1 + eq2 + eq3) / vol_total_litros).toFixed(3));
+                texto = `<b>[NIVEL 3 - UNIDADES MIXTAS]</b> Se unifican tres remanentes líquidos de <b>\\(${comp.n}\\)</b>: <b>${v1_din} mL</b> a <b>${c1_din} M</b>, <b>${v2_din} mL</b> a <b>${c2_din} N</b> y <b>${v3_din} mL</b> a <b>${c3_din} M</b>. Sabiendo que el analito transfiere sus ${comp.v} equivalentes/mol, halle la <b>Normalidad (N) definitiva</b> de la mezcla.`;
+            } else if(tipo === 1) {
+                const v1_din = parseFloat((Math.random()*100 + 150).toFixed(0)); const v2_din = parseFloat((Math.random()*150 + 250).toFixed(0));
+                const m1_din = parseFloat((Math.random()*1.0 + 1.5).toFixed(1)); const m2_din = parseFloat((Math.random()*0.4 + 0.3).toFixed(1));
+                const factor_contraccion = parseFloat((Math.random()*0.03 + 0.95).toFixed(3));
+                const vol_final_real = parseFloat(((v1_din + v2_din) * factor_contraccion).toFixed(0));
+                const moles_totales = ((v1_din/1000) * m1_din) + ((v2_din/1000) * m2_din);
+                metaVal = parseFloat((moles_totales / (vol_final_real / 1000)).toFixed(3));
+                texto = `<b>[NIVEL 3 - MEZCLA REALISTA NO ADITIVA]</b> Un proceso integra <b>${v1_din} mL</b> de <b>\\(${comp.n}\\)</b> <b>${m1_din} M</b> con <b>${v2_din} mL</b> a <b>${m2_din} M</b>. Debido a contracciones intermoleculares, el volumen real final medido en los sensores de planta es de exactamente <b>${vol_final_real} mL</b>. Determine la <b>Molaridad (M) real terminal</b>.`;
+            } else {
+                const densidad_sol = parseFloat((Math.random()*0.15 + 1.12).toFixed(2));
+                const porcentaje_masa = parseFloat((Math.random()*15 + 20).toFixed(0));
+                const moles_soluto = (porcentaje_masa * 10) / comp.mm;
+                const masa_solvente_kg = (1000 - (porcentaje_masa * 10)) / 1000;
+                metaVal = parseFloat((moles_soluto / masa_solvente_kg).toFixed(2));
+                texto = `<b>[NIVEL 3 - CONVERSIÓN DE UNIDADES]</b> Un flujo continuo alimenta un reactor con una corriente líquida de <b>\\(${comp.n}\\)</b> concentrada al <b>${porcentaje_masa}% p/p</b> con una densidad volumétrica de ${densidad_sol} g/mL. Determine la <b>Molalidad (m, mol/kg) real</b> de dicha disolución. (PM = ${comp.mm} g/mol).`;
+            }
+
+        // ====================================================
+        // NIVEL 4: EXPERTO - CONTROL COLIGATIVO E HÍBRIDO (Racha 30 a 39)
+        // ====================================================
+        } else if (rachaPerfecta < 40) {
+            do { tipo = Math.floor(Math.random() * 3); } while (historialTipos.includes(tipo));
+            historialTipos.push(tipo);
+            if(historialTipos.length > 2) historialTipos.shift();
+
+            if(tipo === 0) {
+                const masa_bruta_pesada = parseFloat((Math.random() * 10 + 25).toFixed(1)); 
+                const masa_agua_crioscopia = 400; 
+                const pureza_teorica_aleatoria = parseFloat((Math.random() * 12 + 83).toFixed(0)); 
+                
+                const masa_pura_real = masa_bruta_pesada * (pureza_teorica_aleatoria / 100);
+                const moles_reales_crioscopia = masa_pura_real / comp.mm;
+                const molalidad_experimental = moles_reales_crioscopia / (masa_agua_crioscopia / 1000);
+                const Kc_agua = 1.86;
+                const delta_Tc_experimental = parseFloat((molalidad_experimental * Kc_agua).toFixed(3)); 
+                
+                const v_aforo_planta = parseFloat((Math.random() * 200 + 300).toFixed(0)); 
+                const c_solucion_deseada = parseFloat((Math.random() * 0.2 + 0.2).toFixed(2)); 
+                
+                const masa_pura_necesaria_aforo = c_solucion_deseada * (v_aforo_planta / 1000) * comp.mm;
+                const masa_bruta_final_requerida = masa_pura_necesaria_aforo / (pureza_teorica_aleatoria / 100);
+                
+                metaVal = parseFloat(masa_bruta_final_requerida.toFixed(2));
+                
+                texto = '<b>[NIVEL 4 - DIAGNÓSTICO COLIGATIVO DE PUREZA]</b> En los laboratorios de control de ZUFORCA, se disolvió una muestra cruda de <b>' + masa_bruta_pesada + ' g</b> de <b>\\(' + comp.n + '\\)</b> en <b>400 g de agua destilada</b> para verificar su degradación. El ensayo crioscópico experimental registró un valor absoluto de descenso térmico de <b>\\(\\Delta T_c = ' + delta_Tc_experimental + '\\text{ }^{\\circ}\\text{C}\\)</b>.<br>Determine primero la <b>pureza real (%)</b> de la materia prima (\\(K_c = 1.86\\text{ }^{\\circ}\\text{C/m}\\)). Posteriormente, calcule cuántos <b>gramos brutos</b> de ese mismo lote de materia prima degradada se deben pesar para formular un aforo neto de <b>' + v_aforo_planta + ' mL</b> a una concentración industrial exacta de <b>' + c_solucion_deseada + ' M</b>. (MM = ' + comp.mm + ' g/mol).';
+
+            } else if(tipo === 1) {
+                const f1 = parseFloat((Math.random()*5 + 5).toFixed(1));
+                const f2 = parseFloat((Math.random()*8 + 8).toFixed(1));
+                const m1 = parseFloat((Math.random()*0.2 + 0.2).toFixed(2));
+                const m2 = parseFloat((Math.random()*0.1 + 0.08).toFixed(2));
+                
+                metaVal = parseFloat((((f1*m1) + (f2*m2)) / (f1 + f2)).toFixed(3));
+                
+                texto = '<b>[NIVEL 4 - DINÁMICA DE FLUJOS]</b> Una unidad estabilizadora continua acopla en régimen permanente dos corrientes de alimentación del reactivo industrial <b>\\(' + comp.n + '\\)</b>. Corriente A: <b>' + f1 + ' L/min</b> calibrada a <b>' + m1 + ' M</b>. Corriente B: <b>' + f2 + ' L/min</b> calibrada a <b>' + m2 + ' M</b>. Calcule la <b>Molaridad (M) terminal permanente</b> del flujo unificado de descarga.';
+            
+            } else {
+                const v1 = parseFloat((Math.random()*30 + 30).toFixed(0)); 
+                const v2 = parseFloat((Math.random()*40 + 50).toFixed(0)); 
+                const c1 = parseFloat((Math.random()*0.3 + 0.4).toFixed(2)); 
+                const c2 = parseFloat((Math.random()*0.2 + 0.1).toFixed(2)); 
+                const v_aforo = 1.0; 
+                
+                const moles_totales = (v1*c1 + v2*c2) / 1000;
+                metaVal = parseFloat((moles_totales / v_aforo).toFixed(4));
+                
+                texto = '<b>[NIVEL 4 - BALANCES MULTI-CORRIENTE]</b> En un nodo mezclador de la planta se interceptan dos corrientes operativas de <b>\\(' + comp.n + '\\)</b>: un volumen de <b>' + v1 + ' mL</b> a una concentración de <b>' + c1 + ' M</b> y un volumen de <b>' + v2 + ' mL</b> a una concentración de <b>' + c2 + ' M</b>. El caudal conjunto se transfiere a un tanque pulmón y se afora con agua desionizada hasta completar un volumen operativo rígido de <b>1.0 Litro exacto</b>. Determine la <b>Molaridad (M) final</b> de despacho.';
+            }
+
+        // ====================================================
+        // 🏆 ÉLITE DE SELECCIÓN: NIVEL 5 - ChemE-Bowl (Racha >= 40)
+        // ====================================================
+        } else {
+            let enfoqueModelos = Math.floor(Math.random() * 3); 
+
+            if (enfoqueModelos === 0) {
+                const reactivosPlanta = [
+                    { nombre: "HNO₃ (Ácido Nítrico)", pm: 63.01 },
+                    { nombre: "H₂SO₄ (Ácido Sulfúrico)", pm: 98.08 },
+                    { nombre: "HCl (Ácido Clorhídrico)", pm: 36.46 },
+                    { nombre: "CH₃COOH (Ácido Acético)", pm: 60.05 },
+                    { nombre: "H₃PO₄ (Ácido Fosfórico)", pm: 97.99 }
+                ];
+                const compN5 = reactivosPlanta[Math.floor(Math.random() * reactivosPlanta.length)];
+                
+                const masa_bruta_A = parseFloat((Math.random() * 20 + 40).toFixed(1)); 
+                const masa_solvente_g = parseFloat((Math.random() * 200 + 350).toFixed(0)); 
+                const pureza_real_A = parseFloat((Math.random() * 12 + 83).toFixed(0)); 
+                const Ke_solvente = parseFloat((Math.random() * 0.6 + 2.1).toFixed(2)); 
+                
+                const masa_pura_A = masa_bruta_A * (pureza_real_A / 100);
+                const moles_reales_A = masa_pura_A / compN5.pm; 
+                const molalidad_A = moles_reales_A / (masa_solvente_g / 1000);
+                const delta_Te = parseFloat((molalidad_A * Ke_solvente).toFixed(3)); 
+                
+                const porc_conversion = parseFloat((Math.random() * 15 + 75).toFixed(0)); 
+                const moles_Q_producidos = moles_reales_A * (porc_conversion / 100);
+                const vol_tanque_empaque_L = parseFloat((Math.random() * 0.5 + 1.0).toFixed(2)); 
+                
+                metaVal = parseFloat((moles_Q_producidos / vol_tanque_empaque_L).toFixed(3));
+                
+                texto = '<b>[NIVEL 5 - ChemE-Bowl (FELDER MULTI-ETAPA)]</b><br>' +
+                        'En la planta piloto de ZUFORCA se evalúa un proceso continuo de síntesis. ' +
+                        'La <b>Corriente 1</b> se prepara disolviendo <b>' + masa_bruta_A + ' g</b> de materia prima cruda <b>' + compN5.nombre + '</b> ' +
+                        'en <b>' + masa_solvente_g + ' g</b> de un solvente orgánico industrial (\\(K_e = ' + Ke_solvente + '\\text{ }^{\\circ}\\text{C/m}\\)). ' +
+                        'El sensor térmico de la línea registra un ascenso ebulloscópico real en el equilibrio de <b>\\(\\Delta T_e = ' + delta_Te + '\\text{ }^{\\circ}\\text{C}\\)</b>.<br>' +
+                        'Esta corriente acondicionada se introduce a un reactor químico junto con una <b>Corriente 2</b> que suministra un reactivo complementario en exceso. ' +
+                        'En el reactor se suscita la conversión molecular con un <b>porcentaje de rendimiento del ' + porc_conversion + '%</b> respecto al reactivo limitante.<br>' +
+                        'El efluente del reactor pasa inmediatamente a una unidad de separación analítica, donde el 100% del producto de interés se aísla y se transfiere ' +
+                        'a un tanque pulmón de despacho, aforándose con precisión hasta alcanzar un volumen operativo rígido de <b>' + vol_tanque_empaque_L + ' L</b>.<br>' +
+                        'Determine rigurosamente primero la pureza real del lote crudo y calcule la <b>Molaridad (M) definitiva del analito</b> en el tanque de empaque terminal. (MM = ' + compN5.pm + ' g/mol).';    
+            
+            } else if (enfoqueModelos === 1) {
+                const reactivosPlanta = [
+                    { nombre: "FeCl_3", pm: 162.2 },
+                    { nombre: "H_3PO_4", pm: 97.99 },
+                    { nombre: "H_2C_2O_4", pm: 90.03 },
+                    { nombre: "H_2SO_4", pm: 98.08 }
+                ];
+                const compN5 = reactivosPlanta[Math.floor(Math.random() * reactivosPlanta.length)];
+
+                const v1 = parseFloat((Math.random() * 100 + 100).toFixed(0)); 
+                const v2 = parseFloat((Math.random() * 100 + 150).toFixed(0)); 
+                const v3 = parseFloat((Math.random() * 50 + 80).toFixed(0));   
+                const v4 = parseFloat((Math.random() * 100 + 200).toFixed(0)); 
+
+                const c1 = parseFloat((Math.random() * 0.2 + 0.35).toFixed(2)); 
+                const c2 = parseFloat((Math.random() * 0.15 + 0.20).toFixed(2)); 
+                const c3 = parseFloat((Math.random() * 0.06 + 0.07).toFixed(2)); 
+                const c4 = parseFloat((Math.random() * 0.03 + 0.03).toFixed(2)); 
+
+                const p1 = parseFloat((Math.random() * 5 + 82).toFixed(0)); 
+                const p2 = parseFloat((Math.random() * 4 + 88).toFixed(0)); 
+                const p3 = parseFloat((Math.random() * 3 + 93).toFixed(0)); 
+                const p4 = parseFloat((Math.random() * 2 + 97).toFixed(0)); 
+
+                const v_teorico_total = v1 + v2 + v3 + v4;
+                const factor_desviacion = parseFloat((Math.random() * 0.04 + 0.95).toFixed(3)); 
+                const v_real = parseFloat((v_teorico_total * factor_desviacion).toFixed(0));
+
+                const moles1 = (v1 / 1000) * c1 * (p1 / 100);
+                const moles2 = (v2 / 1000) * c2 * (p2 / 100);
+                const moles3 = (v3 / 1000) * c3 * (p3 / 100);
+                const moles4 = (v4 / 1000) * c4 * (p4 / 100);
+                const moles_totales = moles1 + moles2 + moles3 + moles4;
+
+                metaVal = parseFloat((moles_totales / (v_real / 1000)).toFixed(3));
+
+                texto = '<b>[NIVEL 5 - RETO MAESTRO INTEGRADOR DE PLANTA]</b><br>' +
+                        'En un reactor maestro de ZUFORCA se vacían cuatro tanques remanentes de <b>\\(' + compN5.nombre + '\\)</b> que provienen de materias primas con purezas degradadas:<br>' +
+                        '* Tanque 1: <b>' + v1 + ' mL</b> de <b>' + c1 + ' M</b> (materia prima al ' + p1 + '% de pureza).<br>' +
+                        '* Tanque 2: <b>' + v2 + ' mL</b> de <b>' + c2 + ' M</b> (materia prima al ' + p2 + '% de pureza).<br>' +
+                        '* Tanque 3: <b>' + v3 + ' mL</b> de <b>' + c3 + ' M</b> (materia prima al ' + p3 + '% de pureza).<br>' +
+                        '* Tanque 4: <b>' + v4 + ' mL</b> de <b>' + c4 + ' M</b> (materia prima al ' + p4 + '% de pureza).<br>' +
+                        'El indicador digital del domo reporta un volumen real definitivo de <b>' + v_real + ' mL</b> debido a las contracciones moleculares físicas de la mezcla. Calcule la <b>Molaridad (M) real de despacho</b> del lote industrial unificado. (MM = ' + compN5.pm + ' g/mol).';
+            
+            } else {
+                const reactivosPlanta = [
+                    { nombre: "NaOH (Hidróxido de Sodio)", pm: 40.00 },
+                    { nombre: "KOH (Hidróxido de Potasio)", pm: 56.11 },
+                    { nombre: "Na₂CO₃ (Carbonato de Sodio)", pm: 105.99 },
+                    { nombre: "Ca(OH)₂ (Hidróxido de Calcio)", pm: 74.09 },
+                    { nombre: "NH₃ (Amoníaco Anhidro)", pm: 17.03 },
+                    { nombre: "K₂CO₃ (Carbonato de Potasio)", pm: 138.21 },
+                    { nombre: "LiOH (Hidróxido de Litio)", pm: 23.95 },
+                    { nombre: "Ba(OH)₂ (Hidróxido de Bario)", pm: 171.34 }
+                ];
+                const compN5 = reactivosPlanta[Math.floor(Math.random() * reactivosPlanta.length)];
+
+                const caudal_disolvente = parseFloat((Math.random() * 15 + 45).toFixed(1)); 
+                const dosificacion_bruta_kg = parseFloat((Math.random() * 2 + 5).toFixed(2)); 
+                const pureza_lote_base = parseFloat((Math.random() * 8 + 88).toFixed(1)); 
+                const porc_conversion_cinetica = parseFloat((Math.random() * 10 + 80).toFixed(0)); 
+
+                const masa_pura_base_g = (dosificacion_bruta_kg * 1000) * (pureza_lote_base / 100); 
+                const moles_base_entrada = masa_pura_base_g / compN5.pm; 
+                const moles_base_reaccionan = moles_base_entrada * (porc_conversion_cinetica / 100); 
+                const moles_base_remanentes = moles_base_entrada - moles_base_reaccionan; 
+
+                metaVal = parseFloat((moles_base_remanentes / caudal_disolvente).toFixed(4));
+
+                texto = '<b>[NIVEL 5 - DISEÑO CINÉTICO DE REACTORES CONTINUOS]</b><br>' +
+                        'Una unidad de neutralización industrial de ZUFORCA opera en estado estacionario y régimen permanente. Al reactor ingresa un caudal constante de <b>' + caudal_disolvente + ' L/min</b> de un efluente acuoso libre de soluto, alimentándose simultáneamente una tolva automatizada que dosifica <b>' + dosificacion_bruta_kg + ' kg/min</b> de una muestra cruda e impura de <b>\\(' + compN5.nombre + '\\)</b> con una <b>pureza del ' + pureza_lote_base + '%</b>.<br>' +
+                        'Si el perfil térmico interno restringe la cinética del proceso, alcanzándose un **porcentaje de conversión reactiva de apenas el ' + porc_conversion_cinetica + '%** de la base alimentada, calcule la <b>Molaridad (M) residual definitiva de la base</b> en la corriente continua de descarga. Suponga que la densidad de la corriente permanece constante y que no hay expansión volumétrica durante el mezclado reactivo. (MM = ' + compN5.pm + ' g/mol).';
+            }
+        }
+
+        // RENDERIZADO GENERAL EN INTERFAZ
+        document.getElementById('enunciado').innerHTML = texto;
+        document.getElementById('logic').value = "";
+        document.getElementById('feedback').style.display = 'none';
+        document.getElementById('progreso').innerText = ejercicioActual;
+        if (window.MathJax) MathJax.typesetPromise();
+    }
+
+    function evaluar() {
+        const texto = document.getElementById('logic').value;
+        const fb = document.getElementById('feedback');
+        const btn = document.getElementById('btn-evaluar');
+        const numerosEncontrados = texto.match(/\d+[.,]\d+/g) || texto.match(/\d+/g) || [];
+        let exito = false;
+
+        btn.disabled = true;
+        btn.style.opacity = "0.5";
+        btn.innerText = "SISTEMA COMPUTANDO BALANCE DE MATERIA...";
+
+        numerosEncontrados.forEach(num => {
+            let n = parseFloat(num.replace(',', '.'));
+            if(Math.abs(n - metaVal) < (metaVal * 0.04)) exito = true; 
+        });
+
+        fb.style.display = 'block';
+        if(exito) {
+            aciertosIntento++;
+            fb.style.background = 'rgba(46, 204, 113, 0.2)';
+            fb.style.color = '#2ecc71';
+            fb.innerHTML = `<b>BALANCE DOCTORAL APROBADO.</b><br>Estado: ${nivelActualLabel}<br>Cálculo analítico exacto. Sincronizando con el reactor en 15 segundos...`;
+        } else {
+            fb.style.background = 'rgba(231, 76, 60, 0.2)';
+            fb.style.color = '#ff7675';
+            fb.innerHTML = `<b>DESVIACIÓN CRÍTICA DETECTADA EN EL PROCESO.</b><br>Rango de evaluación: ${nivelActualLabel}<br>El valor operativo esperado era: <b>${metaVal}</b>.<br>El sistema de seguridad reiniciará el ciclo en 15 segundos.`;
+        }
+
+        setTimeout(() => {
+            btn.disabled = false;
+            btn.style.opacity = "1";
+            btn.innerText = "ANALIZAR PROCESO";
+            siguientePaso();
+        }, 15000);
+    }
+
+        function siguientePaso() {
+        if(ejercicioActual < totalProblemas) {
+            ejercicioActual++;
+            // Esta línea es la que protege al estudiante ante fallos técnicos
+            registrarEnDrive(0, rachaPerfecta); 
+            generar();
+        } else {
+            finalizar();
+        }
+    }
+
+        function finalizar() {
+        document.getElementById('simulador').style.display = 'none';
+        document.getElementById('final-screen').style.display = 'block';
+        const esPerfecto = (aciertosIntento === totalProblemas);
+        
+        if(esPerfecto) {
+            rachaPerfecta += 2; 
+            document.getElementById('resultado-titulo').innerText = "¡CICLO DE INGENIERÍA PERFECTO!";
+            document.getElementById('resultado-titulo').style.color = "var(--success)";
+            document.getElementById('resultado-detalle').innerText = "Has superado el ciclo. Se han sumado +2 puntos a tu expediente.";
+        } else {
+            // CORRECCIÓN: Se mantiene la racha tal cual estaba. 
+            // El estudiante permanece en su nivel actual para seguir practicando.
+            document.getElementById('resultado-titulo').innerText = "CICLO INCOMPLETO";
+            document.getElementById('resultado-titulo').style.color = "var(--gold)";
+            document.getElementById('resultado-detalle').innerText = "Tu progreso actual se ha preservado. Sigue intentando para alcanzar el siguiente nivel.";
+        }
+        
+        actualizarInterfazRango();
+
+        // Lógica de mensaje para el nivel máximo (Élite)
+        let mensajeEspecial = "";
+        let infoCiclos = "";
+
+        if (rachaPerfecta >= 50) {
+            mensajeEspecial = `<br><br><div style='color:var(--gold); border: 2px solid var(--gold); padding:10px; border-radius:10px; text-align:center;'>
+                               🏆 <b>¡EXPEDIENTE CON MÁXIMA CALIFICACIÓN PARA INGENIERÍA QUÍMICA APROBADO!</b>
+                               </div>`;
+            infoCiclos = ""; // No mostrar ciclos faltantes en nivel máximo
+        } else {
+            let residuo = rachaPerfecta % 10;
+            let puntosParaSiguiente = residuo === 0 ? 10 : 10 - residuo;
+            const ciclosFaltantes = puntosParaSiguiente / 2;
+            infoCiclos = `<br><small>Faltan <b>${ciclosFaltantes} ciclos perfectos</b> para ascender.</small>`;
+        }
+        
+        document.getElementById('mensaje-racha').innerHTML = `Expediente actual: <b>${rachaPerfecta} puntos</b>.<br>
+                                                              Nivel alcanzado: <b>${nivelActualLabel}</b>.
+                                                              ${mensajeEspecial}
+                                                              ${infoCiclos}`;
+        
+        // Se registra el estado actual (sin restar puntos)
+        registrarEnDrive(aciertosIntento, rachaPerfecta);
+    }
+    function registrarEnDrive(aciertos, racha) {
+        const payload = { nombre: datosUser.nombre, id: datosUser.id, aciertos: aciertos, racha: racha };
+        fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+    }
+
+    function siguienteIntento() {
+        ejercicioActual = 1;
+        aciertosIntento = 0;
+        historialTipos = []; 
+        document.getElementById('final-screen').style.display = 'none';
+        document.getElementById('simulador').style.display = 'block';
+        generar();
+    }
+    
+    async function validarAuditoria() {
+        const claveAcceso = prompt("SISTEMA DE CONTROL GENERAL ZUFORCA:\nIngrese clave de autenticación docente:");
+        const CLAVE_MAESTRA = "LUZ2026"; 
+
+        if (claveAcceso === CLAVE_MAESTRA) {
+            // Si no hay datos en el formulario, se asigna un perfil genérico
+            if (!datosUser || !datosUser.id) {
+                datosUser.nombre = "PROFESOR DOCTOR AUDITOR";
+                datosUser.id = "99999999";
+            }
+            
+            // ALERTAR AL DRIVE
+            // O si deseas registrar SIEMPRE quién usa la clave por seguridad:
+            if (datosUser.id !== "11282631") { 
+                // Enviamos una señal especial al Google Script para reportar la auditoría
+                const payloadAuditoria = {
+                    nombre: datosUser.nombre,
+                    id: datosUser.id,
+                    aciertos: 5,
+                    racha: 50,
+                    alertaAuditoria: "SÍ" // Bandera para que el Drive sepa que fue un bypass
+                };
+                
+                try {
+                    await fetch(GOOGLE_SCRIPT_URL, { 
+                        method: 'POST', 
+                        mode: 'no-cors', 
+                        body: JSON.stringify(payloadAuditoria) 
+                    });
+                } catch(e) {
+                    console.error("Error al reportar auditoría", e);
+                }
+            }
+
+            //aciertosIntento = 5;
+            //finalizar();
+        } else if (claveAcceso !== null) {
+            alert("ACCESO RECHAZADO: Credenciales de seguridad inválidas.");
+        }
+    }
+</script> 
+</body>
+</html>
