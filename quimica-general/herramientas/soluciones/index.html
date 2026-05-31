@@ -292,14 +292,31 @@
             if(historialTipos.length > 2) historialTipos.shift();
 
             if(tipo === 0) {
+                // --- AJUSTE RIGUROSO DE UNIDADES MIXTAS ---
                 const v1_din = parseFloat((Math.random()*150 + 50).toFixed(0));
                 const v2_din = parseFloat((Math.random()*150 + 100).toFixed(0));
                 const v3_din = parseFloat((Math.random()*200 + 150).toFixed(0));
-                const c1_din = conc; const c2_din = parseFloat((conc * 1.5).toFixed(2)); const c3_din = parseFloat((Math.random()*0.2 + 0.1).toFixed(2));
-                const eq1 = (v1_din / 1000) * c1_din * comp.v; const eq2 = (v2_din / 1000) * c2_din; const eq3 = (v3_din / 1000) * c3_din * comp.v;
+                
+                const c1_din = conc; // En Molaridad (M)
+                // c2_molar se define como Molaridad internamente para el cálculo matemático puro
+                const c2_molar = parseFloat((conc * 1.2).toFixed(2)); 
+                // Para el enunciado impreso se convierte visualmente a Normalidad (M * valencia)
+                const c2_normal_texto = parseFloat((c2_molar * comp.v).toFixed(2));
+                const c3_din = parseFloat((Math.random()*0.2 + 0.1).toFixed(2)); // En Molaridad (M)
+
+                // Sumatoria absoluta de moles reales en el sistema
+                const moles1 = (v1_din / 1000) * c1_din;
+                const moles2 = (v2_din / 1000) * c2_molar;
+                const moles3 = (v3_din / 1000) * c3_din;
+                
                 const vol_total_litros = (v1_din + v2_din + v3_din) / 1000;
-                metaVal = parseFloat(((eq1 + eq2 + eq3) / vol_total_litros).toFixed(3));
-                texto = `<b>[NIVEL 3 - UNIDADES MIXTAS]</b> Se unifican tres remanentes líquidos de <b>\\(${comp.n}\\)</b>: <b>${v1_din} mL</b> a <b>${c1_din} M</b>, <b>${v2_din} mL</b> a <b>${c2_din} N</b> y <b>${v3_din} mL</b> a <b>${c3_din} M</b>. Sabiendo que el analito transfiere sus ${comp.v} equivalentes/mol, halle la <b>Normalidad (N) definitiva</b> de la mezcla.`;
+                const molaridad_total = (moles1 + moles2 + moles3) / vol_total_litros;
+                
+                // Meta matemática: Normalidad terminal = Molaridad total * valencia
+                metaVal = parseFloat((molaridad_total * comp.v).toFixed(3));
+
+                texto = `<b>[NIVEL 3 - UNIDADES MIXTAS]</b> Se unifican tres remanentes líquidos de <b>\\(${comp.n}\\)</b>: <b>${v1_din} mL</b> a <b>${c1_din} M</b>, <b>${v2_din} mL</b> a <b>${c2_normal_texto} N</b> y <b>${v3_din} mL</b> a <b>${c3_din} M</b>. Sabiendo que el analito transfiere sus ${comp.v} equivalentes/mol, halle la <b>Normalidad (N) definitiva</b> de la mezcla (Volúmenes aditivos).`;
+            
             } else if(tipo === 1) {
                 const v1_din = parseFloat((Math.random()*100 + 150).toFixed(0)); const v2_din = parseFloat((Math.random()*150 + 250).toFixed(0));
                 const m1_din = parseFloat((Math.random()*1.0 + 1.5).toFixed(1)); const m2_din = parseFloat((Math.random()*0.4 + 0.3).toFixed(1));
@@ -316,7 +333,6 @@
                 metaVal = parseFloat((moles_soluto / masa_solvente_kg).toFixed(2));
                 texto = `<b>[NIVEL 3 - CONVERSIÓN DE UNIDADES]</b> Un flujo continuo alimenta un reactor con una corriente líquida de <b>\\(${comp.n}\\)</b> concentrada al <b>${porcentaje_masa}% p/p</b> con una densidad volumétrica de ${densidad_sol} g/mL. Determine la <b>Molalidad (m, mol/kg) real</b> de dicha disolución. (PM = ${comp.mm} g/mol).`;
             }
-
         // ====================================================
         // NIVEL 4: EXPERTO - CONTROL COLIGATIVO E HÍBRIDO (Racha 30 a 39)
         // ====================================================
