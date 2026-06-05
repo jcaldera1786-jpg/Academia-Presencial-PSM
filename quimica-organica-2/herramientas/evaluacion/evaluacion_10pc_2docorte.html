@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación: Química Orgánica II (Aldehídos y Cetonas)</title>
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/dist/solid.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 850px;
+            background: #fff;
+            margin: 0 auto;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .header-table td {
+            border: 1px solid #dcdcdc;
+            padding: 10px;
+            font-size: 0.9em;
+        }
+        .header-title {
+            text-align: center;
+            font-weight: bold;
+            background-color: #f8f9fa;
+        }
+        h1 {
+            color: #1a365d;
+            text-align: center;
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+        h2 {
+            color: #2b6cb0;
+            font-size: 1.3em;
+            border-bottom: 2px solid #edf2f7;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        .instrucciones {
+            background-color: #ebf8ff;
+            border-left: 4px solid #3182ce;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            font-size: 0.95em;
+        }
+        .pregunta {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #fcfcfc;
+            border: 1px solid #f0f0f0;
+            border-radius: 6px;
+        }
+        .pregunta label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .puntos {
+            color: #718096;
+            font-weight: normal;
+            font-size: 0.9em;
+        }
+        .estructura-img {
+            display: block;
+            max-width: 220px;
+            margin: 15px 0;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: inherit;
+            font-size: 1em;
+        }
+        textarea {
+            resize: vertical;
+            height: 100px;
+        }
+        input[type="file"] {
+            margin-top: 10px;
+            padding: 5px 0;
+        }
+        .file-box {
+            background-color: #f7fafc;
+            border: 1px dashed #cbd5e0;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        button {
+            background-color: #3182ce;
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            display: block;
+            width: 100%;
+            margin-top: 40px;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #2b6cb0;
+        }
+        .datos-estudiante {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <table class="header-table">
+        <tr>
+            <td colspan="2" class="header-title">INSTITUTO UNIVERSITARIO POLITÉCNICO “SANTIAGO MARIÑO”</td>
+            <td class="header-title">DIVISIÓN DE ADMISIÓN Y CONTROL DE ESTUDIOS</td>
+        </tr>
+        <tr>
+            <td><strong>Asignatura:</strong> Química Orgánica II</td>
+            <td><strong>Sección:</strong> A | <strong>Escuela:</strong> 49</td>
+            <td><strong>Lapso:</strong> 2026-1</td>
+        </tr>
+        <tr>
+            <td><strong>Profesor:</strong> José Caldera</td>
+            <td><strong>Corte:</strong> 1er (10%) | <strong>Ponderación:</strong> 20 pts</td>
+            <td><strong>Fecha:</strong> 01/06/2026</td>
+        </tr>
+    </table>
+
+    <h1>Evaluación Escrita</h1>
+    <p style="text-align: center; color: #4a5568; margin-top: 0;">Tema: Aldehídos y Cetonas (Nomenclatura, Estructura y Reactividad)</p>
+
+    <div class="instrucciones">
+        <strong>Instrucciones para resolver el examen:</strong>
+        <ul>
+            <li>Lea detenidamente cada pregunta, razone su respuesta y responda utilizando un lenguaje académico preciso.</li>
+            <li>Desarrolle los ejercicios a mano en hojas blancas y limpias utilizando lápiz y papel.</li>
+            <li>Al finalizar cada sección, tome una foto nítida de su desarrollo físico y adjúntela en el apartado correspondiente del formulario. ¡Éxito!</li>
+        </ul>
+    </div>
+
+    <form id="examenForm">
+        <h2>Datos del Estudiante</h2>
+        <div class="datos-estudiante">
+            <div>
+                <label style="font-weight:bold;">Apellidos y Nombres:</label>
+                <input type="text" id="nombreAlumno" required placeholder="Ej. Pérez, Juan">
+            </div>
+            <div>
+                <label style="font-weight:bold;">Cédula de Identidad:</label>
+                <input type="text" id="cedulaAlumno" required placeholder="Ej. V-12.345.678">
+            </div>
+        </div>
+
+        <h2>PARTE I: Fundamentos Estructura y Enlace (Valor: 6 puntos)</h2>
+        
+        <div class="pregunta">
+            <label>1. Análisis del Grupo Carbonilo <span class="puntos">(2.0 puntos)</span></label>
+            <p>Con base en la hibridación del átomo de carbono en este grupo funcional:</p>
+            <p><strong>a)</strong> Indique el tipo de hibridación que presenta el carbono carbonílico, la geometría molecular resultante y el ángulo de enlace teórico aproximado. <span class="puntos">(1.0 pt)</span></p>
+            <p><strong>b)</strong> Explique, desde el punto de vista de la electronegatividad, por qué el grupo carbonilo es fuertemente polar y cómo afecta esta polaridad a la reactividad del carbono frente a nucleófilos. <span class="puntos">(1.0 pt)</span></p>
+            <textarea id="r_p1" placeholder="Escriba aquí su justificación o resumen teórico..."></textarea>
+        </div>
+
+        <div class="pregunta">
+            <label>2. Diferenciación Estructural <span class="puntos">(4.0 puntos)</span></label>
+            <p><strong>a)</strong> Establezca la diferencia estructural fundamental entre un aldehído y una cetona en términos de los sustituyentes unidos al carbono carbonílico. <span class="puntos">(2.0 pts)</span></p>
+            <p><strong>b)</strong> Explique por qué los aldehídos son, por lo general, sustancialmente más reactivos que las cetonas hacia la adición nucleofílica, argumentando desde dos perspectivas: el <em>efecto estérico</em> y el <em>efecto inductivo</em> de los grupos alquilo. <span class="puntos">(2.0 pts)</span></p>
+            <textarea id="r_p2" placeholder="Escriba sus argumentos analíticos aquí..."></textarea>
+        </div>
+
+        <h2>PARTE II: Propiedades Físicas y Comportamiento Químico (Valor: 4 puntos)</h2>
+        
+        <div class="pregunta">
+            <label>3. Puntos de Ebullición y Solubilidad <span class="puntos">(4.0 puntos)</span></label>
+            <p>Si comparamos el propanal (un aldehído), con el propan-1-ol (un alcohol) y el butano (un alcano), todos con masas moleculares similares: ¿Cuál tendrá el mayor punto de ebullición y cuál el menor? Justifique analizando las fuerzas intermoleculares presentes (puentes de hidrógeno, interacciones dipolo-dipolo, fuerzas de dispersión). <span class="puntos">(2.0 pts)</span></p>
+            <p>Asimismo, explique por qué los aldehídos y cetonas de bajo peso molecular (como la acetona o el formaldehído) son completamente solubles en agua, mientras que la solubilidad disminuye drásticamente al aumentar la longitud de la cadena. <span class="puntos">(2.0 pts)</span></p>
+            <textarea id="r_p3" placeholder="Escriba su respuesta analítica aquí..."></textarea>
+        </div>
+
+        <h2>PARTE III: Nomenclatura IUPAC (Valor: 6 puntos)</h2>
+        
+        <div class="pregunta">
+            <label>4. Asignación de Nombres Estructurales <span class="puntos">(4.0 puntos)</span></label>
+            <p>Escriba el nombre IUPAC correcto para cada una de las siguientes estructuras:</p>
+            
+            <p><strong>Estructura A:</strong> <span class="puntos">(1.0 pt)</span></p>
+            <img src="organica-1.jpg" alt="Estructura Química A" class="estructura-img">
+            <input type="text" id="r_p4_a" placeholder="Nombre IUPAC de la Estructura A">
+
+            <p><strong>Estructura B:</strong> <span class="puntos">(1.0 pt)</span></p>
+            <img src="organica-2.jpg" alt="Estructura Química B" class="estructura-img">
+            <input type="text" id="r_p4_b" placeholder="Nombre IUPAC de la Estructura B">
+
+            <p><strong>Estructura C:</strong> <span class="puntos">(1.0 pt)</span></p>
+            <img src="organica-3.jpg" alt="Estructura Química C" class="estructura-img">
+            <input type="text" id="r_p4_c" placeholder="Nombre IUPAC de la Estructura C">
+
+            <p style="margin-top:20px;"><strong>Pregunta Teórica:</strong> ¿Cómo se nombra el grupo $\text{-CHO}$ cuando actúa como sustituyente (grupo secundario) en una molécula donde el grupo prioritario es un ácido carboxílico? <span class="puntos">(1.0 pt)</span></p>
+            <input type="text" id="r_p4_d" placeholder="Escriba el nombre del sustituyente aquí">
+        </div>
+
+        <div class="pregunta">
+            <label>5. Construcción de Estructuras <span class="puntos">(2.0 puntos)</span></label>
+            <p>Dibuje en su hoja de examen la estructura semidesarrollada o esquelética para los siguientes compuestos:</p>
+            <ul>
+                <li><strong>a)</strong> 3-hidroxibutanal <span class="puntos">(1.0 pt)</span></li>
+                <li><strong>b)</strong> 4-metilpentan-2-ona <span class="puntos">(1.0 pt)</span></li>
+            </ul>
+        </div>
+
+        <h2>PARTE IV: Reactividad y Diferenciación en el Laboratorio (Valor: 4 puntos)</h2>
+        
+        <div class="pregunta">
+            <label>6. Identificación de Aldehídos vs. Cetonas <span class="puntos">(4.0 puntos)</span></label>
+            <p><strong>a)</strong> Describa brevemente en qué consiste la <em>Prueba de Tollens</em> (reactivo de la plata especular) o la <em>Prueba de Fehling</em>. Explique cuál de los dos grupos funcionales da un resultado positivo y por qué el otro no reacciona bajo esas condiciones. <span class="puntos">(2.0 pts)</span></p>
+            <textarea id="r_p6_a" placeholder="Describa la prueba de laboratorio aquí..."></textarea>
+
+            <p style="margin-top:20px;"><strong>b)</strong> Complete la ecuación química general para la oxidación de un aldehído genérico ($\text{R-CHO}$) empleando un agente oxidante representativo $[\text{O}]$ para transformarse en su correspondiente ácido carboxílico. <span class="puntos">(2.0 pts)</span></p>
+            <p style="font-size:1.2em; background:#f7fafc; padding:10px; display:inline-block; border-radius:4px;">
+                $$\text{R-CHO} + [\text{O}] \rightarrow \text{R-COOH}$$
+            </p>
+            <textarea id="r_p6_b" placeholder="Escriba comentarios adicionales sobre el mecanismo o reactivos si lo considera necesario..."></textarea>
+        </div>
+
+        <h2>Carga obligatoria del examen manuscrito</h2>
+        <div class="file-box">
+            <label style="font-weight: bold; color:#c53030;">Adjunte la foto completa de su hoja de respuestas:</label>
+            <p style="font-size:0.85em; color:#4a5568; margin: 4px 0 10px 0;">Asegúrese de que el desarrollo de los ejercicios sea legible, esté ordenado y cuente con su firma manual en la hoja.</p>
+            <input type="file" id="fotoExamen" accept="image/*" required>
+        </div>
+
+        <button type="submit" id="btnEnviar">Enviar Evaluación Completa</button>
+    </form>
+</div>
+
+<script>
+    // URL DE TU ENLACE DE GOOGLE APPS SCRIPT DEPLOYED AS WEB APP
+    const WEB_APP_URL = "https://script.google.com/macros/s/TU_ID_DE_DESPLIEGUE_AQUI/exec";
+
+    document.getElementById('examenForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const btn = document.getElementById('btnEnviar');
+        btn.innerText = "Enviando respuestas y subiendo archivo...";
+        btn.disabled = true;
+
+        const fileInput = document.getElementById('fotoExamen');
+        const file = fileInput.files[0];
+        
+        if (!file) {
+            alert("Por favor, adjunte la foto de su desarrollo antes de enviar.");
+            btn.innerText = "Enviar Evaluación Completa";
+            btn.disabled = false;
+            return;
+        }
+
+        // Convertir la imagen cargada a Base64 para enviarla de forma asíncrona a Drive
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function() {
+            const base64Data = reader.result.split(',')[1];
+            
+            // Paquete de datos estructurados para transferir
+            const datosPayload = {
+                nombre: document.getElementById('nombreAlumno').value,
+                cedula: document.getElementById('cedulaAlumno').value,
+                r_p1: document.getElementById('r_p1').value,
+                r_p2: document.getElementById('r_p2').value,
+                r_p3: document.getElementById('r_p3').value,
+                r_p4_a: document.getElementById('r_p4_a').value,
+                r_p4_b: document.getElementById('r_p4_b').value,
+                r_p4_c: document.getElementById('r_p4_c').value,
+                r_p4_d: document.getElementById('r_p4_d').value,
+                r_p6_a: document.getElementById('r_p6_a').value,
+                r_p6_b: document.getElementById('r_p6_b').value,
+                archivoData: base64Data,
+                archivoNombre: `Examen_${document.getElementById('cedulaAlumno').value}.jpg`
+            };
+
+            // Envío nativo mediante fetch API mediante POST (evita problemas de CORS si se configura correctamente en el Script)
+            fetch(WEB_APP_URL, {
+                method: "POST",
+                mode: "no-cors", // Permite el envío cruzado sin validación estricta de headers
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(datosPayload)
+            })
+            .then(res => {
+                alert("¡Evaluación enviada con éxito! Sus respuestas se guardaron y el archivo se subió a Google Drive de forma segura.");
+                document.getElementById('examenForm').reset();
+                btn.innerText = "Enviar Evaluación Completa";
+                btn.disabled = false;
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Hubo un percance al enviar la información. Valide la conexión.");
+                btn.innerText = "Enviar Evaluación Completa";
+                btn.disabled = false;
+            });
+        };
+    });
+</script>
+
+</body>
+</html>
