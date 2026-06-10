@@ -160,21 +160,28 @@
         { min: 50, label: "🏆 ÉLITE DE SELECCIÓN: ChemE-Bowl", color: "#e74c3c", bg: "rgba(231, 76, 60, 0.3)" }
     ];
 
-    const ELEMENTOS = {
+        const ELEMENTOS = {
         hidroxidos: [
-            {n:"Al(OH)_3", mm:78.00, v:3}, {n:"Fe(OH)_3", mm:106.86, v:3},
-            {n:"Fe(OH)_2", mm:89.86, v:2}, {n:"Mg(OH)_2", mm:58.31, v:2},
-            {n:"Ca(OH)_2", mm:74.09, v:2}
+            {n:"Al(OH)_3", mm:78.00, v:3, i:4}, 
+            {n:"Fe(OH)_3", mm:106.86, v:3, i:4},
+            {n:"Fe(OH)_2", mm:89.86, v:2, i:3}, 
+            {n:"Mg(OH)_2", mm:58.31, v:2, i:3},
+            {n:"Ca(OH)_2", mm:74.09, v:2, i:3}
         ],
         sales: [
-            {n:"FeCl_3", mm:162.2, v:3}, {n:"NiSO_4", mm:154.7, v:2},
-            {n:"Al_2(SO_4)_3", mm:342.15, v:6}, {n:"Ba(ClO_3)_2", mm:304.2, v:2}
+            {n:"FeCl_3", mm:162.2, v:3, i:4}, 
+            {n:"NiSO_4", mm:154.7, v:2, i:2}, // <--- Aquí ya está el i=2 para NiSO4
+            {n:"Al_2(SO_4)_3", mm:342.15, v:6, i:5}, 
+            {n:"Ba(ClO_3)_2", mm:304.2, v:2, i:3}
         ],
         acidos: [
-            {n:"H_2SO_4", mm:98.08, v:2}, {n:"H_3PO_4", mm:97.99, v:3},
-            {n:"HClO_4", mm:100.46, v:1}, {n:"HNO_3", mm:63.01, v:1}
+            {n:"H_2SO_4", mm:98.08, v:2, i:3}, 
+            {n:"H_3PO_4", mm:97.99, v:3, i:4},
+            {n:"HClO_4", mm:100.46, v:1, i:2}, 
+            {n:"HNO_3", mm:63.01, v:1, i:2}
         ]
     };
+
 
     async function iniciar() {
         const n = document.getElementById('user-name').value;
@@ -350,8 +357,9 @@
                 const moles_reales_crioscopia = masa_pura_real / comp.mm;
                 const molalidad_experimental = moles_reales_crioscopia / (masa_agua_crioscopia / 1000);
                 const Kc_agua = 1.86;
-                const delta_Tc_experimental = parseFloat((molalidad_experimental * Kc_agua).toFixed(3)); 
-                
+                // Multiplicamos por comp.i para incluir el factor de van't Hoff
+const           delta_Tc_experimental = parseFloat((comp.i * molalidad_experimental * Kc_agua).toFixed(3));
+       
                 const v_aforo_planta = parseFloat((Math.random() * 200 + 300).toFixed(0)); 
                 const c_solucion_deseada = parseFloat((Math.random() * 0.2 + 0.2).toFixed(2)); 
                 
