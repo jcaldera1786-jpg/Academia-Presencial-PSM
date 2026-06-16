@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Presencial de Soluciones Químicas - Ingeniería</title>
+    
+ <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$']],
+                displayMath: [['$$', '$$']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* Estilos limpios y profesionales, adaptados para la lectura en aula */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            user-select: none; /* Bloquea selección de texto en navegadores antiguos */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        .container {
+            max-width: 850px;
+            margin: 30px auto;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        header {
+            text-align: center;
+            border-bottom: 3px solid #2b579a;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        header h1 {
+            color: #2b579a;
+            font-size: 24px;
+            margin: 0 0 10px 0;
+        }
+        header p {
+            font-size: 14px;
+            color: #666;
+            margin: 5px 0;
+        }
+        .badge-presencial {
+            background-color: #e1f5fe;
+            color: #0288d1;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        
+        /* Interfaz de Acceso */
+        #login-box {
+            max-width: 400px;
+            margin: 5px auto;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            background: #fafafa;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: 6px;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #2b579a;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #1e3d6b;
+        }
+        
+        /* Contenedor del Examen */
+        #exam-content {
+            display: none; /* Oculto hasta que se valide la cédula */
+        }
+        .student-info-bar {
+            background-color: #f1f8e9;
+            border-left: 4px solid #7cb342;
+            padding: 12px;
+            margin-bottom: 25px;
+            font-size: 15px;
+            font-weight: bold;
+            color: #33691e;
+        }
+        .instrucciones-examen {
+            background-color: #fff3e0;
+            border-left: 4px solid #ffb74d;
+            padding: 15px;
+            margin-bottom: 25px;
+            font-size: 13px;
+            color: #e65100;
+            line-height: 1.5;
+        }
+        .problema-card {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 25px;
+            page-break-inside: avoid;
+        }
+        .problema-header {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2b579a;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+        .problema-cuerpo {
+            font-size: 15px;
+            line-height: 1.6;
+            text-align: justify;
+        }
+        .datos-bloque {
+            background-color: #f9f9f9;
+            border: 1px dashed #ccc;
+            padding: 10px;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #555;
+            border-radius: 4px;
+        }
+        
+        /* Alertas de Pantalla Bloqueada */
+        #block-screen {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(211, 47, 47, 0.95);
+            color: white;
+            text-align: center;
+            padding-top: 15%;
+            z-index: 99999;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        #block-screen p {
+            font-size: 18px;
+            margin-top: 15px;
+            font-weight: normal;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #2b579a;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+            display: none;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
+
+    <div id="block-screen">
+        <div>¡PÁGINA BLOQUEADA POR SEGURIDAD!</div>
+        <p>Has salido de la ventana del examen o intentado realizar una acción no permitida.<br>
+        Esta alerta ha sido enviada inmediatamente a la base de datos del profesor.<br>
+        Entrega tu hoja física al docente para validar tu situación.</p>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>UNIVERSIDAD / INSTITUTO POLITÉCNICO</h1>
+            <h3>Evaluación Presencial Digitalizada: Soluciones Químicas</h3>
+            <p>Profesor: José Ángel</p>
+            <span class="badge-presencial">MODALIDAD: RESPUESTAS EXCLUSIVAS EN HOJA FISICA</span>
+        </header>
+
+        <div id="login-section">
+            <div id="login-box">
+                <h4 style="margin-top:0; text-align:center; color:#555;">Validación de Estudiante</h4>
+                <div class="form-group">
+                    <label for="cedulaInput">Número de Cédula de Identidad:</label>
+                    <input type="text" id="cedulaInput" placeholder="Ej: 12345678" autocomplete="off">
+                </div>
+                <button type="button" id="btnIngresar" onclick="validarEstudiante()">Acceder al Examen</button>
+                <div id="spinner" class="spinner"></div>
+                <p id="login-error" style="color:red; font-size:13px; text-align:center; font-weight:bold; margin-top:10px;"></p>
+            </div>
+        </div>
+
+        <div id="exam-content" class="tex2jax_process">
+            <div class="student-info-bar" id="student-bar">
+                Estudiante: <span id="lblNombre">---</span> | Cédula: <span id="lblCedula">---</span> | Sección: <span id="lblSeccion">---</span>
+            </div>
+            
+            <div class="instrucciones-examen">
+                <strong>INSTRUCCIONES CRÍTICAS PARA EL ESTUDIANTE:</strong><br>
+                1. Lea atentamente los enunciados en pantalla. Desenvuelva y resuelva **manuscritamente todo el procedimiento algebraico y analítico** en la hoja de EXAMEN.<br>
+                2. Al finalizar, firme su hoja de examen y entréguela en físico. Las respuestas en pantalla son solo informativas; **solo se corregirá lo plasmado en papel**.<br>
+                3. <span style="text-decoration: underline;">PROHIBIDO SALIR DE LA PÁGINA</span>: Cambiar de pestaña, abrir WhatsApp, tomar capturas de pantalla (PrintScreen) o inspeccionar código provocará el **bloqueo automático e irreversible** de la evaluación.
+            </div>
+
+            <div class="problema-card">
+    <div class="problema-header">Problema 1: Crioscopía y Dilución (5 puntos)</div>
+    <div class="problema-cuerpo">
+        Una solución acuosa de sacarosa ($C_{12}H_{22}O_{11}$) preparada a partir de una masa desconocida de soluto presenta un punto de congelación de $-0,85$ °C. Se conoce que la densidad de esta solución es de $1,05$ g/mL y el volumen inicial medido en el laboratorio es de $250$ mL. A partir de estos datos:
+        <br><br>
+        1. Calcule la concentración molar (Molaridad) de la solución inicial.<br>
+        2. Si toda la solución original se transfiere a un matraz y se diluye con agua destilada hasta alcanzar un volumen final exactamente $2,5$ veces el volumen inicial, determine la concentración molar de la solución resultante.
+        <div class="datos-bloque">
+            <strong>Datos:</strong> $K_f$ del agua = $1,86$ °C·kg/mol; Masa molar de la sacarosa = $342,3$ g/mol.
+        </div>
+    </div>
+</div>
+
+<div class="problema-card">
+    <div class="problema-header">Problema 2: Balance de Masa en Tres Corrientes (5 puntos)</div>
+    <div class="problema-cuerpo">
+        En un proceso industrial continuo se interceptan tres corrientes líquidas de sulfato de sodio ($Na_2SO_4$) para mezclarse en un único tanque homogeneizador, generando un único flujo de salida. Las características de las corrientes de entrada son las siguientes:
+        <ul>
+            <li><strong>Corriente A:</strong> Un flujo de $1,2$ L/min con una concentración de $0,45$ M.</li>
+            <li><strong>Corriente B:</strong> Un flujo de $0,8$ L/min con una concentración de $1,15$ M.</li>
+            <li><strong>Corriente C:</strong> Un flujo de $1,5$ L/min con una concentración de $0,20$ M.</li>
+        </ul>
+        Asumiendo que los volúmenes son estrictamente aditivos y el proceso se encuentra en estado estacionario:
+        <br><br>
+        1. Determine la concentración molar final del sulfato de sodio en el flujo de salida del proceso.
+    </div>
+</div>
+
+<div class="problema-card">
+    <div class="problema-header">Problema 3: Crioscopía de Electrólitos y Rendimiento (5 puntos)</div>
+    <div class="problema-cuerpo">
+        Se disuelven $15,5$ g de un electrólito fuerte hipotético, cloruro de un metal divalente ($MCl_2$), en $400$ g de agua. La solución resultante experimenta un descenso crioscópico ($\Delta T_f$) de $1,98$ °C. Sabiendo que el rendimiento de disociación de la sal en estas condiciones es del $85\%$:
+        <br><br>
+        1. Calcule el factor de Van 't Hoff ($i$) real para el soluto.<br>
+        2. Determine la masa molar del metal ($M$) e identifique de qué elemento de la tabla periódica se trata.
+        <div class="datos-bloque">
+            <strong>Datos:</strong> $K_f$ del agua = $1,86$ °C·kg/mol; Masa atómica del $Cl$ = $35,4$ g/mol.
+        </div>
+    </div>
+</div>
+
+<div class="problema-card">
+    <div class="problema-header">Problema 4: Mezclas de Soluciones (5 puntos)</div>
+    <div class="problema-cuerpo">
+        Se mezclan $378$ mL de solución de $NaOH$ $0,89$ M con $86$ mL de solución $0,67$ M de $NaOH$. Si a esta solución se le agregan $2$ g de $NaOH$ sólido y se completan con agua destilada hasta un aforo de exactamente $500$ mL:
+        <br><br>
+        1. ¿Cuál es la molaridad final de la solución resultante?
+        <div class="datos-bloque">
+            <strong>Datos auxiliares:</strong> Masas atómicas: $Na = 23$ g/mol, $O = 16$ g/mol, $H = 1$ g/mol.
+        </div>
+    </div>
+</div>
+
+    <script>
+        // !! REEMPLAZAR ESTA URL CON LA URL COPIADA DE GOOGLE APPS SCRIPT !!
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzGQenVwhF1vHBvQyT_e1fjdEFfFW2vR9s8CvJ0meT6380v0_GnTpVY8pfRnCfWkH6pDw/exec";
+
+        let estudianteActual = null;
+        let examenIniciado = false;
+        let alertasContador = 0;
+
+// 1. Petición asíncrona de Validación (doGet)
+        function validarEstudiante() {
+            const cedula = document.getElementById("cedulaInput").value.trim();
+            const errorLbl = document.getElementById("login-error");
+            const spinner = document.getElementById("spinner");
+            
+            if(!cedula) {
+                errorLbl.innerText = "Por favor ingrese su número de cédula.";
+                return;
+            }
+            
+            errorLbl.innerText = "";
+            spinner.style.display = "block";
+            
+            // Construir petición con bypass de CORS usando el API nativo fetch
+            fetch(`${WEB_APP_URL}?cedula=${cedula}`)
+            .then(res => res.json())
+            .then(data => {
+                spinner.style.display = "none";
+                if(data.status === "autorizado") {
+                    estudianteActual = data.estudiante;
+                    document.getElementById("login-section").style.display = "none";
+                    
+                    // Asignar datos a la interfaz
+                    document.getElementById("lblNombre").innerText = `${estudianteActual.nombre} ${estudianteActual.apellido}`;
+                    document.getElementById("lblCedula").innerText = estudianteActual.cedula;
+                    document.getElementById("lblSeccion").innerText = estudianteActual.seccion;
+                    
+                    // ==========================================
+                    // NUEVO BLOQUE OPTIMIZADO PARA MATHJAX
+                    // ==========================================
+                    document.getElementById("exam-content").style.display = "block";
+                    examenIniciado = true;
+                    
+                    // Le damos 200 milisegundos al navegador para procesar el texto antes de llamar a MathJax
+                    setTimeout(function() {
+                        if (window.MathJax && window.MathJax.typesetPromise) {
+                            MathJax.typesetPromise();
+                        }
+                    }, 200);
+                    // ==========================================
+                    
+                } else {
+                    errorLbl.innerText = data.message;
+                }
+            })
+            .catch(err => {
+                spinner.style.display = "none";
+                errorLbl.innerText = "Error de conexión con el Drive. Verifique el internet o la URL del script.";
+                console.error(err);
+            });
+        }
+        // 2. Reportar eventos en tiempo real al Apps Script (doPost)
+        function reportarFraude(eventoStr, detallesStr) {
+            if(!examenIniciado || !estudianteActual) return;
+            
+            const payload = {
+                cedula: estudianteActual.cedula,
+                nombre: `${estudianteActual.nombre} ${estudianteActual.apellido}`,
+                evento: eventoStr,
+                detalles: detallesStr
+            };
+            
+            // Usamos sendBeacon para asegurar el envío aunque el usuario intente cerrar la ventana
+            fetch(WEB_APP_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+        }
+
+        // ==========================================
+        // SÓLIDO BLOQUE DE SEGURIDAD ANTI-FRAUDE
+        // ==========================================
+
+        // A. Bloquear Clic Derecho y Selección nativa adicional
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.addEventListener('selectstart', event => event.preventDefault());
+        document.addEventListener('keydown', function(e) {
+            // Bloquear Ctrl+C, Ctrl+U, F12, Ctrl+Shift+I, Ctrl+S
+            if (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 85 || e.keyCode === 73 || e.keyCode === 83 || e.keyCode === 74)) {
+                e.preventDefault();
+                reportarFraude("TECLA_PROHIBIDA", `Intentó usar combinación de teclas con código: ${e.keyCode}`);
+                return false;
+            }
+            if (e.keyCode === 123) { // F12
+                e.preventDefault();
+                reportarFraude("TECLA_PROHIBIDA", "Intentó abrir Herramientas de Desarrollador (F12)");
+                return false;
+            }
+        });
+
+        // B. Control de Pérdida de Foco (Detección si sale a ChatGPT, WhatsApp o captura)
+        window.addEventListener('blur', function() {
+            if(examenIniciado) {
+                alertasContador++;
+                reportarFraude("PERDIDA_FOCO_ALERTA", `El estudiante se salió de la pantalla del examen (Alerta #${alertasContador})`);
+                
+                if(alertasContador >= 1) { // Bloqueo al primer desvío para máxima rigurosidad presencial
+                    document.getElementById("block-screen").style.display = "block";
+                    reportarFraude("BLOQUEO_TOTAL", "Pantalla bloqueada permanentemente por desacatar la norma de permanencia.");
+                }
+            }
+        });
+
+        // Detección complementaria por API de visibilidad de página
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'hidden' && examenIniciado) {
+                reportarFraude("PESTANA_CAMBIADA", "El estudiante minimizó o cambió de pestaña activamente.");
+                document.getElementById("block-screen").style.display = "block";
+            }
+        });
+
+    </script>
+</body>
+</html>
