@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZUFORCA: Reactor Avanzado de Ingeniería Química — (Refactor)</title>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <style>
+        :root {
+            --glass-bg: rgba(10, 20, 30, 0.75);
+            --accent-blue: #3498db;
+            --success: #2ecc71;
+            --gold: #f1c40f;
+            --danger: #e74c3c;
+            --purple: #9b59b6;
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #050b10 url('https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/quimica-general/herramientas/soluciones/fondo-soluciones.png') no-repeat center center fixed;
+            background-size: cover; color: white;
+            transition: background 0.8s ease;
+        }
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 18px; padding: 28px;
+            width: 92%; max-width: 900px;
+            box-shadow: 0 18px 40px rgba(0,0,0,0.85);
+        }
+        .instruction-box {
+            background: rgba(241, 196, 15, 0.08);
+            border: 1px dashed var(--gold);
+            padding: 12px; border-radius: 10px;
+            margin-bottom: 18px; font-size: 0.9em; line-height: 1.4;
+        }
+        .problem-text { 
+            background: rgba(255,255,255,0.06);
+            padding: 18px; 
+            border-radius: 12px; margin: 14px 0; border-left: 6px solid var(--accent-blue);
+            font-size: 1.02em; min-height: 110px; line-height: 1.5;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.16);
+            border-radius: 10px; color: white; padding: 12px; margin-bottom: 12px; 
+            box-sizing: border-box; font-family: inherit; font-size: 1em;
+        }
+        textarea { resize: vertical; min-height: 90px; }
+        .controls { display:flex; gap:10px; flex-wrap:wrap; }
+        .controls button { flex:1 1 200px; padding:12px; border-radius:10px; border:none; cursor:pointer; font-weight:bold; }
+        button.primary { background:var(--accent-blue); color:white; }
+        button.secondary { background:var(--purple); color:white; }
+        button.ghost { background:transparent; border:1px solid rgba(255,255,255,0.08); color:white; }
+        .feedback-box { margin-top: 10px; padding: 12px; border-radius: 10px; font-size: 0.95em; display:none; text-align:center; }
+        .footer-credits { margin-top: 18px; font-size: 0.85em; color: rgba(255,255,255,0.7); text-align: center; }
+        #final-screen { text-align:center; display:none; }
+        .meta-debug { font-size:0.8em; opacity:0.7; margin-top:8px; }
+    </style>
+</head>
+<body>
+<div class="glass-panel">
+    <div id="registro">
+        <h2 style="text-align:center; margin-bottom:6px; letter-spacing:2px;">ZUFORCA</h2>
+        <p style="text-align:center; color:var(--gold); font-size:0.95em; margin-bottom:18px; font-weight:bold;">SISTEMA DE EVALUACIÓN Y ADMISIÓN DE INGENIERÍA</p>
+        <div class="instruction-box">
+            <b>PROTOCOLO DE SELECCIÓN Y EVALUACIÓN INDUSTRIAL:</b><br>
+            • Ciclos automatizados de 5 problemas complejos para validación de aptitud técnica.<br>
+            • Racha de <b>0 a 39 puntos</b>: Evaluación de rangos de pregrado estándar.<br>
+            • Racha de <b>40 a 49 puntos</b>: Nivel Avanzado con acoplamiento de variables coligativas.<br>
+            • Racha <b>&ge; 50 puntos (NIVEL 5)</b>: Filtro riguroso y exclusivo para estudiantes que aspiran a traslados hacia <b>Ingeniería Química</b>.
+        </div>
+
+        <input type="text" id="user-name" placeholder="Nombre y Apellido" />
+        <input type="text" id="user-id" placeholder="Cédula de Identidad" />
+        <div class="controls" style="margin-top:6px;">
+            <button id="btn-activar" class="primary" onclick="iniciar()">ACTIVAR REACTOR DE SELECCIÓN</button>
+            <button id="btn-preview" class="ghost" onclick="abrirDemo()">Vista rápida (demo)</button>
+        </div>
+    </div>
+
+    <div id="simulador" style="display:none;">
+        <div style="display:flex; flex-direction:column; font-size:0.9em; margin-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:10px; gap:6px;">
+            <div style="display:flex; justify-content:space-between;">
+                <span>POSTULANTE: <b id="label-estudiante" style="color:var(--accent-blue);"></b></span>
+                <span>RACHA ACUMULADA: <b id="racha-total" style="color:var(--gold);">0</b></span>
+            </div>
+            <div>
+                <span>ESTADO DE LOGÍSTICA: <b id="label-nivel" style="text-transform:uppercase;"></b></span>
+            </div>
+        </div>
+
+        <div id="enunciado" class="problem-text"></div>
+
+        <label style="font-size:0.9em; opacity:0.9; margin-bottom:6px; display:block;">Desarrollo técnico y balance terminal:</label>
+        <textarea id="logic" placeholder="Ej: Molalidad = DTc / Kc... Pureza = X%... Molaridad final = Y M"></textarea>
+        <div id="feedback" class="feedback-box"></div>
+
+        <div class="controls">
+            <button id="btn-evaluar" class="primary" onclick="evaluar()">ANALIZAR PROCESO</button>
+            <button id="btn-auditoria" class="secondary" onclick="validarAuditoria()">🧪 AUDITORÍA MAESTRA (ACCESO DOCENTE)</button>
+            <button id="btn-simular-correcto" class="ghost" onclick="simularCorrecto()">Simular respuesta correcta (debug)</button>
+        </div>
+
+        <div style="text-align:center; font-size:0.85em; margin-top:12px; opacity:0.7;">EJERCICIO <span id="progreso">1</span> DE <span id="total-ejercicios-label">5</span></div>
+        <div class="meta-debug" id="meta-debug" style="display:none;"></div>
+    </div>
+
+    <div id="final-screen">
+        <h3 id="resultado-titulo" style="font-size:1.5em; margin-bottom:8px;"></h3>
+        <p id="resultado-detalle" style="opacity:0.9;"></p>
+        <div id="mensaje-racha" style="margin:18px 0; padding:12px; background:rgba(255,255,255,0.04); border-radius:12px;"></div>
+        <div class="controls" style="max-width:420px; margin:10px auto;">
+            <button id="btn-siguiente-ciclo" class="primary" onclick="siguienteIntento()">INICIAR SIGUIENTE CICLO DE EVALUACIÓN</button>
+            <button class="ghost" onclick="descargarReporte()">Descargar reporte (JSON)</button>
+        </div>
+    </div>
+</div>
+
+<div class="footer-credits">
+    Desarrollado por <b>ZUFORCA</b> | Dirección de Currículo: <b>Dr. José Ángel Caldera L.</b>
+</div>
+
+<script>
+// CONFIG
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwvI1MEpUrqSYWEE9PTr9HlU1w201eUj_MsJselF7F95DvBKZ1iAVqIHtxGWw69Ahdu/exec";
+const CONFIG = {
+    totalProblemas: 5,
+    relTolByLevel: { 1: 0.06, 2:0.05, 3:0.04, 4:0.035, 5:0.03, 6:0.025, 7:0.02 },
+    absTol: 0.01,
+    showDebugMeta: false
+};
+
+// Datos estáticos (compatibles con tu estructura anterior)
+const RANGOS = [
+    { min: 0,  label: "Preparador de Soluciones Básico", color: "#bdc3c7", bg: "rgba(149, 165, 166, 0.12)" },
+    { min: 10, label: "Asistente de Laboratorio Químico", color: "#2ecc71", bg: "rgba(46, 204, 113, 0.08)" },
+    { min: 20, label: "Estequiometrista de Procesos Planta", color: "#e67e22", bg: "rgba(230, 126, 34, 0.08)" },
+    { min: 30, label: "Ingeniero Junior de Mezclas", color: "#3498db", bg: "rgba(52, 152, 219, 0.08)" },
+    { min: 40, label: "Maestro Operador: Control Coligativo", color: "#f1c40f", bg: "rgba(241, 196, 15, 0.10)" },
+    { min: 50, label: "🏆 ÉLITE DE SELECCIÓN: ChemE-Bowl", color: "#e74c3c", bg: "rgba(231, 76, 60, 0.12)" }
+];
+
+const ELEMENTOS = {
+    hidroxidos: [
+        {n:"Al(OH)_3", mm:78.00, v:3, i:4},
+        {n:"Fe(OH)_3", mm:106.86, v:3, i:4},
+        {n:"Fe(OH)_2", mm:89.86, v:2, i:3},
+        {n:"Mg(OH)_2", mm:58.31, v:2, i:3},
+        {n:"Ca(OH)_2", mm:74.09, v:2, i:3}
+    ],
+    sales: [
+        {n:"FeCl_3", mm:162.2, v:3, i:4},
+        {n:"NiSO_4", mm:154.7, v:2, i:2},
+        {n:"Al_2(SO_4)_3", mm:342.15, v:6, i:5},
+        {n:"Ba(ClO_3)_2", mm:304.2, v:2, i:3}
+    ],
+    acidos: [
+        {n:"H_2SO_4", mm:98.08, v:2, i:3},
+        {n:"H_3PO_4", mm:97.99, v:3, i:4},
+        {n:"HClO_4", mm:100.46, v:1, i:2},
+        {n:"HNO_3", mm:63.01, v:1, i:2}
+    ]
+};
+
+// Estado de la sesión
+let ejercicioActual = 1;
+let aciertosIntento = 0;
+let rachaPerfecta = 0;
+let metaVal = null;
+let historialTipos = [];
+let datosUser = { nombre: "", id: "" };
+let nivelActualLabel = "";
+let historialPlantillas = [];
+
+// Utilidades
+function elegirNoRepetir(lista, historial, maxHist = 6) {
+    if (!Array.isArray(lista) || lista.length === 0) return null;
+    let idx; let tries = 0;
+    do { idx = Math.floor(Math.random() * lista.length); tries++; } while (historial.includes(idx) && tries < 30);
+    historial.push(idx);
+    if (historial.length > maxHist) historial.shift();
+    return lista[idx];
+}
+
+function extraerNumeros(texto) {
+    if (!texto) return [];
+    const re = /[+-]?\d+(?:[\.,]\d+)?(?:e[+-]?\d+)?/ig;
+    const encontrados = texto.match(re) || [];
+    return encontrados.map(s => Number(s.replace(',', '.'))).filter(n => !Number.isNaN(n));
+}
+
+function dentroTolerancia(valorUsuario, meta, nivel) {
+    const rel = CONFIG.relTolByLevel[nivel] ?? 0.04;
+    const tol = Math.max(Math.abs(meta) * rel, CONFIG.absTol);
+    return Math.abs(valorUsuario - meta) <= tol;
+}
+
+function actualizarInterfazRango() {
+    const rangoDefinido = [...RANGOS].reverse().find(r => rachaPerfecta >= r.min) || RANGOS[0];
+    nivelActualLabel = rangoDefinido.label;
+    const labelNivel = document.getElementById('label-nivel');
+    labelNivel.innerText = nivelActualLabel;
+    labelNivel.style.color = rangoDefinido.color;
+    document.getElementById('racha-total').innerText = rachaPerfecta;
+    document.querySelector('.glass-panel').style.background = rangoDefinido.bg;
+}
+
+async function consultarProgresoNube(cedula) {
+    try {
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getProgreso&cedula=${cedula}`);
+        const data = await response.json();
+        rachaPerfecta = Number(data.racha) || 0;
+    } catch (e) {
+        rachaPerfecta = 0; // fallo gracioso: arrancamos local
+        console.warn('No se pudo leer progreso en la nube, iniciando localmente. ', e);
+    }
+}
+
+function registrarEnDrive(aciertos, racha) {
+    // modo no-cors: no esperamos respuesta
+    const payload = { nombre: datosUser.nombre, id: datosUser.id, aciertos: aciertos, racha: racha };
+    try { fetch(GOOGLE_SCRIPT_URL, { method:'POST', mode:'no-cors', body: JSON.stringify(payload) }); }
+    catch (e) { console.warn('Registro fallido (no-cors).', e); }
+}
+
+// --- Plantillas por nivel (cada función devuelve { texto, metaVal, metaLabel? }) ---
+const LevelTemplates = {
+    1: [
+        (comp) => {
+            const v_ml = Math.floor(Math.random() * 600 + 200);
+            const conc = +(Math.random() * 0.7 + 0.15).toFixed(2);
+            const mass = +(conc * (v_ml/1000) * comp.mm).toFixed(2);
+            return { texto: `<b>[NIVEL 1 - MOLARIDAD]</b> Preparar ${v_ml} mL de \(${comp.n}\) a ${conc} M. ¿Qué masa (g) se necesita?`, meta: mass };
+        },
+        (comp) => {
+            const masa_agua = Math.floor(Math.random() * 300 + 200);
+            const molalidad = +(Math.random() * 0.5 + 0.1).toFixed(2);
+            const mass = +(molalidad * (masa_agua / 1000) * comp.mm).toFixed(2);
+            return { texto: `<b>[NIVEL 1 - MOLALIDAD]</b> Se disuelven cristales puros de \(${comp.n}\) en ${masa_agua} g de agua. Si la molalidad es ${molalidad} m, ¿qué masa de soluto (g) se usó?`, meta: mass };
+        }
+    ],
+    2: [
+        (comp) => {
+            const v_ml = Math.floor(Math.random() * 600 + 200);
+            const conc = +(Math.random() * 0.7 + 0.15).toFixed(2);
+            const pureza = Math.floor(Math.random() * 15 + 80);
+            const masa_teorica = conc * (v_ml / 1000) * comp.mm;
+            const mass = +(masa_teorica / (pureza / 100)).toFixed(2);
+            return { texto: `<b>[NIVEL 2 - PUREZA SÓLIDA]</b> Preparar ${v_ml} mL de ${conc} M de \(${comp.n}\) con materia prima ${pureza}% pura. ¿Qué masa bruta (g) se requiere?`, meta: mass };
+        },
+        (comp) => {
+            const v_ml = Math.floor(Math.random() * 500 + 150);
+            const c_stock = +(Math.random() * 1.8 + 0.8).toFixed(2);
+            const desired = +(Math.random() * 0.7 + 0.15).toFixed(2);
+            const mass = +(((desired * v_ml/1000) / c_stock) * comp.mm).toFixed(2);
+            return { texto: `<b>[NIVEL 2 - BALANCES DE DILUCIÓN]</b> Preparar ${v_ml} mL a ${desired} M a partir de un stock ${c_stock} M. ¿Qué masa de soluto (g) está presente en el alícuota de stock requerida?`, meta: mass };
+        }
+    ],
+    3: [
+        (comp) => {
+            const v1 = Math.floor(Math.random() * 150 + 100);
+            const c1 = +(Math.random() * 0.6 + 0.4).toFixed(2);
+            const v2 = Math.floor(Math.random() * 150 + 80);
+            const c2 = +(Math.random() * 0.5 + 0.2).toFixed(2);
+            const factor_contraccion = +(Math.random() * 0.03 + 0.97).toFixed(3);
+            const v_final = Math.round((v1 + v2) * factor_contraccion);
+            const moles = (v1/1000)*c1 + (v2/1000)*c2;
+            const meta = +(moles / (v_final/1000)).toFixed(3);
+            return { texto: `<b>[NIVEL 3 - MEZCLA REALISTA]</b> Mezclar ${v1} mL a ${c1} M y ${v2} mL a ${c2} M. Volumen real: ${v_final} mL. ¿Molaridad final?`, meta };
+        }
+    ],
+    4: [
+        (comp) => {
+            const masa_cruda = +(Math.random() * 10 + 25).toFixed(1);
+            const pureza = Math.floor(Math.random() * 12 + 83);
+            const masa_pura = masa_cruda * (pureza / 100);
+            const masa_agua_g = 400;
+            const moles = masa_pura / comp.mm;
+            const molalidad = moles / (masa_agua_g/1000);
+            const Kc = 1.86;
+            const deltaT = +(comp.i * molalidad * Kc).toFixed(3);
+            const v_aforo = Math.floor(Math.random() * 200 + 300);
+            const c_deseada = +(Math.random() * 0.2 + 0.2).toFixed(2);
+            const masa_pura_necesaria = c_deseada * (v_aforo/1000) * comp.mm;
+            const masa_bruta_requerida = +(masa_pura_necesaria / (pureza/100)).toFixed(2);
+            return { texto: `<b>[NIVEL 4 - DIAGNÓSTICO COLIGATIVO]</b> Muestra ${masa_cruda} g (${pureza}% puro). Medido ΔT = ${deltaT}°C. Para preparar ${v_aforo} mL a ${c_deseada} M, ¿qué masa bruta (g) se requiere?`, meta: masa_bruta_requerida };
+        }
+    ],
+    5: [
+        // Mantener variedad: mezcla multi-tanque con purezas y desviación de volumen
+        (compN5) => {
+            const v1 = Math.floor(Math.random()*150 + 100);
+            const v2 = Math.floor(Math.random()*150 + 120);
+            const v3 = Math.floor(Math.random()*80 + 60);
+            const v4 = Math.floor(Math.random()*200 + 180);
+            const c1 = +(Math.random()*0.4 + 0.35).toFixed(2);
+            const c2 = +(Math.random()*0.3 + 0.2).toFixed(2);
+            const c3 = +(Math.random()*0.06 + 0.07).toFixed(2);
+            const c4 = +(Math.random()*0.03 + 0.03).toFixed(2);
+            const p1 = Math.floor(Math.random()*5 + 82);
+            const p2 = Math.floor(Math.random()*4 + 88);
+            const p3 = Math.floor(Math.random()*3 + 93);
+            const p4 = Math.floor(Math.random()*2 + 97);
+            const v_teorico_total = v1 + v2 + v3 + v4;
+            const factor_desviacion = +(Math.random() * 0.04 + 0.95).toFixed(3);
+            const v_real = Math.round(v_teorico_total * factor_desviacion);
+            const moles1 = (v1/1000)*c1*(p1/100);
+            const moles2 = (v2/1000)*c2*(p2/100);
+            const moles3 = (v3/1000)*c3*(p3/100);
+            const moles4 = (v4/1000)*c4*(p4/100);
+            const moles_totales = moles1 + moles2 + moles3 + moles4;
+            const meta = +(moles_totales / (v_real/1000)).toFixed(3);
+            return { texto: `<b>[NIVEL 5 - RETO MAESTRO INTEGRADOR]</b> Vaciar 4 tanques remanentes de \(${compN5.nombre || compN5.n || 'compuesto'}\) con volúmenes: ${v1}, ${v2}, ${v3}, ${v4} mL y purezas ${p1}%, ${p2}%, ${p3}%, ${p4}%. Volumen real final: ${v_real} mL. ¿Molaridad final?`, meta };
+        }
+    ],
+    // NIVELES NUEVOS
+    6: [
+        (comp) => {
+            const masa_bruta = +(Math.random() * 80 + 40).toFixed(1);
+            const pureza = Math.floor(Math.random() * 12 + 83);
+            const pm = comp.pm || comp.mm || comp.mm;
+            const masa_pura = masa_bruta * (pureza / 100);
+            const moles = masa_pura / pm;
+            const rendimiento = Math.floor(Math.random() * 20 + 75);
+            const moles_prod = moles * (rendimiento/100);
+            const vol_tanque = +(Math.random() * 0.5 + 1.0).toFixed(3);
+            const meta = +(moles_prod / vol_tanque).toFixed(3);
+            return { texto: `<b>[NIVEL 6 - MULTI-ETAPA]</b> Materia prima ${masa_bruta} g (${pureza}% puro). Rendimiento ${rendimiento}%. Volumen final ${vol_tanque} L. ¿Molaridad final?`, meta };
+        }
+    ],
+    7: [
+        (comp) => {
+            const caudal = +(Math.random() * 15 + 45).toFixed(1);
+            const dosificacion_kg = +(Math.random() * 2 + 5).toFixed(2);
+            const pureza = +(Math.random() * 8 + 88).toFixed(1);
+            const pm = comp.pm || comp.mm;
+            const masa_pura_g = dosificacion_kg * 1000 * (pureza/100);
+            const moles = masa_pura_g / pm;
+            const conversion = Math.floor(Math.random()*10 + 80);
+            const moles_remanentes = moles * (1 - conversion/100);
+            const meta = +(moles_remanentes / caudal).toFixed(4);
+            return { texto: `<b>[NIVEL 7 - DISEÑO CINÉTICO]</b> Caudal ${caudal} L/min. Dosificación ${dosificacion_kg} kg (${pureza}%). Conversión ${conversion}%. ¿Moles remanentes por L?`, meta };
+        }
+    ]
+};
+
+// Determina nivel en función de racha
+function nivelPorRacha(racha) {
+    if (racha < 10) return 1;
+    if (racha < 20) return 2;
+    if (racha < 30) return 3;
+    if (racha < 40) return 4;
+    if (racha < 50) return 5;
+    if (racha < 70) return 6;
+    return 7;
+}
+
+// Generador central (modular)
+function generar() {
+    const todas = [...ELEMENTOS.hidroxidos, ...ELEMENTOS.sales, ...ELEMENTOS.acidos];
+    const comp = todas[Math.floor(Math.random() * todas.length)];
+    const nivel = nivelPorRacha(rachaPerfecta);
+    const plantillas = LevelTemplates[nivel] || LevelTemplates[1];
+    const plantilla = elegirNoRepetir(plantillas, historialPlantillas);
+    const result = plantilla(comp);
+    metaVal = result.meta;
+
+    document.getElementById('enunciado').innerHTML = result.texto;
+    document.getElementById('logic').value = '';
+    document.getElementById('feedback').style.display = 'none';
+    document.getElementById('progreso').innerText = ejercicioActual;
+    document.getElementById('total-ejercicios-label').innerText = CONFIG.totalProblemas;
+    if (CONFIG.showDebugMeta) {
+        const metaDbg = document.getElementById('meta-debug');
+        metaDbg.style.display = 'block';
+        metaDbg.innerText = `metaVal = ${metaVal} (nivel ${nivel})`;
+    }
+    if (window.MathJax) MathJax.typesetPromise();
+}
+
+// Evaluación
+function evaluar() {
+    const texto = document.getElementById('logic').value;
+    const fb = document.getElementById('feedback');
+    const btn = document.getElementById('btn-evaluar');
+    const numerosEncontrados = extraerNumeros(texto);
+
+    btn.disabled = true; btn.innerText = 'SISTEMA COMPUTANDO BALANCE DE MATERIA...';
+
+    let exito = false;
+    const nivel = nivelPorRacha(rachaPerfecta);
+
+    for (const n of numerosEncontrados) {
+        if (dentroTolerancia(n, metaVal, nivel)) { exito = true; break; }
+    }
+
+    fb.style.display = 'block';
+    if (exito) {
+        aciertosIntento++;
+        fb.style.background = 'rgba(46, 204, 113, 0.12)';
+        fb.style.color = 'var(--success)';
+        fb.innerHTML = `<b>BALANCE APROBADO.</b><br>Estado: ${nivelActualLabel}<br>Respuesta dentro de tolerancia.`;
+    } else {
+        fb.style.background = 'rgba(231, 76, 60, 0.12)';
+        fb.style.color = 'var(--danger)';
+        fb.innerHTML = `<b>DESVIACIÓN DETECTADA.</b><br>Rango: ${nivelActualLabel}<br>Valor esperado: <b>${metaVal}</b>. Revise su cálculo.`;
+    }
+
+    setTimeout(() => {
+        btn.disabled = false; btn.innerText = 'ANALIZAR PROCESO';
+        siguientePaso();
+    }, 3500); // menor espera para pruebas (antes 15s)
+}
+
+function siguientePaso() {
+    if (ejercicioActual < CONFIG.totalProblemas) {
+        ejercicioActual++;
+        registrarEnDrive(0, rachaPerfecta);
+        generar();
+    } else {
+        finalizar();
+    }
+}
+
+function finalizar() {
+    document.getElementById('simulador').style.display = 'none';
+    document.getElementById('final-screen').style.display = 'block';
+    const esPerfecto = (aciertosIntento === CONFIG.totalProblemas);
+    if (esPerfecto) {
+        rachaPerfecta += 2;
+        document.getElementById('resultado-titulo').innerText = '¡CICLO DE INGENIERÍA PERFECTO!';
+        document.getElementById('resultado-titulo').style.color = 'var(--success)';
+        document.getElementById('resultado-detalle').innerText = 'Has superado el ciclo. Se han sumado +2 puntos a tu expediente.';
+    } else {
+        document.getElementById('resultado-titulo').innerText = 'CICLO INCOMPLETO';
+        document.getElementById('resultado-titulo').style.color = 'var(--gold)';
+        document.getElementById('resultado-detalle').innerText = 'Tu progreso actual se ha preservado. Sigue intentando para alcanzar el siguiente nivel.';
+    }
+
+    actualizarInterfazRango();
+
+    let mensajeEspecial = '';
+    let infoCiclos = '';
+    if (rachaPerfecta >= 50) {
+        mensajeEspecial = `<br><br><div style='color:var(--gold); border:2px solid var(--gold); padding:10px; border-radius:10px; text-align:center;'>🏆 <b>¡EXPEDIENTE CON MÁXIMA CALIFICACIÓN PARA INGENIERÍA QUÍMICA APROBADO!</b></div>`;
+    } else {
+        let residuo = rachaPerfecta % 10;
+        let puntosParaSiguiente = residuo === 0 ? 10 : 10 - residuo;
+        const ciclosFaltantes = puntosParaSiguiente / 2;
+        infoCiclos = `<br><small>Faltan <b>${ciclosFaltantes} ciclos perfectos</b> para ascender.</small>`;
+    }
+
+    document.getElementById('mensaje-racha').innerHTML = `Expediente actual: <b>${rachaPerfecta} puntos</b>.<br> Nivel alcanzado: <b>${nivelActualLabel}</b>. ${mensajeEspecial} ${infoCiclos}`;
+
+    registrarEnDrive(aciertosIntento, rachaPerfecta);
+}
+
+function siguienteIntento() {
+    ejercicioActual = 1; aciertosIntento = 0; historialTipos = []; historialPlantillas = [];
+    document.getElementById('final-screen').style.display = 'none';
+    document.getElementById('simulador').style.display = 'block';
+    generar();
+}
+
+// Auditoría docente
+async function validarAuditoria() {
+    const claveAcceso = prompt("SISTEMA DE CONTROL GENERAL ZUFORCA:\nIngrese clave de autenticación docente:");
+    const CLAVE_MAESTRA = "LUZ2026";
+    if (claveAcceso === CLAVE_MAESTRA) {
+        if (!datosUser || !datosUser.id) { datosUser.nombre = "PROFESOR DOCTOR AUDITOR"; datosUser.id = "99999999"; }
+        if (datosUser.id !== "11282631") {
+            const payloadAuditoria = { nombre: datosUser.nombre, id: datosUser.id, aciertos: CONFIG.totalProblemas, racha: 50, alertaAuditoria: "SÍ" };
+            try { await fetch(GOOGLE_SCRIPT_URL, { method:'POST', mode:'no-cors', body: JSON.stringify(payloadAuditoria) }); }
+            catch(e) { console.error('Error al reportar auditoría', e); }
+        }
+        alert('Acceso auditoría concedido. No se modificaron puntajes automáticamente.');
+    } else if (claveAcceso !== null) {
+        alert('ACCESO RECHAZADO: Credenciales de seguridad inválidas.');
+    }
+}
+
+// UI helpers
+function simularCorrecto() {
+    // Inserta metaVal en textarea para pruebas
+    if (metaVal === null) return alert('No hay meta calculada. Genere un enunciado.');
+    document.getElementById('logic').value = `${metaVal}`;
+}
+
+function abrirDemo() {
+    // abre la interfaz directamente en modo demo con perfil genérico
+    datosUser = { nombre: 'ESTUDIANTE DEMO', id: '00000000' };
+    rachaPerfecta = 0; actualizarInterfazRango();
+    document.getElementById('registro').style.display = 'none';
+    document.getElementById('simulador').style.display = 'block';
+    document.getElementById('label-estudiante').innerText = datosUser.nombre;
+    generar();
+}
+
+function descargarReporte() {
+    const report = { nombre: datosUser.nombre, id: datosUser.id, racha: rachaPerfecta, aciertosIntento, ejercicioActual };
+    const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'reporte_zuforca.json'; a.click(); URL.revokeObjectURL(url);
+}
+
+// Inicio
+async function iniciar() {
+    const n = document.getElementById('user-name').value.trim();
+    const i = document.getElementById('user-id').value.trim();
+    if (n && i) {
+        datosUser.nombre = n; datosUser.id = i;
+        const btnActivar = document.getElementById('btn-activar');
+        btnActivar.disabled = true; btnActivar.innerText = 'ACCEDIENDO AL BANCO DE DATOS...';
+        await consultarProgresoNube(i);
+        document.getElementById('label-estudiante').innerText = n;
+        document.getElementById('total-ejercicios-label').innerText = CONFIG.totalProblemas;
+        actualizarInterfazRango();
+        document.getElementById('registro').style.display = 'none';
+        document.getElementById('simulador').style.display = 'block';
+        generar();
+    } else {
+        alert('Ingrese credenciales válidas para el examen.');
+    }
+}
+
+// Exponer metaVal en consola para debugging (opcional)
+window.__ZUFORCA = { getMeta: () => metaVal, getRacha: () => rachaPerfecta };
+
+</script>
+</body>
+</html>
