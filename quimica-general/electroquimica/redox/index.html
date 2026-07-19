@@ -2,35 +2,321 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ejercicios y Teoría: Redox y Electroquímica</title>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 850px; margin: 40px auto; padding: 20px; background-color: #f4f7f6; }
-        h1 { color: #2c3e50; text-align: center; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
-        h2 { color: #2980b9; border-left: 5px solid #3498db; padding-left: 10px; margin-top: 30px; }
-        .section { background: #fff; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .exercise { background: #fff; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        ol { padding-left: 20px; }
-        li { margin-bottom: 10px; }
+        /* ===== RESET Y BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            line-height: 1.7;
+            color: #1e2b3c;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 30px 25px;
+            background: #f0f4f9;
+            background-image: radial-gradient(circle at 10% 20%, rgba(41, 128, 185, 0.03) 0%, transparent 50%);
+            min-height: 100vh;
+        }
+
+        /* ===== TÍTULOS ===== */
+        h1 {
+            color: #1a3a5e;
+            text-align: center;
+            font-size: 2.4rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            padding-bottom: 18px;
+            border-bottom: 4px solid #2c7fb8;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        h1::after {
+            content: "⚡";
+            margin-left: 12px;
+            font-size: 2rem;
+        }
+
+        h2 {
+            color: #1f4e7a;
+            border-left: 6px solid #2c7fb8;
+            padding-left: 16px;
+            margin: 30px 0 18px 0;
+            font-weight: 600;
+            font-size: 1.6rem;
+        }
+
+        h3 {
+            color: #1f4e7a;
+            margin: 24px 0 12px 0;
+            font-weight: 600;
+            font-size: 1.25rem;
+            border-bottom: 2px solid #dce6f0;
+            padding-bottom: 6px;
+        }
+
+        /* ===== SECCIONES ===== */
+        .section {
+            background: #ffffff;
+            padding: 24px 28px;
+            margin-bottom: 28px;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 20, 40, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e8edf4;
+            transition: box-shadow 0.2s;
+        }
+        .section:hover {
+            box-shadow: 0 8px 28px rgba(0, 20, 40, 0.08);
+        }
+
+        /* ===== EJERCICIOS ===== */
+        .exercise {
+            background: #f7faff;
+            padding: 20px 24px;
+            margin-bottom: 22px;
+            border-radius: 12px;
+            border-left: 6px solid #3a8fcb;
+            border: 1px solid #dde8f2;
+            border-left-width: 6px;
+            transition: background 0.15s;
+        }
+        .exercise:hover {
+            background: #f4f9ff;
+        }
+        .exercise h2 {
+            border-left: none;
+            padding-left: 0;
+            margin-top: 0;
+            font-size: 1.3rem;
+            color: #1a4a7a;
+        }
+        .exercise h2 small {
+            font-weight: 400;
+            font-size: 0.85rem;
+            color: #4f7a9f;
+            background: #e6eef7;
+            padding: 0 14px;
+            border-radius: 20px;
+            margin-left: 10px;
+        }
+
+        /* ===== CAJAS DE SOLUCIÓN ===== */
+        .solution-box {
+            background: #eef5fb;
+            padding: 18px 22px;
+            margin: 16px 0;
+            border-radius: 12px;
+            border-left: 6px solid #2c7fb8;
+            background: #f0f7fe;
+        }
+        .solution-box.amber {
+            border-left-color: #d4a017;
+            background: #fefaf0;
+        }
+        .solution-box.green {
+            border-left-color: #1e8b5e;
+            background: #f0faf5;
+        }
+        .solution-box.purple {
+            border-left-color: #7c5cbf;
+            background: #f6f2fd;
+        }
+
+        /* ===== GUÍAS (cajas destacadas) ===== */
+        .guide-box {
+            border: 2px solid #2c7fb8;
+            border-radius: 14px;
+            padding: 18px 22px;
+            margin: 20px 0;
+            background: #f7fbff;
+        }
+        .guide-box h2 {
+            border-left: none;
+            padding-left: 0;
+            margin-top: 0;
+            font-size: 1.2rem;
+        }
+        .guide-box.green {
+            border-color: #1e8b5e;
+            background: #f6fcf9;
+        }
+        .guide-box.green h2 {
+            color: #1e8b5e;
+        }
+        .guide-box.purple {
+            border-color: #7c5cbf;
+            background: #f8f5ff;
+        }
+        .guide-box.purple h2 {
+            color: #7c5cbf;
+        }
+        .guide-box.amber {
+            border-color: #d4a017;
+            background: #fefcf5;
+        }
+        .guide-box.amber h2 {
+            color: #b8860b;
+        }
+
+        /* ===== TABLAS ===== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0 20px 0;
+            font-size: 0.95rem;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+        }
+        th {
+            background: #1f4e7a;
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+        }
+        td {
+            padding: 10px 16px;
+            border-bottom: 1px solid #e2e9f2;
+            background: white;
+        }
+        tr:nth-child(even) td {
+            background: #f8fbfe;
+        }
+        tr:hover td {
+            background: #f0f6fd;
+        }
+
+        /* ===== LISTAS ===== */
+        ul, ol {
+            padding-left: 26px;
+            margin: 8px 0 12px 0;
+        }
+        li {
+            margin: 4px 0;
+        }
+
+        /* ===== TEXTO DESTACADO ===== */
+        .highlight {
+            background: #dcebf9;
+            padding: 0 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            color: #0b3b6b;
+        }
+        .formula-center {
+            text-align: center;
+            font-size: 1.3rem;
+            background: #f2f8ff;
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin: 12px 0;
+            border: 1px solid #d0e2f0;
+            font-weight: 500;
+        }
+
+        /* ===== IMÁGENES ===== */
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border-radius: 12px;
+            border: 1px solid #dce4ec;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 700px) {
+            body { padding: 16px 12px; }
+            .section { padding: 16px 14px; }
+            .exercise { padding: 14px 16px; }
+            h1 { font-size: 1.8rem; }
+            h2 { font-size: 1.3rem; }
+            .formula-center { font-size: 1.0rem; padding: 10px; }
+            table { font-size: 0.85rem; }
+            th, td { padding: 8px 10px; }
+        }
+
+        /* ===== REGLA DE ORO ===== */
+        .golden-rule {
+            background: #fdf2f2;
+            padding: 16px 20px;
+            border-left: 6px solid #c0392b;
+            border-radius: 10px;
+            margin: 16px 0;
+        }
+        .golden-rule strong {
+            color: #a93226;
+        }
+
+        /* ===== BADGE ===== */
+        .badge {
+            display: inline-block;
+            background: #2c7fb8;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 12px;
+            border-radius: 30px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-right: 6px;
+        }
+        .badge.green { background: #1e8b5e; }
+        .badge.amber { background: #b8860b; }
+        .badge.purple { background: #7c5cbf; }
+        .badge.red { background: #c0392b; }
+
+        /* ===== SEPARADOR ===== */
+        hr {
+            border: none;
+            border-top: 2px dashed #d0dce8;
+            margin: 32px 0 16px 0;
+        }
+
+        /* ===== PIE ===== */
+        .footer-note {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #3d5f7a;
+            background: #e8eff7;
+            padding: 14px 20px;
+            border-radius: 40px;
+            margin-top: 30px;
+            border: 1px solid #cbdae8;
+        }
     </style>
 </head>
 <body>
+
+    <!-- ===== TÍTULO PRINCIPAL ===== -->
     <h1>Teoría y Ejercicios: Redox y Electroquímica</h1>
 
+    <!-- ============================================================ -->
+    <!-- SECCIÓN 1: CONCEPTOS TEÓRICOS -->
+    <!-- ============================================================ -->
     <div class="section">
-        <h2>Conceptos Teóricos</h2>
-        <p><strong>Oxidación y reducción:</strong> En una reacción de oxidación-reducción o rédox existe la transferencia de uno o más electrones de una especia a otra. Ejemplo: \(\text{NaCl} \longrightarrow \text{Na} + \frac{1}{2}\text{Cl}_2\).</p>
+        <h2>📘 Conceptos Teóricos</h2>
+        <p><strong>Oxidación y reducción:</strong> En una reacción de oxidación-reducción o rédox existe la transferencia de uno o más electrones de una especie a otra.</p>
         <p>Un proceso rédox o reacción de célula puede ser dividido, para su estudio, en dos semisistemas o reacciones de electrodo:</p>
         <ul>
             <li><strong>Reducción:</strong> \(\text{Na}^+ + 1e^- \longrightarrow \text{Na}\) (el \(\text{Na}^+\) se reduce, es el oxidante).</li>
             <li><strong>Oxidación:</strong> \(\text{Cl}^- \longrightarrow \frac{1}{2}\text{Cl}_2 + 1e^-\) (el \(\text{Cl}^-\) se oxida, es el reductor).</li>
         </ul>
         <p>La reacción inversa de una reducción es una oxidación: \(\text{Na} \longrightarrow \text{Na}^+ + 1e^-\) (el \(\text{Na}\) se oxida, es el reductor). La oxidación y la reducción ocurren a la vez: no puede haber oxidación sin reducción y viceversa.</p>
-        
-        <p><strong>Estado de oxidación:</strong> El estado de oxidación de un átomo es la carga que tendría si se asignaran los electrones de cada enlace al átomo más electronegativo. Una especie se oxida cuando alguno de sus átomos constituyentes aumenta su estado de oxidación y se reduce cuando disminuye su estado de oxidación.</p>
-        
-        <p><strong>Ajuste de reacciones rédox:</strong></p>
+
+        <h3>Estado de oxidación</h3>
+        <p>El estado de oxidación de un átomo es la carga que tendría si se asignaran los electrones de cada enlace al átomo más electronegativo. Una especie se oxida cuando alguno de sus átomos constituyentes aumenta su estado de oxidación y se reduce cuando disminuye su estado de oxidación.</p>
+
+        <h3>Ajuste de reacciones rédox</h3>
         <ol>
             <li>Localiza las especies que cambian de estado de oxidación y escribe las dos semirreacciones.</li>
             <li>Ajusta cada semirreacción por separado: a) número de átomos, b) oxígeno (añadiendo \(\text{H}_2\text{O}\)), c) hidrógeno (añadiendo \(\text{H}^+\)), d) carga (añadiendo electrones).</li>
@@ -40,13 +326,18 @@
             <li>Comprueba el ajuste final y la simplicidad de los coeficientes.</li>
         </ol>
 
-        <p><strong>Valoraciones rédox:</strong> Se basan en procesos rédox. En el punto de equivalencia se cumple que: \(V_{\text{valorante}} \cdot cN_{\text{valorante}} = V_{\text{valorado}} \cdot cN_{\text{valorado}}\).</p>
+        <h3>Valoraciones rédox</h3>
+        <p>Se basan en procesos rédox. En el punto de equivalencia se cumple que: \(V_{\text{valorante}} \cdot cN_{\text{valorante}} = V_{\text{valorado}} \cdot cN_{\text{valorado}}\).</p>
     </div>
 
-    <h1>Ejercicios Propuestos</h1>
-    
+    <!-- ============================================================ -->
+    <!-- EJERCICIOS 1 al 7 (ajuste y conceptos) -->
+    <!-- ============================================================ -->
+    <h2>📝 Ejercicios de ajuste y conceptos redox</h2>
+
     <div class="exercise">
-        <h2>1 Indica cuales de las siguientes reacciones (sin ajustar) son de tipo rédox:</h2>
+        <h2>1 <small>Identificar reacciones rédox</small></h2>
+        <p>Indica cuales de las siguientes reacciones (sin ajustar) son de tipo rédox:</p>
         <ol>
             <li>a) \(\text{CaO} + \text{H}_2\text{O} \longrightarrow \text{Ca(OH)}_2\)</li>
             <li>b) \(\text{Ag} + \text{HNO}_3 \longrightarrow \text{AgNO}_3 + \text{NO}_2 + \text{H}_2\text{O}\)</li>
@@ -56,12 +347,14 @@
     </div>
 
     <div class="exercise">
-        <h2>2 Di el estado de oxidación de cada átomo de:</h2>
+        <h2>2 <small>Estados de oxidación</small></h2>
+        <p>Di el estado de oxidación de cada átomo de:</p>
         <p>a) \(\text{NO}_2^-\); b) \(\text{HIO}_3\); c) \(\text{TeF}_6^{2-}\); d) \(\text{N}_2\text{O}_3\); e) \(\text{Na}_2\text{MoO}_4\); f) \(\text{RuF}_5\); g) \(\text{HCO}_3^-\); h) \(\text{S}_2\text{O}_3^{2-}\); i) \(\text{ClO}_4^-\); j) \(\text{CaC}_2\text{O}_4\).</p>
     </div>
 
     <div class="exercise">
-        <h2>3 Clasifica cada una de las siguientes semirreacciones como oxidación o reducción:</h2>
+        <h2>3 <small>Clasificar semirreacciones</small></h2>
+        <p>Clasifica cada una de las siguientes semirreacciones como oxidación o reducción:</p>
         <ol>
             <li>a) \(\text{Ca}(s) \longrightarrow \text{Ca}^{2+}(aq)\)</li>
             <li>b) \(\text{Fe}^{3+}(aq) \longrightarrow \text{Fe}^{2+}(aq)\)</li>
@@ -72,12 +365,14 @@
     </div>
 
     <div class="exercise">
-        <h2>4 El cloro y sus compuestos presentan estados de oxidación −1, +1, +3, +5 y +7. ¿Cuáles de las siguientes especies pueden actuar como agentes oxidantes? ¿Cuáles como agentes reductores?</h2>
+        <h2>4 <small>Agentes oxidantes y reductores</small></h2>
+        <p>El cloro y sus compuestos presentan estados de oxidación −1, +1, +3, +5 y +7. ¿Cuáles de las siguientes especies pueden actuar como agentes oxidantes? ¿Cuáles como agentes reductores?</p>
         <p>a) \(\text{HClO}_2\); b) \(\text{ClO}_4^-\); c) \(\text{Cl}^-\); d) \(\text{ClO}^-\); e) \(\text{Cl}_2\text{O}_7\).</p>
     </div>
 
     <div class="exercise">
-        <h2>5 Para cada una de las siguientes reacciones, identifica la especie oxidada, la especie reducida, el agente oxidante y el agente reductor. Ajusta las ecuaciones.</h2>
+        <h2>5 <small>Identificar especies redox y ajustar</small></h2>
+        <p>Para cada una de las siguientes reacciones, identifica la especie oxidada, la especie reducida, el agente oxidante y el agente reductor. Ajusta las ecuaciones.</p>
         <ol>
             <li>a) \(\text{Fe}^{3+}(aq) + \text{I}^-(aq) \longrightarrow \text{Fe}^{2+}(aq) + \text{I}_2(s)\)</li>
             <li>b) \(\text{ClO}_3^-(aq) + \text{S}^{2-}(aq) + \text{H}_2\text{O}(l) \longrightarrow \text{Cl}^-(aq) + \text{S}(s) + \text{OH}^-(aq)\)</li>
@@ -86,7 +381,8 @@
     </div>
 
     <div class="exercise">
-        <h2>6 Ajusta las siguientes ecuaciones en disolución básica:</h2>
+        <h2>6 <small>Ajuste en medio básico</small></h2>
+        <p>Ajusta las siguientes ecuaciones en disolución básica:</p>
         <ol>
             <li>a) \(\text{MnO}_4^-(aq) + \text{Cl}^-(aq) \longrightarrow \text{MnO}_2(aq) + \text{ClO}^-(aq)\)</li>
             <li>b) \(\text{NO}_2^-(aq) + \text{Br}_2(l) \longrightarrow \text{NO}_3^-(aq) + \text{Br}^-(aq)\)</li>
@@ -94,7 +390,8 @@
     </div>
 
     <div class="exercise">
-        <h2>7 Ajusta las siguientes ecuaciones:</h2>
+        <h2>7 <small>Ajuste de ecuaciones diversas</small></h2>
+        <p>Ajusta las siguientes ecuaciones:</p>
         <ol>
             <li>a) \(\text{ClO}^-(aq) + \text{CrO}_2^-(aq) \longrightarrow \text{CrO}_4^{2-}(aq) + \text{Cl}^-(aq)\) (medio básico).</li>
             <li>b) \(\text{KClO}_3(aq) + \text{H}_2\text{C}_2\text{O}_4(aq) \longrightarrow \text{ClO}_2(g) + \text{CO}_2(g) + \text{H}_2\text{O}(l) + \text{K}_2\text{C}_2\text{O}_4(aq)\)</li>
@@ -105,5 +402,340 @@
             <li>g) \(\text{FeSO}_4(aq) + \text{KMnO}_4(aq) + \text{H}_2\text{SO}_4(aq) \longrightarrow \text{Fe}_2\text{(SO}_4)_3(aq) + \text{K}_2\text{SO}_4(aq) + \text{MnSO}_4(aq) + \text{H}_2\text{O}(l)\)</li>
         </ol>
     </div>
+
+    <!-- ============================================================ -->
+    <!-- SECCIÓN 2: ELECTRÓLISIS -->
+    <!-- ============================================================ -->
+    <div class="section">
+        <h2>⚡ Procesos Redox No Espontáneos: Electrólisis</h2>
+        <p>Cuando un proceso rédox no es espontáneo, puede ser forzado mediante la aplicación de un trabajo externo de tipo eléctrico (electrólisis).</p>
+        <img src="celda_electrolitica.png" alt="Esquema de electrolisis del agua">
+
+        <h3>Productos de la electrólisis en disolución acuosa</h3>
+        <p>Al electrolizar una disolución acuosa de una sal, debemos considerar no solo los iones de la sal, sino también la posible oxidación o reducción del agua. Se deben comparar los potenciales de reducción para predecir qué especie reaccionará primero:</p>
+        <ul>
+            <li><strong>En el Cátodo (Reducción):</strong> Se reduce la especie con el potencial de reducción más alto (más positivo). Si el metal de la sal tiene un potencial muy negativo (como \(\text{Na}^+,\, \text{K}^+,\, \text{Ca}^{2+}\)), se reducirá el agua en su lugar:
+                <br>\(2\text{H}_2\text{O}(l) + 2e^- \longrightarrow \text{H}_2(g) + 2\text{OH}^-(aq)\)
+            </li>
+            <li><strong>En el Ánodo (Oxidación):</strong> Se oxida la especie con el potencial de oxidación más alto (o potencial de reducción más bajo). En muchas disoluciones, el agua también compite:
+                <br>\(2\text{H}_2\text{O}(l) \longrightarrow \text{O}_2(g) + 4\text{H}^+(aq) + 4e^-\)
+            </li>
+        </ul>
+
+        <h3>Leyes de Faraday</h3>
+        <p>Las leyes de Faraday relacionan la cantidad de electricidad que circula por la celda con la cantidad de sustancia química transformada:</p>
+        <ol>
+            <li><strong>Primera Ley:</strong> La masa de una sustancia depositada o liberada en un electrodo es directamente proporcional a la cantidad de electricidad (carga, \(Q\)) que circula por la celda.</li>
+            <li><strong>Segunda Ley:</strong> Para liberar o depositar 1 mol de una sustancia, se requieren \(n \cdot 96485\) culombios, donde \(n\) es el número de electrones transferidos en la semirreacción.</li>
+        </ol>
+
+        <div class="solution-box amber">
+            <p><strong>📌 Fórmula fundamental:</strong></p>
+            <div class="formula-center">\(Q = I \cdot t = n(e^-) \cdot F\)</div>
+            <ul>
+                <li><strong>\(I\):</strong> Intensidad de corriente en Amperios (A).</li>
+                <li><strong>\(t\):</strong> Tiempo en segundos (s).</li>
+                <li><strong>\(n(e^-)\):</strong> Moles de electrones.</li>
+                <li><strong>\(F\):</strong> Constante de Faraday (\(96485 \text{ C/mol } e^-\)).</li>
+            </ul>
+        </div>
+
+        <h3>Ejemplo Resuelto: Electrólisis de \(\text{CuCl}_2\) fundido</h3>
+        <div class="solution-box green">
+            <p><strong>Enunciado:</strong> Calcula la masa de Cobre metálico que se deposita en el cátodo al hacer pasar 2.0 A durante 30 minutos por \(\text{CuCl}_2\) fundido.</p>
+            <p><strong>Paso 1 (Semirreacciones):</strong> Cátodo: \(\text{Cu}^{2+} + 2e^- \longrightarrow \text{Cu}(s)\)</p>
+            <p><strong>Paso 2 (Carga Q):</strong> \(Q = I \cdot t = 2.0 \text{ A} \cdot 1800 \text{ s} = 3600 \text{ C}\)</p>
+            <p><strong>Paso 3 (Moles e⁻):</strong> \(n(e^-) = \frac{3600}{96485} = 0.0373 \text{ mol } e^-\)</p>
+            <p><strong>Paso 4 (Masa):</strong> \(n(\text{Cu}) = 0.0373 / 2 = 0.01865 \text{ mol} \implies 0.01865 \cdot 63.55 = \mathbf{1.18 \text{ g de Cu}}\)</p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECCIÓN 3: CÉLULAS GALVÁNICAS -->
+    <!-- ============================================================ -->
+    <div class="section">
+        <h2>🔋 Célula galvánica, Pilas y Potenciales</h2>
+        <p>Un proceso espontáneo puede ser aprovechado para generar trabajo eléctrico en lo que denominamos <strong>célula galvánica o pila</strong>. A diferencia de la célula electrolítica, aquí los procesos de reducción y oxidación deben separarse físicamente para evitar la reacción directa.</p>
+        <p>Las disoluciones se unen mediante un <strong>puente salino</strong> (o un tabique poroso) que contiene una disolución conductora (ej. \(\text{KNO}_3(aq)\) o \(\text{Na}_2\text{SO}_4(aq)\)) cuya función es cerrar el circuito eléctrico.</p>
+        <p>Al igual que en la célula electrolítica, los electrones fluyen desde el ánodo hacia el cátodo:</p>
+        <ul>
+            <li><strong>Ánodo:</strong> Donde ocurre la oxidación (polo \(-\) en la pila).</li>
+            <li><strong>Cátodo:</strong> Donde ocurre la reducción (polo \(+\) en la pila).</li>
+        </ul>
+
+        <h3>Diagrama de célula</h3>
+        <p>Existe un convenio de notación estándar para representar las células. Por ejemplo, el diagrama para una <strong>pila Daniell</strong> es:</p>
+        <div class="formula-center">\(\text{Zn}(s) \mid \text{Zn}^{2+}(aq) \parallel \text{Cu}^{2+}(aq) \mid \text{Cu}(s)\)</div>
+        <ul>
+            <li>El <strong>ánodo</strong> se escribe a la izquierda y el <strong>cátodo</strong> a la derecha, indicando que los electrones circulan de izquierda a derecha.</li>
+            <li>La barra vertical simple (<strong>\( \mid \)</strong>) indica la existencia de una interfase.</li>
+            <li>La barra vertical doble (<strong>\( \parallel \)</strong>) indica la presencia del puente salino.</li>
+        </ul>
+
+        <img src="pila_galvanica.png" alt="Esquema de pila galvánica">
+
+        <h3>El papel del puente salino</h3>
+        <div class="solution-box">
+            <p><strong>¿Por qué es necesario un puente salino?</strong></p>
+            <p>Sin el puente salino, la pila dejaría de funcionar casi instantáneamente debido a la acumulación de carga. Su función es doble:</p>
+            <ul>
+                <li><strong>Cierre del circuito:</strong> Permite que los iones se desplacen entre las dos semiceldas, cerrando el circuito eléctrico para que el flujo de electrones por el cable sea continuo.</li>
+                <li><strong>Neutralidad eléctrica:</strong> Al ocurrir la oxidación (producción de cationes) y la reducción (consumo de cationes), se generan desequilibrios de carga en las disoluciones. El puente salino aporta aniones y cationes inertes (como \(\text{K}^+\) y \(\text{NO}_3^-\)) que migran hacia cada compartimento para compensar este exceso de carga.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECCIÓN: SIGNOS ÁNODO/CÁTODO -->
+    <!-- ============================================================ -->
+    <div class="section">
+        <h2>🔀 ¿Por qué se invierten los signos en el Ánodo y Cátodo?</h2>
+        <p>Es común confundirse con los signos en las celdas. La clave para no olvidar nunca es recordar qué proceso químico ocurre en cada electrodo:</p>
+
+        <div class="golden-rule">
+            <p><strong>⚡ REGLA DE ORO (No cambia):</strong></p>
+            <ul>
+                <li><strong>Ánodo:</strong> Siempre ocurre la <strong>Oxidación</strong> (pérdida de electrones).</li>
+                <li><strong>Cátodo:</strong> Siempre ocurre la <strong>Reducción</strong> (ganancia de electrones).</li>
+            </ul>
+        </div>
+
+        <p>La diferencia de signo se debe a la naturaleza de la energía involucrada:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Tipo de Celda</th>
+                    <th>Ánodo (Oxidación)</th>
+                    <th>Cátodo (Reducción)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Galvánica (Pila)</strong></td>
+                    <td style="color:#c0392b; font-weight:600;">Polo Negativo (−)</td>
+                    <td style="color:#1e8b5e; font-weight:600;">Polo Positivo (+)</td>
+                </tr>
+                <tr>
+                    <td><strong>Electrolítica</strong></td>
+                    <td style="color:#1e8b5e; font-weight:600;">Polo Positivo (+)</td>
+                    <td style="color:#c0392b; font-weight:600;">Polo Negativo (−)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p><strong>Explicación lógica:</strong></p>
+        <ul>
+            <li><strong>En la Pila (Espontánea):</strong> El ánodo es negativo porque es la fuente de electrones que libera la reacción química. Estos fluyen naturalmente hacia el cátodo, que actúa como polo positivo atrayéndolos.</li>
+            <li><strong>En la Electrolítica (Forzada):</strong> Necesitamos una fuente externa (batería) para "empujar" los electrones. El polo positivo de la batería extrae electrones del ánodo (forzando la oxidación) y el polo negativo inyecta electrones al cátodo (forzando la reducción).</li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECCIÓN: PILAS COMERCIALES -->
+    <!-- ============================================================ -->
+    <div class="section">
+        <h2>🔋 Pilas comerciales</h2>
+        <p>Las pilas comerciales se clasifican según su capacidad de recarga y los reactivos utilizados en su fabricación:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Tipo de Pila</th>
+                    <th>Descripción</th>
+                    <th>Ejemplos comunes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Primarias</strong></td>
+                    <td>Producen electricidad a partir de los reactivos introducidos durante su fabricación. No son recargables.</td>
+                    <td>Pila seca (Leclanché), pila alcalina, pila de mercurio.</td>
+                </tr>
+                <tr>
+                    <td><strong>Secundarias</strong></td>
+                    <td>Deben cargarse antes de su uso. Son dispositivos recargables que permiten múltiples ciclos.</td>
+                    <td>Ácido-plomo (automóviles), níquel-cadmio.</td>
+                </tr>
+            </tbody>
+        </table>
+        <p><em>Nota: Las baterías secundarias permiten invertir el proceso electroquímico mediante la aplicación de una corriente externa.</em></p>
+        <img src="pila_comercial.png" alt="Esquema de pilas comerciales">
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECCIÓN: POTENCIAL Y NERNST -->
+    <!-- ============================================================ -->
+    <div class="section">
+        <h2>📊 Potencial, energía libre y ecuación de Nernst</h2>
+        <p>Una célula genera un potencial o fuerza electromotriz (<em>E</em>) entre sus dos polos. Es importante distinguir los estados del sistema:</p>
+        <ul>
+            <li><strong>Potencial normal (\(E^\circ\)):</strong> Medido en condiciones estándar.</li>
+            <li><strong>Signo del potencial:</strong> Positivo en una pila (espontánea) y negativo en una célula electrolítica (no espontánea).</li>
+            <li><strong>Equilibrio:</strong> Cuando la pila se "agota", la reacción química llega al equilibrio y el potencial es nulo (\(E = 0\)).</li>
+        </ul>
+
+        <h3>Cálculo del potencial</h3>
+        <p>El potencial de una célula es la suma de los potenciales de cada electrodo:</p>
+        <div class="formula-center"><strong>\(E^\circ = E^\circ_{\text{ánodo}} + E^\circ_{\text{cátodo}}\)</strong></div>
+        <p>Debido a que no es posible determinar valores absolutos, se utilizan potenciales relativos al <strong>electrodo normal de hidrógeno</strong>: \(\text{Pt} \mid \text{H}_2(g, 1 \text{ atm}) \mid \text{H}^+(aq, 1 \text{ M})\).</p>
+
+        <div class="solution-box" style="border-left-color: #2980b9;">
+            <p><strong>Nota sobre el sentido de la reacción:</strong> Los potenciales de reducción y oxidación tienen el mismo valor absoluto pero signo contrario:</p>
+            <ul>
+                <li><strong>Reducción:</strong> \(\text{Zn}^{2+}(aq) + 2e^- \longrightarrow \text{Zn}(s) \quad E^\circ = -0,76 \text{ V}\)</li>
+                <li><strong>Oxidación:</strong> \(\text{Zn}(s) \longrightarrow \text{Zn}^{2+}(aq) + 2e^- \quad E^\circ = +0,76 \text{ V}\)</li>
+            </ul>
+        </div>
+
+        <p>Por convención, todos los potenciales se listan como <strong>potenciales de reducción</strong>. A continuación se presenta la serie electroquímica, ordenada de mayor a menor tendencia a reducirse:</p>
+        <img src="tabla_potenciales_25C.png" alt="Potenciales normales a 25°C. Semireacción de reduccion">
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECCIÓN: SEMINARIOS -->
+    <!-- ============================================================ -->
+    <div class="section">
+        <h2>📚 Seminarios (Continuación)</h2>
+
+        <!-- GUÍA ELECTRÓLISIS -->
+        <div class="guide-box green">
+            <h2>⚡ Guía: Resolución de problemas de Electrólisis</h2>
+            <p>Antes de empezar, clasifica el problema según lo que te piden:</p>
+            <ul>
+                <li><strong>Tipo A (Cálculo de Masa/Volumen):</strong> Utiliza \(Q = I \cdot t\) para hallar la carga, luego \(n(e^-) = Q/F\) y usa la estequiometría de la semirreacción para hallar moles y masa/volumen.</li>
+                <li><strong>Tipo B (Cálculo de Corriente/Tiempo):</strong> Despeja el tiempo o la intensidad de la ecuación de Faraday: \(I \cdot t = n \cdot F \cdot z\) (donde \(z\) son los moles de electrones por mol de sustancia).</li>
+            </ul>
+        </div>
+
+        <p><strong>8</strong> Establece qué productos se formarán en el ánodo y en el cátodo cuando se electrolizan disoluciones acuosas de los siguientes compuestos: a) HI; b) CuCl<sub>2</sub>; c) KOH; d) Ni(NO<sub>3</sub>)<sub>2</sub>; e) CoCl<sub>2</sub>.</p>
+        <p><strong>9</strong> Una forma de limpiar monedas (que contienen cobre parcialmente oxidado) en arqueología, consiste en colgar el objeto de un hilo de cobre unido al polo negativo de una batería, sumergirlo en una disolución de NaOH al 2,5% e introducir en la disolución un electrodo de grafito unido al terminal positivo. ¿Cuál es la reacción que tiene lugar en la moneda?</p>
+
+        <!-- GUÍA PILAS -->
+        <div class="guide-box" style="border-color:#2c7fb8; background:#f7fbff;">
+            <h2 style="color:#2c7fb8;">🔋 Guía: Resolución de Pilas Galvánicas</h2>
+            <p>Para resolver problemas de diagramas y celdas, sigue este orden:</p>
+            <ol>
+                <li><strong>Identifica los electrodos:</strong> Recuerda: <em>"Ánodo a la izquierda, Cátodo a la derecha"</em> (\(A \parallel C\)).</li>
+                <li><strong>Calcula el potencial estándar:</strong> Usa \(E^\circ_{\text{celda}} = E^\circ_{\text{cátodo}} - E^\circ_{\text{ánodo}}\).</li>
+                <li><strong>Determina la espontaneidad:</strong> Si \(E^\circ > 0\), la pila es espontánea.</li>
+            </ol>
+        </div>
+
+        <p><strong>10</strong> Compara el tipo de proceso químico, el signo del ánodo y del cátodo, y el sentido de circulación de la corriente eléctrica en las células electrolíticas y en las pilas galvánicas.</p>
+        <p><strong>11</strong> ¿Cuál es la función del puente salino en una célula galvánica?</p>
+        <p><strong>12</strong> Escribe las semirreacciones y la reacción de célula para cada una de las siguientes células:</p>
+        <ul>
+            <li>a) \(\text{Ag}(s) \mid \text{Ag}^+(aq) \parallel \text{Fe}^{3+}(aq), \text{Fe}^{2+}(aq) \mid \text{Pt}\)</li>
+            <li>b) \(\text{U}(s) \mid \text{U}^{3+}(aq) \parallel \text{V}^{2+}(aq) \mid \text{V}(s)\)</li>
+            <li>c) \(\text{Cu}(s) \mid \text{Cu}^{2+}(aq) \parallel \text{Cu}^+(aq) \mid \text{Cu}(s)\)</li>
+            <li>d) \(\text{Pt} \mid \text{Pb}^{4+}(aq), \text{Pb}^{2+}(aq) \parallel \text{Sn}^{4+}(aq), \text{Sn}^{2+}(aq) \mid \text{Pt}\)</li>
+            <li>e) \(\text{Pt} \mid \text{Sn}^{4+}(aq), \text{Sn}^{2+}(aq) \parallel \text{Sn}^{2+}(aq) \mid \text{Sn}(s)\)</li>
+            <li>f) \(\text{Au}(s) \mid \text{Au}^+(aq) \parallel \text{Au}^{3+}(aq) \mid \text{Au}(s)\)</li>
+        </ul>
+        <p><strong>13</strong> Imagina una célula para cada una de las siguientes reacciones: a) \(\text{Cr}(s) + \text{Zn}^{2+}(aq) \longrightarrow \text{Cr}^{2+}(aq) + \text{Zn}(s)\); b) \(\text{H}_2(g) + \text{Cl}_2(g) \longrightarrow 2\text{HCl}(aq)\); c) Reacción de precipitación; d) Dilución.</p>
+
+        <!-- GUÍA NERNST -->
+        <div class="guide-box purple">
+            <h2 style="color:#7c5cbf;">🧪 Guía: Ecuación de Nernst y Termodinámica</h2>
+            <p>Estos problemas requieren considerar condiciones no estándar:</p>
+            <ul>
+                <li><strong>Ecuación de Nernst:</strong> Usa \(E = E^\circ - \frac{0.0592}{n} \log Q\) para concentraciones distintas a 1M.</li>
+                <li><strong>Relación con \(\Delta G\):</strong> Recuerda que \(\Delta G = -nFE\). Si el sistema está en equilibrio, \(\Delta G = 0\) y \(E = 0\).</li>
+                <li><strong>Keq:</strong> En equilibrio, \(\log K = \frac{n \cdot E^\circ}{0.0592}\).</li>
+            </ul>
+        </div>
+
+        <p><strong>14</strong> Ordena los siguientes elementos según su carácter reductor: a) Cu, Zn, Cr, Fe; b) Li, Na, K, Mg.</p>
+        <p><strong>15</strong> Para las siguientes parejas, determina quién reducirá a quién: a) \(\text{K}^+/\text{K}\) y \(\text{Na}^+/\text{Na}\); b) \(\text{Cl}_2/\text{Cl}^-\) y \(\text{Br}_2/\text{Br}^-\).</p>
+        <p><strong>16</strong> Determina si los siguientes metales pueden ser depositados electroquímicamente a partir de una disolución acuosa: a) Mn, b) Al, c) Ni, d) Au, e) Li.</p>
+        <p><strong>17</strong> (Diagrama de potencial hipotético M). Analiza la espontaneidad de las reacciones indicadas (a-f) basándote en los potenciales de reducción.</p>
+
+        <h3>Ecuación de Nernst y Energía Libre</h3>
+        <p><strong>18</strong> Argumenta la elección del signo en la ecuación de Nernst \(E = E^\circ \pm \frac{RT}{nF}\ln Q\).</p>
+        <p><strong>19</strong> Calcula el potencial de los semisistemas \(\text{H}^+(aq)/\text{H}_2(g)\) y \(\text{H}_2\text{O}(l)/\text{H}_2(g)\) a pH = 0, 7 y 14.</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECCIÓN: PROBLEMAS (los 13 que me pediste) -->
+    <!-- ============================================================ -->
+    <div class="section">
+        <h2>📝 Problemas de Electrólisis y Pilas</h2>
+
+        <div class="exercise">
+            <h2>1 <small>Electrólisis de NaCl</small></h2>
+            <p>a) ¿Qué cantidad de corriente se precisa para producir 0,015 mol de Cl₂(g) en el ánodo? (F = 96485 C/mol e⁻)</p>
+            <p>b) ¿Cuánto tiempo deberá pasar una corriente de 0,010 A para producir 0,015 mol de H₂(g) en el cátodo?</p>
+        </div>
+
+        <div class="exercise">
+            <h2>2 <small>Electrólisis de NaCl (80 min)</small></h2>
+            <p>Se electroliza una disolución de NaCl durante 80 minutos, con lo que se desprenden 5,0 litros de Cl₂(g) medidos en condiciones normales (V<sub>m</sub> = 22,4 L/mol, F = 96485 C/mol). Calcula:</p>
+            <p>a) la cantidad de corriente que pasó por la disolución.</p>
+            <p>b) la intensidad de la corriente.</p>
+            <p>c) el volumen de gas desprendido en el cátodo durante el proceso en condiciones normales.</p>
+        </div>
+
+        <div class="exercise">
+            <h2>3 <small>Zn depositado</small></h2>
+            <p>Calcula los gramos de Zn depositados a partir de cloruro de cinc fundido (0,010 A, 1 h).</p>
+        </div>
+
+        <div class="exercise">
+            <h2>4 <small>Masas de Zn y Cl₂</small></h2>
+            <p>Calcula las masas de Zn y \(\text{Cl}_2\) liberadas tras pasar 173673 C.</p>
+        </div>
+
+        <div class="exercise">
+            <h2>5 <small>Volumen de O₂</small></h2>
+            <p>Calcula el volumen de \(\text{O}_2\) formado si se depositan 23,8 mg de Ag.</p>
+        </div>
+
+        <div class="exercise">
+            <h2>6 <small>Tiempo para consumir Zn</small></h2>
+            <p>Tiempo necesario para consumir 1,50 g de Zn en la reacción \(\text{Zn} + \text{Cl}_2\) a 0,10 A.</p>
+        </div>
+
+        <div class="exercise">
+            <h2>7 <small>Masa de Pb en acumulador</small></h2>
+            <p>Masa de Pb consumida en un acumulador con capacidad de 100 Ah.</p>
+        </div>
+
+        <div class="exercise">
+            <h2>8 <small>E° para sistema Zn/H₂</small></h2>
+            <p>Cálculos de \(E^\circ\) para el sistema Zn/H₂.</p>
+        </div>
+
+        <div class="exercise">
+            <h2>9 <small>Ajuste y E° para reacciones redox</small></h2>
+            <p>Ajuste y cálculo de \(E^\circ\) para diversas reacciones redox (a-d).</p>
+        </div>
+
+        <div class="exercise">
+            <h2>10 <small>Potencial normal Fe/H₂ y pilas Cr/Ni</small></h2>
+            <p>Cálculos de potencial normal para Fe/H₂ y pilas Cr/Ni.</p>
+        </div>
+
+        <div class="exercise">
+            <h2>11 <small>Ecuación de Nernst</small></h2>
+            <p>Aplicaciones de la ecuación de Nernst en diversas condiciones de concentración y pH.</p>
+        </div>
+
+        <div class="exercise">
+            <h2>12 <small>Pilas de concentración</small></h2>
+            <p>Problemas sobre pilas de concentración y cálculo de potencial.</p>
+        </div>
+
+        <div class="exercise">
+            <h2>13 <small>ΔG°, K, Kps y estabilidad de complejos</small></h2>
+            <p>Cálculos de \(\Delta G^\circ\), constante de equilibrio (K), producto de solubilidad (\(K_{ps}\)) y estabilidad de complejos.</p>
+        </div>
+    </div>
+
+    <!-- ===== PIE ===== -->
+    <div class="footer-note">
+        ⚡ Ejercicios y teoría de Redox y Electroquímica &nbsp;·&nbsp; Diseño académico para GitHub Pages
+    </div>
+
 </body>
 </html>
