@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía de Estudio: Ácidos Carboxílicos y Derivados</title>
+    <style>
+        /* ===== RESET Y ESTILOS BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fc;
+            color: #1e2a3a;
+            line-height: 1.7;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            padding: 2.5rem 3rem;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 20, 40, 0.08);
+        }
+
+        /* ===== TIPOGRAFÍA ===== */
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: #0b2b4a;
+            border-left: 8px solid #2a7de1;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitulo {
+            font-size: 1.1rem;
+            color: #4a5b6e;
+            margin-bottom: 2.5rem;
+            padding-left: 2.3rem;
+            border-bottom: 2px solid #e9edf4;
+            padding-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            color: #103a5e;
+            margin-top: 2.8rem;
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 3px solid #d0ddea;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #1d4b75;
+            margin-top: 2rem;
+            margin-bottom: 0.8rem;
+        }
+
+        h4 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #255a88;
+            margin-top: 1.6rem;
+            margin-bottom: 0.4rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: #1f2c3f;
+        }
+
+        /* ===== LISTAS ===== */
+        ul, ol {
+            margin: 0.8rem 0 1.5rem 2rem;
+        }
+
+        li {
+            margin-bottom: 0.4rem;
+        }
+
+        /* ===== TABLAS ===== */
+        .tabla-wrap {
+            overflow-x: auto;
+            margin: 1.8rem 0;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.98rem;
+        }
+
+        th {
+            background: #1d3b5c;
+            color: white;
+            font-weight: 600;
+            padding: 12px 16px;
+            text-align: left;
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e9edf4;
+            vertical-align: top;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: #f4f8ff;
+        }
+
+        /* ===== CUADROS DESTACADOS ===== */
+        .caja-ejemplo {
+            background: #f0f6fe;
+            border-left: 6px solid #2a7de1;
+            padding: 1.2rem 1.8rem;
+            border-radius: 0 16px 16px 0;
+            margin: 1.5rem 0;
+        }
+
+        .caja-ejemplo strong {
+            color: #0e3d6b;
+        }
+
+        .caja-clave {
+            background: #eaf6ed;
+            border-left: 6px solid #1c9e6b;
+            padding: 1.2rem 1.8rem;
+            border-radius: 0 16px 16px 0;
+            margin: 1.5rem 0;
+        }
+
+        .caja-clave strong {
+            color: #0f6e4a;
+        }
+
+        .caja-ejercicio {
+            background: #fef6e6;
+            border-left: 6px solid #e6a020;
+            padding: 1.2rem 1.8rem;
+            border-radius: 0 16px 16px 0;
+            margin: 1.5rem 0;
+        }
+
+        .caja-ejercicio strong {
+            color: #8f6b1a;
+        }
+
+        .caja-respuesta {
+            background: #f2f2fa;
+            border-left: 6px solid #7b4fbf;
+            padding: 1.2rem 1.8rem;
+            border-radius: 0 16px 16px 0;
+            margin: 1.5rem 0;
+        }
+
+        .caja-respuesta strong {
+            color: #4a2d7a;
+        }
+
+        /* ===== CÓDIGO / FÓRMULAS ===== */
+        .quimica {
+            font-family: 'Courier New', monospace;
+            background: #f0f3f8;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            font-weight: 500;
+            color: #0b3b5e;
+            font-size: 0.95rem;
+            display: inline-block;
+        }
+
+        .ecuacion {
+            background: #eef2f7;
+            padding: 0.8rem 1.4rem;
+            border-radius: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.05rem;
+            text-align: center;
+            margin: 1rem 0;
+            border: 1px dashed #a0b8d0;
+            color: #0a2a44;
+        }
+
+        /* ===== BOTÓN / UTILIDADES ===== */
+        .badge {
+            display: inline-block;
+            background: #2a7de1;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px dashed #d7e0ea;
+            margin: 2.5rem 0;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem 1.2rem;
+            }
+            h1 {
+                font-size: 2rem;
+                padding-left: 1rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+            .subtitulo {
+                padding-left: 1.2rem;
+                font-size: 1rem;
+            }
+            .ecuacion {
+                font-size: 0.9rem;
+                padding: 0.6rem 0.8rem;
+                word-break: break-word;
+            }
+            th, td {
+                padding: 8px 10px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0.5rem;
+            }
+            .container {
+                box-shadow: none;
+                padding: 1rem;
+            }
+            .caja-ejemplo, .caja-clave, .caja-ejercicio, .caja-respuesta {
+                break-inside: avoid;
+            }
+            .tabla-wrap {
+                border: 1px solid #ccc;
+            }
+            th {
+                background: #1d3b5c !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- ==================== ENCABEZADO ==================== -->
+    <h1>📘 Ácidos Carboxílicos y Derivados</h1>
+    <div class="subtitulo">
+        Guía completa de estudio · Nomenclatura · Síntesis · Reacciones · Usos industriales y biológicos
+    </div>
+
+    <!-- ==================== BLOQUE 1 ==================== -->
+    <h2>🧪 1. Estructura, Nomenclatura y Propiedades Físicas</h2>
+
+    <h3>🔹 Ácidos Carboxílicos</h3>
+    <p><span class="badge">Grupo funcional</span> <span class="quimica">-COOH</span> (carboxilo).</p>
+    <ul>
+        <li><strong>Nomenclatura IUPAC:</strong> terminación <strong>-oico</strong>. Ej: <em>ácido etanoico</em> (acético), <em>ácido benzoico</em>.</li>
+        <li><strong>Puntos de ebullición:</strong> muy altos por <strong>puentes de hidrógeno</strong> (forman dímeros). Mayores que alcoholes de similar peso molecular.</li>
+        <li><strong>Solubilidad:</strong> los de ≤ 5 carbonos son solubles en agua; los de cadena larga son insolubles (base de los jabones).</li>
+    </ul>
+
+    <h3>🔹 Aminas (derivados del NH₃)</h3>
+    <ul>
+        <li><strong>Clasificación:</strong> primaria (R–NH₂), secundaria (R₂–NH), terciaria (R₃–N).</li>
+        <li><strong>Nomenclatura:</strong> sufijo <strong>-amina</strong> o prefijo <em>amino-</em>. Ej: etilamina, dimetilamina.</li>
+        <li><strong>Propiedades:</strong> son <strong>básicas</strong> (aceptan protones). Las alifáticas son más básicas que el amoniaco; las aromáticas (anilina) son menos básicas.</li>
+    </ul>
+
+    <h3>🔹 Amidas (derivados de ácidos)</h3>
+    <ul>
+        <li><strong>Grupo:</strong> R–CO–NH₂ (primaria), R–CO–NHR' (secundaria), R–CO–NR'₂ (terciaria).</li>
+        <li><strong>Nomenclatura:</strong> se cambia la terminación del ácido <strong>-oico</strong> por <strong>-amida</strong>. Ej: etanamida (acetamida).</li>
+        <li><strong>Propiedades:</strong> muy polares, altos puntos de ebullición (excepto terciarias). Son <strong>neutras</strong> (no ácidas ni básicas en agua).</li>
+    </ul>
+
+    <h3>🔹 Mercaptanos (tioles, derivados azufrados)</h3>
+    <ul>
+        <li><strong>Grupo:</strong> <span class="quimica">–SH</span> (sulfhidrilo). Análogos al alcohol con azufre.</li>
+        <li><strong>Nomenclatura:</strong> terminación <strong>-tiol</strong>. Ej: etanotiol.</li>
+        <li><strong>Propiedad extrema:</strong> <strong>olor muy desagradable</strong> (se añaden al gas natural para detectar fugas). Son más ácidos que los alcoholes.</li>
+    </ul>
+
+    <h3>🔹 Derivados Fosforados</h3>
+    <ul>
+        <li><strong>Grupo:</strong> ésteres del ácido fosfórico (H₃PO₄).</li>
+        <li><strong>Importancia:</strong> ADN (enlaces fosfodiéster), ATP (energía celular) y pesticidas organofosforados.</li>
+    </ul>
+
+    <!-- ==================== BLOQUE 2 ==================== -->
+    <hr>
+    <h2>⚗️ 2. Obtención (Síntesis) de Ácidos Carboxílicos</h2>
+
+    <div class="tabla-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Método de síntesis</th>
+                    <th>Reacción general</th>
+                    <th>Ejemplo práctico</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Oxidación de alcoholes primarios</strong></td>
+                    <td><span class="quimica">R–CH₂OH + [O] → R–COOH</span></td>
+                    <td>Etanol → Ácido acético (vinagre)</td>
+                </tr>
+                <tr>
+                    <td><strong>Oxidación de aldehídos</strong></td>
+                    <td><span class="quimica">R–CHO + [O] → R–COOH</span></td>
+                    <td>Butanal → Ácido butanoico</td>
+                </tr>
+                <tr>
+                    <td><strong>Hidrólisis de nitrilos (cianuros)</strong></td>
+                    <td><span class="quimica">R–CN + 2H₂O (H⁺/OH⁻) → R–COOH + NH₃</span></td>
+                    <td>Propanonitrilo → Ácido propanoico</td>
+                </tr>
+                <tr>
+                    <td><strong>Hidrólisis de ésteres</strong></td>
+                    <td><span class="quimica">R–COOR' + H₂O (H⁺/OH⁻) → R–COOH + R'–OH</span></td>
+                    <td>Acetato de etilo → Ácido acético + etanol</td>
+                </tr>
+                <tr>
+                    <td><strong>Carboxilación de Grignard</strong></td>
+                    <td><span class="quimica">R–MgX + CO₂ → R–COOMgX → (H⁺) R–COOH</span></td>
+                    <td>Bromuro de fenilmagnesio → Ácido benzoico</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ==================== BLOQUE 3 ==================== -->
+    <hr>
+    <h2>🔄 3. Reacciones de Derivatización (La clave del éxito)</h2>
+
+    <p>Los ácidos carboxílicos se transforman en <strong>derivados funcionales</strong>. Escala de reactividad:<br>
+    <span class="quimica">Cloruro de ácido > Anhídrido > Éster > Amida</span></p>
+
+    <h3>🔸 Formación de Cloruros de Ácido</h3>
+    <div class="ecuacion">R–COOH + SOCl₂ → R–COCl + SO₂ + HCl</div>
+    <p><strong>Ejemplo:</strong> Ácido benzoico → Cloruro de benzoilo (muy reactivo, usado en fármacos).</p>
+
+    <h3>🔸 Formación de Ésteres (Esterificación de Fischer)</h3>
+    <div class="ecuacion">R–COOH + R'–OH <span style="font-weight:300;">⇌</span> R–COO–R' + H₂O</div>
+    <p><strong>Ejemplo:</strong> Ácido acético + etanol → Acetato de etilo (disolvente de uñas).<br>
+    <span class="badge" style="background:#1c9e6b;">Equilibrio</span> Se desplaza con exceso de reactivo o eliminando agua.</p>
+
+    <h3>🔸 Formación de Amidas</h3>
+    <div class="ecuacion">R–COOH + NH₃ <span style="font-weight:300;">(calor)</span> → R–CONH₂ + H₂O</div>
+    <p><strong>Método alternativo (más rápido):</strong> cloruro de ácido + amina.</p>
+
+    <h3>🔸 Formación de Anhídridos</h3>
+    <div class="ecuacion">2 R–COOH <span style="font-weight:300;">(P₂O₅ / calor)</span> → (R–CO)₂O + H₂O</div>
+    <p><strong>Ejemplo:</strong> 2 ácido acético → Anhídrido acético (se usa para fabricar aspirina).</p>
+
+    <h3>🔸 Reducción (muy importante)</h3>
+    <div class="ecuacion">R–COOH + LiAlH₄ → R–CH₂OH (alcohol primario)</div>
+    <p><strong>Ejemplo:</strong> Ácido butanoico → Butan-1-ol.</p>
+
+    <!-- ==================== BLOQUE 4 ==================== -->
+    <hr>
+    <h2>🏭 4. Usos e Importancia Industrial y Biológica</h2>
+
+    <div class="tabla-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Compuesto</th>
+                    <th>Derivado de</th>
+                    <th>Uso principal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Ácido acético</td><td>Ácido carboxílico</td><td>Vinagre, disolvente, acetato de vinilo (pegamento)</td></tr>
+                <tr><td>Ácido cítrico</td><td>Ácido carboxílico (tricarboxílico)</td><td>Conservante, ciclo de Krebs (energía celular)</td></tr>
+                <tr><td>Ácido salicílico</td><td>Ácido carboxílico</td><td>Aspirina (ácido acetilsalicílico)</td></tr>
+                <tr><td>Nylon 6,6</td><td>Amida (poliamida)</td><td>Fibras textiles, plásticos resistentes</td></tr>
+                <tr><td>Urea</td><td>Amida (diamida)</td><td>Fertilizante, resinas, barbitúricos</td></tr>
+                <tr><td>Cisteína</td><td>Mercaptano (azufrado)</td><td>Estabiliza proteínas (puentes disulfuro en el cabello)</td></tr>
+                <tr><td>ATP</td><td>Fosforado (éster de fosfato)</td><td>Moneda energética de las células</td></tr>
+                <tr><td>Paratión / Malatión</td><td>Fosforados</td><td>Insecticidas (inhiben acetilcolinesterasa)</td></tr>
+                <tr><td>Poliéster (PET)</td><td>Éster</td><td>Botellas de plástico y ropa</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ==================== EJERCICIOS RESUELTOS ==================== -->
+    <hr>
+    <h2>✍️ 5. Ejercicios Resueltos (paso a paso)</h2>
+
+    <div class="caja-ejemplo">
+        <h4 style="margin-top:0;">Ejercicio 1 – Nomenclatura</h4>
+        <p><strong>Enunciado:</strong> Nombra: <span class="quimica">CH₃–CH₂–CH(NH₂)–COOH</span></p>
+        <p><strong>Solución:</strong></p>
+        <ul>
+            <li>Cadena principal de 3 carbonos → propanoico.</li>
+            <li>Grupo amino en carbono 2.</li>
+            <li><strong>Nombre:</strong> Ácido 2-aminopropanoico (alanina, un aminoácido).</li>
+        </ul>
+    </div>
+
+    <div class="caja-ejemplo">
+        <h4 style="margin-top:0;">Ejercicio 2 – Derivatización (esterificación)</h4>
+        <p><strong>Enunciado:</strong> ¿Qué producto se obtiene al calentar ácido butanoico con etanol en medio ácido?</p>
+        <p><strong>Solución:</strong> Esterificación de Fischer.</p>
+        <div class="ecuacion" style="background:#e3edfa;">CH₃–CH₂–CH₂–COOH + HO–CH₂–CH₃ → <strong>Butanoato de etilo</strong> + H₂O</div>
+        <p><em>Olor a piña</em> (los ésteres dan fragancias).</p>
+    </div>
+
+    <div class="caja-ejemplo">
+        <h4 style="margin-top:0;">Ejercicio 3 – Propiedades físicas</h4>
+        <p><strong>Enunciado:</strong> Ordena de mayor a menor punto de ebullición: butano, butan-1-ol, ácido butanoico.</p>
+        <p><strong>Solución:</strong></p>
+        <ol>
+            <li><strong>Ácido butanoico</strong> (mayor PE) – forma dímeros por doble puente de H.</li>
+            <li><strong>Butan-1-ol</strong> – un solo puente de H.</li>
+            <li><strong>Butano</strong> – solo fuerzas de London (dipolos inducidos).</li>
+        </ol>
+    </div>
+
+    <!-- ==================== EJERCICIOS PROPUESTOS ==================== -->
+    <hr>
+    <h2>🧪 6. Ejercicios Propuestos </h2>
+
+    <div class="caja-ejercicio">
+        <p><strong>1. Síntesis:</strong> Escribe la reacción para obtener <strong>Ácido 2-metilpropanoico</strong> a partir de un nitrilo (cianuro).</p>
+        <p><strong>2. Mecanismo:</strong> ¿Qué producto se forma al hacer reaccionar <span class="quimica">Cloruro de acetilo (CH₃–COCl)</span> con exceso de <span class="quimica">Metilamina (CH₃–NH₂)</span>?</p>
+        <p><strong>3. Identificación:</strong> Una sustancia orgánica tiene olor a pescado podrido, es soluble en HCl diluido y su fórmula es <span class="quimica">C₂H₅NH₂</span>. ¿Es una amina, amida o ácido? Justifica.</p>
+        <p><strong>4. Usos:</strong> Explica por qué los jabones son sales de ácidos carboxílicos de cadena larga (ej: estearato de sodio) y cómo actúan.</p>
+        <p><strong>5. Reto de síntesis:</strong> Partiendo de benceno (C₆H₆), propón una ruta de 2 pasos para obtener <strong>Ácido benzoico</strong> (C₆H₅–COOH). <em>Pista: Friedel-Crafts y oxidación, o Grignard + CO₂.</em></p>
+    </div>
+
+    
+    <!-- ==================== CONSEJO FINAL ==================== -->
+    <hr>
+    <div class="caja-clave">
+        <h4 style="margin-top:0;">🧠 Consejo final para el examen</h4>
+        <ul style="margin-bottom:0;">
+            <li><strong>Memoriza la escalera:</strong> Ácido → Cloruro (SOCl₂) → Amida (amina) → Éster (alcohol).</li>
+            <li><span class="quimica">LiAlH₄</span> reduce ácidos a alcoholes; <span class="quimica">NaBH₄</span> <strong>NO</strong> (es más suave).</li>
+            <li><strong>Aminas vs Amidas:</strong> aminas = <strong>básicas</strong> (olor a pescado); amidas = <strong>neutras</strong> (plásticos nylon).</li>
+        </ul>
+    </div>
+
+    <hr>
+    <p style="text-align:center; color:#5a6f84; font-size:0.9rem; margin-top:2rem;">
+        📚 Guía elaborada para estudio · 
+    </p>
+
+</div>
+<!-- fin container -->
+
+</body>
+</html>
