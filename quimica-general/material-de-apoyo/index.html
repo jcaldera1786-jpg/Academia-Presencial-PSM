@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Termoquímica y Termodinámica - Guía para Ingeniería</title>
+    <style>
+        /* ===== RESET Y ESTILOS BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4f8;
+            color: #1a2634;
+            line-height: 1.8;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 2.8rem 3.5rem;
+            border-radius: 28px;
+            box-shadow: 0 25px 70px rgba(0, 20, 40, 0.10);
+        }
+
+        /* ===== TIPOGRAFÍA ===== */
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #0a2a44;
+            border-left: 10px solid #d45a2e;
+            padding-left: 1.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .subtitulo {
+            font-size: 1.2rem;
+            color: #3d5770;
+            margin-bottom: 2.8rem;
+            padding-left: 2.8rem;
+            border-bottom: 3px solid #e6ecf3;
+            padding-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 2.1rem;
+            font-weight: 650;
+            color: #0d3b5e;
+            margin-top: 3rem;
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 4px solid #dce4ed;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1d4f7a;
+            margin-top: 2.2rem;
+            margin-bottom: 0.8rem;
+        }
+
+        h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #25628f;
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            margin-bottom: 1.1rem;
+            color: #1f2e41;
+        }
+
+        /* ===== LISTAS ===== */
+        ul, ol {
+            margin: 0.8rem 0 1.6rem 2rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* ===== TABLAS ===== */
+        .tabla-wrap {
+            overflow-x: auto;
+            margin: 1.8rem 0 2.2rem 0;
+            border-radius: 16px;
+            border: 1px solid #dbe2ed;
+            background: #fafcff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.98rem;
+        }
+
+        th {
+            background: #1d3f62;
+            color: white;
+            font-weight: 600;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        td {
+            padding: 14px 18px;
+            border-bottom: 1px solid #e8eef6;
+            vertical-align: top;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: #f2f8ff;
+        }
+
+        /* ===== CUADROS DESTACADOS ===== */
+        .caja-teoria {
+            background: #eef4fb;
+            border-left: 8px solid #2a6dad;
+            padding: 1.4rem 2rem;
+            border-radius: 0 18px 18px 0;
+            margin: 1.8rem 0;
+        }
+
+        .caja-teoria strong {
+            color: #0a3b66;
+        }
+
+        .caja-ejemplo {
+            background: #f2f7ee;
+            border-left: 8px solid #2d8f5e;
+            padding: 1.4rem 2rem;
+            border-radius: 0 18px 18px 0;
+            margin: 1.8rem 0;
+        }
+
+        .caja-ejemplo strong {
+            color: #1a6e44;
+        }
+
+        .caja-formula {
+            background: #fef7e9;
+            border-left: 8px solid #e6a020;
+            padding: 1.4rem 2rem;
+            border-radius: 0 18px 18px 0;
+            margin: 1.8rem 0;
+        }
+
+        .caja-formula strong {
+            color: #8f6b1a;
+        }
+
+        .caja-ejercicio {
+            background: #f0effa;
+            border-left: 8px solid #7b4fbf;
+            padding: 1.4rem 2rem;
+            border-radius: 0 18px 18px 0;
+            margin: 1.8rem 0;
+        }
+
+        .caja-ejercicio strong {
+            color: #4a2d7a;
+        }
+
+        .caja-clave {
+            background: #e6f3ed;
+            border-left: 8px solid #0f8b6a;
+            padding: 1.4rem 2rem;
+            border-radius: 0 18px 18px 0;
+            margin: 1.8rem 0;
+        }
+
+        .caja-clave strong {
+            color: #0a5e46;
+        }
+
+        .caja-aplicacion {
+            background: #e2eaf9;
+            border-left: 8px solid #4a7db5;
+            padding: 1.4rem 2rem;
+            border-radius: 0 18px 18px 0;
+            margin: 1.8rem 0;
+            border-right: 1px solid #cdddec;
+        }
+
+        .caja-aplicacion strong {
+            color: #1f4c7a;
+        }
+
+        /* ===== ECUACIONES Y FÓRMULAS ===== */
+        .ecuacion {
+            background: #eef3fa;
+            padding: 1rem 1.8rem;
+            border-radius: 14px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.15rem;
+            text-align: center;
+            margin: 1.2rem 0;
+            border: 1px solid #c9d7e8;
+            color: #09263f;
+        }
+
+        .ecuacion-destacada {
+            background: #dce6f5;
+            padding: 1.2rem 2rem;
+            border-radius: 14px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.25rem;
+            text-align: center;
+            margin: 1.2rem 0;
+            border: 2px solid #7b9fc7;
+            color: #05233e;
+            font-weight: 600;
+        }
+
+        .quimica {
+            font-family: 'Courier New', monospace;
+            background: #eef2f7;
+            padding: 0.2rem 0.7rem;
+            border-radius: 6px;
+            font-weight: 500;
+            color: #0b3b5e;
+            font-size: 0.95rem;
+            display: inline-block;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #d45a2e;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 1.2rem;
+            border-radius: 30px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .badge-verde {
+            background: #1c9e6b;
+        }
+
+        .badge-azul {
+            background: #2a6dad;
+        }
+
+        .badge-morado {
+            background: #7b4fbf;
+        }
+
+        hr {
+            border: none;
+            border-top: 3px dashed #d7e1ed;
+            margin: 3rem 0;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem 1.2rem;
+            }
+            h1 {
+                font-size: 2rem;
+                padding-left: 1rem;
+            }
+            h2 {
+                font-size: 1.6rem;
+            }
+            .subtitulo {
+                padding-left: 1.2rem;
+                font-size: 1rem;
+            }
+            .ecuacion, .ecuacion-destacada {
+                font-size: 0.95rem;
+                padding: 0.8rem 0.8rem;
+                word-break: break-word;
+            }
+            th, td {
+                padding: 10px 12px;
+                font-size: 0.88rem;
+            }
+            .caja-teoria, .caja-ejemplo, .caja-formula, .caja-ejercicio, .caja-clave, .caja-aplicacion {
+                padding: 1rem 1.2rem;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0.5rem;
+            }
+            .container {
+                box-shadow: none;
+                padding: 1.5rem;
+            }
+            .caja-teoria, .caja-ejemplo, .caja-formula, .caja-ejercicio, .caja-clave, .caja-aplicacion {
+                break-inside: avoid;
+            }
+            .tabla-wrap {
+                border: 1px solid #aaa;
+            }
+            th {
+                background: #1d3f62 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- ==================== ENCABEZADO ==================== -->
+    <h1>🔥 Termoquímica y Termodinámica</h1>
+    <div class="subtitulo">
+        Guía extensa para Ingeniería · Primera y Segunda Ley · Entalpía · Entropía · Ley de Hess · Aplicaciones
+    </div>
+
+    <!-- ==================== INTRODUCCIÓN ==================== -->
+    <div class="caja-aplicacion">
+        <p style="font-size:1.1rem; margin-bottom:0;">
+            <strong>🌍 ¿Por qué esto es crucial para un ingeniero?</strong><br>
+            Desde motores de combustión hasta plantas de energía, pasando por baterías, refrigeración y síntesis química industrial — 
+            <strong>la termodinámica gobierna la eficiencia y viabilidad de todo proceso energético</strong>. 
+            Esta guía te dará las herramientas para calcular calor, predecir espontaneidad y optimizar reacciones.
+        </p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ==================== 1. TERMOQUÍMICA ======================== -->
+    <!-- ============================================================ -->
+    <h2>📊 1. Termoquímica. Relación entre Calor y Reacción</h2>
+
+    <p><strong>Definición:</strong> La termoquímica es la parte de la termodinámica que estudia el <strong>calor intercambiado</strong> (absorbido o liberado) durante una reacción química o un cambio físico.</p>
+
+    <h3>🔹 Clasificación de procesos según el calor</h3>
+    <ul>
+        <li><strong>Reacción exotérmica:</strong> libera calor al entorno. <span class="quimica">ΔH &lt; 0</span>. Ej: combustión de metano, neutralización ácido-base.</li>
+        <li><strong>Reacción endotérmica:</strong> absorbe calor del entorno. <span class="quimica">ΔH &gt; 0</span>. Ej: fotosíntesis, descomposición de carbonato de calcio.</li>
+    </ul>
+
+    <div class="caja-ejemplo">
+        <p><strong>Ejemplo cotidiano:</strong></p>
+        <ul>
+            <li>⚡ <strong>Exotérmica:</strong> Quemar gas en una estufa (liberas calor para cocinar).</li>
+            <li>❄️ <strong>Endotérmica:</strong> Las bolsas de frío instantáneo (nitrato de amonio + agua) absorben calor y bajan la temperatura.</li>
+        </ul>
+    </div>
+
+    <h3>🔹 Magnitudes clave en termoquímica</h3>
+    <ul>
+        <li><span class="quimica">q</span> = calor transferido (J o cal). Depende del camino (no es función de estado).</li>
+        <li><span class="quimica">w</span> = trabajo realizado (J). En química, <span class="quimica">w = –P·ΔV</span> (trabajo presión-volumen).</li>
+        <li><span class="quimica">ΔU</span> = cambio de energía interna (<span class="quimica">ΔU = q + w</span>). <strong>Función de estado</strong>.</li>
+    </ul>
+
+    <!-- ============================================================ -->
+    <!-- ==================== 2. PRIMERA LEY ========================= -->
+    <!-- ============================================================ -->
+    <hr>
+    <h2>⚡ 2. Primera Ley de la Termodinámica</h2>
+
+    <div class="ecuacion-destacada">
+        ΔU = q + w
+    </div>
+
+    <p><strong>Enunciado:</strong> "La energía no se crea ni se destruye, solo se transforma". El cambio en la energía interna de un sistema es igual a la suma del calor y el trabajo intercambiados con el entorno.</p>
+
+    <div class="caja-teoria">
+        <p><strong>Convenio de signos (importante para ingeniería):</strong></p>
+        <ul>
+            <li><span class="quimica">q &gt; 0</span> → el sistema <strong>absorbe</strong> calor (endotérmico).</li>
+            <li><span class="quimica">q &lt; 0</span> → el sistema <strong>libera</strong> calor (exotérmico).</li>
+            <li><span class="quimica">w &gt; 0</span> → el sistema <strong>recibe</strong> trabajo (compresión).</li>
+            <li><span class="quimica">w &lt; 0</span> → el sistema <strong>realiza</strong> trabajo (expansión).</li>
+        </ul>
+        <p style="margin-top:0.8rem;"><strong>Para procesos a volumen constante:</strong> <span class="quimica">ΔV = 0</span> → <span class="quimica">w = 0</span> → <span class="quimica">ΔU = q<sub>v</sub></span> (calor medido en bomba calorimétrica).</p>
+    </div>
+
+    <h3>🔹 Aplicación ingenieril: Calorimetría</h3>
+    <p>Los ingenieros usan calorímetros para medir el poder calórico de combustibles, alimentos o reacciones industriales.</p>
+
+    <div class="caja-ejemplo">
+        <p><strong>Ejemplo resuelto:</strong> Un sistema absorbe 1500 J de calor y realiza un trabajo de 600 J sobre el entorno. Calcula ΔU.</p>
+        <p><strong>Solución:</strong></p>
+        <div class="ecuacion" style="background:#e3edfa;">
+            q = +1500 J (absorbe) &nbsp;&nbsp; w = –600 J (realiza trabajo)<br>
+            ΔU = 1500 + (–600) = <strong>+900 J</strong>
+        </div>
+        <p>El sistema aumentó su energía interna en 900 J.</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ==================== 3. ENTALPÍA ============================ -->
+    <!-- ============================================================ -->
+    <hr>
+    <h2>🔥 3. Concepto de Entalpía (<span class="quimica">H</span>)</h2>
+
+    <p><strong>Definición:</strong> La entalpía es una función de estado que mide el contenido calórico de un sistema a <strong>presión constante</strong>.</p>
+
+    <div class="ecuacion-destacada">
+        H = U + P·V
+    </div>
+
+    <p>En la práctica, la mayoría de las reacciones químicas ocurren a presión constante (atmósfera abierta). Por eso usamos <span class="quimica">ΔH</span> (cambio de entalpía) en lugar de <span class="quimica">ΔU</span>.</p>
+
+    <div class="caja-formula">
+        <p><strong>Relación clave:</strong></p>
+        <div class="ecuacion" style="background:#fcf3e0;">
+            ΔH = ΔU + P·ΔV &nbsp;&nbsp;→&nbsp;&nbsp; <strong>ΔH = q<sub>p</sub></strong> (calor a presión constante)
+        </div>
+        <p>Por eso, en química general casi siempre trabajamos con <span class="quimica">ΔH</span>.</p>
+    </div>
+
+    <h3>🔹 Entalpías de reacción estándar (<span class="quimica">ΔH°<sub>rxn</sub></span>)</h3>
+    <ul>
+        <li><strong>Entalpía de formación estándar (<span class="quimica">ΔH<sub>f</sub>°</span>):</strong> calor asociado a la formación de 1 mol de compuesto a partir de sus elementos en su estado estándar (25°C, 1 atm).</li>
+        <li><span class="quimica">ΔH<sub>f</sub>°</span> para elementos en su forma más estable es <strong>cero</strong> (ej: O₂, H₂, C grafito).</li>
+    </ul>
+
+    <div class="caja-teoria">
+        <p><strong>Fórmula para calcular ΔH° de reacción:</strong></p>
+        <div class="ecuacion">
+            ΔH°<sub>rxn</sub> = Σ n·ΔH<sub>f</sub>°(productos) – Σ m·ΔH<sub>f</sub>°(reactivos)
+        </div>
+        <p>donde n y m son los coeficientes estequiométricos.</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ==================== 4. LEY DE HESS ========================= -->
+    <!-- ============================================================ -->
+    <hr>
+    <h2>🧩 4. Ley de Hess</h2>
+
+    <p><strong>Enunciado:</strong> "El cambio de entalpía de una reacción global es la <strong>suma algebraica</strong> de los cambios de entalpía de las reacciones parciales en las que se puede descomponer, siempre que el estado inicial y final sean los mismos."</p>
+
+    <div class="caja-clave">
+        <p><strong>🔑 Implicación práctica:</strong> Podemos calcular <span class="quimica">ΔH</span> para reacciones que no se pueden medir directamente en el laboratorio, combinando reacciones conocidas.</p>
+    </div>
+
+    <div class="caja-ejemplo">
+        <p><strong>Ejemplo resuelto (Ley de Hess):</strong></p>
+        <p>Calcular <span class="quimica">ΔH°</span> para la reacción:<br>
+        <span class="quimica">C(grafito) + ½ O₂(g) → CO(g)</span></p>
+        <p>Datos conocidos:</p>
+        <ol>
+            <li><span class="quimica">C(grafito) + O₂(g) → CO₂(g) &nbsp; ΔH = –393.5 kJ</span></li>
+            <li><span class="quimica">CO(g) + ½ O₂(g) → CO₂(g) &nbsp; ΔH = –283.0 kJ</span></li>
+        </ol>
+        <p><strong>Estrategia:</strong> Invertimos la reacción (2) y la sumamos con (1):</p>
+        <div class="ecuacion" style="background:#e3edfa;">
+            C(grafito) + O₂(g) → CO₂(g) &nbsp;&nbsp;(ΔH = –393.5 kJ)<br>
+            CO₂(g) → CO(g) + ½ O₂(g) &nbsp;&nbsp;(ΔH = +283.0 kJ) &nbsp;(invertida)<br>
+            <hr style="margin:0.3rem 0; border-color:#a0b8d0;">
+            <strong>C(grafito) + ½ O₂(g) → CO(g) &nbsp; ΔH = –110.5 kJ</strong>
+        </div>
+        <p>La entalpía de formación del CO(g) es <strong>–110.5 kJ/mol</strong>.</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ==================== 5. SEGUNDA LEY ========================= -->
+    <!-- ============================================================ -->
+    <hr>
+    <h2>🌀 5. Segunda Ley de la Termodinámica</h2>
+
+    <p><strong>Enunciado (Clausius):</strong> "El calor no puede fluir espontáneamente desde un cuerpo frío a uno caliente sin realizar trabajo."</p>
+    <p><strong>Enunciado (Kelvin-Planck):</strong> "Es imposible convertir completamente el calor en trabajo sin que ocurran otros efectos."</p>
+
+    <div class="caja-teoria">
+        <p><strong>Consecuencia fundamental para la ingeniería:</strong></p>
+        <ul>
+            <li>Ninguna máquina térmica puede tener una eficiencia del 100% (siempre hay pérdidas por fricción y calor residual).</li>
+            <li>Los procesos reales son <strong>irreversibles</strong> y van hacia el aumento de la entropía del universo.</li>
+        </ul>
+    </div>
+
+    <h3>🔹 La entropía como criterio de espontaneidad</h3>
+    <p>Para que un proceso sea espontáneo (sin intervención externa), la <strong>entropía total</strong> (sistema + entorno) debe aumentar.</p>
+
+    <div class="ecuacion-destacada">
+        ΔS<sub>universo</sub> = ΔS<sub>sistema</sub> + ΔS<sub>entorno</sub> &gt; 0
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ==================== 6. ENTROPÍA ============================ -->
+    <!-- ============================================================ -->
+    <hr>
+    <h2>📈 6. Entropía (<span class="quimica">S</span>) y Temperatura</h2>
+
+    <p><strong>Definición:</strong> La entropía es una función de estado que mide el <strong>grado de desorden o dispersión energética</strong> de un sistema. A mayor desorden, mayor entropía.</p>
+
+    <h3>🔹 Factores que aumentan la entropía</h3>
+    <ul>
+        <li><strong>Cambios de fase:</strong> Sólido → Líquido → Gas (aumenta S).</li>
+        <li><strong>Aumento de temperatura:</strong> las partículas se mueven más → más microestados → aumenta S.</li>
+        <li><strong>Reacciones que aumentan el número de moles gaseosos:</strong> <span class="quimica">2H₂O₂(l) → 2H₂O(l) + O₂(g)</span> (aumenta S por el O₂).</li>
+    </ul>
+
+    <h3>🔹 Relación entre entropía y temperatura (calor reversible)</h3>
+
+    <div class="ecuacion-destacada">
+        ΔS = <sup>q<sub>rev</sub></sup> / <sub>T</sub> &nbsp;&nbsp;(para un proceso isotérmico reversible)
+    </div>
+
+    <p>Para procesos a presión constante y con cambio de temperatura:</p>
+    <div class="ecuacion">
+        ΔS = n·C<sub>p</sub> · ln( T<sub>2</sub> / T<sub>1</sub> )
+    </div>
+
+    <div class="caja-formula">
+        <p><strong>Entropía estándar de reacción:</strong></p>
+        <div class="ecuacion" style="background:#fcf3e0;">
+            ΔS°<sub>rxn</sub> = Σ n·S°(productos) – Σ m·S°(reactivos)
+        </div>
+        <p>Donde <span class="quimica">S°</span> son entropías molares estándar (tablas).</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ==================== 7. ENERGÍA LIBRE DE GIBBS ============== -->
+    <!-- ============================================================ -->
+    <hr>
+    <h2>⚖️ 7. Energía Libre de Gibbs (<span class="quimica">G</span>)</h2>
+
+    <p><strong>Definición:</strong> Es el criterio definitivo para determinar la espontaneidad de un proceso a <strong>T y P constantes</strong> (las condiciones más comunes en ingeniería).</p>
+
+    <div class="ecuacion-destacada">
+        ΔG = ΔH – T·ΔS
+    </div>
+
+    <div class="caja-teoria">
+        <p><strong>Criterio de espontaneidad:</strong></p>
+        <ul>
+            <li><span class="quimica">ΔG &lt; 0</span> → <strong>Proceso espontáneo</strong> (exergónico).</li>
+            <li><span class="quimica">ΔG = 0</span> → <strong>Equilibrio</strong> (el sistema está en su estado más estable).</li>
+            <li><span class="quimica">ΔG &gt; 0</span> → <strong>Proceso no espontáneo</strong> (endergónico) — requiere trabajo externo.</li>
+        </ul>
+    </div>
+
+    <div class="caja-ejemplo">
+        <p><strong>Ejemplo resuelto:</strong> Para una reacción con <span class="quimica">ΔH = –100 kJ</span> y <span class="quimica">ΔS = –0.200 kJ/K</span>, ¿es espontánea a 300 K y a 600 K?</p>
+        <p><strong>Solución:</strong></p>
+        <ul>
+            <li>A 300 K: <span class="quimica">ΔG = –100 – 300·(–0.200) = –100 + 60 = –40 kJ</span> → <strong>¡Espontánea!</strong></li>
+            <li>A 600 K: <span class="quimica">ΔG = –100 – 600·(–0.200) = –100 + 120 = +20 kJ</span> → <strong>¡No espontánea!</strong></li>
+        </ul>
+        <p><strong>Conclusión:</strong> La espontaneidad depende de la temperatura. Procesos exotérmicos pero con ΔS negativo solo son espontáneos a temperaturas bajas.</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ==================== 8. APLICACIONES EN INGENIERÍA ========== -->
+    <!-- ============================================================ -->
+    <hr>
+    <h2>🏗️ 8. Aplicaciones en Ingeniería</h2>
+
+    <div class="tabla-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Área de ingeniería</th>
+                    <th>Aplicación directa de termodinámica</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Ingeniería mecánica / térmica</strong></td>
+                    <td>Motores de combustión interna (ciclo Otto, Diesel). Eficiencia limitada por la 2ª ley.</td>
+                </tr>
+                <tr>
+                    <td><strong>Ingeniería química</strong></td>
+                    <td>Diseño de reactores: equilibrio químico <span class="quimica">(ΔG = 0)</span> y control de temperatura para maximizar rendimiento.</td>
+                </tr>
+                <tr>
+                    <td><strong>Ingeniería de materiales</strong></td>
+                    <td>Diagramas de fases y tratamientos térmicos (difusión controlada por entropía).</td>
+                </tr>
+                <tr>
+                    <td><strong>Ingeniería eléctrica / electrónica</strong></td>
+                    <td>Baterías y pilas de combustible: la <span class="quimica">ΔG</span> se convierte en trabajo eléctrico (<span class="quimica">W<sub>eléctrico</sub> = –n·F·E</span>).</td>
+                </tr>
+                <tr>
+                    <td><strong>Ingeniería ambiental</strong></td>
+                    <td>Evaluación de procesos de captura de CO₂, eficiencia energética y huella de carbono.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ==================== 9. EJERCICIOS RESUELTOS ================ -->
+    <!-- ============================================================ -->
+    <hr>
+    <h2>✍️ 9. Ejercicios Resueltos (paso a paso)</h2>
+
+    <div class="caja-ejemplo">
+        <h4 style="margin-top:0;">Ejercicio 1 – Primera Ley</h4>
+        <p><strong>Enunciado:</strong> Un gas se expande desde 2.0 L hasta 5.0 L a presión constante de 1.5 atm, absorbiendo 850 J de calor. Calcula <span class="quimica">ΔU</span>.</p>
+        <p><strong>Solución:</strong></p>
+        <ol>
+            <li>Convertir trabajo: <span class="quimica">w = –P·ΔV = –1.5 atm · (5.0 – 2.0) L = –4.5 atm·L</span>.</li>
+            <li>Convertir a J: <span class="quimica">1 atm·L = 101.325 J</span> → <span class="quimica">w = –4.5 · 101.325 = –456 J</span>.</li>
+            <li><span class="quimica">ΔU = q + w = 850 J + (–456 J) = <strong>+394 J</strong></span>.</li>
+        </ol>
+    </div>
+
+    <div class="caja-ejemplo">
+        <h4 style="margin-top:0;">Ejercicio 2 – Ley de Hess</h4>
+        <p><strong>Enunciado:</strong> Calcula <span class="quimica">ΔH°</span> para <span class="quimica">2C(grafito) + 2H₂(g) + O₂(g) → C₂H₄O₂(l)</span> (ácido acético) usando las siguientes reacciones:</p>
+        <ol>
+            <li><span class="quimica">C(grafito) + O₂(g) → CO₂(g) &nbsp; ΔH = –393.5 kJ</span></li>
+            <li><span class="quimica">H₂(g) + ½O₂(g) → H₂O(l) &nbsp; ΔH = –285.8 kJ</span></li>
+            <li><span class="quimica">C₂H₄O₂(l) + 2O₂(g) → 2CO₂(g) + 2H₂O(l) &nbsp; ΔH = –871.7 kJ</span></li>
+        </ol>
+        <p><strong>Solución (estrategia):</strong> Invertir la reacción (3) y sumar 2·(1) + 2·(2) + [–(3)].</p>
+        <div class="ecuacion" style="background:#e3edfa;">
+            2C(grafito) + 2O₂(g) → 2CO₂(g) &nbsp; ΔH = –787.0 kJ<br>
+            2H₂(g) + O₂(g) → 2H₂O(l) &nbsp; ΔH = –571.6 kJ<br>
+            2CO₂(g) + 2H₂O(l) → C₂H₄O₂(l) + 2O₂(g) &nbsp; ΔH = +871.7 kJ<br>
+            <hr style="margin:0.3rem 0; border-color:#a0b8d0;">
+            <strong>2C(grafito) + 2H₂(g) + O₂(g) → C₂H₄O₂(l) &nbsp; ΔH = –486.9 kJ</strong>
+        </div>
+    </div>
+
+    <div class="caja-ejemplo">
+        <h4 style="margin-top:0;">Ejercicio 3 – Energía Libre y Espontaneidad</h4>
+        <p><strong>Enunciado:</strong> Para la reacción <span class="quimica">N₂(g) + 3H₂(g) → 2NH₃(g)</span>, <span class="quimica">ΔH° = –92.2 kJ</span> y <span class="quimica">ΔS° = –198.7 J/K</span>. ¿A qué temperatura se vuelve no espontánea?</p>
+        <p><strong>Solución:</strong></p>
+        <ul>
+            <li>La reacción es espontánea cuando <span class="quimica">ΔG &lt; 0</span> → <span class="quimica">ΔH – T·ΔS &lt; 0</span>.</li>
+            <li>Despejamos <span class="quimica">T &lt; ΔH / ΔS</span> (cuidado con signos).</li>
+            <li><span class="quimica">ΔH = –92.2 kJ = –92200 J</span>; <span class="quimica">ΔS = –198.7 J/K</span>.</li>
+            <li><span class="quimica">T = ΔH / ΔS = (–92200) / (–198.7) = 464 K</span>.</li>
+            <li><strong>Conclusión:</strong> Por debajo de 464 K es espontánea; por encima, no (porque el término <span class="quimica">–TΔS</span> se vuelve positivo y domina).</li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ==================== 10. EJERCICIOS PROPUESTOS ============== -->
+    <!-- ============================================================ -->
+    <hr>
+    <h2>🧪 10. Ejercicios Propuestos (para practicar)</h2>
+
+    <div class="caja-ejercicio">
+        <p><strong>1. Primera Ley:</strong> Un sistema recibe 2500 J de calor y su energía interna aumenta en 1800 J. ¿Realizó o recibió trabajo? ¿De qué magnitud?</p>
+        <p><strong>2. Ley de Hess:</strong> Calcula <span class="quimica">ΔH°</span> para <span class="quimica">C₂H₄(g) + H₂O(l) → C₂H₅OH(l)</span> usando:</p>
+        <ul>
+            <li><span class="quimica">C₂H₄(g) + 3O₂(g) → 2CO₂(g) + 2H₂O(l) &nbsp; ΔH = –1411 kJ</span></li>
+            <li><span class="quimica">C₂H₅OH(l) + 3O₂(g) → 2CO₂(g) + 3H₂O(l) &nbsp; ΔH = –1367 kJ</span></li>
+        </ul>
+        <p><strong>3. Entropía:</strong> ¿Cuál proceso tiene mayor aumento de entropía? Justifica: <br> a) Hielo fundiendo a 0°C &nbsp; b) Agua hirviendo a 100°C &nbsp; c) N₂(g) + 3H₂(g) → 2NH₃(g)</p>
+        <p><strong>4. Gibbs:</strong> Una reacción tiene <span class="quimica">ΔH = +50 kJ</span> y <span class="quimica">ΔS = +0.100 kJ/K</span>. ¿A partir de qué temperatura será espontánea? Interpreta el resultado.</p>
+        <p><strong>5. Aplicación ingenieril:</strong> Explica por qué un motor de combustión interna no puede tener una eficiencia del 100% usando la 2ª ley de la termodinámica.</p>
+    </div>
+
+
+
+    <!-- ============================================================ -->
+    <!-- ==================== 11. RESUMEN Y CONSEJOS ================= -->
+    <!-- ============================================================ -->
+    <hr>
+    <div class="caja-aplicacion">
+        <h4 style="margin-top:0;">🎯 Resumen para el examen de ingeniería</h4>
+        <ul>
+            <li><strong>Primera Ley:</strong> <span class="quimica">ΔU = q + w</span> → la energía se conserva. Usa <span class="quimica">ΔH = q<sub>p</sub></span> para reacciones a presión constante.</li>
+            <li><strong>Ley de Hess:</strong> Suma algebraica de entalpías. Útil para reacciones no medibles.</li>
+            <li><strong>Segunda Ley:</strong> La entropía del universo siempre aumenta. <span class="quimica">ΔS<sub>univ</sub> &gt; 0</span>.</li>
+            <li><strong>Gibbs:</strong> <span class="quimica">ΔG = ΔH – TΔS</span>. Si <span class="quimica">ΔG &lt; 0</span> → espontáneo. <strong>Criterio definitivo</strong> para procesos a T y P ctes.</li>
+            <li><strong>Consejo ingenieril:</strong> Siempre verifica unidades (J vs kJ, atm·L vs J) y el signo de cada término.</li>
+        </ul>
+    </div>
+
+    <hr>
+    <p style="text-align:center; color:#4d6a86; font-size:0.95rem; margin-top:2.5rem;">
+        ⚙️ Material diseñado para futuros ingenieros · La termodinámica es la columna vertebral de la energía y los procesos industriales.
+    </p>
+
+</div>
+<!-- fin container -->
+
+</body>
+</html>
