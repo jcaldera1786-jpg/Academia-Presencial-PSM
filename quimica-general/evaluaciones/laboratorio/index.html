@@ -11,6 +11,7 @@
             margin: 20px;
             background-color: #f4f4f9;
             color: #333;
+            display: block; 
         }
         h1 { text-align: center; color: #2c3e50; }
         .question-block {
@@ -28,9 +29,8 @@
             border-radius: 5px;
             border: 1px solid #ddd;
         }
-        .sub-question { font-weight: bold; margin-top: 15px; }
         
-        /* --- PANTALLA DE ADVERTENCIA (PRIMER INTENTO) --- */
+        /* --- PANTALLA DE ADVERTENCIA (1er intento) --- */
         #warning-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -47,8 +47,7 @@
             border: 4px solid #f1c40f;
         }
         #warning-overlay.visible { display: flex; }
-        #warning-overlay h2 { color: #e67e22; margin-bottom: 5px; }
-        #warning-overlay p { margin-bottom: 20px; font-size: 17px; line-height: 1.5; }
+        #warning-overlay h2 { color: #e67e22; }
         #warning-overlay button {
             padding: 12px 30px;
             font-size: 18px;
@@ -59,9 +58,8 @@
             color: white;
             cursor: pointer;
         }
-        #warning-overlay button:hover { background-color: #d35400; }
 
-        /* --- PANTALLA DE BLOQUEO (SEGUNDO INTENTO) --- */
+        /* --- PANTALLA DE BLOQUEO (2do intento / Recarga) --- */
         #lock-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -77,8 +75,7 @@
             box-sizing: border-box;
         }
         #lock-overlay.visible { display: flex; }
-        #lock-overlay h2 { color: #e74c3c; margin-bottom: 5px; }
-        #lock-overlay p { margin-bottom: 20px; font-size: 16px; }
+        #lock-overlay h2 { color: #e74c3c; }
         #master-password {
             padding: 10px;
             font-size: 18px;
@@ -99,7 +96,6 @@
             cursor: pointer;
             font-weight: bold;
         }
-        #unlock-btn:hover { background-color: #2980b9; }
         #error-msg { color: #e74c3c; margin-top: 10px; display: none; font-weight: bold; }
     </style>
 </head>
@@ -111,41 +107,57 @@
         
         <div class="question-block">
             <h3>Pregunta 1</h3>
-            <p><strong>Indique el nombre de cada uno de los siguientes instrumentos/materiales de laboratorio:(4puntos)</strong></p>
-            <!-- Aquí el alumno debe colocar las rutas de sus imágenes, por ejemplo en una carpeta 'imgs' -->
-            <p><strong>1.</strong></p>
-            <img src="imgs/img1.jpg" alt="Instrumento 1">
-            <p><strong>2.</strong></p>
-            <img src="imgs/img2.png" alt="Instrumento 2">
-            <p><strong>3.</strong></p>
-            <img src="imgs/img3.jpg" alt="Instrumento 3">
-            <p><strong>4.</strong></p>
-            <img src="imgs/img4.jpg" alt="Instrumento 4">
-            <p><strong>5.</strong></p>
-            <img src="imgs/img5.jpg" alt="Instrumento 5">
-            <p><strong>6.</strong></p>
-            <img src="imgs/img6.jfif" alt="Instrumento 6">
-            <p><strong>7.</strong></p>
-            <img src="imgs/img7.jfif" alt="Instrumento 7">
-            <p><strong>8.</strong></p>
-            <img src="imgs/img8.jpg" alt="Instrumento 8">
+            <p><strong>Indique el nombre de cada uno de los siguientes instrumentos/materiales de laboratorio:</strong></p>
+            <!-- Ejemplo de imagen con número -->
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+                <span style="font-weight: bold; font-size: 1.3em;">1.</span>
+                <img src="imgs/img1.jpg" alt="Instrumento 1" style="max-width: 70%;">
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+                <span style="font-weight: bold; font-size: 1.3em;">2.</span>
+                <img src="imgs/img2.png" alt="Instrumento 2" style="max-width: 70%;">
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+                <span style="font-weight: bold; font-size: 1.3em;">3.</span>
+                <img src="imgs/img3.jpg" alt="Instrumento 3" style="max-width: 70%;">
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+                <span style="font-weight: bold; font-size: 1.3em;">4.</span>
+                <img src="imgs/img4.jpg" alt="Instrumento 4" style="max-width: 70%;">
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+                <span style="font-weight: bold; font-size: 1.3em;">5.</span>
+                <img src="imgs/img5.jpg" alt="Instrumento 5" style="max-width: 70%;">
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+                <span style="font-weight: bold; font-size: 1.3em;">6.</span>
+                <img src="imgs/img6.jfif" alt="Instrumento 6" style="max-width: 70%;">
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+                <span style="font-weight: bold; font-size: 1.3em;">7.</span>
+                <img src="imgs/img7.jfif" alt="Instrumento 7" style="max-width: 70%;">
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span style="font-weight: bold; font-size: 1.3em;">8.</span>
+                <img src="imgs/img8.jpg" alt="Instrumento 8" style="max-width: 70%;">
+            </div>
         </div>
 
         <div class="question-block">
             <h3>Pregunta 2</h3>
-            <p><strong>¿Cómo determina Ud. la densidad de una sustancia líquida y de un sólido irregular, como el de un cortauñas? (3 puntos)</strong></p>
+            <p><strong>¿Cómo determina Ud. la densidad de una sustancia líquida y de un sólido irregular, como el de un cortauñas?</strong></p>
         </div>
 
         <div class="question-block">
             <h3>Pregunta 3</h3>
-            <p><strong>Describa el procedimiento para preparar 100 ml de solución de NaCl 0,5 M.(4puntos)</strong></p>
+            <p><strong>Describa el procedimiento para preparar 100 ml de solución de NaCl 0,5 M.</strong></p>
         </div>
 
         <div class="question-block">
             <h3>Pregunta 4</h3>
-            <p><strong> Tiene una solucion de ácido acético de concentración desconocida, proveniente de una muestra de vinagre, y se desea determinar su acidez como ácido acético. Si cuenta con una solucion 1,086M de hidroxido de sodio, previamente estandarizado con pftalato ácido de potasio. </strong></p>
-            <p>a) Describa el procedimiento completo para la determinación de dicha acidez.(4 puntos)</p>
-            <p>b) Si usa esa solución de NaOH y una muestra de 30 ml de vinagre, consumen 6,4 ml de esa solución. ¿Cuál es la concentración del ácido acético en la muestra?(5 puntos)</p>
+            <p><strong>Tiene una solución de ácido acético de concentración desconocida...</strong></p>
+            <p>a) Describa el procedimiento completo para la determinación de dicha acidez.</p>
+            <p>b) Si usa esa solución de NaOH y una muestra de 30 ml de vinagre, consumen 6,4 ml de esa solución. ¿Cuál es la concentración del ácido acético en la muestra?</p>
         </div>
     </div>
 
@@ -160,8 +172,8 @@
 
     <!-- PANTALLA DE BLOQUEO -->
     <div id="lock-overlay">
-        <h2>🔒 EXAMEN BLOQUEADO</h2>
-        <p>Has intentado cambiar de aplicación por segunda vez.<br>Para continuar, solicita al profesor que autorice la reapertura.</p>
+        <h2>🔒 EXAMEN BLOQUEADO PERMANENTEMENTE</h2>
+        <p>Has intentado cambiar de aplicación por segunda vez <strong>O has recargado la página estando bloqueado.</strong><br>Para continuar, solicita al profesor que autorice la reapertura.</p>
         <input type="password" id="master-password" placeholder="Ingrese clave de autorización">
         <button id="unlock-btn">Desbloquear</button>
         <p id="error-msg">❌ Clave incorrecta. Solicite al profesor.</p>
@@ -169,70 +181,83 @@
 
     <script>
         // --- CONFIGURACIÓN DEL PROFESOR ---
-        // Cambia esta contraseña por la que usarás tú para desbloquear
         const PROFESSOR_PASSWORD = "jacl01";
 
         // Variables de estado
         let wakeLock = null;
-        let switchAttempts = 0; // Contador de intentos
+        let switchAttempts = 0; 
         let isLocked = false;
-        let isHandlingSwitch = false; // Controla los eventos dobles en móviles
+        let isHandlingSwitch = false;
 
         const warningOverlay = document.getElementById('warning-overlay');
         const lockOverlay = document.getElementById('lock-overlay');
+        const examContent = document.getElementById('exam-content');
         const passInput = document.getElementById('master-password');
         const errorMsg = document.getElementById('error-msg');
         const unlockBtn = document.getElementById('unlock-btn');
 
-        // --- MANTENER LA PANTALLA ENCENDIDA ---
+        // --- SISTEMA DE PERSISTENCIA (LOCALSTORAGE) ---
+        // Se ejecuta ni bien carga la página para frustrar la recarga
+        window.addEventListener('DOMContentLoaded', () => {
+            // Si el estudiante recarga y ya estaba bloqueado...
+            if (localStorage.getItem('exam_lock_state') === 'true') {
+                isLocked = true;
+                switchAttempts = parseInt(localStorage.getItem('exam_attempts')) || 2;
+                forceLockOnReload();
+            }
+        });
+
+        function forceLockOnReload() {
+            examContent.style.display = 'none'; // OCULTAMOS EL EXAMEN INMEDIATAMENTE
+            lockOverlay.classList.add('visible');
+            if (navigator.vibrate) navigator.vibrate(200);
+        }
+
+        // --- WAKE LOCK (Pantalla encendida) ---
         async function requestWakeLock() {
             try {
                 if ('wakeLock' in navigator) {
                     wakeLock = await navigator.wakeLock.request('screen');
-                    console.log("Pantalla bloqueada para no apagarse");
                 }
-            } catch (err) {
-                console.error("Fallo al mantener pantalla encendida:", err);
-            }
+            } catch (err) { /* Silencioso */ }
         }
         requestWakeLock();
 
-        // --- MOSTRAR ADVERTENCIA ---
+        // --- FUNCIONES DE ADVERTENCIA Y BLOQUEO ---
         function showWarning() {
             if (isLocked) return;
             warningOverlay.classList.add('visible');
-            if (wakeLock) {
-                wakeLock.release();
-                wakeLock = null;
-            }
+            if (wakeLock) { wakeLock.release(); wakeLock = null; }
         }
 
-        // --- CERRAR ADVERTENCIA ---
         function dismissWarning() {
             warningOverlay.classList.remove('visible');
             requestWakeLock();
         }
 
-        // --- BLOQUEAR EXAMEN ---
         function lockExam() {
             if (isLocked) return; 
             isLocked = true;
+            
+            // Guardamos en el teléfono para que no puedan escapar recargando
+            localStorage.setItem('exam_lock_state', 'true');
+            localStorage.setItem('exam_attempts', switchAttempts.toString());
+
             lockOverlay.classList.add('visible');
-            passInput.value = "";
-            errorMsg.style.display = "none";
-            if (wakeLock) {
-                wakeLock.release();
-                wakeLock = null;
-            }
+            if (wakeLock) { wakeLock.release(); wakeLock = null; }
             if (navigator.vibrate) navigator.vibrate(200);
         }
 
-        // --- DESBLOQUEAR EXAMEN ---
         function unlockExam() {
             const pass = passInput.value.trim();
             if (pass === PROFESSOR_PASSWORD) {
+                // Borramos el estado de bloqueo del teléfono
+                localStorage.removeItem('exam_lock_state');
+                localStorage.removeItem('exam_attempts');
+                
                 isLocked = false;
-                switchAttempts = 0; // Reiniciamos el contador
+                switchAttempts = 0;
+                examContent.style.display = 'block'; // Volvemos a mostrar el examen
                 lockOverlay.classList.remove('visible');
                 errorMsg.style.display = "none";
                 requestWakeLock();
@@ -242,48 +267,45 @@
             }
         }
 
-        // --- LÓGICA PRINCIPAL CON DEBOUNCE (CORREGIDA) ---
+        // --- EVENTOS DE SALIDA DE PANTALLA ---
         function handleScreenSwitchAttempt() {
             if (isLocked) return;
-            
-            // Si ya estamos procesando este cambio, ignoramos el segundo evento (blur + visibilitychange)
             if (isHandlingSwitch) return;
-
             isHandlingSwitch = true;
 
-            // Esperamos 300 ms para evitar que se cuenten los eventos dobles del celular como 2 intentos
             setTimeout(() => {
                 isHandlingSwitch = false;
                 switchAttempts++;
 
                 if (switchAttempts === 1) {
-                    showWarning(); // Primer intento: solo advertencia
+                    showWarning();
                 } else if (switchAttempts >= 2) {
-                    lockExam(); // Segundo intento: bloqueo total
+                    lockExam();
                 }
             }, 300);
         }
 
-        // --- EVENTOS DE SEGURIDAD ---
         document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                handleScreenSwitchAttempt();
-            }
+            if (document.hidden) handleScreenSwitchAttempt();
         });
-
         window.addEventListener('blur', () => {
-            // Solo lo ejecutamos si no se ha disparado ya el visibilitychange
-            if (!document.hidden) {
-                handleScreenSwitchAttempt();
+            if (!document.hidden) handleScreenSwitchAttempt();
+        });
+
+        // --- TRAMPA ANTI-RECARGA (beforeunload) ---
+        window.addEventListener('beforeunload', function (e) {
+            if (isLocked) {
+                // Si intenta recargar estando bloqueado, le mostramos este mensaje de advertencia
+                e.preventDefault();
+                e.returnValue = "¡Cuidado! El examen está bloqueado. Si recargas la página, el bloqueo persistirá y deberás llamar al profesor.";
+                return e.returnValue;
             }
         });
 
-        // --- EVENTOS DE DESBLOQUEO ---
+        // --- EVENTOS DEL BOTÓN DE DESBLOQUEO ---
         unlockBtn.addEventListener('click', unlockExam);
         passInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                unlockExam();
-            }
+            if (e.key === 'Enter') unlockExam();
         });
     </script>
 </body>
