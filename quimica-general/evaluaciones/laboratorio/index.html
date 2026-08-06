@@ -28,18 +28,46 @@
             border-radius: 5px;
             border: 1px solid #ddd;
         }
-        .sub-question {
-            font-weight: bold;
-            margin-top: 15px;
-        }
+        .sub-question { font-weight: bold; margin-top: 15px; }
         
-        /* Estilos para el bloqueo de pantalla */
+        /* --- PANTALLA DE ADVERTENCIA (PRIMER INTENTO) --- */
+        #warning-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9998;
+            text-align: center;
+            padding: 30px;
+            box-sizing: border-box;
+            border: 4px solid #f1c40f;
+        }
+        #warning-overlay.visible { display: flex; }
+        #warning-overlay h2 { color: #e67e22; margin-bottom: 5px; }
+        #warning-overlay p { margin-bottom: 20px; font-size: 17px; line-height: 1.5; }
+        #warning-overlay button {
+            padding: 12px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            background-color: #e67e22;
+            color: white;
+            cursor: pointer;
+        }
+        #warning-overlay button:hover { background-color: #d35400; }
+
+        /* --- PANTALLA DE BLOQUEO (SEGUNDO INTENTO) --- */
         #lock-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.9);
             color: white;
-            display: none; /* Oculto por defecto */
+            display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -48,13 +76,9 @@
             padding: 20px;
             box-sizing: border-box;
         }
-        #lock-overlay.visible {
-            display: flex;
-        }
+        #lock-overlay.visible { display: flex; }
         #lock-overlay h2 { color: #e74c3c; margin-bottom: 5px; }
         #lock-overlay p { margin-bottom: 20px; font-size: 16px; }
-        
-        /* Input y botón de desbloqueo */
         #master-password {
             padding: 10px;
             font-size: 18px;
@@ -84,11 +108,11 @@
     <!-- CONTENIDO DEL EXAMEN -->
     <div id="exam-content">
         <h1>Evaluación de Laboratorio</h1>
-
-        <!-- PREGUNTA 1 -->
+        
         <div class="question-block">
             <h3>Pregunta 1</h3>
             <p><strong>Indique el nombre de cada uno de los siguientes instrumentos/materiales de laboratorio:</strong></p>
+            <!-- Aquí el alumno debe colocar las rutas de sus imágenes, por ejemplo en una carpeta 'imgs' -->
             <img src="imgs/img1.jpg" alt="Instrumento 1">
             <img src="imgs/img2.png" alt="Instrumento 2">
             <img src="imgs/img3.jpg" alt="Instrumento 3">
@@ -99,50 +123,60 @@
             <img src="imgs/img8.jpg" alt="Instrumento 8">
         </div>
 
-        <!-- PREGUNTA 2 -->
         <div class="question-block">
             <h3>Pregunta 2</h3>
             <p><strong>¿Cómo determina Ud. la densidad de una sustancia líquida y de un sólido irregular, como el de un cortauñas?</strong></p>
         </div>
 
-        <!-- PREGUNTA 3 -->
         <div class="question-block">
             <h3>Pregunta 3</h3>
             <p><strong>Describa el procedimiento para preparar 100 ml de solución de NaCl 0,5 M.</strong></p>
         </div>
 
-        <!-- PREGUNTA 4 -->
         <div class="question-block">
             <h3>Pregunta 4</h3>
-            <p><strong>Tiene una solución de ácido acético de concentración desconocida... (Completo aquí según tu texto original).</strong></p>
+            <p><strong>Tiene una solución de ácido acético de concentración desconocida...</strong></p>
             <p>a) Describa el procedimiento completo para la determinación de dicha acidez.</p>
             <p>b) Si usa esa solución de NaOH y una muestra de 30 ml de vinagre, consumen 6,4 ml de esa solución. ¿Cuál es la concentración del ácido acético en la muestra?</p>
         </div>
     </div>
 
+    <!-- PANTALLA DE ADVERTENCIA -->
+    <div id="warning-overlay">
+        <h2>⚠️ PRIMERA ADVERTENCIA</h2>
+        <p>Has intentado cambiar de aplicación o minimizar el examen.</p>
+        <p><strong>Esta es tu primera y única advertencia.</strong><br>
+        Si vuelves a salir de esta pantalla, el examen se <strong>BLOQUEARÁ</strong> automáticamente y solo el profesor podrá autorizar su reapertura.</p>
+        <button onclick="dismissWarning()">Entendido, continuar</button>
+    </div>
+
     <!-- PANTALLA DE BLOQUEO -->
     <div id="lock-overlay">
-        <h2>⚠️ EXAMEN BLOQUEADO</h2>
-        <p>Has intentado cambiar de aplicación o pestaña.<br>Para continuar, solicita al profesor que autorice la reapertura.</p>
+        <h2>🔒 EXAMEN BLOQUEADO</h2>
+        <p>Has intentado cambiar de aplicación por segunda vez.<br>Para continuar, solicita al profesor que autorice la reapertura.</p>
         <input type="password" id="master-password" placeholder="Ingrese clave de autorización">
         <button id="unlock-btn">Desbloquear</button>
         <p id="error-msg">❌ Clave incorrecta. Solicite al profesor.</p>
     </div>
 
     <script>
-        // --- CONFIGURACIÓN DE SEGURIDAD ---
-        // Cambia esta contraseña por la que el profesor usará para desbloquear
+        // --- CONFIGURACIÓN DEL PROFESOR ---
+        // Cambia esta contraseña por la que usarás tú para desbloquear
         const PROFESSOR_PASSWORD = "EXAM2026";
 
-        // Variables del sistema
+        // Variables de estado
         let wakeLock = null;
-        const overlay = document.getElementById('lock-overlay');
+        let switchAttempts = 0; // Contador de intentos
+        let isLocked = false;
+        let isHandlingSwitch = false; // Controla los eventos dobles en móviles
+
+        const warningOverlay = document.getElementById('warning-overlay');
+        const lockOverlay = document.getElementById('lock-overlay');
         const passInput = document.getElementById('master-password');
         const errorMsg = document.getElementById('error-msg');
         const unlockBtn = document.getElementById('unlock-btn');
-        let isLocked = false;
 
-        // --- FUNCIÓN PARA MANTENER LA PANTALLA ENCENDIDA (WAKE LOCK) ---
+        // --- MANTENER LA PANTALLA ENCENDIDA ---
         async function requestWakeLock() {
             try {
                 if ('wakeLock' in navigator) {
@@ -155,69 +189,94 @@
         }
         requestWakeLock();
 
-        // --- FUNCIÓN PARA BLOQUEAR EL EXAMEN ---
-        function lockExam() {
-            if (isLocked) return; // Si ya está bloqueado, no hacer nada
-            isLocked = true;
-            overlay.classList.add('visible');
-            passInput.value = "";
-            errorMsg.style.display = "none";
-            // Desactivar el wake lock para que el móvil pueda ahorrar energía mientras el alumno espera al profesor
+        // --- MOSTRAR ADVERTENCIA ---
+        function showWarning() {
+            if (isLocked) return;
+            warningOverlay.classList.add('visible');
             if (wakeLock) {
                 wakeLock.release();
                 wakeLock = null;
             }
-            // Usar vibración si el móvil lo permite como aviso al alumno
+        }
+
+        // --- CERRAR ADVERTENCIA ---
+        function dismissWarning() {
+            warningOverlay.classList.remove('visible');
+            requestWakeLock();
+        }
+
+        // --- BLOQUEAR EXAMEN ---
+        function lockExam() {
+            if (isLocked) return; 
+            isLocked = true;
+            lockOverlay.classList.add('visible');
+            passInput.value = "";
+            errorMsg.style.display = "none";
+            if (wakeLock) {
+                wakeLock.release();
+                wakeLock = null;
+            }
             if (navigator.vibrate) navigator.vibrate(200);
         }
 
-        // --- FUNCIÓN PARA DESBLOQUEAR EL EXAMEN ---
+        // --- DESBLOQUEAR EXAMEN ---
         function unlockExam() {
             const pass = passInput.value.trim();
             if (pass === PROFESSOR_PASSWORD) {
-                // Clave correcta
                 isLocked = false;
-                overlay.classList.remove('visible');
+                switchAttempts = 0; // Reiniciamos el contador
+                lockOverlay.classList.remove('visible');
                 errorMsg.style.display = "none";
-                // Reactivar el bloqueo de pantalla
                 requestWakeLock();
             } else {
-                // Clave incorrecta
                 errorMsg.style.display = "block";
-                // Si el alumno falla, vibrar para avisar al profesor en la sala
                 if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
             }
         }
 
+        // --- LÓGICA PRINCIPAL CON DEBOUNCE (CORREGIDA) ---
+        function handleScreenSwitchAttempt() {
+            if (isLocked) return;
+            
+            // Si ya estamos procesando este cambio, ignoramos el segundo evento (blur + visibilitychange)
+            if (isHandlingSwitch) return;
+
+            isHandlingSwitch = true;
+
+            // Esperamos 300 ms para evitar que se cuenten los eventos dobles del celular como 2 intentos
+            setTimeout(() => {
+                isHandlingSwitch = false;
+                switchAttempts++;
+
+                if (switchAttempts === 1) {
+                    showWarning(); // Primer intento: solo advertencia
+                } else if (switchAttempts >= 2) {
+                    lockExam(); // Segundo intento: bloqueo total
+                }
+            }, 300);
+        }
+
         // --- EVENTOS DE SEGURIDAD ---
-        // 1. Si cambia de pestaña en el navegador o minimiza la app
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
-                lockExam();
+                handleScreenSwitchAttempt();
             }
         });
 
-        // 2. Si cambia de aplicación o recibe una llamada (capturado por 'blur')
         window.addEventListener('blur', () => {
-            lockExam();
+            // Solo lo ejecutamos si no se ha disparado ya el visibilitychange
+            if (!document.hidden) {
+                handleScreenSwitchAttempt();
+            }
         });
 
-        // 3. Si vuelve a estar visible/foco después de volver, solo verifica que no esté bloqueado a medias
-        window.addEventListener('focus', () => {
-            // Si no está bloqueado, no hacemos nada, si está bloqueado, se queda bloqueado.
-        });
-
-        // --- EVENTO DEL BOTÓN DE DESBLOQUEO ---
+        // --- EVENTOS DE DESBLOQUEO ---
         unlockBtn.addEventListener('click', unlockExam);
-
-        // Permitir presionar "Enter" en el input para desbloquear
         passInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 unlockExam();
             }
         });
-        
-        console.log("Sistema de examen bloqueado por cambio de pantalla activado.");
     </script>
 </body>
 </html>
