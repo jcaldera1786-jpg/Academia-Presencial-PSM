@@ -12,6 +12,11 @@
             background-color: #f4f4f9;
             color: #333;
             display: block; 
+            /* CAPA CSS ANTI-SELECCIÓN Y ANTI-ARRASTRE */
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
         h1 { text-align: center; color: #2c3e50; }
         .question-block {
@@ -20,6 +25,8 @@
             margin-bottom: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            user-select: none;
+            -webkit-user-select: none;
         }
         .question-block img {
             max-width: 100%;
@@ -28,6 +35,8 @@
             margin: 10px auto;
             border-radius: 5px;
             border: 1px solid #ddd;
+            /* Evita que arrastren la imagen para hacer captura parcial */
+            pointer-events: none;
         }
         
         /* --- PANTALLA DE ADVERTENCIA (1er intento) --- */
@@ -164,7 +173,7 @@
     <!-- PANTALLA DE ADVERTENCIA -->
     <div id="warning-overlay">
         <h2>⚠️ PRIMERA ADVERTENCIA</h2>
-        <p>Has intentado cambiar de aplicación o minimizar el examen.</p>
+        <p>Has intentado cambiar de aplicación, minimizar o realizar una captura de pantalla.</p>
         <p><strong>Esta es tu primera y única advertencia.</strong><br>
         Si vuelves a salir de esta pantalla, el examen se <strong>BLOQUEARÁ</strong> automáticamente y solo el profesor podrá autorizar su reapertura.</p>
         <button onclick="dismissWarning()">Entendido, continuar</button>
@@ -173,7 +182,7 @@
     <!-- PANTALLA DE BLOQUEO -->
     <div id="lock-overlay">
         <h2>🔒 EXAMEN BLOQUEADO PERMANENTEMENTE</h2>
-        <p>Has intentado cambiar de aplicación por segunda vez <strong>O has recargado la página estando bloqueado.</strong><br>Para continuar, solicita al profesor que autorice la reapertura.</p>
+        <p>Has intentado cambiar de aplicación por segunda vez, hacer captura <strong>O has recargado la página estando bloqueado.</strong><br>Para continuar, solicita al profesor que autorice la reapertura.</p>
         <input type="password" id="master-password" placeholder="Ingrese clave de autorización">
         <button id="unlock-btn">Desbloquear</button>
         <p id="error-msg">❌ Clave incorrecta. Solicite al profesor.</p>
@@ -197,9 +206,7 @@
         const unlockBtn = document.getElementById('unlock-btn');
 
         // --- SISTEMA DE PERSISTENCIA (LOCALSTORAGE) ---
-        // Se ejecuta ni bien carga la página para frustrar la recarga
         window.addEventListener('DOMContentLoaded', () => {
-            // Si el estudiante recarga y ya estaba bloqueado...
             if (localStorage.getItem('exam_lock_state') === 'true') {
                 isLocked = true;
                 switchAttempts = parseInt(localStorage.getItem('exam_attempts')) || 2;
@@ -208,7 +215,7 @@
         });
 
         function forceLockOnReload() {
-            examContent.style.display = 'none'; // OCULTAMOS EL EXAMEN INMEDIATAMENTE
+            examContent.style.display = 'none'; 
             lockOverlay.classList.add('visible');
             if (navigator.vibrate) navigator.vibrate(200);
         }
@@ -238,11 +245,8 @@
         function lockExam() {
             if (isLocked) return; 
             isLocked = true;
-            
-            // Guardamos en el teléfono para que no puedan escapar recargando
             localStorage.setItem('exam_lock_state', 'true');
             localStorage.setItem('exam_attempts', switchAttempts.toString());
-
             lockOverlay.classList.add('visible');
             if (wakeLock) { wakeLock.release(); wakeLock = null; }
             if (navigator.vibrate) navigator.vibrate(200);
@@ -251,13 +255,11 @@
         function unlockExam() {
             const pass = passInput.value.trim();
             if (pass === PROFESSOR_PASSWORD) {
-                // Borramos el estado de bloqueo del teléfono
                 localStorage.removeItem('exam_lock_state');
                 localStorage.removeItem('exam_attempts');
-                
                 isLocked = false;
                 switchAttempts = 0;
-                examContent.style.display = 'block'; // Volvemos a mostrar el examen
+                examContent.style.display = 'block';
                 lockOverlay.classList.remove('visible');
                 errorMsg.style.display = "none";
                 requestWakeLock();
@@ -272,11 +274,9 @@
             if (isLocked) return;
             if (isHandlingSwitch) return;
             isHandlingSwitch = true;
-
             setTimeout(() => {
                 isHandlingSwitch = false;
                 switchAttempts++;
-
                 if (switchAttempts === 1) {
                     showWarning();
                 } else if (switchAttempts >= 2) {
@@ -295,12 +295,52 @@
         // --- TRAMPA ANTI-RECARGA (beforeunload) ---
         window.addEventListener('beforeunload', function (e) {
             if (isLocked) {
-                // Si intenta recargar estando bloqueado, le mostramos este mensaje de advertencia
                 e.preventDefault();
                 e.returnValue = "¡Cuidado! El examen está bloqueado. Si recargas la página, el bloqueo persistirá y deberás llamar al profesor.";
                 return e.returnValue;
             }
         });
+
+        // ========================================================
+        // === NUEVA CAPA: ANTI-CAPTURAS DE PANTALLA Y GRABACIÓN ===
+        // ========================================================
+
+        // 1. Bloquear la tecla "Imprimir Pantalla" (PrintScreen) y combinaciones comunes
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "PrintScreen" || 
+                e.key === "Snapshot" || 
+                (e.ctrlKey && e.shiftKey && e.key === "S")) { 
+                alert("⚠️ No está permitido tomar capturas de pantalla.");
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // 2. Bloquear el menú contextual (Hacer clic sostenido / Long Press en móvil)
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        // 3. Bloquear el arrastre de imágenes o textos para evitar selecciones parciales
+        document.addEventListener('dragstart', function(e) {
+            e.preventDefault();
+            return false;
+        });
+        document.addEventListener('selectstart', function(e) {
+            e.preventDefault();
+        });
+
+        // 4. Bloquear la grabación de pantalla (Screen Recording API)
+        // Si el estudiante intenta compartir o grabar pantalla, lo cancelamos y activamos el sistema de bloqueo
+        if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+            const originalGetDisplayMedia = navigator.mediaDevices.getDisplayMedia;
+            navigator.mediaDevices.getDisplayMedia = function(constraints) {
+                handleScreenSwitchAttempt(); // Dispara el sistema de seguridad por intento de grabación
+                alert("La grabación de pantalla está prohibida durante el examen.");
+                return Promise.reject(new Error("Grabación de pantalla bloqueada por la política del examen."));
+            };
+        }
 
         // --- EVENTOS DEL BOTÓN DE DESBLOQUEO ---
         unlockBtn.addEventListener('click', unlockExam);
