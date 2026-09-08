@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Diagnóstica - Química General PSM</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --psm-blue: #003366;
+            --psm-gold: #b8860b;
+            --bg: #f4f7f6;
+            --danger: #dc3545;
+        }
+
+        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body { background: var(--bg); margin: 0; padding: 12px; }
+
+        .app-card {
+            max-width: 480px;
+            margin: auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border-top: 6px solid var(--psm-blue);
+        }
+
+        .header {
+            background: #fff;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 2px solid #eee;
+        }
+
+        .header h1 { font-size: 1.1rem; color: var(--psm-blue); margin: 0 0 5px 0; }
+        .header p { font-size: 0.85rem; color: #555; margin: 0; }
+
+        .warning-banner {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px 15px;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #ffeeba;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .counter-badge {
+            background: var(--danger);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .content { padding: 15px; }
+
+        .instructions {
+            background: #e9ecef;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .section-tag {
+            background: var(--psm-blue);
+            color: white;
+            padding: 6px 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border-radius: 4px;
+            margin: 20px 0 10px 0;
+            display: inline-block;
+        }
+
+        .item {
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .item-num { font-weight: bold; color: var(--psm-blue); font-size: 0.9rem; }
+        .item-text { font-size: 0.9rem; margin: 5px 0; color: #222; line-height: 1.4; }
+
+        .btn-finish {
+            width: 100%;
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        /* Modal de Advertencia por cambio de ventana */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-box {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            max-width: 350px;
+        }
+
+        .modal-box h3 { color: var(--danger); margin-top: 0; }
+        .modal-box p { font-size: 0.88rem; color: #333; }
+        .modal-btn {
+            background: var(--psm-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .finished-state { display: none; text-align: center; padding: 30px 15px; }
+    </style>
+</head>
+<body>
+
+<div class="app-card">
+    <div class="header">
+        <h1>I.U.P. "Santiago Mariño"</h1>
+        <p><b>Química General — Diagnóstico Inicial</b></p>
+    </div>
+
+    <div class="warning-banner" id="banner">
+        <span>🔒 Modo Evaluación Activo</span>
+        <span class="counter-badge" id="warnCount">Faltas: 0</span>
+    </div>
+
+    <div class="content" id="quizBody">
+        <div class="instructions">
+            <b>Instrucciones:</b> Lee cada ejercicio en la pantalla y pasa tus cálculos y respuestas a la <b>hoja física de evaluación</b>. No salgas de esta ventana hasta pulsar "Entregar".
+        </div>
+
+        <!-- BLOQUE I -->
+        <div class="section-tag">BLOQUE I: RAZONAMIENTO MATEMÁTICO</div>
+        
+        <div class="item">
+            <span class="item-num">1. Notación Científica:</span>
+            <div class="item-text">Expresa \( 0{,}0000456 \text{ g} \) en notación científica e indica cuántas cifras significativas posee.</div>
+        </div>
+
+        <div class="item">
+            <span class="item-num">2. Despeje Algebraico:</span>
+            <div class="item-text">Dada la ecuación de gases ideales \( P \cdot V = n \cdot R \cdot T \), despeja la variable Temperatura (\( T \)).</div>
+        </div>
+
+        <div class="item">
+            <span class="item-num">3. Conversión de Unidades:</span>
+            <div class="item-text">Un matraz contiene \( 2500 \text{ mL} \). ¿A cuántos Litros (\( \text{L} \)) y metros cúbicos (\( \text{m}^3 \)) equivale?</div>
+        </div>
+
+        <div class="item">
+            <span class="item-num">4. Proporcionalidad:</span>
+            <div class="item-text">Si \( 50 \text{ g} \) de una muestra pura contienen \( 12 \text{ g} \) de Carbono, ¿cuántos gramos de Carbono habrá en \( 180 \text{ g} \)?</div>
+        </div>
+
+        <div class="item">
+            <span class="item-num">5. Concentración:</span>
+            <div class="item-text">Se disuelven \( 15 \text{ g} \) de sal en \( 85 \text{ g} \) de agua. ¿Cuál es el \( \% \text{ m/m} \) de la solución?</div>
+        </div>
+
+        <!-- BLOQUE II -->
+        <div class="section-tag">BLOQUE II: ESTRUCTURA Y TABLA PERIÓDICA</div>
+
+        <div class="item">
+            <span class="item-num">6. Átomo Neutro:</span>
+            <div class="item-text">El núcleo del átomo de Sodio (\( ^{23}_{11}\text{Na} \)) contiene:<br>
+            a) 11p, 11e, 12n | b) 12p, 11e, 11n | c) 11p, 12e, 23n</div>
+        </div>
+
+        <div class="item">
+            <span class="item-num">7. Configuración Electrónica:</span>
+            <div class="item-text">Escribe la configuración electrónica completa del Carbono (\( Z = 6 \)).</div>
+        </div>
+
+        <div class="item">
+            <span class="item-num">8. Electronegatividad:</span>
+            <div class="item-text">Entre el Flúor (\( \text{F} \)) y el Cesio (\( \text{Cs} \)), ¿cuál es más electronegativo y por qué?</div>
+        </div>
+
+        <!-- BLOQUE III -->
+        <div class="section-tag">BLOQUE III: ENLACE Y NOMENCLATURA</div>
+
+        <div class="item">
+            <span class="item-num">9. Tipos de Enlace:</span>
+            <div class="item-text">Clasifica como Iónico o Covalente: a) \( \text{NaCl} \), b) \( \text{H}_2\text{O} \), c) \( \text{O}_2 \).</div>
+        </div>
+
+        <div class="item">
+            <span class="item-num">10. Masa Molar:</span>
+            <div class="item-text">Calcula la masa molar del Ácido Sulfúrico (\( \text{H}_2\text{SO}_4 \)).<br>
+            <i>Datos: H=1, S=32, O=16 g/mol.</i></div>
+        </div>
+
+        <div class="item">
+            <span class="item-num">11. Concepto de Mol:</span>
+            <div class="item-text">¿Cuántos moles de moléculas representan \( 36 \text{ g} \) de agua (\( \text{H}_2\text{O} \))?</div>
+        </div>
+
+        <!-- BLOQUE IV -->
+        <div class="section-tag">BLOQUE IV: DENSIDAD Y ESTADOS</div>
+
+        <div class="item">
+            <span class="item-num">12. Densidad:</span>
+            <div class="item-text">Un sólido tiene una masa de \( 156 \text{ g} \) y ocupa \( 20 \text{ cm}^3 \). Determina su densidad.</div>
+        </div>
+
+        <div class="item">
+            <span class="item-num">13. Balanceo de Ecuaciones:</span>
+            <div class="item-text">Ajusta la siguiente ecuación por tanteo en tu hoja:<br>
+            \( \text{H}_2 + \text{O}_2 \rightarrow \text{H}_2\text{O} \)</div>
+        </div>
+
+        <button class="btn-finish" onclick="confirmarEntrega()">ENTREGAR PRUEBA</button>
+    </div>
+
+    <!-- ESTADO FINAL -->
+    <div class="finished-state" id="finishedBox">
+        <h2 style="color: #28a745;">¡Prueba Concluida!</h2>
+        <p>Entregaste la prueba digital. Asegúrate de entregar tu <b>hoja física de respuestas</b> al docente.</p>
+        <p><b>Registro de salidas de pantalla:</b> <span id="finalWarns" style="font-weight:bold;">0</span></p>
+    </div>
+</div>
+
+<!-- MODAL DE ADVERTENCIA POR SALIR DE PESTAÑA -->
+<div class="modal-overlay" id="warnModal">
+    <div class="modal-box">
+        <h3>⚠️ ¡ADVERTENCIA!</h3>
+        <p>Cambiaste de ventana o minimizaste el examen. Esta acción queda registrada en el reporte del docente.</p>
+        <p>Mantén la pantalla abierta hasta terminar.</p>
+        <button class="modal-btn" onclick="cerrarModal()">Entendido / Volver al Examen</button>
+    </div>
+</div>
+
+<script>
+    let warnings = 0;
+    let isFinished = false;
+
+    // Detectar cuando el estudiante cambia de pestaña o minimiza
+    document.addEventListener("visibilitychange", function() {
+        if (document.hidden && !isFinished) {
+            warnings++;
+            document.getElementById('warnCount').innerText = "Faltas: " + warnings;
+        } else if (!document.hidden && !isFinished && warnings > 0) {
+            document.getElementById('warnModal').style.display = 'flex';
+        }
+    });
+
+    // Detectar pérdida de foco adicional (por si abre ventanas flotantes)
+    window.addEventListener("blur", function() {
+        if (!isFinished) {
+            // Activa el contador si pierde el foco de la ventana activa
+        }
+    });
+
+    function cerrarModal() {
+        document.getElementById('warnModal').style.display = 'none';
+    }
+
+    function confirmarEntrega() {
+        if(confirm("¿Estás seguro de que deseas finalizar la prueba y entregar tu hoja física?")) {
+            isFinished = true;
+            document.getElementById('quizBody').style.display = 'none';
+            document.getElementById('banner').style.display = 'none';
+            document.getElementById('finishedBox').style.display = 'block';
+            document.getElementById('finalWarns').innerText = warnings;
+        }
+    }
+</script>
+
+</body>
+</html>
