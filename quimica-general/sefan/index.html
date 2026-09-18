@@ -1,1 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEFAN | Química General - PSM</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.85);
+            --accent-blue: #38bdf8;
+            --accent-green: #22c55e;
+            --accent-gold: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --locked-color: #475569;
+        }
 
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.4rem;
+            color: var(--accent-blue);
+            letter-spacing: 1px;
+        }
+
+        header p {
+            margin: 0.2rem 0 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 1.5rem auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .welcome-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.2rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .welcome-card h2 {
+            margin-top: 0;
+            color: var(--accent-gold);
+            font-size: 1.2rem;
+        }
+
+        .levels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .level-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-blue);
+            border-radius: 8px;
+            padding: 1rem;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .level-card.locked {
+            border-left-color: var(--locked-color);
+            opacity: 0.7;
+        }
+
+        .level-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .level-title {
+            font-weight: bold;
+            font-size: 1rem;
+            color: var(--accent-blue);
+        }
+
+        .level-card.locked .level-title {
+            color: var(--text-muted);
+        }
+
+        .level-badge {
+            font-size: 0.75rem;
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent-blue);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .level-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .btn-action {
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            padding: 0.6rem 0;
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 6px;
+            transition: background 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .btn-action:hover {
+            background: linear-gradient(135deg, #0369a1, #075985);
+        }
+
+        .btn-action.disabled {
+            background: #334155;
+            color: #94a3b8;
+            cursor: not-allowed;
+            pointer-events: none;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 1.5rem 0;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+/* Marca de agua difuminada en el fondo de la pantalla */
+body::before {
+    content: "";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 320px; /* Tamaño ajustable en pantalla */
+    height: 320px;
+    background-image: url('https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/assets/psm.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    opacity: 0.08; /* Control de transparencia (8%) */
+    filter: blur(1px); /* Efecto leve de difuminado/suavizado */
+    z-index: -1; /* Mantiene la imagen detrás del contenido */
+    pointer-events: none;
+}
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>SEFAN - QUÍMICA GENERAL</h1>
+        <p>Sistema de Evaluación Formativa Adaptativo por Niveles | PSM Maracaibo</p>
+    </header>
+
+    <div class="container">
+        
+        <div class="welcome-card">
+            <h2>Ruta Adaptativa de Progresión Académica</h2>
+            <p style="font-size: 0.9rem; line-height: 1.5;">
+                Bienvenido al portal SEFAN. Completa los desafíos de cada nivel acumulando al menos 25 ejercicios resueltos correctamente para desbloquear la siguiente etapa. Recuerda desglosar tus cálculos en la hoja física para la validación presencial.
+            </p>
+        </div>
+
+        <div class="levels-grid">
+
+            <!-- NIVEL 1 -->
+            <div class="level-card">
+                <div class="level-header">
+                    <span class="level-title">Nivel 1: Diagnóstico e Iniciación</span>
+                    <span class="level-badge">Semana 1-2</span>
+                </div>
+                <div class="level-desc">
+                    Conversión de unidades, notación científica, despeje de ecuaciones básicas y conceptos de materia y energía.
+                </div>
+                <a href="https://forms.google.com" target="_blank" class="btn-action">Iniciar Desafío Nivel 1</a>
+            </div>
+
+            <!-- NIVEL 2 -->
+            <div class="level-card locked">
+                <div class="level-header">
+                    <span class="level-title">Nivel 2: Estructura Atómica</span>
+                    <span class="level-badge">Semana 3</span>
+                </div>
+                <div class="level-desc">
+                    Modelos atómicos, partículas subatómicas, número atómico (Z), número de masa (A) e isótopos.
+                </div>
+                <a href="#" class="btn-action disabled">🔒 Bloqueado (Completar Nivel 1)</a>
+            </div>
+
+            <!-- NIVEL 3 -->
+            <div class="level-card locked">
+                <div class="level-header">
+                    <span class="level-title">Nivel 3: Tabla Periódica y Configuración</span>
+                    <span class="level-badge">Semana 4</span>
+                </div>
+                <div class="level-desc">
+                    Configuración electrónica, números cuánticos, electrones de valencia y propiedades periódicas.
+                </div>
+                <a href="#" class="btn-action disabled">🔒 Bloqueado (Completar Nivel 2)</a>
+            </div>
+
+            <!-- NIVEL 4 -->
+            <div class="level-card locked">
+                <div class="level-header">
+                    <span class="level-title">Nivel 4: Enlace Químico y Estructura</span>
+                    <span class="level-badge">Semana 5-6</span>
+                </div>
+                <div class="level-desc">
+                    Estructuras de Lewis, regla del octeto, polaridad de enlace y geometría molecular.
+                </div>
+                <a href="#" class="btn-action disabled">🔒 Bloqueado (Completar Nivel 3)</a>
+            </div>
+
+            <!-- NIVEL 5 -->
+            <div class="level-card locked">
+                <div class="level-header">
+                    <span class="level-title">Nivel 5: Nomenclatura Inorgánica</span>
+                    <span class="level-badge">Semana 7</span>
+                </div>
+                <div class="level-desc">
+                    Estados de oxidación, nomenclatura de óxidos, hidróxidos, ácidos y sales.
+                </div>
+                <a href="#" class="btn-action disabled">🔒 Bloqueado (Completar Nivel 4)</a>
+            </div>
+
+            <!-- NIVEL 6 -->
+            <div class="level-card locked">
+                <div class="level-header">
+                    <span class="level-title">Nivel 6: El Mol y Estequiometría I</span>
+                    <span class="level-badge">Semana 8-9</span>
+                </div>
+                <div class="level-desc">
+                    Masa molar, número de Avogadro, composición porcentual y fórmula empírica/molecular.
+                </div>
+                <a href="#" class="btn-action disabled">🔒 Bloqueado (Completar Nivel 5)</a>
+            </div>
+
+            <!-- NIVEL 7 -->
+            <div class="level-card locked">
+                <div class="level-header">
+                    <span class="level-title">Nivel 7: Estequiometría II y Reactivo Límite</span>
+                    <span class="level-badge">Semana 10-11</span>
+                </div>
+                <div class="level-desc">
+                    Balanceo de ecuaciones, reactivo límite, reactivo en exceso y rendimiento de reacción.
+                </div>
+                <a href="#" class="btn-action disabled">🔒 Bloqueado (Completar Nivel 6)</a>
+            </div>
+
+            <!-- NIVEL 8 -->
+            <div class="level-card locked">
+                <div class="level-header">
+                    <span class="level-title">Nivel 8: Soluciones y Concentración</span>
+                    <span class="level-badge">Semana 12-13</span>
+                </div>
+                <div class="level-desc">
+                    Unidades físicas (%m/m, %v/v) y químicas (Molaridad, Normalidad) y diluciones.
+                </div>
+                <a href="#" class="btn-action disabled">🔒 Bloqueado (Completar Nivel 7)</a>
+            </div>
+
+            <!-- NIVEL 9 -->
+            <div class="level-card locked">
+                <div class="level-header">
+                    <span class="level-title">Nivel 9: Estado Gaseoso</span>
+                    <span class="level-badge">Semana 14-15</span>
+                </div>
+                <div class="level-desc">
+                    Leyes de los gases ideales (PV = nRT), mezcla de gases y presión parcial (Dalton).
+                </div>
+                <a href="#" class="btn-action disabled">🔒 Bloqueado (Completar Nivel 8)</a>
+            </div>
+
+            <!-- NIVEL 10 -->
+            <div class="level-card locked">
+                <div class="level-header">
+                    <span class="level-title">Nivel 10: Integración y Caso Industrial</span>
+                    <span class="level-badge">Semana 16</span>
+                </div>
+                <div class="level-desc">
+                    Resolución de un problema integrado de proceso químico industrial (ABP).
+                </div>
+                <a href="#" class="btn-action disabled">🔒 Bloqueado (Completar Nivel 9)</a>
+            </div>
+
+        </div>
+
+    </div>
+
+    <footer>
+        <p>Prof. Dr. José Ángel Caldera Luzardo | Instituto Universitario Politécnico "Santiago Mariño"</p>
+    </footer>
+
+</body>
+</html>
