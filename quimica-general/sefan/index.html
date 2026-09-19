@@ -29,6 +29,25 @@
             align-items: center;
         }
 
+        /* Marca de agua difuminada en el fondo */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            height: 320px;
+            background-image: url('https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/assets/psm.png');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            opacity: 0.08;
+            filter: blur(1px);
+            z-index: -1;
+            pointer-events: none;
+        }
+
         header {
             width: 100%;
             background: rgba(15, 23, 42, 0.95);
@@ -164,24 +183,6 @@
             color: var(--text-muted);
             text-align: center;
         }
-/* Marca de agua difuminada en el fondo de la pantalla */
-body::before {
-    content: "";
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 320px; /* Tamaño ajustable en pantalla */
-    height: 320px;
-    background-image: url('https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/assets/psm.png');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-    opacity: 0.08; /* Control de transparencia (8%) */
-    filter: blur(1px); /* Efecto leve de difuminado/suavizado */
-    z-index: -1; /* Mantiene la imagen detrás del contenido */
-    pointer-events: none;
-}
     </style>
 </head>
 <body>
