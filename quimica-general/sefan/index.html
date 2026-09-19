@@ -15,43 +15,41 @@
             --text-muted: #94a3b8;
             --border-color: rgba(255, 255, 255, 0.1);
             --locked-color: #475569;
-       body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-main);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative; /* Asegura el contexto de posicionamiento */
-}
+        }
 
-/* Marca de agua del fondo corregida */
-body::before {
-    content: "";
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 320px;
-    height: 320px;
-    background-image: url("https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/assets/psm.png");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-    opacity: 0.12; /* Ligeramente incrementado para mayor visibilidad */
-    filter: blur(0.5px);
-    z-index: 0; /* Colocado en 0 para evitar que el fondo oscuro lo tape */
-    pointer-events: none;
-}
+        html {
+            background-color: var(--bg-color);
+        }
 
-/* Asegura que el contenido quede por encima de la marca de agua */
-header, .container, footer {
-    position: relative;
-    z-index: 1;
-}
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            isolation: isolate; /* contexto de apilamiento propio */
+        }
+
+        /* Marca de agua del fondo */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: url("https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/assets/psm.png");
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: 320px 320px;
+            opacity: 0.15;
+            filter: blur(0.5px);
+            mix-blend-mode: screen; /* hace desaparecer el fondo oscuro del logo */
+            pointer-events: none;
+            z-index: -1;
+        }
 
         header {
             width: 100%;
@@ -85,6 +83,8 @@ header, .container, footer {
             display: flex;
             flex-direction: column;
             gap: 1.2rem;
+            position: relative;
+            z-index: 1;
         }
 
         .welcome-card {
@@ -187,6 +187,8 @@ header, .container, footer {
             font-size: 0.8rem;
             color: var(--text-muted);
             text-align: center;
+            position: relative;
+            z-index: 1;
         }
     </style>
 </head>
@@ -198,7 +200,7 @@ header, .container, footer {
     </header>
 
     <div class="container">
-        
+
         <div class="welcome-card">
             <h2>Ruta Adaptativa de Progresión Académica</h2>
             <p style="font-size: 0.9rem; line-height: 1.5;">
