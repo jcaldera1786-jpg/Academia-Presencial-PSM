@@ -283,7 +283,7 @@
                 <div class="level-desc">
                     Conversión de unidades, notación científica, despeje de ecuaciones básicas y conceptos de materia y energía.
                 </div>
-                <a href="https://forms.google.com" target="_blank" class="btn-action">Iniciar Desafío Nivel 1</a>
+                <button onclick="abrirDesafioNivel(1)" class="btn-action">Iniciar Desafío Nivel 1</button>
             </div>
 
             <!-- NIVEL 2 -->
@@ -432,45 +432,134 @@
 
     <!-- MOTOR DE SCRIPT PARA COMUNICACIÓN CON GOOGLE APPS SCRIPT -->
     <script>
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxk-sK0Ut4YJWe67OJEqAyq9-Zf6-pA1TFFS8FIxEbva1FyFe0VUQ2bFM1_W46EJKUI7A/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxk-sK0Ut4YJWe67OJEqAyq9-Zf6-pA1TFFS8FIxEbva1FyFe0VUQ2bFM1_W46EJKUI7A/exec";
+    
+    let preguntaActual = null;
+    let nivelSeleccionado = 1;
 
-        async function guardarProgreso(nivel, puntaje, respuestasObj) {
-            const ci = document.getElementById("ci-input").value.trim();
-            const nombre = document.getElementById("name-input").value.trim();
+    async function abrirDesafioNivel(nivel) {
+        const ci = document.getElementById("ci-input").value.trim();
+        const nombre = document.getElementById("name-input").value.trim();
 
-            if (!ci || !nombre) {
-                alert("Por favor ingrese Cédula y Nombre Completo para registrar su avance.");
+        if (!ci || !nombre) {
+            alert("⚠️ Por favor, ingresa tu Cédula y Nombre Completo en el módulo superior antes de iniciar.");
+            document.getElementById("ci-input").focus();
+            return;
+        }
+
+        nivelSeleccionado = nivel;
+        const modal = document.getElementById("quiz-modal");
+        const loading = document.getElementById("quiz-loading");
+        const content = document.getElementById("quiz-content");
+        const feedback = document.getElementById("quiz-feedback");
+
+        document.getElementById("quiz-title").innerText = `Desafío SEFAN - Nivel ${nivel}`;
+        modal.style.display = "block";
+        loading.style.display = "block";
+        content.style.display = "none";
+        feedback.style.display = "none";
+
+        // Desplazar la pantalla suavemente hacia el cuestionario
+        modal.scrollIntoView({ behavior: 'smooth' });
+
+        try {
+            // Solicitar pregunta a Apps Script (petición GET)
+            const response = await fetch(`${APPS_SCRIPT_URL}?cedula=${encodeURIComponent(ci)}&nivel=${nivel}`);
+            preguntaActual = await response.json();
+
+            if (preguntaActual.error) {
+                alert("Atención: " + preguntaActual.error);
+                cerrarQuiz();
                 return;
             }
 
-            const payload = {
-                cedula: ci,
-                nombre: nombre,
-                nivelActual: nivel,
-                puntaje: puntaje,
-                respuestas: respuestasObj
-            };
+            // Desplegar la pregunta en la interfaz
+            document.getElementById("quiz-enunciado").innerText = preguntaActual.enunciado;
+            const contenedorOpciones = document.getElementById("quiz-opciones");
+            contenedorOpciones.innerHTML = "";
 
-            try {
-                // Guardado local de respaldo
-                localStorage.setItem("sefan_user", JSON.stringify(payload));
+            preguntaActual.opciones.forEach((opcion, index) => {
+                contenedorOpciones.innerHTML += `
+                    <label style="display: flex; align-items: center; gap: 10px; background: #0f172a; padding: 0.8rem; border-radius: 6px; border: 1px solid #334155; cursor: pointer;">
+                        <input type="radio" name="opcion_sefan" value="${index}">
+                        <span>${opcion}</span>
+                    </label>
+                `;
+            });
 
-                const response = await fetch(APPS_SCRIPT_URL, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(payload)
-                });
+            loading.style.display = "none";
+            content.style.display = "block";
 
-                alert("¡Progreso y datos guardados exitosamente en Google Sheets!");
-            } catch (err) {
-                console.error("Error al sincronizar datos:", err);
-                alert("No se pudo conectar con el servidor, pero sus datos se guardaron localmente en el dispositivo.");
-            }
+        } catch (err) {
+            console.error("Error al cargar pregunta:", err);
+            alert("No se pudo obtener la pregunta desde el servidor. Verifique la conexión.");
+            cerrarQuiz();
         }
-    </script>
+    }
+
+    async function validarRespuesta() {
+        const seleccion = document.querySelector('input[name="opcion_sefan"]:checked');
+        if (!seleccion) {
+            alert("Por favor selecciona una opción antes de enviar.");
+            return;
+        }
+
+        const opcionIndex = parseInt(seleccion.value, 10);
+        const feedback = document.getElementById("quiz-feedback");
+        const esCorrecto = (opcionIndex === preguntaActual.respuestaCorrecta);
+        const puntajeObtenido = esCorrecto ? 100 : 0;
+
+        feedback.style.display = "block";
+        if (esCorrecto) {
+            feedback.style.background = "rgba(34, 197, 94, 0.2)";
+            feedback.style.border = "1px solid #22c55e";
+            feedback.style.color = "#4ade80";
+            feedback.innerHTML = `<strong>¡Correcto! 🎉</strong><br>${preguntaActual.explicacion}`;
+        } else {
+            feedback.style.background = "rgba(239, 68, 68, 0.2)";
+            feedback.style.border = "1px solid #ef4444";
+            feedback.style.color = "#fca5a5";
+            feedback.innerHTML = `<strong>Incorrecto.</strong><br>${preguntaActual.explicacion}`;
+        }
+
+        // Guardar el intento en Google Sheets mediante Apps Script
+        await guardarProgreso(nivelSeleccionado, puntajeObtenido, {
+            pregunta: preguntaActual.enunciado,
+            respuestaEstudiante: opcionIndex,
+            esCorrecto: esCorrecto
+        });
+    }
+
+    function cerrarQuiz() {
+        document.getElementById("quiz-modal").style.display = "none";
+    }
+
+    async function guardarProgreso(nivel, puntaje, respuestasObj) {
+        const ci = document.getElementById("ci-input").value.trim();
+        const nombre = document.getElementById("name-input").value.trim();
+
+        const payload = {
+            cedula: ci,
+            nombre: nombre,
+            nivelActual: nivel,
+            puntaje: puntaje,
+            respuestas: respuestasObj
+        };
+
+        try {
+            localStorage.setItem("sefan_user", JSON.stringify(payload));
+
+            await fetch(APPS_SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+        } catch (err) {
+            console.error("Error al sincronizar en Sheets:", err);
+        }
+    }
+</script>
 
 </body>
 </html>
