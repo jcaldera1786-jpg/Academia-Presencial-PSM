@@ -15,38 +15,43 @@
             --text-muted: #94a3b8;
             --border-color: rgba(255, 255, 255, 0.1);
             --locked-color: #475569;
-        }
+       body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative; /* Asegura el contexto de posicionamiento */
+}
 
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+/* Marca de agua del fondo corregida */
+body::before {
+    content: "";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 320px;
+    height: 320px;
+    background-image: url("https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/assets/psm.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    opacity: 0.12; /* Ligeramente incrementado para mayor visibilidad */
+    filter: blur(0.5px);
+    z-index: 0; /* Colocado en 0 para evitar que el fondo oscuro lo tape */
+    pointer-events: none;
+}
 
-        /* Marca de agua difuminada en el fondo */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 320px;
-            height: 320px;
-            background-image: url('https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/assets/psm.png');
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: contain;
-            opacity: 0.08;
-            filter: blur(1px);
-            z-index: -1;
-            pointer-events: none;
-        }
+/* Asegura que el contenido quede por encima de la marca de agua */
+header, .container, footer {
+    position: relative;
+    z-index: 1;
+}
 
         header {
             width: 100%;
