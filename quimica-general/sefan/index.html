@@ -32,7 +32,7 @@
             flex-direction: column;
             align-items: center;
             position: relative;
-            isolation: isolate; /* contexto de apilamiento propio */
+            isolation: isolate; /* Contexto de apilamiento propio */
         }
 
         /* Marca de agua del fondo */
@@ -46,7 +46,7 @@
             background-size: 320px 320px;
             opacity: 0.15;
             filter: blur(0.5px);
-            mix-blend-mode: screen; /* hace desaparecer el fondo oscuro del logo */
+            mix-blend-mode: screen;
             pointer-events: none;
             z-index: -1;
         }
@@ -85,6 +85,58 @@
             gap: 1.2rem;
             position: relative;
             z-index: 1;
+        }
+
+        /* Estilos del Módulo de Registro */
+        .student-card {
+            background: var(--card-bg);
+            border: 1px solid var(--accent-blue);
+            border-radius: 12px;
+            padding: 1.2rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .student-card h3 {
+            margin-top: 0;
+            margin-bottom: 0.8rem;
+            color: var(--accent-blue);
+            font-size: 1.1rem;
+        }
+
+        .form-grid {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .input-field {
+            flex: 1 1 200px;
+            padding: 0.6rem 0.8rem;
+            border-radius: 6px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: #fff;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .input-field:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .btn-save {
+            padding: 0.6rem 1.2rem;
+            background: var(--accent-green);
+            border: none;
+            color: white;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .btn-save:hover {
+            background: #16a34a;
         }
 
         .welcome-card {
@@ -200,6 +252,18 @@
     </header>
 
     <div class="container">
+
+        <!-- MÓDULO DE IDENTIFICACIÓN DE ESTUDIANTE Y GUARDADO EN GOOGLE SHEETS -->
+        <div class="student-card">
+            <h3>Identificación del Estudiante</h3>
+            <div class="form-grid">
+                <input type="text" id="ci-input" class="input-field" placeholder="Cédula de Identidad">
+                <input type="text" id="name-input" class="input-field" placeholder="Nombre y Apellido">
+                <button onclick="guardarProgreso(1, 100, {p1: 'A', p2: 'C'})" class="btn-save">
+                    Guardar Avance en Sheets
+                </button>
+            </div>
+        </div>
 
         <div class="welcome-card">
             <h2>Ruta Adaptativa de Progresión Académica</h2>
@@ -337,6 +401,48 @@
     <footer>
         <p>Prof. Dr. José Ángel Caldera Luzardo | Instituto Universitario Politécnico "Santiago Mariño"</p>
     </footer>
+
+    <!-- MOTOR DE SCRIPT PARA COMUNICACIÓN CON GOOGLE APPS SCRIPT -->
+    <script>
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxk-sK0Ut4YJWe67OJEqAyq9-Zf6-pA1TFFS8FIxEbva1FyFe0VUQ2bFM1_W46EJKUI7A/exec";
+
+        async function guardarProgreso(nivel, puntaje, respuestasObj) {
+            const ci = document.getElementById("ci-input").value.trim();
+            const nombre = document.getElementById("name-input").value.trim();
+
+            if (!ci || !nombre) {
+                alert("Por favor ingrese Cédula y Nombre Completo para registrar su avance.");
+                return;
+            }
+
+            const payload = {
+                cedula: ci,
+                nombre: nombre,
+                nivelActual: nivel,
+                puntaje: puntaje,
+                respuestas: respuestasObj
+            };
+
+            try {
+                // Guardado local de respaldo
+                localStorage.setItem("sefan_user", JSON.stringify(payload));
+
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                alert("¡Progreso y datos guardados exitosamente en Google Sheets!");
+            } catch (err) {
+                console.error("Error al sincronizar datos:", err);
+                alert("No se pudo conectar con el servidor, pero sus datos se guardaron localmente en el dispositivo.");
+            }
+        }
+    </script>
 
 </body>
 </html>
