@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Diagnóstica - Química I | PSM</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.9);
+            --accent-blue: #38bdf8;
+            --accent-teal: #14b8a6;
+            --accent-gold: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        html {
+            background-color: var(--bg-color);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.98);
+            border-bottom: 2px solid var(--accent-blue);
+            padding: 1.2rem 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.3rem;
+            color: var(--accent-blue);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        header p {
+            margin: 0.3rem 0 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 1.5rem auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .info-card, .block-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1.2rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        .info-item {
+            background: rgba(15, 23, 42, 0.6);
+            padding: 0.6rem;
+            border-radius: 6px;
+            border-left: 3px solid var(--accent-teal);
+        }
+
+        .info-item strong {
+            color: var(--accent-teal);
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .block-card {
+            border-left: 4px solid var(--accent-blue);
+        }
+
+        .block-card.gold {
+            border-left-color: var(--accent-gold);
+        }
+
+        .block-card.teal {
+            border-left-color: var(--accent-teal);
+        }
+
+        .block-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .block-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--accent-blue);
+        }
+
+        .gold .block-title { color: var(--accent-gold); }
+        .teal .block-title { color: var(--accent-teal); }
+
+        ol {
+            margin: 0;
+            padding-left: 1.2rem;
+        }
+
+        li {
+            margin-bottom: 0.9rem;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        .notice-banner {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .math-expr {
+            font-family: 'Courier New', Courier, monospace;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            color: #38bdf8;
+            display: inline-block;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 1.5rem 0;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Instituto Universitario Politécnico "Santiago Mariño"</h1>
+        <p>División de Admisión y Control de Estudios | Evaluación Diagnóstica</p>
+    </header>
+
+    <div class="container">
+
+        <!-- AVISO DE INSTRUCCIÓN -->
+        <div class="notice-banner">
+            📝 <strong>Instrucciones:</strong> Responda cada uno de los planteamientos de forma clara y ordenada en su <strong>hoja de examen</strong>. No olvide identificar su hoja con su nombre y cédula.
+        </div>
+
+        <!-- FICHA DE LA ASIGNATURA -->
+        <div class="info-card">
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Asignatura</strong>
+                    Química I
+                </div>
+                <div class="info-item">
+                    <strong>Docente</strong>
+                    Prof. Dr. José Caldera
+                </div>
+                <div class="info-item">
+                    <strong>Secciones / Aulas</strong>
+                    A, B, C (Aulas 05, 01, 07)
+                </div>
+                <div class="info-item">
+                    <strong>Lapso Académico</strong>
+                    2026-2
+                </div>
+            </div>
+        </div>
+
+        <!-- BLOQUE I -->
+        <div class="block-card gold">
+            <div class="block-header">
+                <span class="block-title">Bloque I: Propiocepción, Motivación y Compromiso</span>
+            </div>
+            <ol>
+                <li>Nombre tres personas muy importantes en su vida.</li>
+                <li>¿Qué carrera eligió usted y qué criterios usó para esta elección?</li>
+                <li>¿Está usted consciente del nivel de compromiso que adquiere?, ¿Con quién lo adquirió? Y ¿Con qué nivel de compromiso te proyectas?</li>
+                <li>En caso de encontrar un obstáculo en aprender esta materia, ¿cuál será su acción para resolver la situación?</li>
+            </ol>
+        </div>
+
+        <!-- BLOQUE II -->
+        <div class="block-card">
+            <div class="block-header">
+                <span class="block-title">Bloque II: Conocimiento General</span>
+            </div>
+            <ol>
+                <li>Responda, condicionando si así es el caso, ¿a qué temperatura hierve el agua y a cuál se congela?</li>
+                <li>¿Qué es una mezcla y cómo la diferencia de una solución?</li>
+                <li>Mencione al menos 3 soluciones de uso cotidiano.</li>
+            </ol>
+        </div>
+
+        <!-- BLOQUE III -->
+        <div class="block-card teal">
+            <div class="block-header">
+                <span class="block-title">Bloque III: Comprensión Lógico-Matemática</span>
+            </div>
+            <ol>
+                <li>Escriba en notación científica las siguientes cantidades:
+                    <ul>
+                        <li><code>0,00000000156 m</code> (distancia de un enlace químico).</li>
+                        <li><code>602200000000000000000000</code> partículas en un mol de sustancia.</li>
+                    </ul>
+                </li>
+                <li>Analice la siguiente ecuación física/matemática:
+                    <div style="text-align: center; margin: 0.8rem 0;">
+                        <span class="math-expr">F = (K · q₁ · q₂) / d²</span>
+                    </div>
+                    Despeje de la expresión la variable <strong>d</strong>.
+                </li>
+            </ol>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>Prof. Dr. José Ángel Caldera Luzardo | PSM Maracaibo</p>
+    </footer>
+
+</body>
+</html>
