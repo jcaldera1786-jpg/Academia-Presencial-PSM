@@ -32,7 +32,7 @@
             flex-direction: column;
             align-items: center;
             position: relative;
-            isolation: isolate; /* Contexto de apilamiento propio */
+            isolation: isolate;
         }
 
         /* Marca de agua del fondo */
@@ -87,8 +87,7 @@
             z-index: 1;
         }
 
-        /* Estilos del Módulo de Registro */
-        .student-card {
+        .student-card, .welcome-card {
             background: var(--card-bg);
             border: 1px solid var(--accent-blue);
             border-radius: 12px;
@@ -96,11 +95,21 @@
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
 
+        .welcome-card {
+            border-color: var(--border-color);
+        }
+
         .student-card h3 {
             margin-top: 0;
             margin-bottom: 0.8rem;
             color: var(--accent-blue);
             font-size: 1.1rem;
+        }
+
+        .welcome-card h2 {
+            margin-top: 0;
+            color: var(--accent-gold);
+            font-size: 1.2rem;
         }
 
         .form-grid {
@@ -122,35 +131,6 @@
 
         .input-field:focus {
             border-color: var(--accent-blue);
-        }
-
-        .btn-save {
-            padding: 0.6rem 1.2rem;
-            background: var(--accent-green);
-            border: none;
-            color: white;
-            font-weight: 600;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background 0.2s ease;
-        }
-
-        .btn-save:hover {
-            background: #16a34a;
-        }
-
-        .welcome-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1.2rem;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
-
-        .welcome-card h2 {
-            margin-top: 0;
-            color: var(--accent-gold);
-            font-size: 1.2rem;
         }
 
         .levels-grid {
@@ -219,6 +199,8 @@
             border-radius: 6px;
             transition: background 0.3s ease;
             box-sizing: border-box;
+            border: none;
+            cursor: pointer;
         }
 
         .btn-action:hover {
@@ -253,22 +235,19 @@
 
     <div class="container">
 
-        <!-- MÓDULO DE IDENTIFICACIÓN DE ESTUDIANTE Y GUARDADO EN GOOGLE SHEETS -->
+        <!-- MÓDULO DE IDENTIFICACIÓN -->
         <div class="student-card">
             <h3>Identificación del Estudiante</h3>
             <div class="form-grid">
                 <input type="text" id="ci-input" class="input-field" placeholder="Cédula de Identidad">
                 <input type="text" id="name-input" class="input-field" placeholder="Nombre y Apellido">
-                <button onclick="guardarProgreso(1, 100, {p1: 'A', p2: 'C'})" class="btn-save">
-                    Guardar Avance en Sheets
-                </button>
             </div>
         </div>
 
         <div class="welcome-card">
-            <h2>Ruta Adaptativa de Progresión Académica</h2>
+            <h2>Ruta de Progresión Académica (8 Niveles)</h2>
             <p style="font-size: 0.9rem; line-height: 1.5;">
-                Bienvenido al portal SEFAN. Completa los desafíos de cada nivel acumulando al menos 25 ejercicios resueltos correctamente para desbloquear la siguiente etapa. Recuerda desglosar tus cálculos en la hoja física para la validación presencial.
+                Bienvenido al portal SEFAN. Completa los desafíos de cada nivel formativo. El <strong>Nivel 4 (Soluciones)</strong> es la puerta de certificación clave antes de ascender hacia los estados de materia, electroquímica, termoquímica e ingeniería industrial.
             </p>
         </div>
 
@@ -277,59 +256,59 @@
             <!-- NIVEL 1 -->
             <div class="level-card">
                 <div class="level-header">
-                    <span class="level-title">Nivel 1: Diagnóstico e Iniciación</span>
-                    <span class="level-badge">Semana 1-2</span>
+                    <span class="level-title">Nivel 1: Adaptación y Teoría Atómica</span>
+                    <span class="level-badge">Fundamentos</span>
                 </div>
                 <div class="level-desc">
-                    Conversión de unidades, notación científica, despeje de ecuaciones básicas y conceptos de materia y energía.
+                    Conversión de unidades, notación científica, despeje de ecuaciones, materia, energía y teoría atómica elemental.
                 </div>
                 <button onclick="abrirDesafioNivel(1)" class="btn-action">Iniciar Desafío Nivel 1</button>
             </div>
 
             <!-- NIVEL 2 -->
-            <div class="level-card locked">
+            <div class="level-card">
                 <div class="level-header">
-                    <span class="level-title">Nivel 2: Estructura Atómica</span>
-                    <span class="level-badge">Semana 3</span>
+                    <span class="level-title">Nivel 2: Cuánticos y Tabla Periódica</span>
+                    <span class="level-badge">Estructura</span>
                 </div>
                 <div class="level-desc">
-                    Modelos atómicos, partículas subatómicas, número atómico (Z), número de masa (A) e isótopos.
+                    Números cuánticos, distribución electrónica de átomos y iones, y periodicidad química de los elementos.
                 </div>
-                <a href="#" class="btn-action disabled">🔒 Bloqueado (Completar Nivel 1)</a>
+                <button onclick="abrirDesafioNivel(2)" class="btn-action">Iniciar Desafío Nivel 2</button>
             </div>
 
             <!-- NIVEL 3 -->
-            <div class="level-card locked">
+            <div class="level-card">
                 <div class="level-header">
-                    <span class="level-title">Nivel 3: Tabla Periódica y Configuración</span>
-                    <span class="level-badge">Semana 4</span>
+                    <span class="level-title">Nivel 3: Enlaces y Estequiometría</span>
+                    <span class="level-badge">Reacciones</span>
                 </div>
                 <div class="level-desc">
-                    Configuración electrónica, números cuánticos, electrones de valencia y propiedades periódicas.
+                    Enlaces químicos, fuerzas intermoleculares (puente de hidrógeno, London), nomenclatura, leyes de conservación y estequiometría.
                 </div>
-                <a href="#" class="btn-action disabled">🔒 Bloqueado (Completar Nivel 2)</a>
+                <button onclick="abrirDesafioNivel(3)" class="btn-action">Iniciar Desafío Nivel 3</button>
             </div>
 
-            <!-- NIVEL 4 -->
-            <div class="level-card locked">
+            <!-- NIVEL 4 (SOLUCIONES - CERTIFICACIÓN) -->
+            <div class="level-card" style="border-left-color: var(--accent-gold);">
                 <div class="level-header">
-                    <span class="level-title">Nivel 4: Enlace Químico y Estructura</span>
-                    <span class="level-badge">Semana 5-6</span>
+                    <span class="level-title" style="color: var(--accent-gold);">Nivel 4: Soluciones (Certificación)</span>
+                    <span class="level-badge" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-gold); border-color: rgba(245, 158, 11, 0.3);">Clave</span>
                 </div>
                 <div class="level-desc">
-                    Estructuras de Lewis, regla del octeto, polaridad de enlace y geometría molecular.
+                    Concentraciones físicas y químicas, preparación y dilución de soluciones. ¡Supera este módulo para certificar e impulsar tu ascenso!
                 </div>
-                <a href="#" class="btn-action disabled">🔒 Bloqueado (Completar Nivel 3)</a>
+                <a href="herramientas/soluciones_avanzadas/index.html" class="btn-action" style="background: linear-gradient(135deg, #d97706, #b45309);">Ir al Módulo de Soluciones 🚀</a>
             </div>
 
             <!-- NIVEL 5 -->
             <div class="level-card locked">
                 <div class="level-header">
-                    <span class="level-title">Nivel 5: Nomenclatura Inorgánica</span>
-                    <span class="level-badge">Semana 7</span>
+                    <span class="level-title">Nivel 5: Estados de la Materia y Gases</span>
+                    <span class="level-badge">Avanzado</span>
                 </div>
                 <div class="level-desc">
-                    Estados de oxidación, nomenclatura de óxidos, hidróxidos, ácidos y sales.
+                    Teoría cinética de gases, leyes de gases ideales, diagramas de fases y transiciones de estado.
                 </div>
                 <a href="#" class="btn-action disabled">🔒 Bloqueado (Completar Nivel 4)</a>
             </div>
@@ -337,11 +316,11 @@
             <!-- NIVEL 6 -->
             <div class="level-card locked">
                 <div class="level-header">
-                    <span class="level-title">Nivel 6: El Mol y Estequiometría I</span>
-                    <span class="level-badge">Semana 8-9</span>
+                    <span class="level-title">Nivel 6: Electroquímica</span>
+                    <span class="level-badge">Redox</span>
                 </div>
                 <div class="level-desc">
-                    Masa molar, número de Avogadro, composición porcentual y fórmula empírica/molecular.
+                    Electroquímica conceptual, balanceo de ecuaciones redox y celdas electroquímicas / problemas prácticos.
                 </div>
                 <a href="#" class="btn-action disabled">🔒 Bloqueado (Completar Nivel 5)</a>
             </div>
@@ -349,11 +328,11 @@
             <!-- NIVEL 7 -->
             <div class="level-card locked">
                 <div class="level-header">
-                    <span class="level-title">Nivel 7: Estequiometría II y Reactivo Límite</span>
-                    <span class="level-badge">Semana 10-11</span>
+                    <span class="level-title">Nivel 7: Termoquímica</span>
+                    <span class="level-badge">Energía</span>
                 </div>
                 <div class="level-desc">
-                    Balanceo de ecuaciones, reactivo límite, reactivo en exceso y rendimiento de reacción.
+                    Entalpía, leyes de termoquímica, calor de reacción y balances energéticos en procesos químicos.
                 </div>
                 <a href="#" class="btn-action disabled">🔒 Bloqueado (Completar Nivel 6)</a>
             </div>
@@ -361,205 +340,191 @@
             <!-- NIVEL 8 -->
             <div class="level-card locked">
                 <div class="level-header">
-                    <span class="level-title">Nivel 8: Soluciones y Concentración</span>
-                    <span class="level-badge">Semana 12-13</span>
+                    <span class="level-title">Nivel 8: Ingeniería e Industria</span>
+                    <span class="level-badge">Cima Industrial</span>
                 </div>
                 <div class="level-desc">
-                    Unidades físicas (%m/m, %v/v) y químicas (Molaridad, Normalidad) y diluciones.
+                    Problemas de altura, manejo de situaciones industriales reales y optimización de procesos químicos.
                 </div>
                 <a href="#" class="btn-action disabled">🔒 Bloqueado (Completar Nivel 7)</a>
             </div>
 
-            <!-- NIVEL 9 -->
-            <div class="level-card locked">
-                <div class="level-header">
-                    <span class="level-title">Nivel 9: Estado Gaseoso</span>
-                    <span class="level-badge">Semana 14-15</span>
-                </div>
-                <div class="level-desc">
-                    Leyes de los gases ideales (PV = nRT), mezcla de gases y presión parcial (Dalton).
-                </div>
-                <a href="#" class="btn-action disabled">🔒 Bloqueado (Completar Nivel 8)</a>
-            </div>
-
-            <!-- NIVEL 10 -->
-            <div class="level-card locked">
-                <div class="level-header">
-                    <span class="level-title">Nivel 10: Integración y Caso Industrial</span>
-                    <span class="level-badge">Semana 16</span>
-                </div>
-                <div class="level-desc">
-                    Resolución de un problema integrado de proceso químico industrial (ABP).
-                </div>
-                <a href="#" class="btn-action disabled">🔒 Bloqueado (Completar Nivel 9)</a>
-            </div>
-
-        </div>
-        <!-- MÓDULO INTERACTIVO DE EVALUACIÓN (SEFAN EXAM MODAL) -->
-<div id="quiz-modal" style="display: none; background: var(--card-bg); border: 1px solid var(--accent-blue); border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);">
-    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 1rem;">
-        <h3 id="quiz-title" style="margin: 0; color: var(--accent-blue);">Cargando Desafío...</h3>
-        <button onclick="cerrarQuiz()" style="background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✖</button>
-    </div>
-
-    <!-- Indicador de carga -->
-    <div id="quiz-loading" style="text-align: center; padding: 2rem; color: var(--accent-gold);">
-        ⚡ Generando ejercicio adaptativo con IA de Gemini... Por favor espera.
-    </div>
-
-    <!-- Contenedor del Ejercicio -->
-    <div id="quiz-content" style="display: none;">
-        <p id="quiz-enunciado" style="font-size: 1rem; line-height: 1.5; font-weight: 500; margin-bottom: 1.2rem;"></p>
-        
-        <div id="quiz-opciones" style="display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 1.5rem;">
-            <!-- Las opciones A, B, C, D se insertan dinámicamente aquí -->
         </div>
 
-        <button id="btn-enviar-respuesta" onclick="validarRespuesta()" class="btn-save" style="width: 100%;">
-            Enviar Respuesta para Evaluación
-        </button>
+        <!-- MODAL DE EVALUACIÓN PARA NIVELES 1, 2 y 3 -->
+        <div id="quiz-modal" style="display: none; background: var(--card-bg); border: 1px solid var(--accent-blue); border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                <h3 id="quiz-title" style="margin: 0; color: var(--accent-blue);">Desafío Teórico</h3>
+                <button onclick="cerrarQuiz()" style="background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✖</button>
+            </div>
 
-        <!-- Feedback de la IA -->
-        <div id="quiz-feedback" style="display: none; margin-top: 1rem; padding: 1rem; border-radius: 6px; font-size: 0.9rem;"></div>
-    </div>
-</div>
-        
+            <div id="quiz-content">
+                <p id="quiz-enunciado" style="font-size: 1rem; line-height: 1.5; font-weight: 500; margin-bottom: 1.2rem;"></p>
+                
+                <div id="quiz-opciones" style="display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 1.5rem;">
+                    <!-- Opciones dinámicas -->
+                </div>
+
+                <button id="btn-enviar-respuesta" onclick="validarRespuestaTeorica()" class="btn-action" style="background: var(--accent-green);">
+                    Enviar Respuesta
+                </button>
+
+                <div id="quiz-feedback" style="display: none; margin-top: 1rem; padding: 1rem; border-radius: 6px; font-size: 0.9rem;"></div>
+            </div>
+        </div>
+
     </div>
 
     <footer>
         <p>Prof. Dr. José Ángel Caldera Luzardo | Instituto Universitario Politécnico "Santiago Mariño"</p>
     </footer>
 
-    <!-- MOTOR DE SCRIPT PARA COMUNICACIÓN CON GOOGLE APPS SCRIPT -->
     <script>
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxk-sK0Ut4YJWe67OJEqAyq9-Zf6-pA1TFFS8FIxEbva1FyFe0VUQ2bFM1_W46EJKUI7A/exec";
-    
-    let preguntaActual = null;
-    let nivelSeleccionado = 1;
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxk-sK0Ut4YJWe67OJEqAyq9-Zf6-pA1TFFS8FIxEbva1FyFe0VUQ2bFM1_W46EJKUI7A/exec";
 
-    async function abrirDesafioNivel(nivel) {
-        const ci = document.getElementById("ci-input").value.trim();
-        const nombre = document.getElementById("name-input").value.trim();
+        // Banco de preguntas integrado para los niveles teóricos 1, 2 y 3
+        const BANCO_TEORICO = {
+            1: [
+                {
+                    enunciado: "¿A cuántos metros equivalen 2.5 kilómetros expresados en notación científica?",
+                    opciones: ["2.5 x 10² m", "2.5 x 10³ m", "25 x 10² m", "0.25 x 10⁴ m"],
+                    correcta: 1,
+                    explicacion: "1 kilómetro equivale a 1000 metros (10³ m). Por lo tanto, 2.5 km = 2.5 x 10³ m."
+                },
+                {
+                    enunciado: "Indique cuál de las siguientes opciones representa una propiedad intensiva de la materia:",
+                    opciones: ["Masa", "Volumen", "Punto de ebullición", "Peso"],
+                    correcta: 2,
+                    explicacion: "El punto de ebullición no depende de la cantidad de materia presente, lo que lo define como una propiedad intensiva."
+                }
+            ],
+            2: [
+                {
+                    enunciado: "¿Cuáles son los valores posibles para el número cuántico secundario o azimutal (l) si el nivel principal n = 3?",
+                    opciones: ["0, 1, 2", "1, 2, 3", "-3, -2, -1, 0, 1, 2, 3", "Sólo 2"],
+                    correcta: 0,
+                    explicacion: "El número cuántico azimutal 'l' toma valores enteros desde 0 hasta (n - 1). Para n = 3, l puede ser 0, 1 y 2."
+                },
+                {
+                    enunciado: "La configuración electrónica externa de los halógenos (Grupo 17) en su capa de valencia corresponde a:",
+                    opciones: ["ns¹", "ns² np⁴", "ns² np⁵", "ns² np⁶"],
+                    correcta: 2,
+                    explicacion: "Los halógenos pertenecen al grupo 17 y poseen 7 electrones de valencia, distribuidos en ns² np⁵."
+                }
+            ],
+            3: [
+                {
+                    enunciado: "¿Qué tipo de fuerza intermolecular predomina en moléculas de agua (H₂O) líquida?",
+                    opciones: ["Fuerzas de dispersión de London", "Enlace iónico", "Puente de hidrógeno", "Enlace metálico"],
+                    correcta: 2,
+                    explicacion: "El hidrógeno unido covalentemente a átomos muy electronegativos como el oxígeno genera intensos puentes de hidrógeno."
+                },
+                {
+                    enunciado: "En una reacción química estequiométrica, la ley que postula que la masa total de los reactivos es igual a la masa total de los productos es:",
+                    opciones: ["Ley de las proporciones definidas (Proust)", "Ley de la conservación de la masa (Lavoisier)", "Ley de las proporciones múltiples", "Ley de Dalton"],
+                    correcta: 1,
+                    explicacion: "Antoine Lavoisier estableció la Ley de Conservación de la Materia / Masa en reacciones químicas en sistemas cerrados."
+                }
+            ]
+        };
 
-        if (!ci || !nombre) {
-            alert("⚠️ Por favor, ingresa tu Cédula y Nombre Completo en el módulo superior antes de iniciar.");
-            document.getElementById("ci-input").focus();
-            return;
-        }
+        let nivelActualGlobal = 1;
+        let preguntaSeleccionada = null;
 
-        nivelSeleccionado = nivel;
-        const modal = document.getElementById("quiz-modal");
-        const loading = document.getElementById("quiz-loading");
-        const content = document.getElementById("quiz-content");
-        const feedback = document.getElementById("quiz-feedback");
+        function abrirDesafioNivel(nivel) {
+            const ci = document.getElementById("ci-input").value.trim();
+            const nombre = document.getElementById("name-input").value.trim();
 
-        document.getElementById("quiz-title").innerText = `Desafío SEFAN - Nivel ${nivel}`;
-        modal.style.display = "block";
-        loading.style.display = "block";
-        content.style.display = "none";
-        feedback.style.display = "none";
-
-        // Desplazar la pantalla suavemente hacia el cuestionario
-        modal.scrollIntoView({ behavior: 'smooth' });
-
-        try {
-            // Solicitar pregunta a Apps Script (petición GET)
-            const response = await fetch(`${APPS_SCRIPT_URL}?cedula=${encodeURIComponent(ci)}&nivel=${nivel}`);
-            preguntaActual = await response.json();
-
-            if (preguntaActual.error) {
-                alert("Atención: " + preguntaActual.error);
-                cerrarQuiz();
+            if (!ci || !nombre) {
+                alert("⚠️ Por favor, ingresa tu Cédula y Nombre Completo en el módulo superior antes de iniciar.");
+                document.getElementById("ci-input").focus();
                 return;
             }
 
-            // Desplegar la pregunta en la interfaz
-            document.getElementById("quiz-enunciado").innerText = preguntaActual.enunciado;
+            nivelActualGlobal = nivel;
+            const modal = document.getElementById("quiz-modal");
+            const preguntasNivel = BANCO_TEORICO[nivel];
+
+            if (!preguntasNivel || preguntasNivel.length === 0) {
+                alert("Pronto se añadirán más reactivos para este nivel.");
+                return;
+            }
+
+            // Seleccionar una pregunta aleatoria del nivel correspondiente
+            preguntaSeleccionada = preguntasNivel[Math.floor(Math.random() * preguntasNivel.length)];
+
+            document.getElementById("quiz-title").innerText = `Desafío Teórico SEFAN - Nivel ${nivel}`;
+            document.getElementById("quiz-enunciado").innerText = preguntaSeleccionada.enunciado;
+            
             const contenedorOpciones = document.getElementById("quiz-opciones");
             contenedorOpciones.innerHTML = "";
 
-            preguntaActual.opciones.forEach((opcion, index) => {
+            preguntaSeleccionada.opciones.forEach((opcion, index) => {
                 contenedorOpciones.innerHTML += `
                     <label style="display: flex; align-items: center; gap: 10px; background: #0f172a; padding: 0.8rem; border-radius: 6px; border: 1px solid #334155; cursor: pointer;">
-                        <input type="radio" name="opcion_sefan" value="${index}">
+                        <input type="radio" name="opcion_teorica" value="${index}">
                         <span>${opcion}</span>
                     </label>
                 `;
             });
 
-            loading.style.display = "none";
-            content.style.display = "block";
-
-        } catch (err) {
-            console.error("Error al cargar pregunta:", err);
-            alert("No se pudo obtener la pregunta desde el servidor. Verifique la conexión.");
-            cerrarQuiz();
-        }
-    }
-
-    async function validarRespuesta() {
-        const seleccion = document.querySelector('input[name="opcion_sefan"]:checked');
-        if (!seleccion) {
-            alert("Por favor selecciona una opción antes de enviar.");
-            return;
+            document.getElementById("quiz-feedback").style.display = "none";
+            modal.style.display = "block";
+            modal.scrollIntoView({ behavior: 'smooth' });
         }
 
-        const opcionIndex = parseInt(seleccion.value, 10);
-        const feedback = document.getElementById("quiz-feedback");
-        const esCorrecto = (opcionIndex === preguntaActual.respuestaCorrecta);
-        const puntajeObtenido = esCorrecto ? 100 : 0;
+        async function validarRespuestaTeorica() {
+            const seleccion = document.querySelector('input[name="opcion_teorica"]:checked');
+            if (!seleccion) {
+                alert("Por favor selecciona una opción.");
+                return;
+            }
 
-        feedback.style.display = "block";
-        if (esCorrecto) {
-            feedback.style.background = "rgba(34, 197, 94, 0.2)";
-            feedback.style.border = "1px solid #22c55e";
-            feedback.style.color = "#4ade80";
-            feedback.innerHTML = `<strong>¡Correcto! 🎉</strong><br>${preguntaActual.explicacion}`;
-        } else {
-            feedback.style.background = "rgba(239, 68, 68, 0.2)";
-            feedback.style.border = "1px solid #ef4444";
-            feedback.style.color = "#fca5a5";
-            feedback.innerHTML = `<strong>Incorrecto.</strong><br>${preguntaActual.explicacion}`;
+            const rtaIndex = parseInt(seleccion.value, 10);
+            const feedback = document.getElementById("quiz-feedback");
+            const esCorrecto = (rtaIndex === preguntaSeleccionada.correcta);
+            const puntaje = esCorrecto ? 100 : 0;
+
+            feedback.style.display = "block";
+            if (esCorrecto) {
+                feedback.style.background = "rgba(34, 197, 94, 0.2)";
+                feedback.style.border = "1px solid #22c55e";
+                feedback.style.color = "#4ade80";
+                feedback.innerHTML = `<strong>¡Correcto! 🎉</strong><br>${preguntaSeleccionada.explicacion}`;
+            } else {
+                feedback.style.background = "rgba(239, 68, 68, 0.2)";
+                feedback.style.border = "1px solid #ef4444";
+                feedback.style.color = "#fca5a5";
+                feedback.innerHTML = `<strong>Incorrecto.</strong><br>${preguntaSeleccionada.explicacion}`;
+            }
+
+            // Guardar progreso en Google Sheets
+            const ci = document.getElementById("ci-input").value.trim();
+            const nombre = document.getElementById("name-input").value.trim();
+
+            const payload = {
+                cedula: ci,
+                nombre: nombre,
+                nivelActual: nivelActualGlobal,
+                puntaje: puntaje,
+                respuestas: { pregunta: preguntaSeleccionada.enunciado, esCorrecto: esCorrecto }
+            };
+
+            try {
+                await fetch(APPS_SCRIPT_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+            } catch (err) {
+                console.error("Error al registrar en Sheets:", err);
+            }
         }
 
-        // Guardar el intento en Google Sheets mediante Apps Script
-        await guardarProgreso(nivelSeleccionado, puntajeObtenido, {
-            pregunta: preguntaActual.enunciado,
-            respuestaEstudiante: opcionIndex,
-            esCorrecto: esCorrecto
-        });
-    }
-
-    function cerrarQuiz() {
-        document.getElementById("quiz-modal").style.display = "none";
-    }
-
-    async function guardarProgreso(nivel, puntaje, respuestasObj) {
-        const ci = document.getElementById("ci-input").value.trim();
-        const nombre = document.getElementById("name-input").value.trim();
-
-        const payload = {
-            cedula: ci,
-            nombre: nombre,
-            nivelActual: nivel,
-            puntaje: puntaje,
-            respuestas: respuestasObj
-        };
-
-        try {
-            localStorage.setItem("sefan_user", JSON.stringify(payload));
-
-            await fetch(APPS_SCRIPT_URL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-        } catch (err) {
-            console.error("Error al sincronizar en Sheets:", err);
+        function cerrarQuiz() {
+            document.getElementById("quiz-modal").style.display = "none";
         }
-    }
-</script>
-
+    </script>
 </body>
 </html>
