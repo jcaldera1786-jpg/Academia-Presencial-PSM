@@ -88,7 +88,7 @@
             z-index: 1;
         }
 
-        .student-card, .welcome-card, .tool-card {
+        .student-card, .welcome-card, .tool-card, .quiz-card {
             background: var(--card-bg);
             border: 1px solid var(--accent-blue);
             border-radius: 12px;
@@ -221,6 +221,14 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
+        .btn-secondary {
+            background: #475569;
+        }
+
+        .btn-secondary:hover {
+            background: #334155;
+        }
+
         .btn-tool {
             background: linear-gradient(135deg, #0d9488, #0f766e);
         }
@@ -250,7 +258,7 @@
     <div class="container">
 
         <!-- MÓDULO DE IDENTIFICACIÓN -->
-        <div class="student-card">
+        <div class="student-card" id="card-identificacion">
             <h3>Identificación del Estudiante</h3>
             <div class="form-grid">
                 <input type="text" id="ci-input" class="input-field" placeholder="Cédula de Identidad">
@@ -258,7 +266,7 @@
             </div>
         </div>
 
-        <div class="welcome-card">
+        <div class="welcome-card" id="card-bienvenida">
             <h2>Ruta de Progresión Académica (8 Niveles)</h2>
             <p style="font-size: 0.9rem; line-height: 1.5;">
                 Bienvenido al portal SEFAN. Completa los desafíos de cada nivel formativo. El <strong>Nivel 4 (Soluciones)</strong> es la puerta de certificación clave antes de ascender hacia los estados de materia, electroquímica, termoquímica e ingeniería industrial.
@@ -266,7 +274,7 @@
         </div>
 
         <!-- HERRAMIENTA TRANSVERSAL DE APOYO -->
-        <div class="tool-card">
+        <div class="tool-card" id="card-herramienta">
             <div class="level-header">
                 <span class="level-title" style="color: var(--accent-teal);">🧪 Herramienta de Consulta Transversal</span>
                 <span class="level-badge" style="background: rgba(20, 184, 166, 0.15); color: var(--accent-teal); border-color: rgba(20, 184, 166, 0.3);">Apoyo</span>
@@ -277,7 +285,8 @@
             <a href="https://ptable.com/?lang=es" target="_blank" class="btn-action btn-tool">Abrir Tabla Periódica Interactiva ↗</a>
         </div>
 
-        <div class="levels-grid">
+        <!-- GRILLA DE NIVELES -->
+        <div class="levels-grid" id="main-levels-grid">
 
             <!-- NIVEL 1 -->
             <div class="level-card">
@@ -288,7 +297,7 @@
                 <div class="level-desc">
                     Conversión de unidades, notación científica, despeje de ecuaciones, materia, energía y teoría atómica elemental.
                 </div>
-                <button onclick="abrirDesafioNivel(1)" class="btn-action">Iniciar Desafío Nivel 1</button>
+                <button onclick="iniciarModuloNivel(1)" class="btn-action">Iniciar Desafío Nivel 1</button>
             </div>
 
             <!-- NIVEL 2 -->
@@ -300,7 +309,7 @@
                 <div class="level-desc">
                     Números cuánticos, distribución electrónica de átomos y iones, y periodicidad química de los elementos.
                 </div>
-                <button onclick="abrirDesafioNivel(2)" class="btn-action">Iniciar Desafío Nivel 2</button>
+                <button onclick="iniciarModuloNivel(2)" class="btn-action">Iniciar Desafío Nivel 2</button>
             </div>
 
             <!-- NIVEL 3 -->
@@ -312,7 +321,7 @@
                 <div class="level-desc">
                     Enlaces químicos, fuerzas intermoleculares (puente de hidrógeno, London), nomenclatura, leyes de conservación y estequiometría.
                 </div>
-                <button onclick="abrirDesafioNivel(3)" class="btn-action">Iniciar Desafío Nivel 3</button>
+                <button onclick="iniciarModuloNivel(3)" class="btn-action">Iniciar Desafío Nivel 3</button>
             </div>
 
             <!-- NIVEL 4 (SOLUCIONES - CERTIFICACIÓN) -->
@@ -377,25 +386,39 @@
 
         </div>
 
-        <!-- MODAL DE EVALUACIÓN PARA NIVELES 1, 2 y 3 -->
-        <div id="quiz-modal" style="display: none; background: var(--card-bg); border: 1px solid var(--accent-blue); border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 1rem;">
-                <h3 id="quiz-title" style="margin: 0; color: var(--accent-blue);">Desafío Teórico</h3>
-                <button onclick="cerrarQuiz()" style="background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✖</button>
+        <!-- CONTENEDOR DINÁMICO DEL MÓDULO/DESAFÍO -->
+        <div id="modulo-container" class="quiz-card" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.8rem; margin-bottom: 1.2rem;">
+                <div>
+                    <h3 id="modulo-titulo" style="margin: 0; color: var(--accent-blue);">Nivel Activo</h3>
+                    <span id="modulo-progreso" style="font-size: 0.85rem; color: var(--text-muted);">Pregunta 1 de 3</span>
+                </div>
+                <button onclick="salirDelModulo()" class="btn-action btn-secondary" style="width: auto; padding: 0.4rem 0.8rem;">⬅ Salir al Menú</button>
             </div>
 
-            <div id="quiz-content">
+            <div id="quiz-area">
                 <p id="quiz-enunciado" style="font-size: 1rem; line-height: 1.5; font-weight: 500; margin-bottom: 1.2rem;"></p>
                 
                 <div id="quiz-opciones" style="display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 1.5rem;">
                     <!-- Opciones dinámicas -->
                 </div>
 
-                <button id="btn-enviar-respuesta" onclick="validarRespuestaTeorica()" class="btn-action" style="background: var(--accent-green);">
-                    Enviar Respuesta
-                </button>
+                <div style="display: flex; gap: 10px;">
+                    <button id="btn-enviar-respuesta" onclick="validarRespuesta()" class="btn-action" style="background: var(--accent-green);">
+                        Validar Respuesta
+                    </button>
+                    <button id="btn-siguiente-pregunta" onclick="siguientePregunta()" class="btn-action" style="display: none;">
+                        Siguiente Pregunta ➡
+                    </button>
+                </div>
 
                 <div id="quiz-feedback" style="display: none; margin-top: 1rem; padding: 1rem; border-radius: 6px; font-size: 0.9rem;"></div>
+            </div>
+
+            <div id="resumen-area" style="display: none; text-align: center; padding: 1rem 0;">
+                <h3 style="color: var(--accent-gold); font-size: 1.4rem;">¡Desafío Completado!</h3>
+                <p id="resumen-texto" style="font-size: 1.1rem; line-height: 1.6;"></p>
+                <button onclick="salirDelModulo()" class="btn-action" style="max-width: 250px; margin: 1.5rem auto 0 auto;">Volver a la Ruta de Niveles</button>
             </div>
         </div>
 
@@ -408,56 +431,63 @@
     <script>
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxk-sK0Ut4YJWe67OJEqAyq9-Zf6-pA1TFFS8FIxEbva1FyFe0VUQ2bFM1_W46EJKUI7A/exec";
 
-        // Banco de preguntas integrado para los niveles teóricos 1, 2 y 3
         const BANCO_TEORICO = {
             1: [
                 {
-                    enunciado: "¿A cuántos metros equivalen 2.5 kilómetros expresados en notación científica?",
+                    enunciado: "1. ¿A cuántos metros equivalen 2.5 kilómetros expresados en notación científica?",
                     opciones: ["2.5 x 10² m", "2.5 x 10³ m", "25 x 10² m", "0.25 x 10⁴ m"],
                     correcta: 1,
                     explicacion: "1 kilómetro equivale a 1000 metros (10³ m). Por lo tanto, 2.5 km = 2.5 x 10³ m."
                 },
                 {
-                    enunciado: "Indique cuál de las siguientes opciones representa una propiedad intensiva de la materia:",
+                    enunciado: "2. Indique cuál de las siguientes opciones representa una propiedad intensiva de la materia:",
                     opciones: ["Masa", "Volumen", "Punto de ebullición", "Peso"],
                     correcta: 2,
                     explicacion: "El punto de ebullición no depende de la cantidad de materia presente, lo que lo define como una propiedad intensiva."
+                },
+                {
+                    enunciado: "3. ¿Cuál de los siguientes fenómenos corresponde a un cambio químico?",
+                    opciones: ["Evaporación del agua", "Oxidación de un clavo de hierro", "Sublimación de la naftalina", "Disolución de sal en agua"],
+                    correcta: 1,
+                    explicacion: "La oxidación altera la naturaleza química de la sustancia, formando un nuevo compuesto (óxido de hierro)."
                 }
             ],
             2: [
                 {
-                    enunciado: "¿Cuáles son los valores posibles para el número cuántico secundario o azimutal (l) si el nivel principal n = 3?",
+                    enunciado: "1. ¿Cuáles son los valores posibles para el número cuántico secundario (l) si n = 3?",
                     opciones: ["0, 1, 2", "1, 2, 3", "-3, -2, -1, 0, 1, 2, 3", "Sólo 2"],
                     correcta: 0,
                     explicacion: "El número cuántico azimutal 'l' toma valores enteros desde 0 hasta (n - 1). Para n = 3, l puede ser 0, 1 y 2."
                 },
                 {
-                    enunciado: "La configuración electrónica externa de los halógenos (Grupo 17) en su capa de valencia corresponde a:",
+                    enunciado: "2. La configuración electrónica externa de los halógenos (Grupo 17) corresponde a:",
                     opciones: ["ns¹", "ns² np⁴", "ns² np⁵", "ns² np⁶"],
                     correcta: 2,
-                    explicacion: "Los halógenos pertenecen al grupo 17 y poseen 7 electrones de valencia, distribuidos en ns² np⁵."
+                    explicacion: "Los halógenos pertenecen al grupo 17 y poseen 7 electrones en su capa de valencia (ns² np⁵)."
                 }
             ],
             3: [
                 {
-                    enunciado: "¿Qué tipo de fuerza intermolecular predomina en moléculas de agua (H₂O) líquida?",
-                    opciones: ["Fuerzas de dispersión de London", "Enlace iónico", "Puente de hidrógeno", "Enlace metálico"],
+                    enunciado: "1. ¿Qué tipo de fuerza intermolecular predomina en moléculas de agua (H₂O) líquida?",
+                    opciones: ["Fuerzas de London", "Enlace iónico", "Puente de hidrógeno", "Enlace metálico"],
                     correcta: 2,
-                    explicacion: "El hidrógeno unido covalentemente a átomos muy electronegativos como el oxígeno genera intensos puentes de hidrógeno."
+                    explicacion: "El hidrógeno unido covalentemente a átomos muy electronegativos como el oxígeno genera puentes de hidrógeno."
                 },
                 {
-                    enunciado: "En una reacción química estequiométrica, la ley que postula que la masa total de los reactivos es igual a la masa total de los productos es:",
-                    opciones: ["Ley de las proporciones definidas (Proust)", "Ley de la conservación de la masa (Lavoisier)", "Ley de las proporciones múltiples", "Ley de Dalton"],
+                    enunciado: "2. En una reacción química, la ley que establece que la masa total de los reactivos es igual a la de los productos es:",
+                    opciones: ["Ley de Proust", "Ley de Lavoisier", "Ley de Dalton", "Ley de Gay-Lussac"],
                     correcta: 1,
-                    explicacion: "Antoine Lavoisier established la Ley de Conservación de la Materia / Masa en reacciones químicas en sistemas cerrados."
+                    explicacion: "Antoine Lavoisier formuló la Ley de Conservación de la Masa."
                 }
             ]
         };
 
         let nivelActualGlobal = 1;
-        let preguntaSeleccionada = null;
+        let preguntasModulo = [];
+        let indicePreguntaActual = 0;
+        let aciertosModulo = 0;
 
-        function abrirDesafioNivel(nivel) {
+        function iniciarModuloNivel(nivel) {
             const ci = document.getElementById("ci-input").value.trim();
             const nombre = document.getElementById("name-input").value.trim();
 
@@ -468,72 +498,116 @@
             }
 
             nivelActualGlobal = nivel;
-            const modal = document.getElementById("quiz-modal");
-            const preguntasNivel = BANCO_TEORICO[nivel];
+            preguntasModulo = BANCO_TEORICO[nivel] || [];
 
-            if (!preguntasNivel || preguntasNivel.length === 0) {
-                alert("Pronto se añadirán más reactivos para este nivel.");
+            if (preguntasModulo.length === 0) {
+                alert("Pronto se añadirán reactivos para este nivel.");
                 return;
             }
 
-            // Seleccionar una pregunta aleatoria del nivel correspondiente
-            preguntaSeleccionada = preguntasNivel[Math.floor(Math.random() * preguntasNivel.length)];
+            // Ocultar vistas principales y desplegar contenedor dinámico
+            document.getElementById("main-levels-grid").style.display = "none";
+            document.getElementById("card-bienvenida").style.display = "none";
+            document.getElementById("card-herramienta").style.display = "none";
+            document.getElementById("modulo-container").style.display = "block";
 
-            document.getElementById("quiz-title").innerText = `Desafío Teórico SEFAN - Nivel ${nivel}`;
-            document.getElementById("quiz-enunciado").innerText = preguntaSeleccionada.enunciado;
+            indicePreguntaActual = 0;
+            aciertosModulo = 0;
+
+            document.getElementById("quiz-area").style.display = "block";
+            document.getElementById("resumen-area").style.display = "none";
+
+            cargarPreguntaActual();
+        }
+
+        function cargarPreguntaActual() {
+            const preg = preguntasModulo[indicePreguntaActual];
+            document.getElementById("modulo-titulo").innerText = `Desafío SEFAN - Nivel ${nivelActualGlobal}`;
+            document.getElementById("modulo-progreso").innerText = `Pregunta ${indicePreguntaActual + 1} de ${preguntasModulo.length}`;
+            
+            document.getElementById("quiz-enunciado").innerText = preg.enunciado;
             
             const contenedorOpciones = document.getElementById("quiz-opciones");
             contenedorOpciones.innerHTML = "";
 
-            preguntaSeleccionada.opciones.forEach((opcion, index) => {
+            preg.opciones.forEach((opc, idx) => {
                 contenedorOpciones.innerHTML += `
                     <label style="display: flex; align-items: center; gap: 10px; background: #0f172a; padding: 0.8rem; border-radius: 6px; border: 1px solid #334155; cursor: pointer;">
-                        <input type="radio" name="opcion_teorica" value="${index}">
-                        <span>${opcion}</span>
+                        <input type="radio" name="opcion_teorica" value="${idx}">
+                        <span>${opc}</span>
                     </label>
                 `;
             });
 
             document.getElementById("quiz-feedback").style.display = "none";
-            modal.style.display = "block";
-            modal.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById("btn-enviar-respuesta").style.display = "block";
+            document.getElementById("btn-siguiente-pregunta").style.display = "none";
         }
 
-        async function validarRespuestaTeorica() {
+        async function validarRespuesta() {
             const seleccion = document.querySelector('input[name="opcion_teorica"]:checked');
             if (!seleccion) {
-                alert("Por favor selecciona una opción.");
+                alert("Por favor selecciona una respuesta.");
                 return;
             }
 
             const rtaIndex = parseInt(seleccion.value, 10);
+            const preg = preguntasModulo[indicePreguntaActual];
             const feedback = document.getElementById("quiz-feedback");
-            const esCorrecto = (rtaIndex === preguntaSeleccionada.correcta);
-            const puntaje = esCorrecto ? 100 : 0;
+            const esCorrecto = (rtaIndex === preg.correcta);
+
+            if (esCorrecto) aciertosModulo++;
 
             feedback.style.display = "block";
             if (esCorrecto) {
                 feedback.style.background = "rgba(34, 197, 94, 0.2)";
                 feedback.style.border = "1px solid #22c55e";
                 feedback.style.color = "#4ade80";
-                feedback.innerHTML = `<strong>¡Correcto! 🎉</strong><br>${preguntaSeleccionada.explicacion}`;
+                feedback.innerHTML = `<strong>¡Correcto! 🎉</strong><br>${preg.explicacion}`;
             } else {
                 feedback.style.background = "rgba(239, 68, 68, 0.2)";
                 feedback.style.border = "1px solid #ef4444";
                 feedback.style.color = "#fca5a5";
-                feedback.innerHTML = `<strong>Incorrecto.</strong><br>${preguntaSeleccionada.explicacion}`;
+                feedback.innerHTML = `<strong>Incorrecto.</strong><br>${preg.explicacion}`;
             }
 
-            // Guardar progreso en Google Sheets
+            // Deshabilitar radios tras responder
+            document.querySelectorAll('input[name="opcion_teorica"]').forEach(input => input.disabled = true);
+
+            document.getElementById("btn-enviar-respuesta").style.display = "none";
+            document.getElementById("btn-siguiente-pregunta").style.display = "block";
+        }
+
+        function siguientePregunta() {
+            indicePreguntaActual++;
+            if (indicePreguntaActual < preguntasModulo.length) {
+                cargarPreguntaActual();
+            } else {
+                finalizarModulo();
+            }
+        }
+
+        async function finalizarModulo() {
+            document.getElementById("quiz-area").style.display = "none";
+            document.getElementById("resumen-area").style.display = "block";
+
+            const notaFinal = Math.round((aciertosModulo / preguntasModulo.length) * 100);
+            document.getElementById("resumen-texto").innerHTML = `
+                Has respondido correctamente <strong>${aciertosModulo}</strong> de <strong>${preguntasModulo.length}</strong> preguntas.<br>
+                Calificación obtenida: <span style="color: var(--accent-blue); font-weight: bold;">${notaFinal} / 100 pts</span>
+            `;
+
+            // Transmitir datos unificados a la central de Google Sheets
             const ci = document.getElementById("ci-input").value.trim();
             const nombre = document.getElementById("name-input").value.trim();
 
             const payload = {
+                origen: "SEFAN_NIVELES",
                 cedula: ci,
                 nombre: nombre,
                 nivelActual: nivelActualGlobal,
-                puntaje: puntaje,
-                respuestas: { pregunta: preguntaSeleccionada.enunciado, esCorrecto: esCorrecto }
+                puntaje: notaFinal,
+                detalles: `Aciertos: ${aciertosModulo}/${preguntasModulo.length}`
             };
 
             try {
@@ -544,12 +618,15 @@
                     body: JSON.stringify(payload)
                 });
             } catch (err) {
-                console.error("Error al registrar en Sheets:", err);
+                console.error("Error al registrar en Google Sheets:", err);
             }
         }
 
-        function cerrarQuiz() {
-            document.getElementById("quiz-modal").style.display = "none";
+        function salirDelModulo() {
+            document.getElementById("modulo-container").style.display = "none";
+            document.getElementById("main-levels-grid").style.display = "grid";
+            document.getElementById("card-bienvenida").style.display = "block";
+            document.getElementById("card-herramienta").style.display = "block";
         }
     </script>
 </body>
