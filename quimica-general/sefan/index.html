@@ -618,7 +618,7 @@ const BANCO_TEORICO = {
             enunciado: "17. Un catión se forma formalmente cuando un átomo neutro:",
             opciones: [
                 "Pierde uno o más electrones, adquiriendo carga positiva.",
-                "Gana uno o más electrones, adquiriendo carga negativa.",
+                "Gana uno o más electrones, acquiring carga negativa.",
                 "Pierde protones del núcleo.",
                 "Gana neutrones en el núcleo."
             ],
@@ -630,7 +630,7 @@ const BANCO_TEORICO = {
             opciones: [
                 "El anión tiene un número mayor de electrones que de protones.",
                 "El anión tiene mayor número de protones en el núcleo.",
-                "El anión não posee electrones en la capa externa.",
+                "El anión no posee electrones en la capa externa.",
                 "El anión tiene un valor de Z más elevado."
             ],
             correcta: 0,
@@ -641,7 +641,7 @@ const BANCO_TEORICO = {
             opciones: [
                 "Toda partícula en movimiento (como el electrón) lleva asociada una onda.",
                 "Los electrones son exclusivamente ondas electromagnéticas.",
-                "Los fotones tienen masa en reposo idéntica la del protón.",
+                "Los fotones tienen masa en reposo idéntica a la del protón.",
                 "La materia no puede convertirse en energía bajo ninguna circunstancia."
             ],
             correcta: 0,
@@ -658,7 +658,7 @@ const BANCO_TEORICO = {
             correcta: 0,
             explicacion: "El principio de Heisenberg marca una limitación fundamental en la medición a escala cuántica: cuanto con más precisión se conoce la posición, menos se conoce la velocidad y viceversa."
         }
-    ]
+    ], // <- Se añadió la coma omitida
     2: [
         {
             enunciado: "1. ¿Cuáles son los valores posibles para el número cuántico secundario (l) si n = 3?",
@@ -708,7 +708,6 @@ async function registrarEstudiante() {
     statusDiv.style.color = "var(--accent-gold)";
     statusDiv.innerText = "⏳ Conectando con Google Sheets...";
 
-    // Usamos URLSearchParams para asegurar el llenado de e.parameter en Google Apps Script
     const payload = new URLSearchParams();
     payload.append("origen", "SEFAN_NIVELES");
     payload.append("cedula", ci);
