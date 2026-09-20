@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reto Balanceo Blindado </title>
+    <title>Reto Balanceo Blindado</title>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
@@ -25,7 +25,7 @@
 <div class="container">
     <div class="header">
         <h1>Desafío: Balanceo Estequiométrico Pro</h1>
-        <p>Zuforca Academy | Prof. José Ángel Caldera Luzardo</p>
+        <p>Politécnico Santiago Mariño | Prof. José Ángel Caldera Luzardo</p>
     </div>
 
     <div id="setup">
@@ -62,7 +62,7 @@
     let correctCount = 0, qIndex = 0, currentAnswer = [];
     let bancoActual = [];
 
-const poolReacciones = [
+    const poolReacciones = [
         // NIVEL BÁSICO (Síntesis y Descomposición)
         { ec: ["H₂", "+", "O₂", "→", "H₂O"], coefs: [2, 1, 2] },
         { ec: ["N₂", "+", "H₂", "→", "NH₃"], coefs: [1, 3, 2] },
@@ -97,7 +97,7 @@ const poolReacciones = [
         { ec: ["NH₃", "+", "O₂", "→", "NO", "+", "H₂O"], coefs: [4, 5, 4, 6] },
         { ec: ["FeS₂", "+", "O₂", "→", "Fe₂O₃", "+", "SO₂"], coefs: [4, 11, 2, 8] },
         { ec: ["K", "+", "H₂O", "→", "KOH", "+", "H₂"], coefs: [2, 2, 2, 1] },
-        { ec: ["C₆H₁₂O₆", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [1, 6, 6, 6] }, // <-- COMA CORREGIDA
+        { ec: ["C₆H₁₂O₆", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [1, 6, 6, 6] },
 
         // ADICIONALES (31 - 60) - NIVEL EXPERTO Y SALES
         { ec: ["Ag", "+", "H₂S", "+", "O₂", "→", "Ag₂S", "+", "H₂O"], coefs: [4, 2, 1, 2, 2] },
@@ -131,6 +131,7 @@ const poolReacciones = [
         { ec: ["Fe₂O₃", "+", "H₂", "→", "Fe", "+", "H₂O"], coefs: [1, 3, 2, 3] },
         { ec: ["C₂H₄", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [1, 3, 2, 2] }
     ];
+
     function shuffle(array) { return array.sort(() => Math.random() - 0.5); }
 
     function iniciar() {
@@ -209,16 +210,29 @@ const poolReacciones = [
 
     async function enviar(p) {
         const btn = document.getElementById('btn-send');
-        btn.disabled = true; btn.innerText = "Enviando...";
-        const data = { nombre: userData.nombre, cedula: userData.cedula, puntos: p, intento: userData.intento };
+        btn.disabled = true; 
+        btn.innerText = "Enviando...";
+        
+        const data = { 
+            nombre: userData.nombre, 
+            cedula: userData.cedula, 
+            puntos: p, 
+            intento: userData.intento 
+        };
 
         try {
-            await fetch(GOOGLE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
-            alert("SISTEMA: Datos guardados en la nube.");
+            await fetch(GOOGLE_URL, { 
+                method: 'POST', 
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(data) 
+            });
+            
+            alert("SISTEMA: Datos enviados con éxito a la nube.");
             document.getElementById('action-area').innerHTML = `<button class="btn-action" onclick="reintentar()" style="background:var(--secondary)">Nuevo Intento</button>`;
         } catch (e) {
-            alert("Error de conexión.");
-            btn.disabled = false; btn.innerText = "Reintentar";
+            alert("Error de conexión al enviar resultados.");
+            btn.disabled = false; 
+            btn.innerText = "Reintentar Envío";
         }
     }
 
