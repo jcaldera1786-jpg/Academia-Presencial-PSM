@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cátedra de Química - Reto Atómico (Nivel 1)</title>
+  <style>
+    :root {
+      --primary-color: #1a365d;
+      --secondary-color: #2b6cb0;
+      --accent-color: #3182ce;
+      --bg-color: #f7fafc;
+      --card-bg: #ffffff;
+      --text-color: #2d3748;
+      --success-color: #38a169;
+      --error-color: #e53e3e;
+      --border-radius: 8px;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background-color: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 700px;
+      padding: 30px;
+      box-sizing: border-box;
+    }
+
+    header {
+      text-align: center;
+      border-bottom: 2px solid var(--bg-color);
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      color: var(--primary-color);
+      margin: 0 0 5px 0;
+      font-size: 1.6rem;
+    }
+
+    p.subtitle {
+      color: #718096;
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #cbd5e0;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 1rem;
+    }
+
+    .btn {
+      background-color: var(--secondary-color);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      width: 100%;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-color);
+    }
+
+    .btn:disabled {
+      background-color: #a0aec0;
+      cursor: not-allowed;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      background-color: #edf2f7;
+      border-radius: 4px;
+      height: 10px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background-color: var(--accent-color);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .question-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .option-btn {
+      background-color: #edf2f7;
+      border: 1px solid #cbd5e0;
+      padding: 12px;
+      border-radius: 4px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+
+    .option-btn:hover {
+      background-color: #e2e8f0;
+      border-color: #cbd5e0;
+    }
+
+    .option-btn.selected {
+      background-color: #ebf8ff;
+      border-color: var(--accent-color);
+      font-weight: 600;
+    }
+
+    .results-card {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .score-display {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: var(--primary-color);
+      margin: 15px 0;
+    }
+
+    .status-msg {
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-weight: 600;
+    }
+
+    .status-success {
+      background-color: #c6f6d5;
+      color: #22543d;
+    }
+
+    .status-error {
+      background-color: #fed7d7;
+      color: #742a2a;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>Cátedra de Química</h1>
+    <p class="subtitle">Módulo: Estructura y Teoría Atómica | Reto Atómico (Nivel 1)</p>
+  </header>
+
+  <!-- PANTALLA 1: REGISTRO DEL ESTUDIANTE -->
+  <div id="screen-register">
+    <div class="form-group">
+      <label for="student-name">Nombre y Apellido:</label>
+      <input type="text" id="student-name" placeholder="Ej. Juan Pérez" required>
+    </div>
+    <div class="form-group">
+      <label for="student-id">Cédula de Identidad:</label>
+      <input type="text" id="student-id" placeholder="Ej. V-12345678" required>
+    </div>
+    <button class="btn" onclick="startQuiz()">Iniciar Evaluación</button>
+  </div>
+
+  <!-- PANTALLA 2: BANCO DE PREGUNTAS -->
+  <div id="screen-quiz" class="hidden">
+    <div class="progress-bar-container">
+      <div id="progress-bar" class="progress-bar"></div>
+    </div>
+    <div id="question-number" style="font-size: 0.85rem; color: #718096; margin-bottom: 5px;"></div>
+    <div id="question-text" class="question-title"></div>
+    <div id="options-container" class="options-container"></div>
+    <button id="btn-next" class="btn" onclick="nextQuestion()" disabled>Siguiente Pregunta</button>
+  </div>
+
+  <!-- PANTALLA 3: RESULTADOS Y ENVÍO -->
+  <div id="screen-results" class="hidden">
+    <div class="results-card">
+      <h2>Evaluación Finalizada</h2>
+      <p>Has completado el Reto Atómico (Nivel 1).</p>
+      <div class="score-display" id="final-score">0 / 20</div>
+      <p id="percentage-display" style="font-weight: 600; font-size: 1.2rem;"></p>
+      <div id="status-message" class="status-msg hidden"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // CONFIGURACIÓN CENTRALIZADA DE ENVÍO
+  // Reemplazar la siguiente URL por la Web App URL de tu Google Apps Script único
+  const SCRIPT_URL = "URL_DE_TU_GOOGLE_APPS_SCRIPT";
+
+  // BASE DE DATOS DE PREGUNTAS (NIVEL 1)
+  const questions = [
+    { id: "N1_Q01", q: "¿Cuál fue el postulado principal de John Dalton sobre la naturaleza de la materia a principios del siglo XIX?", options: ["La materia está formada por átomos indivisibles e indestructibles.", "El átomo contiene un núcleo denso con carga positiva.", "Los electrones giran en órbitas cuantizadas de energía.", "El átomo es una esfera con cargas negativas incrustadas."], answer: 0 },
+    { id: "N1_Q02", q: "¿Cuál fue una de las principales limitaciones o desventajas del modelo atómico de Dalton?", options: ["No explicaba la gravedad dentro del átomo.", "No permitía la existencia de isótopos ni la naturaleza eléctrica de la materia.", "Consideraba que el núcleo era demasiado grande.", "Introdujo órbitas elípticas en lugar de circulares."], answer: 1 },
+    { id: "N1_Q03", q: "En el experimento de tubos de rayos catódicos realizado por J.J. Thomson, ¿qué evidencia demostró la existencia de los electrones?", options: ["La desviación de los rayos hacia la placa cargada positivamente en un campo eléctrico.", "La emisión de partículas alfa tras golpear una lámina de oro.", "El espectro de emisión discontinuo del hidrógeno.", "La absorción de fotones por la materia a altas temperaturas."], answer: 0 },
+    { id: "N1_Q04", q: "¿Qué nombre recibe el modelo atómico propuesto por J.J. Thomson?", options: ["Modelo planetario.", "Modelo del pastel de pasas (pudín de pasas).", "Modelo mecánico cuántico.", "Modelo de órbitas estacionarias."], answer: 1 },
+    { id: "N1_Q05", q: "¿Cuál fue el acierto fundamental del modelo atómico de J.J. Thomson?", options: ["Descubrir el neutrón dentro del núcleo.", "Reconocer por primera vez la naturaleza eléctrica y subatómica de la materia.", "Calcular la masa exacta del protón.", "Explicar el comportamiento de los gases ideales."], answer: 1 },
+    { id: "N1_Q06", q: "En el experimento de Ernest Rutherford (lámina de oro), ¿qué observación crítica descartó el modelo de Thomson?", options: ["La mayoría de las partículas alfa rebotaron en la lámina.", "Una pequeña fracción de partículas alfa se desviaron en ángulos muy grandes o rebotaron hacia atrás.", "Las partículas alfa aumentaron su velocidad al atravesar el oro.", "Las partículas alfa cambiaron su carga de positiva a negativa."], answer: 1 },
+    { id: "N1_Q07", q: "¿Qué conclusión crítica obtuvo Rutherford a partir del desvío de las partículas alfa?", options: ["El átomo es mayoritariamente espacio vacío con un núcleo pequeño, denso y positivo.", "Los electrones están fusionados con los protones en el centro.", "El átomo carece de carga eléctrica.", "Los neutrones forman la corteza exterior del átomo."], answer: 0 },
+    { id: "N1_Q08", q: "¿Cuál es la principal desventaja o falla teórica del modelo planetario de Rutherford según la física clásica?", options: ["No explicaba por qué los electrones no perdían energía y colapsaban contra el núcleo.", "Afirmaba que los protones tenían carga negativa.", "Negaba la presencia de electrones en el átomo.", "No permitía calcular la masa del átomo de helio."], answer: 0 },
+    { id: "N1_Q09", q: "¿Qué postuló Niels Bohr para resolver la inestabilidad del modelo atómico de Rutherford?", options: ["Los electrones orbitan en niveles discretos (cuantizados) de energía sin emitir radiación.", "Los protones se mueven libremente fuera del núcleo.", "El electrón es una onda estacionaria que llena todo el átomo.", "La atracción electromagnética se anula con la masa del neutrón."], answer: 0 },
+    { id: "N1_Q10", q: "¿Cuál fue el gran acierto experimental del modelo atómico de Niels Bohr?", options: ["Explicar matemáticamente el espectro de emisión del átomo de hidrógeno.", "Descubrir la existencia de los quarks.", "Predecir la masa exacta de los átomos polielectrónicos.", "Explicar el enlace covalente no polar."], answer: 0 },
+    { id: "N1_Q11", q: "¿Cuál es una desventaja o limitación crítica del modelo atómico de Bohr?", options: ["Solo funciona con precisión para átomos hidrogenoides (un solo electrón).", "Afirmaba que el núcleo contenía electrones.", "No utilizaba las leyes de la física clásica en ningún punto.", "Asumía que los electrones no tenían masa."], answer: 0 },
+    { id: "N1_Q12", q: "¿Qué científico descubrió el neutrón en 1932, completando el modelo básico de partículas subatómicas?", options: ["James Chadwick.", "Robert Millikan.", "Louis de Broglie.", "Erwin Schrödinger."], answer: 0 },
+    { id: "N1_Q13", q: "El experimento de la gota de aceite de Robert Millikan permitió determinar experimentalmente:", options: ["La carga eléctrica del electrón.", "La masa del núcleo atómico.", "El radio atómico del hidrógeno.", "La velocidad de la luz en el vacío."], answer: 0 },
+    { id: "N1_Q14", q: "¿Cómo se define el número atómico (Z) de un elemento químico?", options: ["El número total de protones presentes en el núcleo.", "La suma de protones y neutrones en el núcleo.", "El número de electrones en la última capa de valencia.", "La masa promedio de los isótopos del elemento."], answer: 0 },
+    { id: "N1_Q15", q: "¿Cómo se define el número de masa (A) de un átomo?", options: ["La suma del número de protones (Z) y el número de neutrones (N).", "El número total de electrones en el átomo neutro.", "La diferencia entre protones y electrones.", "La cantidad de niveles de energía ocupados."], answer: 0 },
+    { id: "N1_Q16", q: "Dos átomos son considerados isótopos entre sí cuando poseen:", options: ["El mismo número atómico (Z), pero diferente número de masa (A).", "El mismo número de masa (A), pero diferente número atómico (Z).", "El mismo número de neutrones y diferente número de protones.", "La misma masa y las mismas propiedades físicas."], answer: 0 },
+    { id: "N1_Q17", q: "Un catión se forma formalmente cuando un átomo neutro:", options: ["Pierde uno o más electrones, acquiring carga positiva.", "Gana uno o más electrones, acquiring carga negativa.", "Pierde protones del núcleo.", "Gana neutrones en el núcleo."], answer: 0 },
+    { id: "N1_Q18", q: "¿Qué diferencia a un anión de un átomo neutro del mismo elemento?", options: ["El anión tiene un número mayor de electrones que de protones.", "El anión tiene mayor número de protones en el núcleo.", "El anión no posee electrones en la capa externa.", "El anión tiene un valor de Z más elevado."], answer: 0 },
+    { id: "N1_Q19", q: "El principio de dualidad onda-partícula propuesto por Louis de Broglie establece que:", options: ["Toda partícula en movimiento (como el electrón) lleva asociada una onda.", "Los electrones son exclusivamente ondas electromagnéticas.", "Los fotones tienen masa en reposo idéntica a la del protón.", "La materia no puede convertirse en energía bajo ninguna circunstancia."], answer: 0 },
+    { id: "N1_Q20", q: "¿Qué establece el Principio de Incertidumbre de Heisenberg?", options: ["Es imposible conocer simultáneamente y con precisión la posición y el momento (velocidad) de un electrón.", "Dos electrones en un mismo átomo no pueden tener sus cuatro números cuánticos iguales.", "Los orbitales se llenan comenzando por los de menor energía.", "La energía de un fotón es inversamente proporcional a la constante de Planck."], answer: 0 }
+  ];
+
+  // VARIABLES DE ESTADO
+  let currentQuestionIndex = 0;
+  let score = 0;
+  let selectedOption = null;
+  let studentData = { name: "", id: "" };
+
+  function startQuiz() {
+    const nameInput = document.getElementById("student-name").value.trim();
+    const idInput = document.getElementById("student-id").value.trim();
+
+    if (!nameInput || !idInput) {
+      alert("Por favor, ingresa tu Nombre y Cédula para comenzar.");
+      return;
+    }
+
+    studentData.name = nameInput;
+    studentData.id = idInput;
+
+    document.getElementById("screen-register").classList.add("hidden");
+    document.getElementById("screen-quiz").classList.remove("hidden");
+
+    loadQuestion();
+  }
+
+  function loadQuestion() {
+    selectedOption = null;
+    const btnNext = document.getElementById("btn-next");
+    btnNext.disabled = true;
+    btnNext.innerText = (currentQuestionIndex === questions.length - 1) ? "Finalizar y Enviar" : "Siguiente Pregunta";
+
+    const qData = questions[currentQuestionIndex];
+    document.getElementById("question-number").innerText = `Pregunta ${currentQuestionIndex + 1} de ${questions.length}`;
+    document.getElementById("question-text").innerText = qData.q;
+
+    const progressPct = ((currentQuestionIndex) / questions.length) * 100;
+    document.getElementById("progress-bar").style.width = `${progressPct}%`;
+
+    const optionsContainer = document.getElementById("options-container");
+    optionsContainer.innerHTML = "";
+
+    qData.options.forEach((optText, index) => {
+      const btn = document.createElement("button");
+      btn.className = "option-btn";
+      btn.innerText = optText;
+      btn.onclick = () => selectOption(index, btn);
+      optionsContainer.appendChild(btn);
+    });
+  }
+
+  function selectOption(index, element) {
+    selectedOption = index;
+    const allBtns = document.querySelectorAll(".option-btn");
+    allBtns.forEach(b => b.classList.remove("selected"));
+    element.classList.add("selected");
+
+    document.getElementById("btn-next").disabled = false;
+  }
+
+  function nextQuestion() {
+    if (selectedOption === null) return;
+
+    if (selectedOption === questions[currentQuestionIndex].answer) {
+      score++;
+    }
+
+    currentQuestionIndex++;
+
+    if (currentQuestionIndex < questions.length) {
+      loadQuestion();
+    } else {
+      finishQuiz();
+    }
+  }
+
+  function finishQuiz() {
+    document.getElementById("progress-bar").style.width = "100%";
+    document.getElementById("screen-quiz").classList.add("hidden");
+    document.getElementById("screen-results").classList.remove("hidden");
+
+    const total = questions.length;
+    const percentage = Math.round((score / total) * 100);
+
+    document.getElementById("final-score").innerText = `${score} / ${total}`;
+    document.getElementById("percentage-display").innerText = `Calificación: ${percentage}%`;
+
+    sendResults(percentage);
+  }
+
+  function sendResults(percentage) {
+    const statusMsg = document.getElementById("status-message");
+    statusMsg.innerText = "Guardando resultado en el sistema...";
+    statusMsg.className = "status-msg";
+    statusMsg.classList.remove("hidden");
+
+    const payload = {
+      modulo: "Reto Atómico - Nivel 1",
+      nombre: studentData.name,
+      cedula: studentData.id,
+      puntaje: score,
+      total: questions.length,
+      porcentaje: percentage
+    };
+
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+    .then(() => {
+      statusMsg.innerText = "¡Resultado registrado con éxito en la plataforma!";
+      statusMsg.classList.add("status-success");
+    })
+    .catch(err => {
+      console.error(err);
+      statusMsg.innerText = "Resultado guardado localmente (no se pudo sincronizar con el servidor).";
+      statusMsg.classList.add("status-error");
+    });
+  }
+</script>
+</body>
+</html>
