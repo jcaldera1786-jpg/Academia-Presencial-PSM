@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cátedra de Química - Reto de Nomenclatura Química</title>
+  <style>
+    :root {
+      --primary-color: #1a365d;
+      --secondary-color: #2b6cb0;
+      --accent-color: #3182ce;
+      --bg-color: #f7fafc;
+      --card-bg: #ffffff;
+      --text-color: #2d3748;
+      --success-color: #38a169;
+      --error-color: #e53e3e;
+      --border-radius: 8px;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background-color: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 700px;
+      padding: 30px;
+      box-sizing: border-box;
+    }
+
+    header {
+      text-align: center;
+      border-bottom: 2px solid var(--bg-color);
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      color: var(--primary-color);
+      margin: 0 0 5px 0;
+      font-size: 1.6rem;
+    }
+
+    p.subtitle {
+      color: #718096;
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #cbd5e0;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 1rem;
+    }
+
+    .btn {
+      background-color: var(--secondary-color);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      width: 100%;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-color);
+    }
+
+    .btn:disabled {
+      background-color: #a0aec0;
+      cursor: not-allowed;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      background-color: #edf2f7;
+      border-radius: 4px;
+      height: 10px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background-color: var(--accent-color);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .question-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .option-btn {
+      background-color: #edf2f7;
+      border: 1px solid #cbd5e0;
+      padding: 12px;
+      border-radius: 4px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+
+    .option-btn:hover {
+      background-color: #e2e8f0;
+      border-color: #cbd5e0;
+    }
+
+    .option-btn.selected {
+      background-color: #ebf8ff;
+      border-color: var(--accent-color);
+      font-weight: 600;
+    }
+
+    .results-card {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .score-display {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: var(--primary-color);
+      margin: 15px 0;
+    }
+
+    .status-msg {
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 15px;
+      font-weight: 600;
+    }
+
+    .status-success {
+      background-color: #c6f6d5;
+      color: #22543d;
+    }
+
+    .status-error {
+      background-color: #fed7d7;
+      color: #742a2a;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>Cátedra de Química</h1>
+    <p class="subtitle">Módulo: Lenguaje Químico | Reto de Nomenclatura Inorgánica</p>
+  </header>
+
+  <!-- PANTALLA 1: REGISTRO DEL ESTUDIANTE -->
+  <div id="screen-register">
+    <div class="form-group">
+      <label for="student-name">Nombre y Apellido:</label>
+      <input type="text" id="student-name" placeholder="Ej. Juan Pérez" required>
+    </div>
+    <div class="form-group">
+      <label for="student-id">Cédula de Identidad:</label>
+      <input type="text" id="student-id" placeholder="Ej. V-12345678" required>
+    </div>
+    <button class="btn" onclick="startQuiz()">Iniciar Evaluación</button>
+  </div>
+
+  <!-- PANTALLA 2: BANCO DE PREGUNTAS -->
+  <div id="screen-quiz" class="hidden">
+    <div class="progress-bar-container">
+      <div id="progress-bar" class="progress-bar"></div>
+    </div>
+    <div id="question-number" style="font-size: 0.85rem; color: #718096; margin-bottom: 5px;"></div>
+    <div id="question-text" class="question-title"></div>
+    <div id="options-container" class="options-container"></div>
+    <button id="btn-next" class="btn" onclick="nextQuestion()" disabled>Siguiente Pregunta</button>
+  </div>
+
+  <!-- PANTALLA 3: RESULTADOS Y ENVÍO -->
+  <div id="screen-results" class="hidden">
+    <div class="results-card">
+      <h2>Evaluación Finalizada</h2>
+      <p>Has completado el Reto de Nomenclatura Química.</p>
+      <div class="score-display" id="final-score">0 / 10</div>
+      <p id="percentage-display" style="font-weight: 600; font-size: 1.2rem;"></p>
+      <div id="status-message" class="status-msg hidden"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const SCRIPT_URL = "URL_DE_TU_GOOGLE_APPS_SCRIPT";
+
+  // BANCO DE PREGUNTAS DE NOMENCLATURA
+  const questions = [
+    {
+      id: "NOM_01",
+      q: "¿Cuál es el nombre según la nomenclatura Stock para el compuesto Fe₂O₃?",
+      options: ["Óxido de hierro(II)", "Óxido de hierro(III)", "Trióxido de dihierro", "Óxido ferroso"],
+      answer: 1
+    },
+    {
+      id: "NOM_02",
+      q: "¿Cuál es la fórmula química correcta del ácido sulfúrico?",
+      options: ["H₂SO₃", "H₂SO₄", "H₂S", "SO₃"],
+      answer: 1
+    },
+    {
+      id: "NOM_03",
+      q: "Según la nomenclatura tradicional, ¿cómo se nombra el compuesto Fe(OH)₂?",
+      options: ["Hidróxido férrico", "Hidróxido ferroso", "Hidróxido de hierro(II)", "Dihidróxido de hierro"],
+      answer: 1
+    },
+    {
+      id: "NOM_04",
+      q: "¿Cuál es el nombre sistemático (IUPAC) para el compuesto CO₂?",
+      options: ["Monóxido de carbono", "Dióxido de carbono", "Óxido de carbono(IV)", "Árbol carbónico"],
+      answer: 1
+    },
+    {
+      id: "NOM_05",
+      q: "¿Cuál es la fórmula correcta del hidróxido de aluminio?",
+      options: ["AlOH", "Al(OH)₂", "Al(OH)₃", "Al₃OH"],
+      answer: 2
+    },
+    {
+      id: "NOM_06",
+      q: "¿Cómo se llama la sal binaria NaCl según la nomenclatura tradicional y Stock?",
+      options: ["Clorato de sodio", "Cloruro de sodio", "Clorito sódico", "Sulfato de sodio"],
+      answer: 1
+    },
+    {
+      id: "NOM_07",
+      q: "¿Qué fórmula corresponde al ácido clorhídrico en solución acuosa?",
+      options: ["HCl", "HClO", "HClO₃", "HClO₄"],
+      answer: 0
+    },
+    {
+      id: "NOM_08",
+      q: "El compuesto CaCO₃ corresponde a la sal oxisAL denominada:",
+      options: ["Carbonito de calcio", "Carbonato de calcio", "Carburo de calcio", "Óxido de calcio"],
+      answer: 1
+    },
+    {
+      id: "NOM_09",
+      q: "¿Cuál es la fórmula química del nitrato de potasio?",
+      options: ["KNO₂", "KNO₃", "K₃N", "KClO₃"],
+      answer: 1
+    },
+    {
+      id: "NOM_10",
+      q: "¿Cuál es el estado de oxidación del azufre en el anión sulfato (SO₄²⁻)?",
+      options: ["+2", "+4", "+6", "-2"],
+      answer: 2
+    }
+  ];
+
+  let currentQuestionIndex = 0;
+  let score = 0;
+  let selectedOption = null;
+  let studentData = { name: "", id: "" };
+
+  function startQuiz() {
+    const nameInput = document.getElementById("student-name").value.trim();
+    const idInput = document.getElementById("student-id").value.trim();
+
+    if (!nameInput || !idInput) {
+      alert("Por favor, ingresa tu Nombre y Cédula para comenzar.");
+      return;
+    }
+
+    studentData.name = nameInput;
+    studentData.id = idInput;
+
+    document.getElementById("screen-register").classList.add("hidden");
+    document.getElementById("screen-quiz").classList.remove("hidden");
+
+    loadQuestion();
+  }
+
+  function loadQuestion() {
+    selectedOption = null;
+    const btnNext = document.getElementById("btn-next");
+    btnNext.disabled = true;
+    btnNext.innerText = (currentQuestionIndex === questions.length - 1) ? "Finalizar y Enviar" : "Siguiente Pregunta";
+
+    const qData = questions[currentQuestionIndex];
+    document.getElementById("question-number").innerText = `Pregunta ${currentQuestionIndex + 1} de ${questions.length}`;
+    document.getElementById("question-text").innerText = qData.q;
+
+    const progressPct = ((currentQuestionIndex) / questions.length) * 100;
+    document.getElementById("progress-bar").style.width = `${progressPct}%`;
+
+    const optionsContainer = document.getElementById("options-container");
+    optionsContainer.innerHTML = "";
+
+    qData.options.forEach((optText, index) => {
+      const btn = document.createElement("button");
+      btn.className = "option-btn";
+      btn.innerText = optText;
+      btn.onclick = () => selectOption(index, btn);
+      optionsContainer.appendChild(btn);
+    });
+  }
+
+  function selectOption(index, element) {
+    selectedOption = index;
+    const allBtns = document.querySelectorAll(".option-btn");
+    allBtns.forEach(b => b.classList.remove("selected"));
+    element.classList.add("selected");
+
+    document.getElementById("btn-next").disabled = false;
+  }
+
+  function nextQuestion() {
+    if (selectedOption === null) return;
+
+    if (selectedOption === questions[currentQuestionIndex].answer) {
+      score++;
+    }
+
+    currentQuestionIndex++;
+
+    if (currentQuestionIndex < questions.length) {
+      loadQuestion();
+    } else {
+      finishQuiz();
+    }
+  }
+
+  function finishQuiz() {
+    document.getElementById("progress-bar").style.width = "100%";
+    document.getElementById("screen-quiz").classList.add("hidden");
+    document.getElementById("screen-results").classList.remove("hidden");
+
+    const total = questions.length;
+    const percentage = Math.round((score / total) * 100);
+
+    document.getElementById("final-score").innerText = `${score} / ${total}`;
+    document.getElementById("percentage-display").innerText = `Calificación: ${percentage}%`;
+
+    sendResults(percentage);
+  }
+
+  function sendResults(percentage) {
+    const statusMsg = document.getElementById("status-message");
+    statusMsg.innerText = "Guardando resultado en el sistema...";
+    statusMsg.className = "status-msg";
+    statusMsg.classList.remove("hidden");
+
+    const payload = {
+      modulo: "Reto Nomenclatura Química",
+      nombre: studentData.name,
+      cedula: studentData.id,
+      puntaje: score,
+      total: questions.length,
+      porcentaje: percentage
+    };
+
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+    .then(() => {
+      statusMsg.innerText = "¡Resultado registrado con éxito en la plataforma!";
+      statusMsg.classList.add("status-success");
+    })
+    .catch(err => {
+      console.error(err);
+      statusMsg.innerText = "Resultado guardado localmente (no se pudo sincronizar con el servidor).";
+      statusMsg.classList.add("status-error");
+    });
+  }
+</script>
+</body>
+</html>
