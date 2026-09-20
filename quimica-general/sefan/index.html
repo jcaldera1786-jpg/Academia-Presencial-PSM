@@ -11,6 +11,7 @@
             --accent-blue: #38bdf8;
             --accent-green: #22c55e;
             --accent-gold: #f59e0b;
+            --accent-teal: #14b8a6;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: rgba(255, 255, 255, 0.1);
@@ -78,7 +79,7 @@
 
         .container {
             width: 90%;
-            max-width: 800px;
+            max-width: 850px;
             margin: 1.5rem auto;
             display: flex;
             flex-direction: column;
@@ -87,7 +88,7 @@
             z-index: 1;
         }
 
-        .student-card, .welcome-card {
+        .student-card, .welcome-card, .tool-card {
             background: var(--card-bg);
             border: 1px solid var(--accent-blue);
             border-radius: 12px;
@@ -97,6 +98,11 @@
 
         .welcome-card {
             border-color: var(--border-color);
+        }
+
+        .tool-card {
+            border-color: var(--accent-teal);
+            background: rgba(15, 23, 42, 0.6);
         }
 
         .student-card h3 {
@@ -215,6 +221,14 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
+        .btn-tool {
+            background: linear-gradient(135deg, #0d9488, #0f766e);
+        }
+
+        .btn-tool:hover {
+            background: linear-gradient(135deg, #0f766e, #115e59);
+        }
+
         footer {
             margin-top: auto;
             padding: 1.5rem 0;
@@ -249,6 +263,18 @@
             <p style="font-size: 0.9rem; line-height: 1.5;">
                 Bienvenido al portal SEFAN. Completa los desafíos de cada nivel formativo. El <strong>Nivel 4 (Soluciones)</strong> es la puerta de certificación clave antes de ascender hacia los estados de materia, electroquímica, termoquímica e ingeniería industrial.
             </p>
+        </div>
+
+        <!-- HERRAMIENTA TRANSVERSAL DE APOYO -->
+        <div class="tool-card">
+            <div class="level-header">
+                <span class="level-title" style="color: var(--accent-teal);">🧪 Herramienta de Consulta Transversal</span>
+                <span class="level-badge" style="background: rgba(20, 184, 166, 0.15); color: var(--accent-teal); border-color: rgba(20, 184, 166, 0.3);">Apoyo</span>
+            </div>
+            <p class="level-desc" style="margin-bottom: 0.8rem;">
+                Consulta las propiedades periódicas, masas atómicas, números cuánticos y valencias para la resolución de los ejercicios.
+            </p>
+            <a href="https://ptable.com/?lang=es" target="_blank" class="btn-action btn-tool">Abrir Tabla Periódica Interactiva ↗</a>
         </div>
 
         <div class="levels-grid">
@@ -423,7 +449,7 @@
                     enunciado: "En una reacción química estequiométrica, la ley que postula que la masa total de los reactivos es igual a la masa total de los productos es:",
                     opciones: ["Ley de las proporciones definidas (Proust)", "Ley de la conservación de la masa (Lavoisier)", "Ley de las proporciones múltiples", "Ley de Dalton"],
                     correcta: 1,
-                    explicacion: "Antoine Lavoisier estableció la Ley de Conservación de la Materia / Masa en reacciones químicas en sistemas cerrados."
+                    explicacion: "Antoine Lavoisier established la Ley de Conservación de la Materia / Masa en reacciones químicas en sistemas cerrados."
                 }
             ]
         };
