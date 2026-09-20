@@ -436,236 +436,235 @@
     <script>
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxk-sK0Ut4YJWe67OJEqAyq9-Zf6-pA1TFFS8FIxEbva1FyFe0VUQ2bFM1_W46EJKUI7A/exec";
 
-        const BANCO_TEORICO = {
-            1: [
-                {
-                    enunciado: "1. ¿A cuántos metros equivalen 2.5 kilómetros expresados en notación científica?",
-                    opciones: ["2.5 x 10² m", "2.5 x 10³ m", "25 x 10² m", "0.25 x 10⁴ m"],
-                    correcta: 1,
-                    explicacion: "1 kilómetro equivale a 1000 metros (10³ m). Por lo tanto, 2.5 km = 2.5 x 10³ m."
-                },
-                {
-                    enunciado: "2. Indique cuál de las siguientes opciones representa una propiedad intensiva de la materia:",
-                    opciones: ["Masa", "Volumen", "Punto de ebullición", "Peso"],
-                    correcta: 2,
-                    explicacion: "El punto de ebullición no depende de la cantidad de materia presente, lo que lo define como una propiedad intensiva."
-                },
-                {
-                    enunciado: "3. ¿Cuál de los siguientes fenómenos corresponde a un cambio químico?",
-                    opciones: ["Evaporación del agua", "Oxidación de un clavo de hierro", "Sublimación de la naftalina", "Disolución de sal en agua"],
-                    correcta: 1,
-                    explicacion: "La oxidación altera la naturaleza química de la sustancia, formando un nuevo compuesto (óxido de hierro)."
-                }
-            ],
-            2: [
-                {
-                    enunciado: "1. ¿Cuáles son los valores posibles para el número cuántico secundario (l) si n = 3?",
-                    opciones: ["0, 1, 2", "1, 2, 3", "-3, -2, -1, 0, 1, 2, 3", "Sólo 2"],
-                    correcta: 0,
-                    explicacion: "El número cuántico azimutal 'l' toma valores enteros desde 0 hasta (n - 1). Para n = 3, l puede ser 0, 1 y 2."
-                },
-                {
-                    enunciado: "2. La configuración electrónica externa de los halógenos (Grupo 17) corresponde a:",
-                    opciones: ["ns¹", "ns² np⁴", "ns² np⁵", "ns² np⁶"],
-                    correcta: 2,
-                    explicacion: "Los halógenos pertenecen al grupo 17 y poseen 7 electrones en su capa de valencia (ns² np⁵)."
-                }
-            ],
-            3: [
-                {
-                    enunciado: "1. ¿Qué tipo de fuerza intermolecular predomina en moléculas de agua (H₂O) líquida?",
-                    opciones: ["Fuerzas de London", "Enlace iónico", "Puente de hidrógeno", "Enlace metálico"],
-                    correcta: 2,
-                    explicacion: "El hidrógeno unido covalentemente a átomos muy electronegativos como el oxígeno genera puentes de hidrógeno."
-                },
-                {
-                    enunciado: "2. En una reacción química, la ley que establece que la masa total de los reactivos es igual a la de los productos es:",
-                    opciones: ["Ley de Proust", "Ley de Lavoisier", "Ley de Dalton", "Ley de Gay-Lussac"],
-                    correcta: 1,
-                    explicacion: "Antoine Lavoisier formuló la Ley de Conservación de la Masa."
-                }
-            ]
-        };
-
-        let nivelActualGlobal = 1;
-        let preguntasModulo = [];
-        let indicePreguntaActual = 0;
-        let aciertosModulo = 0;
-
-        async function registrarEstudiante() {
-            const ci = document.getElementById("ci-input").value.trim();
-            const nombre = document.getElementById("name-input").value.trim();
-            const statusDiv = document.getElementById("registro-status");
-
-            if (!ci || !nombre) {
-                alert("⚠️ Ingresa Cédula y Nombre Completo.");
-                return;
-            }
-
-            statusDiv.style.display = "block";
-            statusDiv.style.color = "var(--accent-gold)";
-            statusDiv.innerText = "⏳ Conectando con Google Sheets...";
-
-            const payload = {
-                origen: "SEFAN_REGISTRO_INICIAL",
-                cedula: ci,
-                nombre: nombre,
-                nivelActual: 0,
-                puntaje: 0,
-                detalles: "Registro/Inicio de sesión inicial"
-            };
-
-            try {
-                await fetch(APPS_SCRIPT_URL, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-                statusDiv.style.color = "#4ade80";
-                statusDiv.innerText = "✅ Datos registrados. Ya puedes seleccionar un nivel.";
-            } catch (err) {
-                console.error("Error al registrar:", err);
-                statusDiv.style.color = "#fca5a5";
-                statusDiv.innerText = "⚠️ No se pudo verificar la red, pero puedes continuar.";
-            }
+const BANCO_TEORICO = {
+    1: [
+        {
+            enunciado: "1. ¿A cuántos metros equivalen 2.5 kilómetros expresados en notación científica?",
+            opciones: ["2.5 x 10² m", "2.5 x 10³ m", "25 x 10² m", "0.25 x 10⁴ m"],
+            correcta: 1,
+            explicacion: "1 kilómetro equivale a 1000 metros (10³ m). Por lo tanto, 2.5 km = 2.5 x 10³ m."
+        },
+        {
+            enunciado: "2. Indique cuál de las siguientes opciones representa una propiedad intensiva de la materia:",
+            opciones: ["Masa", "Volumen", "Punto de ebullición", "Peso"],
+            correcta: 2,
+            explicacion: "El punto de ebullición no depende de la cantidad de materia presente, lo que lo define como una propiedad intensiva."
+        },
+        {
+            enunciado: "3. ¿Cuál de los siguientes fenómenos corresponde a un cambio químico?",
+            opciones: ["Evaporación del agua", "Oxidación de un clavo de hierro", "Sublimación de la naftalina", "Disolución de sal en agua"],
+            correcta: 1,
+            explicacion: "La oxidación altera la naturaleza química de la sustancia, formando un nuevo compuesto (óxido de hierro)."
         }
-
-        function iniciarModuloNivel(nivel) {
-            const ci = document.getElementById("ci-input").value.trim();
-            const nombre = document.getElementById("name-input").value.trim();
-
-            if (!ci || !nombre) {
-                alert("⚠️ Por favor, ingresa tu Cédula y Nombre Completo en el módulo superior antes de iniciar.");
-                document.getElementById("ci-input").focus();
-                return;
-            }
-
-            nivelActualGlobal = nivel;
-            preguntasModulo = BANCO_TEORICO[nivel] || [];
-
-            if (preguntasModulo.length === 0) {
-                alert("Pronto se añadirán reactivos para este nivel.");
-                return;
-            }
-
-            document.getElementById("main-levels-grid").style.display = "none";
-            document.getElementById("card-bienvenida").style.display = "none";
-            document.getElementById("card-herramienta").style.display = "none";
-            document.getElementById("modulo-container").style.display = "block";
-
-            indicePreguntaActual = 0;
-            aciertosModulo = 0;
-
-            document.getElementById("quiz-area").style.display = "block";
-            document.getElementById("resumen-area").style.display = "none";
-
-            cargarPreguntaActual();
+    ],
+    2: [
+        {
+            enunciado: "1. ¿Cuáles son los valores posibles para el número cuántico secundario (l) si n = 3?",
+            opciones: ["0, 1, 2", "1, 2, 3", "-3, -2, -1, 0, 1, 2, 3", "Sólo 2"],
+            correcta: 0,
+            explicacion: "El número cuántico azimutal 'l' toma valores enteros desde 0 hasta (n - 1). Para n = 3, l puede ser 0, 1 y 2."
+        },
+        {
+            enunciado: "2. La configuración electrónica externa de los halógenos (Grupo 17) corresponde a:",
+            opciones: ["ns¹", "ns² np⁴", "ns² np⁵", "ns² np⁶"],
+            correcta: 2,
+            explicacion: "Los halógenos pertenecen al grupo 17 y poseen 7 electrones en su capa de valencia (ns² np⁵)."
         }
-
-        function cargarPreguntaActual() {
-            const preg = preguntasModulo[indicePreguntaActual];
-            document.getElementById("modulo-titulo").innerText = `Desafío SEFAN - Nivel ${nivelActualGlobal}`;
-            document.getElementById("modulo-progreso").innerText = `Pregunta ${indicePreguntaActual + 1} de ${preguntasModulo.length}`;
-            
-            document.getElementById("quiz-enunciado").innerText = preg.enunciado;
-            
-            const contenedorOpciones = document.getElementById("quiz-opciones");
-            contenedorOpciones.innerHTML = "";
-
-            preg.opciones.forEach((opc, idx) => {
-                contenedorOpciones.innerHTML += `
-                    <label style="display: flex; align-items: center; gap: 10px; background: #0f172a; padding: 0.8rem; border-radius: 6px; border: 1px solid #334155; cursor: pointer;">
-                        <input type="radio" name="opcion_teorica" value="${idx}">
-                        <span>${opc}</span>
-                    </label>
-                `;
-            });
-
-            document.getElementById("quiz-feedback").style.display = "none";
-            document.getElementById("btn-enviar-respuesta").style.display = "block";
-            document.getElementById("btn-siguiente-pregunta").style.display = "none";
+    ],
+    3: [
+        {
+            enunciado: "1. ¿Qué tipo de fuerza intermolecular predomina en moléculas de agua (H₂O) líquida?",
+            opciones: ["Fuerzas de London", "Enlace iónico", "Puente de hidrógeno", "Enlace metálico"],
+            correcta: 2,
+            explicacion: "El hidrógeno unido covalentemente a átomos muy electronegativos como el oxígeno genera puentes de hidrógeno."
+        },
+        {
+            enunciado: "2. En una reacción química, la ley que establece que la masa total de los reactivos es igual a la de los productos es:",
+            opciones: ["Ley de Proust", "Ley de Lavoisier", "Ley de Dalton", "Ley de Gay-Lussac"],
+            correcta: 1,
+            explicacion: "Antoine Lavoisier formuló la Ley de Conservación de la Masa."
         }
+    ]
+};
 
-        function validarRespuesta() {
-            const seleccion = document.querySelector('input[name="opcion_teorica"]:checked');
-            if (!seleccion) {
-                alert("Por favor selecciona una respuesta.");
-                return;
-            }
+let nivelActualGlobal = 1;
+let preguntasModulo = [];
+let indicePreguntaActual = 0;
+let aciertosModulo = 0;
 
-            const rtaIndex = parseInt(seleccion.value, 10);
-            const preg = preguntasModulo[indicePreguntaActual];
-            const feedback = document.getElementById("quiz-feedback");
-            const esCorrecto = (rtaIndex === preg.correcta);
+async function registrarEstudiante() {
+    const ci = document.getElementById("ci-input").value.trim();
+    const nombre = document.getElementById("name-input").value.trim();
+    const statusDiv = document.getElementById("registro-status");
 
-            if (esCorrecto) aciertosModulo++;
+    if (!ci || !nombre) {
+        alert("⚠️ Ingresa Cédula y Nombre Completo.");
+        return;
+    }
 
-            feedback.style.display = "block";
-            if (esCorrecto) {
-                feedback.style.background = "rgba(34, 197, 94, 0.2)";
-                feedback.style.border = "1px solid #22c55e";
-                feedback.style.color = "#4ade80";
-                feedback.innerHTML = `<strong>¡Correcto! 🎉</strong><br>${preg.explicacion}`;
-            } else {
-                feedback.style.background = "rgba(239, 68, 68, 0.2)";
-                feedback.style.border = "1px solid #ef4444";
-                feedback.style.color = "#fca5a5";
-                feedback.innerHTML = `<strong>Incorrecto.</strong><br>${preg.explicacion}`;
-            }
+    statusDiv.style.display = "block";
+    statusDiv.style.color = "var(--accent-gold)";
+    statusDiv.innerText = "⏳ Conectando con Google Sheets...";
 
-            document.querySelectorAll('input[name="opcion_teorica"]').forEach(input => input.disabled = true);
+    // Usamos URLSearchParams para asegurar el llenado de e.parameter en Google Apps Script
+    const payload = new URLSearchParams();
+    payload.append("origen", "SEFAN_NIVELES");
+    payload.append("cedula", ci);
+    payload.append("nombre", nombre);
+    payload.append("nivelActual", "0");
+    payload.append("puntaje", "0");
+    payload.append("detalles", "Registro/Inicio de sesión inicial");
 
-            document.getElementById("btn-enviar-respuesta").style.display = "none";
-            document.getElementById("btn-siguiente-pregunta").style.display = "block";
-        }
+    try {
+        await fetch(APPS_SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: payload.toString()
+        });
+        statusDiv.style.color = "#4ade80";
+        statusDiv.innerText = "✅ Datos registrados correctamente en la base de datos.";
+    } catch (err) {
+        console.error("Error al registrar:", err);
+        statusDiv.style.color = "#fca5a5";
+        statusDiv.innerText = "⚠️ Error de conexión al registrar.";
+    }
+}
 
-        function siguientePregunta() {
-            indicePreguntaActual++;
-            if (indicePreguntaActual < preguntasModulo.length) {
-                cargarPreguntaActual();
-            } else {
-                finalizarModulo();
-            }
-        }
+function iniciarModuloNivel(nivel) {
+    const ci = document.getElementById("ci-input").value.trim();
+    const nombre = document.getElementById("name-input").value.trim();
 
-        async function finalizarModulo() {
-            const ci = document.getElementById("ci-input").value.trim();
-            const nombre = document.getElementById("name-input").value.trim();
+    if (!ci || !nombre) {
+        alert("⚠️ Por favor, ingresa tu Cédula y Nombre Completo en el módulo superior antes de iniciar.");
+        document.getElementById("ci-input").focus();
+        return;
+    }
 
-            const notaFinal = Math.round((aciertosModulo / preguntasModulo.length) * 100);
+    nivelActualGlobal = nivel;
+    preguntasModulo = BANCO_TEORICO[nivel] || [];
 
-            document.getElementById("quiz-area").style.display = "none";
-            document.getElementById("resumen-area").style.display = "block";
-            document.getElementById("resumen-texto").innerHTML = `Has completado el <strong>Nivel ${nivelActualGlobal}</strong>.<br>Aciertos: ${aciertosModulo} / ${preguntasModulo.length}<br>Calificación: <strong>${notaFinal} / 100 pts</strong>`;
+    if (preguntasModulo.length === 0) {
+        alert("Pronto se añadirán reactivos para este nivel.");
+        return;
+    }
 
-            const payload = {
-                origen: "SEFAN_NIVELES",
-                cedula: ci,
-                nombre: nombre,
-                nivelActual: nivelActualGlobal,
-                puntaje: notaFinal,
-                detalles: `Aciertos: ${aciertosModulo}/${preguntasModulo.length}`
-            };
+    document.getElementById("main-levels-grid").style.display = "none";
+    document.getElementById("card-bienvenida").style.display = "none";
+    document.getElementById("card-herramienta").style.display = "none";
+    document.getElementById("modulo-container").style.display = "block";
 
-            try {
-                await fetch(APPS_SCRIPT_URL, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-            } catch (err) {
-                console.error("Error al registrar en Google Sheets:", err);
-            }
-        }
+    indicePreguntaActual = 0;
+    aciertosModulo = 0;
 
-        function salirDelModulo() {
-            document.getElementById("modulo-container").style.display = "none";
-            document.getElementById("main-levels-grid").style.display = "grid";
-            document.getElementById("card-bienvenida").style.display = "block";
-            document.getElementById("card-herramienta").style.display = "block";
-        }
+    document.getElementById("quiz-area").style.display = "block";
+    document.getElementById("resumen-area").style.display = "none";
+
+    cargarPreguntaActual();
+}
+
+function cargarPreguntaActual() {
+    const preg = preguntasModulo[indicePreguntaActual];
+    document.getElementById("modulo-titulo").innerText = `Desafío SEFAN - Nivel ${nivelActualGlobal}`;
+    document.getElementById("modulo-progreso").innerText = `Pregunta ${indicePreguntaActual + 1} de ${preguntasModulo.length}`;
+    
+    document.getElementById("quiz-enunciado").innerText = preg.enunciado;
+    
+    const contenedorOpciones = document.getElementById("quiz-opciones");
+    contenedorOpciones.innerHTML = "";
+
+    preg.opciones.forEach((opc, idx) => {
+        contenedorOpciones.innerHTML += `
+            <label style="display: flex; align-items: center; gap: 10px; background: #0f172a; padding: 0.8rem; border-radius: 6px; border: 1px solid #334155; cursor: pointer;">
+                <input type="radio" name="opcion_teorica" value="${idx}">
+                <span>${opc}</span>
+            </label>
+        `;
+    });
+
+    document.getElementById("quiz-feedback").style.display = "none";
+    document.getElementById("btn-enviar-respuesta").style.display = "block";
+    document.getElementById("btn-siguiente-pregunta").style.display = "none";
+}
+
+function validarRespuesta() {
+    const seleccion = document.querySelector('input[name="opcion_teorica"]:checked');
+    if (!seleccion) {
+        alert("Por favor selecciona una respuesta.");
+        return;
+    }
+
+    const rtaIndex = parseInt(seleccion.value, 10);
+    const preg = preguntasModulo[indicePreguntaActual];
+    const feedback = document.getElementById("quiz-feedback");
+    const esCorrecto = (rtaIndex === preg.correcta);
+
+    if (esCorrecto) aciertosModulo++;
+
+    feedback.style.display = "block";
+    if (esCorrecto) {
+        feedback.style.background = "rgba(34, 197, 94, 0.2)";
+        feedback.style.border = "1px solid #22c55e";
+        feedback.style.color = "#4ade80";
+        feedback.innerHTML = `<strong>¡Correcto! 🎉</strong><br>${preg.explicacion}`;
+    } else {
+        feedback.style.background = "rgba(239, 68, 68, 0.2)";
+        feedback.style.border = "1px solid #ef4444";
+        feedback.style.color = "#fca5a5";
+        feedback.innerHTML = `<strong>Incorrecto.</strong><br>${preg.explicacion}`;
+    }
+
+    document.querySelectorAll('input[name="opcion_teorica"]').forEach(input => input.disabled = true);
+
+    document.getElementById("btn-enviar-respuesta").style.display = "none";
+    document.getElementById("btn-siguiente-pregunta").style.display = "block";
+}
+
+function siguientePregunta() {
+    indicePreguntaActual++;
+    if (indicePreguntaActual < preguntasModulo.length) {
+        cargarPreguntaActual();
+    } else {
+        finalizarModulo();
+    }
+}
+
+async function finalizarModulo() {
+    const ci = document.getElementById("ci-input").value.trim();
+    const nombre = document.getElementById("name-input").value.trim();
+
+    const notaFinal = Math.round((aciertosModulo / preguntasModulo.length) * 100);
+
+    document.getElementById("quiz-area").style.display = "none";
+    document.getElementById("resumen-area").style.display = "block";
+    document.getElementById("resumen-texto").innerHTML = `Has completado el <strong>Nivel ${nivelActualGlobal}</strong>.<br>Aciertos: ${aciertosModulo} / ${preguntasModulo.length}<br>Calificación: <strong>${notaFinal} / 100 pts</strong>`;
+
+    const payload = new URLSearchParams();
+    payload.append("origen", "SEFAN_NIVELES");
+    payload.append("cedula", ci);
+    payload.append("nombre", nombre);
+    payload.append("nivelActual", nivelActualGlobal.toString());
+    payload.append("puntaje", notaFinal.toString());
+    payload.append("detalles", `Aciertos: ${aciertosModulo}/${preguntasModulo.length}`);
+
+    try {
+        await fetch(APPS_SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: payload.toString()
+        });
+    } catch (err) {
+        console.error("Error al registrar en Google Sheets:", err);
+    }
+}
+
+function salirDelModulo() {
+    document.getElementById("modulo-container").style.display = "none";
+    document.getElementById("main-levels-grid").style.display = "grid";
+    document.getElementById("card-bienvenida").style.display = "block";
+    document.getElementById("card-herramienta").style.display = "block";
+}
     </script>
 </body>
 </html>
