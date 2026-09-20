@@ -549,11 +549,20 @@
         }
 
         async function validarRespuesta() {
-            const seleccion = document.querySelector('input[name="opcion_teorica"]:checked');
-            if (!seleccion) {
-                alert("Por favor selecciona una respuesta.");
-                return;
-            }
+    const seleccion = document.querySelector('input[name="opcion_teorica"]:checked');
+    if (!seleccion) {
+        alert("Por favor selecciona una respuesta.");
+        return;
+    }
+
+    const rtaIndex = parseInt(seleccion.value, 10);
+    const preg = preguntasModulo[indicePreguntaActual];
+    const feedback = document.getElementById("quiz-feedback");
+    const esCorrecto = (rtaIndex === preg.correcta);
+
+    if (esCorrecto) aciertosModulo++;
+    // ... Muestra el feedback visual (verde/rojo) al estudiante ...
+}
 
             const rtaIndex = parseInt(seleccion.value, 10);
             const preg = preguntasModulo[indicePreguntaActual];
@@ -592,39 +601,31 @@
         }
 
         async function finalizarModulo() {
-            document.getElementById("quiz-area").style.display = "none";
-            document.getElementById("resumen-area").style.display = "block";
+    // ... Cálculo de la calificación final ...
+    const notaFinal = Math.round((aciertosModulo / preguntasModulo.length) * 100);
 
-            const notaFinal = Math.round((aciertosModulo / preguntasModulo.length) * 100);
-            document.getElementById("resumen-texto").innerHTML = `
-                Has respondido correctamente <strong>${aciertosModulo}</strong> de <strong>${preguntasModulo.length}</strong> preguntas.<br>
-                Calificación obtenida: <span style="color: var(--accent-blue); font-weight: bold;">${notaFinal} / 100 pts</span>
-            `;
+    // Preparación del objeto JSON
+    const payload = {
+        origen: "SEFAN_NIVELES",
+        cedula: ci,
+        nombre: nombre,
+        nivelActual: nivelActualGlobal,
+        puntaje: notaFinal,
+        detalles: `Aciertos: ${aciertosModulo}/${preguntasModulo.length}`
+    };
 
-            // Transmitir datos unificados a la central de Google Sheets
-            const ci = document.getElementById("ci-input").value.trim();
-            const nombre = document.getElementById("name-input").value.trim();
-
-            const payload = {
-                origen: "SEFAN_NIVELES",
-                cedula: ci,
-                nombre: nombre,
-                nivelActual: nivelActualGlobal,
-                puntaje: notaFinal,
-                detalles: `Aciertos: ${aciertosModulo}/${preguntasModulo.length}`
-            };
-
-            try {
-                await fetch(APPS_SCRIPT_URL, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-            } catch (err) {
-                console.error("Error al registrar en Google Sheets:", err);
-            }
-        }
+    // Envío de datos vía POST al Web App de Google Apps Script
+    try {
+        await fetch(APPS_SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+    } catch (err) {
+        console.error("Error al registrar en Google Sheets:", err);
+    }
+}
 
         function salirDelModulo() {
             document.getElementById("modulo-container").style.display = "none";
