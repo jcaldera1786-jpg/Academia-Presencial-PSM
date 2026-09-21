@@ -143,20 +143,20 @@
         </div>
 
         <div class="form-group">
-    <label for="carrera">Escuela / Carrera:</label>
-    <select id="carrera" required>
-        <option value="">Seleccione su carrera...</option>
-        <option value="Ingeniería Civil">Ingeniería Civil</option>
-        <option value="Ingeniería Eléctrica">Ingeniería Eléctrica</option>
-        <option value="Ingeniería Química">Ingeniería Química</option>
-        <option value="Ingeniería Industrial">Ingeniería Industrial</option>
-        <option value="Ingeniería de Petróleo">Ingeniería de Petróleo</option>
-        <option value="Ingeniería de Sistemas">Ingeniería de Sistemas</option>
-        <option value="Ingeniería Electrónica">Ingeniería Electrónica</option>
-        <option value="Ingeniería en Mantenimiento Mecánico">Ingeniería en Mantenimiento Mecánico</option>
-        <option value="Otra">Otra</option>
-    </select>
-</div>
+            <label for="carrera">Escuela / Carrera:</label>
+            <select id="carrera" required>
+                <option value="">Seleccione su carrera...</option>
+                <option value="Ingeniería Civil">Ingeniería Civil</option>
+                <option value="Ingeniería Eléctrica">Ingeniería Eléctrica</option>
+                <option value="Ingeniería Química">Ingeniería Química</option>
+                <option value="Ingeniería Industrial">Ingeniería Industrial</option>
+                <option value="Ingeniería de Petróleo">Ingeniería de Petróleo</option>
+                <option value="Ingeniería de Sistemas">Ingeniería de Sistemas</option>
+                <option value="Ingeniería Electrónica">Ingeniería Electrónica</option>
+                <option value="Ingeniería en Mantenimiento Mecánico">Ingeniería en Mantenimiento Mecánico</option>
+                <option value="Otra">Otra</option>
+            </select>
+        </div>
 
         <div class="form-group">
             <label for="seccion">Sección:</label>
@@ -170,7 +170,6 @@
 </div>
 
 <script>
-    // Coloca aquí la URL generada al implementar Google Apps Script
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxwXL6ufNBMII-jpJsYGQXDzuDO4JENCH9xYVjzp4lrhkNqi0-BXkfY-Kj0colPegDIJg/exec";
 
     document.getElementById('registroForm').addEventListener('submit', function(e) {
@@ -192,12 +191,27 @@
             seccion: document.getElementById('seccion').value
         };
 
-            fetch(WEB_APP_URL, {
+        fetch(WEB_APP_URL, {
             method: 'POST',
             mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(payload)
-})
+        })
+        .then(() => {
+            msg.className = "exito";
+            msg.innerText = "¡Registro exitoso! Guardado en la lista de " + payload.materia + ".";
+            msg.style.display = "block";
+            document.getElementById('registroForm').reset();
+            btn.disabled = false;
+            btn.innerText = "Registrarme";
+        })
+        .catch(err => {
+            msg.className = "error";
+            msg.innerText = "Ocurrió un error al enviar. Intenta de nuevo.";
+            msg.style.display = "block";
+            btn.disabled = false;
+            btn.innerText = "Registrarme";
+        });
     });
 </script>
 
