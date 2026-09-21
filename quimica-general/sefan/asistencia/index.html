@@ -192,49 +192,12 @@
             seccion: document.getElementById('seccion').value
         };
 
-       const formData = new URLSearchParams();
-formData.append("materia", document.getElementById('materia').value);
-formData.append("apellidos", document.getElementById('apellidos').value);
-formData.append("nombres", document.getElementById('nombres').value);
-formData.append("cedula", document.getElementById('cedula').value);
-formData.append("carrera", document.getElementById('carrera').value);
-formData.append("seccion", document.getElementById('seccion').value);
-
 fetch(WEB_APP_URL, {
     method: 'POST',
     mode: 'no-cors',
-    body: formData
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload)
 })
-.then(() => {
-    msg.className = "exito";
-    msg.innerText = "¡Registro exitoso! Guardado en la lista de " + document.getElementById('materia').value + ".";
-    msg.style.display = "block";
-    document.getElementById('registroForm').reset();
-    btn.disabled = false;
-    btn.innerText = "Registrarme";
-})
-.catch(err => {
-    msg.className = "error";
-    msg.innerText = "Ocurrió un error al enviar. Intenta de nuevo.";
-    msg.style.display = "block";
-    btn.disabled = false;
-    btn.innerText = "Registrarme";
-});
-        .then(() => {
-            msg.className = "exito";
-            msg.innerText = "¡Registro exitoso! Guardado en la lista de " + payload.materia + ".";
-            msg.style.display = "block";
-            document.getElementById('registroForm').reset();
-            btn.disabled = false;
-            btn.innerText = "Registrarme";
-        })
-        .catch(err => {
-            msg.className = "error";
-            msg.innerText = "Ocurrió un error al enviar. Intenta de nuevo.";
-            msg.style.display = "block";
-            btn.disabled = false;
-            btn.innerText = "Registrarme";
-        });
     });
 </script>
 
