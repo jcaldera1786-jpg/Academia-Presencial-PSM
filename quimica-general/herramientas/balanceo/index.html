@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEFAN - Reto de Balanceo Estequiométrico Pro</title>
+    <title>SEFAN - Reto de Balanceo Estequiométrico Pro (3 Ciclos)</title>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
@@ -29,7 +29,7 @@
             align-items: center;
         }
         .container { 
-            max-width: 900px; 
+            max-width: 950px; 
             width: 100%;
             margin: auto; 
             background: var(--card-bg); 
@@ -41,7 +41,7 @@
         .header { 
             text-align: center; 
             border-bottom: 2px solid var(--primary); 
-            margin-bottom: 25px; 
+            margin-bottom: 20px; 
             padding-bottom: 15px;
         }
         .header h1 { color: var(--primary); margin: 0 0 5px 0; font-size: 1.5rem; }
@@ -56,6 +56,7 @@
             border-radius: 8px; 
             margin-bottom: 20px; 
             font-weight: 600;
+            font-size: 0.9rem;
             border: 1px solid #334155;
         }
         .card { 
@@ -67,17 +68,17 @@
             background: rgba(15, 23, 42, 0.6);
         }
         .equation-box { 
-            font-size: 1.6em; 
-            margin: 30px 0; 
+            font-size: 1.5em; 
+            margin: 25px 0; 
             display: flex; 
             flex-wrap: wrap; 
             justify-content: center; 
             align-items: center; 
-            gap: 12px; 
+            gap: 10px; 
             color: #f8fafc; 
         }
         .coef-input { 
-            width: 50px; 
+            width: 48px; 
             height: 45px; 
             text-align: center; 
             font-size: 0.9em; 
@@ -94,6 +95,7 @@
             margin-top: 15px; 
             font-weight: bold; 
             text-align: left; 
+            font-size: 0.95rem;
         }
         .btn-action { 
             background: linear-gradient(135deg, #0284c7, #0369a1); 
@@ -128,24 +130,25 @@
 
 <div class="container">
     <div class="header">
-        <h1>Desafío: Balanceo Estequiométrico Pro (SEFAN)</h1>
+        <h1>Desafío Estequiométrico Pro - Sistema SEFAN</h1>
         <p>Instituto Universitario Politécnico "Santiago Mariño" | Prof. Dr. José Ángel Caldera Luzardo</p>
     </div>
 
     <div id="setup">
         <p style="color: var(--text-muted); text-align: center; margin-bottom: 20px;">
-            Ingrese sus datos personales para iniciar la evaluación formativa sin opciones múltiples. Debe digitar los coeficientes correctos.
+            <strong>Modalidad de 3 Ciclos Obligatorios:</strong> Se evaluarán un total de 60 reacciones (20 por cada ciclo) mediante balanceo por tanteo estricto.
         </p>
         <input type="text" id="name" class="user-input" placeholder="Nombre y Apellido Completo" autocomplete="off">
         <input type="text" id="cedula" class="user-input" placeholder="Cédula de Identidad (Solo números)" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '');" autocomplete="off">
-        <button class="btn-action" onclick="iniciar()" style="width: 100%;">Iniciar Evaluación Blindada 🚀</button>
+        <button class="btn-action" onclick="iniciar()" style="width: 100%;">Iniciar Evaluación de 3 Ciclos 🚀</button>
     </div>
 
     <div id="quiz" style="display:none;">
         <div class="stats-bar">
-            <span>Pregunta: <span id="q-num">1</span>/10</span>
-            <span>Acierto: <span id="percent">0</span>%</span>
-            <span>Intento: <span id="attempt-num">1</span></span>
+            <span>Ciclo: <span id="cycle-num">1</span>/3</span>
+            <span>Pregunta: <span id="q-num">1</span>/20</span>
+            <span>Aciertos Totales: <span id="total-correct">0</span>/60</span>
+            <span>Efectividad: <span id="percent">0</span>%</span>
         </div>
         <div class="card">
             <h3>Escriba los coeficientes enteros mínimos para balancear la ecuación:</h3>
@@ -166,11 +169,16 @@
     const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbzzsmla-QTxaEFsYlSp1wpmLmKOQk7krVa7m6PwRgeaD39I-fUoOhSjiNZ25XP6lindug/exec";
     
     let userData = { nombre: "", cedula: "", intento: 1 };
-    let correctCount = 0, qIndex = 0, currentAnswer = [];
+    let correctCount = 0; // Aciertos acumulados en los 3 ciclos (hasta 60)
+    let cycleCorrect = 0; // Aciertos en el ciclo actual
+    let qIndex = 0;       // Índice de pregunta (0 al 19 por ciclo)
+    let currentCycle = 1; // Ciclo actual (1, 2, 3)
+    let currentAnswer = [];
     let bancoActual = [];
 
-    // Banco completo de reacciones estequiométricas
+    // Banco completo de 60 reacciones estequiométricas
     const poolReacciones = [
+        // Básico
         { ec: ["H₂", "+", "O₂", "→", "H₂O"], coefs: [2, 1, 2] },
         { ec: ["N₂", "+", "H₂", "→", "NH₃"], coefs: [1, 3, 2] },
         { ec: ["Li", "+", "O₂", "→", "Li₂O"], coefs: [4, 1, 2] },
@@ -181,16 +189,60 @@
         { ec: ["H₂O₂", "→", "H₂O", "+", "O₂"], coefs: [2, 2, 1] },
         { ec: ["Al", "+", "O₂", "→", "Al₂O₃"], coefs: [4, 3, 2] },
         { ec: ["Fe", "+", "O₂", "→", "Fe₂O₃"], coefs: [4, 3, 2] },
+        { ec: ["K", "+", "Br₂", "→", "KBr"], coefs: [2, 1, 2] },
+        { ec: ["Na₂O", "+", "H₂O", "→", "NaOH"], coefs: [1, 1, 2] },
+        { ec: ["SO₂", "+", "O₂", "→", "SO₃"], coefs: [2, 1, 2] },
+        { ec: ["H₂", "+", "Cl₂", "→", "HCl"], coefs: [1, 1, 2] },
+        { ec: ["CaO", "+", "H₂O", "→", "Ca(OH)₂"], coefs: [1, 1, 1] },
+        { ec: ["N₂", "+", "O₂", "→", "NO"], coefs: [1, 1, 2] },
+        { ec: ["P₄", "+", "O₂", "→", "P₂O₅"], coefs: [1, 5, 2] },
+        { ec: ["Na", "+", "O₂", "→", "Na₂O"], coefs: [4, 1, 2] },
+        { ec: ["ZnO", "+", "C", "→", "Zn", "+", "CO"], coefs: [1, 1, 1, 1] },
+        { ec: ["BaO", "+", "H₂O", "→", "Ba(OH)₂"], coefs: [1, 1, 1] },
+
+        // Intermedio
         { ec: ["Zn", "+", "HCl", "→", "ZnCl₂", "+", "H₂"], coefs: [1, 2, 1, 1] },
         { ec: ["Mg", "+", "HCl", "→", "MgCl₂", "+", "H₂"], coefs: [1, 2, 1, 1] },
         { ec: ["Cu", "+", "AgNO₃", "→", "Cu(NO₃)₂", "+", "Ag"], coefs: [1, 2, 1, 2] },
         { ec: ["Al", "+", "H₂SO₄", "→", "Al₂(SO₄)₃", "+", "H₂"], coefs: [2, 3, 1, 3] },
         { ec: ["Na", "+", "H₂O", "→", "NaOH", "+", "H₂"], coefs: [2, 2, 2, 1] },
+        { ec: ["Fe", "+", "H₂O", "→", "Fe₃O₄", "+", "H₂"], coefs: [3, 4, 1, 4] },
+        { ec: ["P₄", "+", "O₂", "→", "P₄O₁₀"], coefs: [1, 5, 1] },
+        { ec: ["S₈", "+", "O₂", "→", "SO₃"], coefs: [1, 12, 8] },
+        { ec: ["Cl₂", "+", "KI", "→", "KCl", "+", "I₂"], coefs: [1, 2, 2, 1] },
+        { ec: ["Pb(NO₃)₂", "+", "KI", "→", "PbI₂", "+", "KNO₃"], coefs: [1, 2, 1, 2] },
+        { ec: ["Al", "+", "HCl", "→", "AlCl₃", "+", "H₂"], coefs: [2, 6, 2, 3] },
+        { ec: ["BaCl₂", "+", "Na₂SO₄", "→", "BaSO₄", "+", "NaCl"], coefs: [1, 1, 1, 2] },
+        { ec: ["Ca(OH)₂", "+", "CO₂", "→", "CaCO₃", "+", "H₂O"], coefs: [1, 1, 1, 1] },
+        { ec: ["H₂SO₄", "+", "NaOH", "→", "Na₂SO₄", "+", "H₂O"], coefs: [1, 2, 1, 2] },
+        { ec: ["MnO₂", "+", "HCl", "→", "MnCl₂", "+", "Cl₂", "+", "H₂O"], coefs: [1, 4, 1, 1, 2] },
+        { ec: ["P₄", "+", "Cl₂", "→", "PCl₃"], coefs: [1, 6, 4] },
+        { ec: ["Fe₂O₃", "+", "C", "→", "Fe", "+", "CO"], coefs: [1, 3, 2, 3] },
+        { ec: ["TiCl₄", "+", "Mg", "→", "Ti", "+", "MgCl₂"], coefs: [1, 2, 1, 2] },
+        { ec: ["Fe₂O₃", "+", "H₂", "→", "Fe", "+", "H₂O"], coefs: [1, 3, 2, 3] },
+        { ec: ["FeCl₃", "+", "NaOH", "→", "Fe(OH)₃", "+", "NaCl"], coefs: [1, 3, 1, 3] },
+
+        // Avanzado y Experto
         { ec: ["CH₄", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [1, 2, 1, 2] },
         { ec: ["C₂H₆", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [2, 7, 4, 6] },
         { ec: ["C₃H₈", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [1, 5, 3, 4] },
         { ec: ["C₄H₁₀", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [2, 13, 8, 10] },
-        { ec: ["C₂H₂", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [2, 5, 4, 2] }
+        { ec: ["C₂H₂", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [2, 5, 4, 2] },
+        { ec: ["C₂H₅OH", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [1, 3, 2, 3] },
+        { ec: ["NH₃", "+", "O₂", "→", "NO", "+", "H₂O"], coefs: [4, 5, 4, 6] },
+        { ec: ["FeS₂", "+", "O₂", "→", "Fe₂O₃", "+", "SO₂"], coefs: [4, 11, 2, 8] },
+        { ec: ["K", "+", "H₂O", "→", "KOH", "+", "H₂"], coefs: [2, 2, 2, 1] },
+        { ec: ["C₆H₁₂O₆", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [1, 6, 6, 6] },
+        { ec: ["Ag", "+", "H₂S", "+", "O₂", "→", "Ag₂S", "+", "H₂O"], coefs: [4, 2, 1, 2, 2] },
+        { ec: ["Cu", "+", "HNO₃", "→", "Cu(NO₃)₂", "+", "NO₂", "+", "H₂O"], coefs: [1, 4, 1, 2, 2] },
+        { ec: ["C₅H₁₂", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [1, 8, 5, 6] },
+        { ec: ["C₆H₆", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [2, 15, 12, 6] },
+        { ec: ["C₁₂H₂₂O₁₁", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [1, 12, 12, 11] },
+        { ec: ["H₃PO₄", "+", "Ca(OH)₂", "→", "Ca₃(PO₄)₂", "+", "H₂O"], coefs: [2, 3, 1, 6] },
+        { ec: ["CS₂", "+", "O₂", "→", "CO₂", "+", "SO₂"], coefs: [1, 3, 1, 2] },
+        { ec: ["ZnS", "+", "O₂", "→", "ZnO", "+", "SO₂"], coefs: [2, 3, 2, 2] },
+        { ec: ["Na₂CO₃", "+", "HCl", "→", "NaCl", "+", "H₂O", "+", "CO₂"], coefs: [1, 2, 2, 1, 1] },
+        { ec: ["C₈H₁₈", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [2, 25, 16, 18] }
     ];
 
     function shuffle(array) { return array.sort(() => Math.random() - 0.5); }
@@ -204,7 +256,10 @@
         }
         userData.nombre = n; 
         userData.cedula = c;
-        bancoActual = shuffle([...poolReacciones]).slice(0, 10);
+        
+        // Generar un bloque de 20 preguntas aleatorias para el ciclo 1
+        bancoActual = shuffle([...poolReacciones]).slice(0, 20);
+        
         document.getElementById('setup').style.display = 'none';
         document.getElementById('quiz').style.display = 'block';
         cargar();
@@ -230,6 +285,8 @@
         document.getElementById('feedback').style.display = 'none';
         document.getElementById('btn-check').style.display = 'inline-block';
         document.getElementById('btn-next').style.display = 'none';
+        
+        document.getElementById('cycle-num').innerText = currentCycle;
         document.getElementById('q-num').innerText = qIndex + 1;
     }
 
@@ -250,6 +307,7 @@
             fb.style.border = "1px solid var(--success)";
             fb.style.color = "#4ade80";
             correctCount++;
+            cycleCorrect++;
         } else {
             fb.innerHTML = `❌ Incorrecto. Los coeficientes correctos eran: <strong>[${currentAnswer.join(', ')}]</strong>.`;
             fb.style.background = "rgba(239, 68, 68, 0.2)";
@@ -257,7 +315,10 @@
             fb.style.color = "#fca5a5";
         }
 
-        document.getElementById('percent').innerText = ((correctCount/(qIndex+1))*100).toFixed(0);
+        let totalRespondidas = ((currentCycle - 1) * 20) + (qIndex + 1);
+        document.getElementById('total-correct').innerText = `${correctCount}/60`;
+        document.getElementById('percent').innerText = ((correctCount / totalRespondidas) * 100).toFixed(0);
+        
         document.getElementById('btn-check').style.display = 'none';
         document.getElementById('btn-next').style.display = 'inline-block';
         document.querySelectorAll('.coef-input').forEach(input => input.disabled = true);
@@ -268,15 +329,26 @@
             qIndex++;
             cargar();
         } else {
-            prepararEnvio();
+            // Fin del ciclo actual
+            if(currentCycle < 3) {
+                currentCycle++;
+                qIndex = 0;
+                // Cargar un nuevo bloque de 20 preguntas aleatorias para el siguiente ciclo
+                bancoActual = shuffle([...poolReacciones]).slice(0, 20);
+                alert(`¡Ciclo ${currentCycle - 1} completado! A continuación comienza el Ciclo ${currentCycle} de 3.`);
+                cargar();
+            } else {
+                // Se completaron los 3 ciclos (60 preguntas en total)
+                prepararEnvio();
+            }
         }
     }
 
     function prepararEnvio() {
-        const finalP = ((correctCount/bancoActual.length)*100).toFixed(0);
-        document.getElementById('action-area').innerHTML = `<button id="btn-send" class="btn-action" onclick="enviar(${finalP})">Enviar Resultados a la Nube 📤</button>`;
-        document.querySelector('.card h3').innerText = "¡Evaluación Finalizada con Éxito!";
-        document.getElementById('equation-area').innerHTML = `<div style="font-size: 1.3rem; color: #38bdf8;">Calificación Obtenida: ${finalP}% (${correctCount} de ${bancoActual.length} aciertos)</div>`;
+        const finalP = ((correctCount / 60) * 100).toFixed(0);
+        document.getElementById('action-area').innerHTML = `<button id="btn-send" class="btn-action" onclick="enviar(${finalP})">Enviar Resultados Finales a la Nube 📤</button>`;
+        document.querySelector('.card h3').innerText = "🎉 ¡Evaluación de 3 Ciclos Finalizada!";
+        document.getElementById('equation-area').innerHTML = `<div style="font-size: 1.3rem; color: #38bdf8;">Calificación Global: ${finalP}%<br><span style="font-size: 1rem; color: var(--text-muted);">Aciertos totales: ${correctCount} de 60 reacciones</span></div>`;
     }
 
     async function enviar(p) {
@@ -299,8 +371,8 @@
                 body: JSON.stringify(data) 
             });
             
-            alert("SISTEMA: Resultados enviados con éxito al servidor institucional.");
-            document.getElementById('action-area').innerHTML = `<button class="btn-action" onclick="reintentar()" style="background:var(--secondary)">Nuevo Intento 🔄</button>`;
+            alert("SISTEMA: Resultados de los 3 ciclos enviados con éxito al servidor institucional.");
+            document.getElementById('action-area').innerHTML = `<button class="btn-action" onclick="reintentar()" style="background:var(--secondary)">Reiniciar Evaluación 🔄</button>`;
         } catch (e) {
             alert("Error de conexión al enviar resultados.");
             btn.disabled = false; 
@@ -310,10 +382,14 @@
 
     function reintentar() {
         userData.intento++;
-        correctCount = 0; qIndex = 0;
-        bancoActual = shuffle([...poolReacciones]).slice(0, 10);
+        correctCount = 0; 
+        cycleCorrect = 0; 
+        qIndex = 0; 
+        currentCycle = 1;
+        bancoActual = shuffle([...poolReacciones]).slice(0, 20);
+        
         document.getElementById('percent').innerText = "0";
-        document.getElementById('attempt-num').innerText = userData.intento;
+        document.getElementById('total-correct').innerText = "0/60";
         document.querySelector('.card h3').innerText = "Escriba los coeficientes enteros mínimos para balancear la ecuación:";
         document.getElementById('action-area').innerHTML = `<button id="btn-check" class="btn-action" onclick="verificar()">Verificar Balanceo</button><button id="btn-next" class="btn-action" onclick="siguiente()" style="display:none; background: #334155;">Siguiente →</button>`;
         cargar();
