@@ -3,677 +3,396 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEFAN - Reto de Balanceo de Ecuaciones Químicas | PSM</title>
-    <!-- MathJax Configuration -->
-    <script>
-        window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$'], ['\\[', '\\]']]
-            },
-            svg: { fontCache: 'global' }
-        };
-    </script>
+    <title>SEFAN - Reto de Balanceo Estequiométrico Pro (3 Ciclos)</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
-        :root {
-            --bg-color: #0f172a;
+        :root { 
+            --primary: #0284c7; 
+            --secondary: #1e293b; 
+            --success: #22c55e; 
+            --error: #f43f5e;
+            --bg: #0f172a; 
             --card-bg: rgba(30, 41, 59, 0.85);
-            --accent-blue: #38bdf8;
-            --accent-green: #22c55e;
-            --accent-gold: #f59e0b;
-            --accent-teal: #14b8a6;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --border-color: rgba(255, 255, 255, 0.1);
-            --error: #f43f5e;
         }
-
-        html {
-            background-color: var(--bg-color);
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--bg); 
             color: var(--text-main);
+            padding: 20px; 
+            margin: 0;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            position: relative;
-            isolation: isolate;
         }
-
-        body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            background-image: url("https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/assets/psm.png");
-            background-repeat: no-repeat;
-            background-position: center center;
-            background-size: 320px 320px;
-            opacity: 0.15;
-            filter: blur(0.5px);
-            mix-blend-mode: screen;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        header {
+        .container { 
+            max-width: 950px; 
             width: 100%;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-color);
-            padding: 1rem 0;
-            text-align: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            margin: auto; 
+            background: var(--card-bg); 
+            padding: 30px; 
+            border-radius: 15px; 
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); 
+            border: 1px solid var(--primary);
         }
-
-        header h1 {
-            margin: 0;
-            font-size: 1.4rem;
-            color: var(--accent-blue);
-            letter-spacing: 1px;
+        .header { 
+            text-align: center; 
+            border-bottom: 2px solid var(--primary); 
+            margin-bottom: 20px; 
+            padding-bottom: 15px;
         }
-
-        header p {
-            margin: 0.2rem 0 0;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .container {
-            width: 90%;
-            max-width: 850px;
-            margin: 1.5rem auto;
-            display: flex;
-            flex-direction: column;
-            gap: 1.2rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--accent-blue);
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
-
-        .card-header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 0.8rem;
-            margin-bottom: 1rem;
-        }
-
-        .card-title {
-            color: var(--accent-blue);
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin: 0;
-        }
-
-        .btn-menu {
-            background: #334155;
-            color: #fff;
-            border: none;
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            text-decoration: none;
+        .header h1 { color: var(--primary); margin: 0 0 5px 0; font-size: 1.5rem; }
+        .header p { color: var(--text-muted); margin: 0; font-size: 0.9rem; }
+        
+        .stats-bar { 
+            display: flex; 
+            justify-content: space-around; 
+            background: #111827; 
+            color: var(--text-main); 
+            padding: 12px; 
+            border-radius: 8px; 
+            margin-bottom: 20px; 
             font-weight: 600;
-            transition: background 0.2s;
-        }
-        .btn-menu:hover {
-            background: #475569;
-        }
-
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 0.5rem;
-        }
-
-        .progress-bar-container {
-            width: 100%;
-            background-color: #1e293b;
-            border-radius: 4px;
-            height: 8px;
-            margin-bottom: 1.2rem;
-            overflow: hidden;
-            border: 1px solid #334155;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background-color: var(--accent-blue);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .instruction-box {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid var(--accent-teal);
-            padding: 0.9rem;
-            border-radius: 8px;
-            margin-bottom: 1.2rem;
-            text-align: left;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            line-height: 1.4;
-        }
-
-        .instruction-box b {
-            color: var(--accent-teal);
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-            text-align: left;
-        }
-
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.4rem;
-            color: var(--accent-blue);
             font-size: 0.9rem;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 0.7rem 0.8rem;
             border: 1px solid #334155;
-            border-radius: 8px;
+        }
+        .card { 
+            border: 1px solid #334155; 
+            padding: 25px; 
+            border-radius: 12px; 
+            min-height: 280px; 
+            text-align: center; 
+            background: rgba(15, 23, 42, 0.6);
+        }
+        .equation-box { 
+            font-size: 1.5em; 
+            margin: 25px 0; 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 10px; 
+            color: #f8fafc; 
+        }
+        .coef-input { 
+            width: 48px; 
+            height: 45px; 
+            text-align: center; 
+            font-size: 0.9em; 
+            border: 2px solid var(--primary); 
+            border-radius: 6px; 
+            font-weight: bold; 
+            color: #38bdf8;
             background: #0f172a;
-            color: #fff;
+        }
+        .feedback { 
+            display: none; 
+            padding: 15px; 
+            border-radius: 8px; 
+            margin-top: 15px; 
+            font-weight: bold; 
+            text-align: left; 
+            font-size: 0.95rem;
+        }
+        .btn-action { 
+            background: linear-gradient(135deg, #0284c7, #0369a1); 
+            color: white; 
+            padding: 12px 30px; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            margin-top: 20px; 
             font-size: 1rem;
-            box-sizing: border-box;
+            transition: background 0.3s;
+        }
+        .btn-action:hover { background: linear-gradient(135deg, #0369a1, #075985); }
+        .btn-action:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
+        
+        input[type="text"].user-input {
+            width: 95%; 
+            padding: 12px; 
+            margin-bottom: 12px; 
+            border-radius: 8px; 
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: white;
+            font-size: 1rem;
             outline: none;
         }
-
-        input[type="text"]:focus {
-            border-color: var(--accent-blue);
-        }
-
-        .question-title {
-            font-size: 1.05rem;
-            font-weight: 600;
-            margin-bottom: 1.2rem;
-            line-height: 1.5;
-            color: var(--text-main);
-            text-align: left;
-        }
-
-        .options-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 1.2rem;
-        }
-
-        .option-btn {
-            background-color: #1e293b;
-            border: 1px solid #334155;
-            color: var(--text-main);
-            padding: 0.9rem 1rem;
-            border-radius: 8px;
-            text-align: left;
-            cursor: pointer;
-            font-size: 0.95rem;
-            transition: all 0.2s;
-        }
-
-        .option-btn:hover {
-            background-color: #334155;
-            border-color: var(--accent-blue);
-        }
-
-        .option-btn.selected {
-            background-color: rgba(56, 189, 248, 0.15);
-            border-color: var(--accent-blue);
-            font-weight: 600;
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #0284c7, #0369a1);
-            color: white;
-            border: none;
-            padding: 0.8rem 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            width: 100%;
-            font-weight: bold;
-            transition: background 0.3s ease;
-        }
-
-        .btn:hover {
-            background: linear-gradient(135deg, #0369a1, #075985);
-        }
-
-        .btn:disabled {
-            background: #334155;
-            color: #64748b;
-            cursor: not-allowed;
-        }
-
-        #feedback-box {
-            display: none;
-            margin-top: 1rem;
-            padding: 1rem;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            text-align: left;
-            line-height: 1.4;
-        }
-
-        .results-card {
-            text-align: center;
-            padding: 1rem 0;
-        }
-
-        .score-display {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: var(--accent-blue);
-            margin: 15px 0;
-        }
-
-        .status-msg {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-top: 15px;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .status-success {
-            background-color: rgba(34, 197, 94, 0.2);
-            border: 1px solid var(--accent-green);
-            color: #4ade80;
-        }
-
-        .status-error {
-            background-color: rgba(239, 68, 68, 0.2);
-            border: 1px solid var(--error);
-            color: #fca5a5;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        footer {
-            margin-top: auto;
-            padding: 1.5rem 0;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            text-align: center;
-        }
+        input[type="text"].user-input:focus { border-color: var(--primary); }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>SEFAN - QUÍMICA GENERAL</h1>
-    <p>Sistema de Evaluación Formativa Adaptativo por Niveles | PSM Maracaibo</p>
-</header>
-
 <div class="container">
-    <div class="card">
-        <div class="card-header-row">
-            <h2 class="card-title">Reto SEFAN: Balanceo de Ecuaciones Químicas</h2>
-            <a href="index.html" class="btn-menu">⬅ Salir al Menú</a>
+    <div class="header">
+        <h1>Desafío Estequiométrico Pro - Sistema SEFAN</h1>
+        <p>Instituto Universitario Politécnico "Santiago Mariño" | Prof. Dr. José Ángel Caldera Luzardo</p>
+    </div>
+
+    <div id="setup">
+        <p style="color: var(--text-muted); text-align: center; margin-bottom: 20px;">
+            <strong>Modalidad de 3 Ciclos Obligatorios:</strong> Se evaluarán un total de 60 reacciones (20 por cada ciclo) mediante balanceo por tanteo estricto.
+        </p>
+        <input type="text" id="name" class="user-input" placeholder="Nombre y Apellido Completo" autocomplete="off">
+        <input type="text" id="cedula" class="user-input" placeholder="Cédula de Identidad (Solo números)" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '');" autocomplete="off">
+        <button class="btn-action" onclick="iniciar()" style="width: 100%;">Iniciar Evaluación de 3 Ciclos 🚀</button>
+    </div>
+
+    <div id="quiz" style="display:none;">
+        <div class="stats-bar">
+            <span>Ciclo: <span id="cycle-num">1</span>/3</span>
+            <span>Pregunta: <span id="q-num">1</span>/20</span>
+            <span>Aciertos Totales: <span id="total-correct">0</span>/60</span>
+            <span>Efectividad: <span id="percent">0</span>%</span>
         </div>
-
-        <!-- PANTALLA 1: REGISTRO DEL ESTUDIANTE -->
-        <div id="screen-register">
-            <div class="instruction-box">
-                <b>📝 Instrucciones de Ingreso:</b><br>
-                1. Digita tu Nombre y Apellido completo.<br>
-                2. Ingresa tu número de <b>Cédula (el campo solo permite números)</b>.<br>
-                3. Al finalizar los ejercicios, tus resultados se registrarán automáticamente en la plataforma institucional.
-            </div>
-            <div class="form-group">
-                <label for="student-name">Nombre y Apellido:</label>
-                <input type="text" id="student-name" placeholder="Ej. Juan Pérez" autocomplete="off">
-            </div>
-            <div class="form-group" style="max-width: 250px;">
-                <label for="student-id">Cédula de Identidad:</label>
-                <!-- Restricción estricta de solo números -->
-                <input type="text" id="student-id" placeholder="Ej. 12345678" maxlength="10" 
-                       oninput="this.value = this.value.replace(/[^0-9]/g, '')" autocomplete="off">
-            </div>
-            <button class="btn" onclick="startQuiz()">Iniciar Evaluación 🚀</button>
-        </div>
-
-        <!-- PANTALLA 2: BANCO DE PREGUNTAS -->
-        <div id="screen-quiz" class="hidden">
-            <div class="progress-info">
-                <span id="question-number">PREGUNTA 1 DE 15</span>
-                <span id="aciertos-parciales">Aciertos: 0</span>
-            </div>
-            <div class="progress-bar-container">
-                <div id="progress-bar" class="progress-bar"></div>
-            </div>
-
-            <div id="question-text" class="question-title"></div>
-            <div id="options-container" class="options-container"></div>
+        <div class="card">
+            <h3>Escriba los coeficientes enteros mínimos para balancear la ecuación:</h3>
+            <p style="color: var(--text-muted); font-size: 0.85em;">(Si el coeficiente estequiométrico es 1, puede dejar el campo en blanco o digitar 1)</p>
+            <div id="equation-area" class="equation-box"></div>
             
-            <button id="btn-next" class="btn" onclick="nextQuestion()" disabled>Verificar Respuesta</button>
-            <div id="feedback-box"></div>
-        </div>
-
-        <!-- PANTALLA 3: RESULTADOS Y ENVÍO -->
-        <div id="screen-results" class="hidden">
-            <div class="results-card">
-                <h2>¡Evaluación Finalizada con Éxito!</h2>
-                <p style="color: var(--text-muted);">Has completado el Reto SEFAN de Balanceo de Ecuaciones.</p>
-                <div class="score-display" id="final-score">0 / 15</div>
-                <p id="percentage-display" style="font-weight: 600; font-size: 1.2rem; color: var(--accent-teal);"></p>
-                <div id="status-message" class="status-msg hidden">Guardando resultado en el sistema...</div>
+            <div id="feedback" class="feedback"></div>
+            
+            <div id="action-area">
+                <button id="btn-check" class="btn-action" onclick="verificar()">Verificar Balanceo</button>
+                <button id="btn-next" class="btn-action" onclick="siguiente()" style="display:none; background: #334155;">Siguiente →</button>
             </div>
         </div>
     </div>
 </div>
 
-<footer>
-    <p>Prof. Dr. José Ángel Caldera Luzardo | Instituto Universitario Politécnico "Santiago Mariño"</p>
-</footer>
-
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3J3H_1IWvejJpjtquuHV-HmXeoZ29PGo828lazfCrTijX8Uk1_fgDdzC8Xe_MdgZUhA/exec";
+    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbzzsmla-QTxaEFsYlSp1wpmLmKOQk7krVa7m6PwRgeaD39I-fUoOhSjiNZ25XP6lindug/exec";
+    
+    let userData = { nombre: "", cedula: "", intento: 1 };
+    let correctCount = 0; // Aciertos acumulados en los 3 ciclos (hasta 60)
+    let cycleCorrect = 0; // Aciertos en el ciclo actual
+    let qIndex = 0;       // Índice de pregunta (0 al 19 por ciclo)
+    let currentCycle = 1; // Ciclo actual (1, 2, 3)
+    let currentAnswer = [];
+    let bancoActual = [];
 
-    // Banco de preguntas ampliado (15 ítems) con retroalimentación detallada
-    const questions = [
-        {
-            id: "BAL_01",
-            q: "¿Cuáles son los coeficientes estequiométricos para balancear la ecuación de combustión del metano: $CH_4 + O_2 \\rightarrow CO_2 + H_2O$?",
-            options: ["1, 2, 1, 2", "1, 1, 1, 1", "2, 1, 1, 2", "1, 2, 2, 1"],
-            answer: 0,
-            feedback: "¡Correcto! Al colocar un 2 delante del $O_2$ y del $H_2O$, se equilibran 4 átomos de hidrógeno y 4 de oxígeno en ambos miembros."
-        },
-        {
-            id: "BAL_02",
-            q: "Al balancear la reacción de síntesis del amoniaco: $N_2 + H_2 \\rightarrow NH_3$, ¿qué coeficiente le corresponde al hidrógeno ($H_2$)?",
-            options: ["1", "2", "3", "4"],
-            answer: 2,
-            feedback: "¡Muy bien! La ecuación balanceada es $N_2 + 3H_2 \\rightarrow 2NH_3$. El coeficiente estequiométrico del hidrógeno es 3."
-        },
-        {
-            id: "BAL_03",
-            q: "¿Qué coeficientes balancean correctamente la formación de agua a partir de sus elementos: $H_2 + O_2 \\rightarrow H_2O$?",
-            options: ["1, 1, 1", "2, 1, 2", "1, 2, 1", "2, 2, 2"],
-            answer: 1,
-            feedback: "¡Excelente! La proporción correcta es $2H_2 + 1O_2 \\rightarrow 2H_2O$, asegurando la conservación de la masa de oxígeno."
-        },
-        {
-            id: "BAL_04",
-            q: "En la reacción de neutralización: $HCl + Ca(OH)_2 \\rightarrow CaCl_2 + H_2O$, ¿cuáles son los coeficientes correctos?",
-            options: ["1, 1, 1, 1", "2, 1, 1, 2", "1, 2, 1, 2", "2, 2, 1, 1"],
-            answer: 1,
-            feedback: "¡Correcto! Se requieren 2 moles de $HCl$ y 2 de $H_2O$ para neutralizar el hidróxido de calcio: $2HCl + Ca(OH)_2 \\rightarrow CaCl_2 + 2H_2O$."
-        },
-        {
-            id: "BAL_05",
-            q: "Balancee la descomposición del clorato de potasio: $KClO_3 \\rightarrow KCl + O_2$. ¿Cuál es la secuencia correcta de coeficientes?",
-            options: ["2, 2, 3", "1, 1, 3", "2, 1, 3", "3, 3, 2"],
-            answer: 0,
-            feedback: "¡Muy bien! Al ajustar queda $2KClO_3 \\rightarrow 2KCl + 3O_2$, igualando los 6 átomos de oxígeno en ambos lados."
-        },
-        {
-            id: "BAL_06",
-            q: "En la combustión completa del propano: $C_3H_8 + O_2 \\rightarrow CO_2 + H_2O$, ¿cuántos moles de $O_2$ se requieren en los coeficientes mínimos?",
-            options: ["3", "4", "5", "10"],
-            answer: 2,
-            feedback: "¡Exacto! La ecuación balanceada es $C_3H_8 + 5O_2 \\rightarrow 3CO_2 + 4H_2O$. Se necesitan 5 moles de oxígeno."
-        },
-        {
-            id: "BAL_07",
-            q: "Balancee la siguiente reacción de desplazamiento: $Fe + HCl \\rightarrow FeCl_2 + H_2$. Los coeficientes mínimos son:",
-            options: ["1, 2, 1, 1", "1, 1, 1, 1", "2, 2, 1, 1", "1, 3, 1, 2"],
-            answer: 0,
-            feedback: "¡Correcto! $1Fe + 2HCl \\rightarrow 1FeCl_2 + 1H_2$. El cloro y el hidrógeno quedan perfectamente balanceados."
-        },
-        {
-            id: "BAL_08",
-            q: "Para la oxidación del aluminio: $Al + O_2 \\rightarrow Al_2O_3$, los coeficientes estequiométricos mínimos enteros son:",
-            options: ["2, 3, 1", "4, 3, 2", "4, 2, 2", "2, 1, 1"],
-            answer: 1,
-            feedback: "¡Muy bien! La ecuación balanceada es $4Al + 3O_2 \\rightarrow 2Al_2O_3$, cumpliendo con la estequiometría de los óxidos metálicos."
-        },
-        {
-            id: "BAL_09",
-            q: "En la reacción: $Na + H_2O \\rightarrow NaOH + H_2$, ¿cuál es el coeficiente del sodio ($Na$) para el balanceo correcto?",
-            options: ["1", "2", "3", "4"],
-            answer: 1,
-            feedback: "¡Correcto! La ecuación completa es $2Na + 2H_2O \\rightarrow 2NaOH + H_2$."
-        },
-        {
-            id: "BAL_10",
-            q: "¿Qué principio fundamental de la química justifica el proceso de balanceo de las ecuaciones químicas?",
-            options: [
-                "Ley de las Proporciones Definidas (Proust)",
-                "Ley de Conservación de la Masa (Lavoisier)",
-                "Principio de Exclusión de Pauli",
-                "Ley de las Proporciones Múltiples (Dalton)"
-            ],
-            answer: 1,
-            feedback: "¡Excelente! La Ley de Lavoisier establece que la masa total en un sistema cerrado permanece constante, por lo que los átomos ni se crean ni se destruyen."
-        },
-        {
-            id: "BAL_11",
-            q: "Balancee la combustión del eteno ($C_2H_4 + O_2 \\rightarrow CO_2 + H_2O$). El coeficiente del oxígeno ($O_2$) es:",
-            options: ["2", "3", "4", "5"],
-            answer: 1,
-            feedback: "¡Correcto! La ecuación balanceada es $C_2H_4 + 3O_2 \\rightarrow 2CO_2 + 2H_2O$."
-        },
-        {
-            id: "BAL_12",
-            q: "Al reaccionar ácido fosfórico con hidróxido de sodio ($H_3PO_4 + NaOH \\rightarrow Na_3PO_4 + H_2O$), ¿cuántos moles de agua se producen?",
-            options: ["1", "2", "3", "4"],
-            answer: 2,
-            feedback: "¡Muy bien! La neutralización total requiere 3 moles de $NaOH$ para liberar 3 moles de agua: $H_3PO_4 + 3NaOH \\rightarrow Na_3PO_4 + 3H_2O$."
-        },
-        {
-            id: "BAL_13",
-            q: "En la descomposición térmica del óxido de mercurio ($HgO \\rightarrow Hg + O_2$), ¿cuál es el coeficiente del $HgO$?",
-            options: ["1", "2", "3", "4"],
-            answer: 1,
-            feedback: "¡Correcto! Al balancear se obtiene $2HgO \\rightarrow 2Hg + O_2$."
-        },
-        {
-            id: "BAL_14",
-            q: "Balancee la síntesis del yoduro de hidrógeno ($H_2 + I_2 \\rightarrow HI$). ¿Qué coeficiente le corresponde al producto ($HI$)?",
-            options: ["1", "2", "3", "4"],
-            answer: 1,
-            feedback: "¡Exacto! La reacción equilibrada es $H_2 + I_2 \\rightarrow 2HI$."
-        },
-        {
-            id: "BAL_15",
-            q: "Dada la reacción de obtención de hierro: $Fe_2O_3 + CO \\rightarrow Fe + CO_2$, ¿cuál es el coeficiente del monóxido de carbono ($CO$)?",
-            options: ["1", "2", "3", "4"],
-            answer: 2,
-            feedback: "¡Muy bien! La ecuación balanceada es $Fe_2O_3 + 3CO \\rightarrow 2Fe + 3CO_2$."
-        }
+    // Banco completo de 60 reacciones estequiométricas
+    const poolReacciones = [
+        // Básico
+        { ec: ["H₂", "+", "O₂", "→", "H₂O"], coefs: [2, 1, 2] },
+        { ec: ["N₂", "+", "H₂", "→", "NH₃"], coefs: [1, 3, 2] },
+        { ec: ["Li", "+", "O₂", "→", "Li₂O"], coefs: [4, 1, 2] },
+        { ec: ["Mg", "+", "O₂", "→", "MgO"], coefs: [2, 1, 2] },
+        { ec: ["Na", "+", "Cl₂", "→", "NaCl"], coefs: [2, 1, 2] },
+        { ec: ["KClO₃", "→", "KCl", "+", "O₂"], coefs: [2, 2, 3] },
+        { ec: ["CaCO₃", "→", "CaO", "+", "CO₂"], coefs: [1, 1, 1] },
+        { ec: ["H₂O₂", "→", "H₂O", "+", "O₂"], coefs: [2, 2, 1] },
+        { ec: ["Al", "+", "O₂", "→", "Al₂O₃"], coefs: [4, 3, 2] },
+        { ec: ["Fe", "+", "O₂", "→", "Fe₂O₃"], coefs: [4, 3, 2] },
+        { ec: ["K", "+", "Br₂", "→", "KBr"], coefs: [2, 1, 2] },
+        { ec: ["Na₂O", "+", "H₂O", "→", "NaOH"], coefs: [1, 1, 2] },
+        { ec: ["SO₂", "+", "O₂", "→", "SO₃"], coefs: [2, 1, 2] },
+        { ec: ["H₂", "+", "Cl₂", "→", "HCl"], coefs: [1, 1, 2] },
+        { ec: ["CaO", "+", "H₂O", "→", "Ca(OH)₂"], coefs: [1, 1, 1] },
+        { ec: ["N₂", "+", "O₂", "→", "NO"], coefs: [1, 1, 2] },
+        { ec: ["P₄", "+", "O₂", "→", "P₂O₅"], coefs: [1, 5, 2] },
+        { ec: ["Na", "+", "O₂", "→", "Na₂O"], coefs: [4, 1, 2] },
+        { ec: ["ZnO", "+", "C", "→", "Zn", "+", "CO"], coefs: [1, 1, 1, 1] },
+        { ec: ["BaO", "+", "H₂O", "→", "Ba(OH)₂"], coefs: [1, 1, 1] },
+
+        // Intermedio
+        { ec: ["Zn", "+", "HCl", "→", "ZnCl₂", "+", "H₂"], coefs: [1, 2, 1, 1] },
+        { ec: ["Mg", "+", "HCl", "→", "MgCl₂", "+", "H₂"], coefs: [1, 2, 1, 1] },
+        { ec: ["Cu", "+", "AgNO₃", "→", "Cu(NO₃)₂", "+", "Ag"], coefs: [1, 2, 1, 2] },
+        { ec: ["Al", "+", "H₂SO₄", "→", "Al₂(SO₄)₃", "+", "H₂"], coefs: [2, 3, 1, 3] },
+        { ec: ["Na", "+", "H₂O", "→", "NaOH", "+", "H₂"], coefs: [2, 2, 2, 1] },
+        { ec: ["Fe", "+", "H₂O", "→", "Fe₃O₄", "+", "H₂"], coefs: [3, 4, 1, 4] },
+        { ec: ["P₄", "+", "O₂", "→", "P₄O₁₀"], coefs: [1, 5, 1] },
+        { ec: ["S₈", "+", "O₂", "→", "SO₃"], coefs: [1, 12, 8] },
+        { ec: ["Cl₂", "+", "KI", "→", "KCl", "+", "I₂"], coefs: [1, 2, 2, 1] },
+        { ec: ["Pb(NO₃)₂", "+", "KI", "→", "PbI₂", "+", "KNO₃"], coefs: [1, 2, 1, 2] },
+        { ec: ["Al", "+", "HCl", "→", "AlCl₃", "+", "H₂"], coefs: [2, 6, 2, 3] },
+        { ec: ["BaCl₂", "+", "Na₂SO₄", "→", "BaSO₄", "+", "NaCl"], coefs: [1, 1, 1, 2] },
+        { ec: ["Ca(OH)₂", "+", "CO₂", "→", "CaCO₃", "+", "H₂O"], coefs: [1, 1, 1, 1] },
+        { ec: ["H₂SO₄", "+", "NaOH", "→", "Na₂SO₄", "+", "H₂O"], coefs: [1, 2, 1, 2] },
+        { ec: ["MnO₂", "+", "HCl", "→", "MnCl₂", "+", "Cl₂", "+", "H₂O"], coefs: [1, 4, 1, 1, 2] },
+        { ec: ["P₄", "+", "Cl₂", "→", "PCl₃"], coefs: [1, 6, 4] },
+        { ec: ["Fe₂O₃", "+", "C", "→", "Fe", "+", "CO"], coefs: [1, 3, 2, 3] },
+        { ec: ["TiCl₄", "+", "Mg", "→", "Ti", "+", "MgCl₂"], coefs: [1, 2, 1, 2] },
+        { ec: ["Fe₂O₃", "+", "H₂", "→", "Fe", "+", "H₂O"], coefs: [1, 3, 2, 3] },
+        { ec: ["FeCl₃", "+", "NaOH", "→", "Fe(OH)₃", "+", "NaCl"], coefs: [1, 3, 1, 3] },
+
+        // Avanzado y Experto
+        { ec: ["CH₄", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [1, 2, 1, 2] },
+        { ec: ["C₂H₆", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [2, 7, 4, 6] },
+        { ec: ["C₃H₈", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [1, 5, 3, 4] },
+        { ec: ["C₄H₁₀", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [2, 13, 8, 10] },
+        { ec: ["C₂H₂", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [2, 5, 4, 2] },
+        { ec: ["C₂H₅OH", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [1, 3, 2, 3] },
+        { ec: ["NH₃", "+", "O₂", "→", "NO", "+", "H₂O"], coefs: [4, 5, 4, 6] },
+        { ec: ["FeS₂", "+", "O₂", "→", "Fe₂O₃", "+", "SO₂"], coefs: [4, 11, 2, 8] },
+        { ec: ["K", "+", "H₂O", "→", "KOH", "+", "H₂"], coefs: [2, 2, 2, 1] },
+        { ec: ["C₆H₁₂O₆", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [1, 6, 6, 6] },
+        { ec: ["Ag", "+", "H₂S", "+", "O₂", "→", "Ag₂S", "+", "H₂O"], coefs: [4, 2, 1, 2, 2] },
+        { ec: ["Cu", "+", "HNO₃", "→", "Cu(NO₃)₂", "+", "NO₂", "+", "H₂O"], coefs: [1, 4, 1, 2, 2] },
+        { ec: ["C₅H₁₂", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [1, 8, 5, 6] },
+        { ec: ["C₆H₆", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [2, 15, 12, 6] },
+        { ec: ["C₁₂H₂₂O₁₁", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [1, 12, 12, 11] },
+        { ec: ["H₃PO₄", "+", "Ca(OH)₂", "→", "Ca₃(PO₄)₂", "+", "H₂O"], coefs: [2, 3, 1, 6] },
+        { ec: ["CS₂", "+", "O₂", "→", "CO₂", "+", "SO₂"], coefs: [1, 3, 1, 2] },
+        { ec: ["ZnS", "+", "O₂", "→", "ZnO", "+", "SO₂"], coefs: [2, 3, 2, 2] },
+        { ec: ["Na₂CO₃", "+", "HCl", "→", "NaCl", "+", "H₂O", "+", "CO₂"], coefs: [1, 2, 2, 1, 1] },
+        { ec: ["C₈H₁₈", "+", "O₂", "→", "CO₂", "+", "H₂O"], coefs: [2, 25, 16, 18] }
     ];
 
-    let currentQuestionIndex = 0;
-    let score = 0;
-    let selectedOption = null;
-    let studentData = { name: "", id: "" };
-    let answeredCurrent = false;
+    function shuffle(array) { return array.sort(() => Math.random() - 0.5); }
 
-    function startQuiz() {
-        const nameInput = document.getElementById("student-name").value.trim();
-        const idInput = document.getElementById("student-id").value.trim();
-
-        if (!nameInput || !idInput) {
-            alert("Por favor, ingresa tu Nombre y tu Cédula para comenzar la evaluación.");
+    function iniciar() {
+        const n = document.getElementById('name').value.trim();
+        const c = document.getElementById('cedula').value.trim();
+        if(!n || !c) {
+            alert("Por favor, ingrese su nombre y número de cédula.");
             return;
         }
-
-        studentData.name = nameInput;
-        studentData.id = idInput;
-
-        document.getElementById("screen-register").classList.add("hidden");
-        document.getElementById("screen-quiz").classList.remove("hidden");
-
-        loadQuestion();
+        userData.nombre = n; 
+        userData.cedula = c;
+        
+        // Generar un bloque de 20 preguntas aleatorias para el ciclo 1
+        bancoActual = shuffle([...poolReacciones]).slice(0, 20);
+        
+        document.getElementById('setup').style.display = 'none';
+        document.getElementById('quiz').style.display = 'block';
+        cargar();
     }
 
-    function loadQuestion() {
-        selectedOption = null;
-        answeredCurrent = false;
-        const btnNext = document.getElementById("btn-next");
-        btnNext.disabled = true;
-        btnNext.innerText = "Verificar Respuesta";
-
-        const qData = questions[currentQuestionIndex];
-        document.getElementById("question-number").innerText = `PREGUNTA ${currentQuestionIndex + 1} DE ${questions.length}`;
-        document.getElementById("aciertos-parciales").innerText = `Aciertos: ${score}`;
-        document.getElementById("question-text").innerHTML = qData.q;
-
-        const progressPct = ((currentQuestionIndex) / questions.length) * 100;
-        document.getElementById("progress-bar").style.width = `${progressPct}%`;
-
-        const optionsContainer = document.getElementById("options-container");
-        optionsContainer.innerHTML = "";
+    function cargar() {
+        const r = bancoActual[qIndex];
+        currentAnswer = r.coefs;
+        const area = document.getElementById('equation-area');
+        area.innerHTML = "";
         
-        document.getElementById("feedback-box").style.display = "none";
-
-        qData.options.forEach((optText, index) => {
-            const btn = document.createElement("button");
-            btn.className = "option-btn";
-            btn.innerText = optText;
-            btn.onclick = () => selectOption(index, btn);
-            optionsContainer.appendChild(btn);
+        let inputCount = 0;
+        r.ec.forEach((part) => {
+            if (["+", "→"].includes(part)) {
+                area.innerHTML += `<span style="color: var(--primary); font-weight: bold;">${part}</span>`;
+            } else {
+                area.innerHTML += `<input type="text" class="coef-input" id="c${inputCount}" placeholder="1" maxlength="3" oninput="this.value = this.value.replace(/[^0-9]/g, '');">`;
+                area.innerHTML += `<span>${part}</span>`;
+                inputCount++;
+            }
         });
 
-        // Actualizar MathJax si está cargado
-        if (window.MathJax) {
-            MathJax.typeset();
+        document.getElementById('feedback').style.display = 'none';
+        document.getElementById('btn-check').style.display = 'inline-block';
+        document.getElementById('btn-next').style.display = 'none';
+        
+        document.getElementById('cycle-num').innerText = currentCycle;
+        document.getElementById('q-num').innerText = qIndex + 1;
+    }
+
+    function verificar() {
+        let studentAnswers = [];
+        for(let i = 0; i < currentAnswer.length; i++) {
+            let val = document.getElementById(`c${i}`).value.trim();
+            studentAnswers.push(val === "" ? 1 : parseInt(val));
         }
-    }
 
-    function selectOption(index, element) {
-        if (answeredCurrent) return;
-        selectedOption = index;
-        const allBtns = document.querySelectorAll(".option-btn");
-        allBtns.forEach(b => b.classList.remove("selected"));
-        element.classList.add("selected");
-
-        document.getElementById("btn-next").disabled = false;
-    }
-
-    function nextQuestion() {
-        const btnNext = document.getElementById("btn-next");
-        const fBox = document.getElementById("feedback-box");
-        const qData = questions[currentQuestionIndex];
-
-        if (!answeredCurrent) {
-            // Fase de verificación
-            if (selectedOption === null) return;
-            answeredCurrent = true;
-
-            const allBtns = document.querySelectorAll(".option-btn");
-            allBtns.forEach((btn, idx) => {
-                btn.disabled = true;
-                if (idx === qData.answer) {
-                    btn.style.backgroundColor = "rgba(34, 197, 94, 0.2)";
-                    btn.style.borderColor = "var(--accent-green)";
-                    btn.style.color = "#4ade80";
-                } else if (idx === selectedOption) {
-                    btn.style.backgroundColor = "rgba(239, 68, 68, 0.2)";
-                    btn.style.borderColor = "var(--error)";
-                    btn.style.color = "#fca5a5";
-                }
-            });
-
-            fBox.style.display = "block";
-            if (selectedOption === qData.answer) {
-                score++;
-                document.getElementById("aciertos-parciales").innerText = `Aciertos: ${score}`;
-                fBox.style.backgroundColor = "rgba(34, 197, 94, 0.2)";
-                fBox.style.border = "1px solid var(--accent-green)";
-                fBox.style.color = "#4ade80";
-                fBox.innerHTML = `<strong>✅ ¡Excelente! Respuesta Correcta.</strong><br>${qData.feedback}`;
-            } else {
-                fBox.style.backgroundColor = "rgba(239, 68, 68, 0.2)";
-                fBox.style.border = "1px solid var(--error)";
-                fBox.style.color = "#fca5a5";
-                fBox.innerHTML = `<strong>❌ Respuesta Incorrecta.</strong><br>${qData.feedback}`;
-            }
-
-            btnNext.innerText = (currentQuestionIndex === questions.length - 1) ? "Finalizar Evaluación" : "Siguiente Pregunta ➡";
+        const isCorrect = JSON.stringify(studentAnswers) === JSON.stringify(currentAnswer);
+        const fb = document.getElementById('feedback');
+        fb.style.display = 'block';
+        
+        if(isCorrect) {
+            fb.innerHTML = "✅ ¡Excelente! La ecuación está perfectamente balanceada.";
+            fb.style.background = "rgba(34, 197, 94, 0.2)";
+            fb.style.border = "1px solid var(--success)";
+            fb.style.color = "#4ade80";
+            correctCount++;
+            cycleCorrect++;
         } else {
-            // Avanzar a la siguiente pregunta
-            currentQuestionIndex++;
-            if (currentQuestionIndex < questions.length) {
-                loadQuestion();
+            fb.innerHTML = `❌ Incorrecto. Los coeficientes correctos eran: <strong>[${currentAnswer.join(', ')}]</strong>.`;
+            fb.style.background = "rgba(239, 68, 68, 0.2)";
+            fb.style.border = "1px solid var(--error)";
+            fb.style.color = "#fca5a5";
+        }
+
+        let totalRespondidas = ((currentCycle - 1) * 20) + (qIndex + 1);
+        document.getElementById('total-correct').innerText = `${correctCount}/60`;
+        document.getElementById('percent').innerText = ((correctCount / totalRespondidas) * 100).toFixed(0);
+        
+        document.getElementById('btn-check').style.display = 'none';
+        document.getElementById('btn-next').style.display = 'inline-block';
+        document.querySelectorAll('.coef-input').forEach(input => input.disabled = true);
+    }
+
+    function siguiente() {
+        if(qIndex < bancoActual.length - 1) {
+            qIndex++;
+            cargar();
+        } else {
+            // Fin del ciclo actual
+            if(currentCycle < 3) {
+                currentCycle++;
+                qIndex = 0;
+                // Cargar un nuevo bloque de 20 preguntas aleatorias para el siguiente ciclo
+                bancoActual = shuffle([...poolReacciones]).slice(0, 20);
+                alert(`¡Ciclo ${currentCycle - 1} completado! A continuación comienza el Ciclo ${currentCycle} de 3.`);
+                cargar();
             } else {
-                finishQuiz();
+                // Se completaron los 3 ciclos (60 preguntas en total)
+                prepararEnvio();
             }
         }
     }
 
-    function finishQuiz() {
-        document.getElementById("progress-bar").style.width = "100%";
-        document.getElementById("screen-quiz").classList.add("hidden");
-        document.getElementById("screen-results").classList.remove("hidden");
-
-        const total = questions.length;
-        const percentage = Math.round((score / total) * 100);
-
-        document.getElementById("final-score").innerText = `${score} / ${total}`;
-        document.getElementById("percentage-display").innerText = `Calificación Final: ${percentage}%`;
-
-        sendResults(percentage);
+    function prepararEnvio() {
+        const finalP = ((correctCount / 60) * 100).toFixed(0);
+        document.getElementById('action-area').innerHTML = `<button id="btn-send" class="btn-action" onclick="enviar(${finalP})">Enviar Resultados Finales a la Nube 📤</button>`;
+        document.querySelector('.card h3').innerText = "🎉 ¡Evaluación de 3 Ciclos Finalizada!";
+        document.getElementById('equation-area').innerHTML = `<div style="font-size: 1.3rem; color: #38bdf8;">Calificación Global: ${finalP}%<br><span style="font-size: 1rem; color: var(--text-muted);">Aciertos totales: ${correctCount} de 60 reacciones</span></div>`;
     }
 
-    function sendResults(percentage) {
-        const statusMsg = document.getElementById("status-message");
-        statusMsg.innerText = "Registrando resultado en la base de datos institucional...";
-        statusMsg.className = "status-msg";
-        statusMsg.classList.remove("hidden");
-
-        const payload = {
-            modulo: "Reto Balanceo de Ecuaciones SEFAN",
-            nombre: studentData.name,
-            cedula: studentData.id,
-            puntaje: score,
-            total: questions.length,
-            porcentaje: percentage
+    async function enviar(p) {
+        const btn = document.getElementById('btn-send');
+        btn.disabled = true; 
+        btn.innerText = "Enviando registros...";
+        
+        const data = { 
+            nombre: userData.nombre, 
+            cedula: userData.cedula, 
+            puntos: p, 
+            intento: userData.intento 
         };
 
-        fetch(SCRIPT_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        })
-        .then(() => {
-            statusMsg.innerText = "¡Resultado registrado con éxito en la plataforma!";
-            statusMsg.classList.add("status-success");
-        })
-        .catch(err => {
-            console.error(err);
-            statusMsg.innerText = "Resultado almacenado localmente (sincronización pendiente con el servidor).";
-            statusMsg.classList.add("status-error");
-        });
+        try {
+            await fetch(GOOGLE_URL, { 
+                method: 'POST', 
+                mode: 'no-cors',
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(data) 
+            });
+            
+            alert("SISTEMA: Resultados de los 3 ciclos enviados con éxito al servidor institucional.");
+            document.getElementById('action-area').innerHTML = `<button class="btn-action" onclick="reintentar()" style="background:var(--secondary)">Reiniciar Evaluación 🔄</button>`;
+        } catch (e) {
+            alert("Error de conexión al enviar resultados.");
+            btn.disabled = false; 
+            btn.innerText = "Reintentar Envío";
+        }
+    }
+
+    function reintentar() {
+        userData.intento++;
+        correctCount = 0; 
+        cycleCorrect = 0; 
+        qIndex = 0; 
+        currentCycle = 1;
+        bancoActual = shuffle([...poolReacciones]).slice(0, 20);
+        
+        document.getElementById('percent').innerText = "0";
+        document.getElementById('total-correct').innerText = "0/60";
+        document.querySelector('.card h3').innerText = "Escriba los coeficientes enteros mínimos para balancear la ecuación:";
+        document.getElementById('action-area').innerHTML = `<button id="btn-check" class="btn-action" onclick="verificar()">Verificar Balanceo</button><button id="btn-next" class="btn-action" onclick="siguiente()" style="display:none; background: #334155;">Siguiente →</button>`;
+        cargar();
     }
 </script>
 </body>
