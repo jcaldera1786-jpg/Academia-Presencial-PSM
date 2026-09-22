@@ -1,419 +1,476 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cátedra de Química - Reto de Nomenclatura Química</title>
-  <style>
-    :root {
-      --primary-color: #1a365d;
-      --secondary-color: #2b6cb0;
-      --accent-color: #3182ce;
-      --bg-color: #f7fafc;
-      --card-bg: #ffffff;
-      --text-color: #2d3748;
-      --success-color: #38a169;
-      --error-color: #e53e3e;
-      --border-radius: 8px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEFAN - Reto Avanzado de Nomenclatura y Valencia | PSM</title>
+    <!-- MathJax Configuration para renderizar sintaxis LaTeX correctamente -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.85);
+            --accent-blue: #38bdf8;
+            --accent-green: #22c55e;
+            --accent-gold: #f59e0b;
+            --accent-teal: #14b8a6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --locked-color: #475569;
+            --error: #f43f5e;
+            --help: #d35400;
+        }
 
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
+        html {
+            background-color: var(--bg-color);
+        }
 
-    .container {
-      background-color: var(--card-bg);
-      border-radius: var(--border-radius);
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      width: 100%;
-      max-width: 700px;
-      padding: 30px;
-      box-sizing: border-box;
-    }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            isolation: isolate;
+        }
 
-    header {
-      text-align: center;
-      border-bottom: 2px solid var(--bg-color);
-      padding-bottom: 15px;
-      margin-bottom: 20px;
-    }
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: url("https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/assets/psm.png");
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: 320px 320px;
+            opacity: 0.15;
+            filter: blur(0.5px);
+            mix-blend-mode: screen;
+            pointer-events: none;
+            z-index: -1;
+        }
 
-    h1 {
-      color: var(--primary-color);
-      margin: 0 0 5px 0;
-      font-size: 1.6rem;
-    }
+        header {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-    p.subtitle {
-      color: #718096;
-      margin: 0;
-      font-size: 0.95rem;
-    }
+        header h1 {
+            margin: 0;
+            font-size: 1.4rem;
+            color: var(--accent-blue);
+            letter-spacing: 1px;
+        }
 
-    .form-group {
-      margin-bottom: 15px;
-    }
+        header p {
+            margin: 0.2rem 0 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
 
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: 600;
-      color: var(--primary-color);
-    }
+        .container {
+            width: 90%;
+            max-width: 850px;
+            margin: 1.5rem auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            position: relative;
+            z-index: 1;
+        }
 
-    input[type="text"] {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #cbd5e0;
-      border-radius: 4px;
-      box-sizing: border-box;
-      font-size: 1rem;
-    }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--accent-blue);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
 
-    .btn {
-      background-color: var(--secondary-color);
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 1rem;
-      width: 100%;
-      font-weight: bold;
-      transition: background-color 0.2s;
-    }
+        .instruction-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--accent-teal);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.2rem;
+            text-align: left;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
 
-    .btn:hover {
-      background-color: var(--primary-color);
-    }
+        .instruction-box b {
+            color: var(--accent-teal);
+        }
 
-    .btn:disabled {
-      background-color: #a0aec0;
-      cursor: not-allowed;
-    }
+        .formula-container {
+            background: #0f172a;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            margin-bottom: 1.2rem;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    .hidden {
-      display: none;
-    }
+        .formula-text {
+            font-size: 48px;
+            font-weight: bold;
+            color: var(--text-main);
+        }
 
-    .progress-bar-container {
-      width: 100%;
-      background-color: #edf2f7;
-      border-radius: 4px;
-      height: 10px;
-      margin-bottom: 20px;
-      overflow: hidden;
-    }
+        sub {
+            font-size: 0.6em;
+            vertical-align: sub;
+        }
 
-    .progress-bar {
-      height: 100%;
-      background-color: var(--accent-color);
-      width: 0%;
-      transition: width 0.3s ease;
-    }
+        sup {
+            font-size: 0.6em;
+            vertical-align: super;
+        }
 
-    .question-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 15px;
-    }
+        .input-group {
+            margin-bottom: 1rem;
+            text-align: left;
+        }
 
-    .options-container {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            color: var(--accent-blue);
+            font-size: 0.9rem;
+        }
 
-    .option-btn {
-      background-color: #edf2f7;
-      border: 1px solid #cbd5e0;
-      padding: 12px;
-      border-radius: 4px;
-      text-align: left;
-      cursor: pointer;
-      font-size: 0.95rem;
-      transition: all 0.2s;
-    }
+        input[type="text"] {
+            width: 100%;
+            padding: 0.7rem 0.8rem;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            background: #0f172a;
+            color: #fff;
+            font-size: 1rem;
+            box-sizing: border-box;
+            outline: none;
+        }
 
-    .option-btn:hover {
-      background-color: #e2e8f0;
-      border-color: #cbd5e0;
-    }
+        input[type="text"]:focus {
+            border-color: var(--accent-blue);
+        }
 
-    .option-btn.selected {
-      background-color: #ebf8ff;
-      border-color: var(--accent-color);
-      font-weight: 600;
-    }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 1rem;
+        }
 
-    .results-card {
-      text-align: center;
-      padding: 20px 0;
-    }
+        button {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: background 0.3s ease;
+        }
 
-    .score-display {
-      font-size: 2.5rem;
-      font-weight: bold;
-      color: var(--primary-color);
-      margin: 15px 0;
-    }
+        .btn-check {
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+        }
+        .btn-check:hover {
+            background: linear-gradient(135deg, #0369a1, #075985);
+        }
 
-    .status-msg {
-      padding: 10px;
-      border-radius: 4px;
-      margin-top: 15px;
-      font-weight: 600;
-    }
+        .btn-help {
+            background: linear-gradient(135deg, #d97706, #b45309);
+        }
+        .btn-help:hover {
+            background: linear-gradient(135deg, #b45309, #92400e);
+        }
 
-    .status-success {
-      background-color: #c6f6d5;
-      color: #22543d;
-    }
+        #feedback-box {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
 
-    .status-error {
-      background-color: #fed7d7;
-      color: #742a2a;
-    }
-  </style>
+        #tutor-box {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(15, 23, 42, 0.8);
+            border-left: 5px solid var(--accent-gold);
+            text-align: left;
+            font-size: 0.9rem;
+            border-radius: 0 8px 8px 0;
+            line-height: 1.4;
+        }
+
+        #next-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            display: none;
+            margin-top: 1rem;
+            font-size: 1rem;
+        }
+        #next-btn:hover {
+            background: linear-gradient(135deg, #15803d, #166534);
+        }
+
+        .nav-back {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+        .nav-back:hover {
+            color: var(--accent-blue);
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 1.5rem 0;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
 
-<div class="container">
-  <header>
-    <h1>Cátedra de Química</h1>
-    <p class="subtitle">Módulo: Lenguaje Químico | Reto de Nomenclatura Inorgánica</p>
-  </header>
+    <header>
+        <h1>SEFAN - QUÍMICA GENERAL</h1>
+        <p>Sistema de Evaluación Formativa Adaptativo por Niveles | PSM Maracaibo</p>
+    </header>
 
-  <!-- PANTALLA 1: REGISTRO DEL ESTUDIANTE -->
-  <div id="screen-register">
-    <div class="form-group">
-      <label for="student-name">Nombre y Apellido:</label>
-      <input type="text" id="student-name" placeholder="Ej. Juan Pérez" required>
-    </div>
-    <div class="form-group">
-      <label for="student-id">Cédula de Identidad:</label>
-      <input type="text" id="student-id" placeholder="Ej. V-12345678" required>
-    </div>
-    <button class="btn" onclick="startQuiz()">Iniciar Evaluación</button>
-  </div>
+    <div class="container">
+        <a href="index.html" class="nav-back">⬅ Volver al Menú Principal de SEFAN</a>
 
-  <!-- PANTALLA 2: BANCO DE PREGUNTAS -->
-  <div id="screen-quiz" class="hidden">
-    <div class="progress-bar-container">
-      <div id="progress-bar" class="progress-bar"></div>
-    </div>
-    <div id="question-number" style="font-size: 0.85rem; color: #718096; margin-bottom: 5px;"></div>
-    <div id="question-text" class="question-title"></div>
-    <div id="options-container" class="options-container"></div>
-    <button id="btn-next" class="btn" onclick="nextQuestion()" disabled>Siguiente Pregunta</button>
-  </div>
+        <div class="card">
+            <h2 style="color: var(--accent-blue); margin-top: 0; margin-bottom: 5px;">Módulo Nivel 3: Reto Avanzado de Nomenclatura</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0; margin-bottom: 1rem;">Banco ampliado de compuestos inorgánicos de alta complejidad.</p>
+            
+            <div class="instruction-box">
+                <b>📝 Instrucciones Académicas:</b><br>
+                1. Se acepta el nombre en cualquier nomenclatura oficial (Tradicional, Stock o IUPAC/Sistemática).<br>
+                2. El <b>Estado de Oxidación</b> DEBE incluir obligatoriamente el signo positivo (+) o negativo (-).<br>
+                3. Analiza la estequiometría y verifica la valencia del átomo central antes de validar.
+            </div>
+            
+            <div class="formula-container">
+                <div class="formula-text" id="formula-display">...</div>
+            </div>
+            
+            <div class="input-group">
+                <label>Nombre del Compuesto:</label>
+                <input type="text" id="user-name" placeholder="Ej: Oxido de Hierro (III) o Ferrico..." autocomplete="off">
+            </div>
 
-  <!-- PANTALLA 3: RESULTADOS Y ENVÍO -->
-  <div id="screen-results" class="hidden">
-    <div class="results-card">
-      <h2>Evaluación Finalizada</h2>
-      <p>Has completado el Reto de Nomenclatura Química.</p>
-      <div class="score-display" id="final-score">0 / 10</div>
-      <p id="percentage-display" style="font-weight: 600; font-size: 1.2rem;"></p>
-      <div id="status-message" class="status-msg hidden"></div>
+            <div class="input-group">
+                <label>Estado de Oxidación (Átomo Central / Metal):</label>
+                <input type="text" id="user-valencia" placeholder="Ej: +3, +6 o -2" autocomplete="off">
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn-check" onclick="validar()">Verificar Respuesta</button>
+                <button class="btn-help" onclick="solicitarAyuda()">Solicitar Ayuda 💡</button>
+            </div>
+
+            <div id="feedback-box"></div>
+            
+            <div id="tutor-box">
+                <strong style="color: var(--accent-gold);">Guía de Resolución:</strong>
+                <p id="tutor-msg" style="margin: 0.5rem 0 0; color: var(--text-main);"></p>
+            </div>
+            
+            <button id="next-btn" onclick="siguiente()">Siguiente Compuesto ➡</button>
+        </div>
     </div>
-  </div>
-</div>
+
+    <footer>
+        <p>Prof. Dr. José Ángel Caldera Luzardo | Instituto Universitario Politécnico "Santiago Mariño"</p>
+    </footer>
 
 <script>
-  const SCRIPT_URL = "URL_DE_TU_GOOGLE_APPS_SCRIPT";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx3J3H_1IWvejJpjtquuHV-HmXeoZ29PGo828lazfCrTijX8Uk1_fgDdzC8Xe_MdgZUhA/exec"; 
 
-  // BANCO DE PREGUNTAS DE NOMENCLATURA
-  const questions = [
-    {
-      id: "NOM_01",
-      q: "¿Cuál es el nombre según la nomenclatura Stock para el compuesto Fe₂O₃?",
-      options: ["Óxido de hierro(II)", "Óxido de hierro(III)", "Trióxido de dihierro", "Óxido ferroso"],
-      answer: 1
-    },
-    {
-      id: "NOM_02",
-      q: "¿Cuál es la fórmula química correcta del ácido sulfúrico?",
-      options: ["H₂SO₃", "H₂SO₄", "H₂S", "SO₃"],
-      answer: 1
-    },
-    {
-      id: "NOM_03",
-      q: "Según la nomenclatura tradicional, ¿cómo se nombra el compuesto Fe(OH)₂?",
-      options: ["Hidróxido férrico", "Hidróxido ferroso", "Hidróxido de hierro(II)", "Dihidróxido de hierro"],
-      answer: 1
-    },
-    {
-      id: "NOM_04",
-      q: "¿Cuál es el nombre sistemático (IUPAC) para el compuesto CO₂?",
-      options: ["Monóxido de carbono", "Dióxido de carbono", "Óxido de carbono(IV)", "Árbol carbónico"],
-      answer: 1
-    },
-    {
-      id: "NOM_05",
-      q: "¿Cuál es la fórmula correcta del hidróxido de aluminio?",
-      options: ["AlOH", "Al(OH)₂", "Al(OH)₃", "Al₃OH"],
-      answer: 2
-    },
-    {
-      id: "NOM_06",
-      q: "¿Cómo se llama la sal binaria NaCl según la nomenclatura tradicional y Stock?",
-      options: ["Clorato de sodio", "Cloruro de sodio", "Clorito sódico", "Sulfato de sodio"],
-      answer: 1
-    },
-    {
-      id: "NOM_07",
-      q: "¿Qué fórmula corresponde al ácido clorhídrico en solución acuosa?",
-      options: ["HCl", "HClO", "HClO₃", "HClO₄"],
-      answer: 0
-    },
-    {
-      id: "NOM_08",
-      q: "El compuesto CaCO₃ corresponde a la sal oxisAL denominada:",
-      options: ["Carbonito de calcio", "Carbonato de calcio", "Carburo de calcio", "Óxido de calcio"],
-      answer: 1
-    },
-    {
-      id: "NOM_09",
-      q: "¿Cuál es la fórmula química del nitrato de potasio?",
-      options: ["KNO₂", "KNO₃", "K₃N", "KClO₃"],
-      answer: 1
-    },
-    {
-      id: "NOM_10",
-      q: "¿Cuál es el estado de oxidación del azufre en el anión sulfato (SO₄²⁻)?",
-      options: ["+2", "+4", "+6", "-2"],
-      answer: 2
-    }
-  ];
+    // Banco de ejercicios ampliado y con mayor complejidad técnica (Química Inorgánica Avanzada)
+    const bancoOriginal = [
+        { f: "NaCl", c: ["cloruro de sodio"], v: "+1", hint: "Sal binaria simple. El Na pertenece al grupo 1." },
+        { f: "H<sub>2</sub>SO<sub>4</sub>", c: ["acido sulfurico", "tetraoxosulfato (vi) de hidrogeno"], v: "+6", hint: "Oxoácido fuerte. Azufre actuando con su valencia máxima." },
+        { f: "KOH", c: ["hidroxido de potasio"], v: "+1", hint: "Hidróxido básico de metal alcalino." },
+        { f: "Fe<sub>2</sub>O<sub>3</sub>", c: ["oxido ferrico", "oxido de hierro (iii)", "trioxido de dihierro"], v: "+3", hint: "Óxido metálico. El hierro emplea su valencia superior." },
+        { f: "KMnO<sub>4</sub>", c: ["permanganato de potasio", "tetraoxomanganato (vii) de potasio"], v: "+7", hint: "Oxisat con manganeso en su estado de oxidación más alto." },
+        { f: "HCl", c: ["acido clorhidrico", "cloruro de hidrogeno"], v: "-1", hint: "Hidrácido en solución acuosa. Cloro con estado de oxidación negativo." },
+        { f: "CO<sub>2</sub>", c: ["dioxido de carbono", "anhidrido carbonico"], v: "+4", hint: "Óxido ácido (anhídrido) del carbono." },
+        { f: "NaOH", c: ["hidroxido de sodio", "sosa caustica"], v: "+1", hint: "Base fuerte de gran uso industrial." },
+        { f: "CuSO<sub>4</sub>", c: ["sulfato de cobre (ii)", "sulfato cuprico"], v: "+2", hint: "Sal oxisal derivada del cobre divalente." },
+        { f: "NH<sub>3</sub>", c: ["amoniaco", "trihidruro de nitrogeno"], v: "-3", hint: "Hidruro no metálico nitrogenado con valencia formal -3." },
+        { f: "H<sub>2</sub>O<sub>2</sub>", c: ["peroxido de hidrogeno", "agua oxigenada"], v: "-1", hint: "Excepción peróxidos: El oxígeno actúa con estado de oxidación -1." },
+        { f: "K<sub>2</sub>Cr<sub>2</sub>O<sub>7</sub>", c: ["dicromato de potasio", "heptaoxodicromato (vi) de potasio"], v: "+6", hint: "Sal oxisal compleja con cromo hexavalente." },
+        { f: "MgO", c: ["oxido de magnesio"], v: "+2", hint: "Óxido básico de metal alcalinotérreo." },
+        { f: "HNO<sub>3</sub>", c: ["acido nitrico", "trioxonitrato (v) de hidrogeno"], v: "+5", hint: "Oxoácido nitrogenado. Nitrógeno con valencia +5." },
+        { f: "Al(OH)<sub>3</sub>", c: ["hidroxido de aluminio"], v: "+3", hint: "Hidróxido anfótero del grupo 13." },
+        { f: "CaCO<sub>3</sub>", c: ["carbonato de calcio", "trioxocarbonato (iv) de calcio"], v: "+4", hint: "Sal oxisal. El carbono central opera con valencia +4." },
+        { f: "LiH", c: ["hidruro de litio"], v: "-1", hint: "Hidruro metálico salino. El hidrógeno actúa como hidruro (-1)." },
+        { f: "SO<sub>3</sub>", c: ["trioxido de azufre", "anhidrido sulfurico"], v: "+6", hint: "Anhídrido superior del azufre." },
+        { f: "AgCl", c: ["cloruro de plata"], v: "+1", hint: "Sal binaria insoluble. La plata mantiene número de oxidación fijo +1." },
+        { f: "FeSO<sub>4</sub>", c: ["sulfato ferroso", "sulfato de hierro (ii)"], v: "+2", hint: "Sal oxisal. El hierro actúa con su menor valencia (+2)." },
+        { f: "H<sub>3</sub>PO<sub>4</sub>", c: ["acido fosforico", "tetraoxofosfato (v) de hidrogeno"], v: "+5", hint: "Triácido oxigenado del fósforo pentavalente." },
+        { f: "PbO<sub>2</sub>", c: ["oxido plumbico", "oxido de plomo (iv)", "dioxido de plomo"], v: "+4", hint: "Óxido metálico superior. El plomo actúa con valencia +4." },
+        { f: "Ni(OH)<sub>2</sub>", c: ["hidroxido niqueloso", "hidroxido de niquel (ii)"], v: "+2", hint: "Hidróxido metálico con níquel divalente." },
+        { f: "ZnCl<sub>2</sub>", c: ["cloruro de zinc"], v: "+2", hint: "Sal haloidea. El zinc posee estado de oxidación fijo +2." },
+        { f: "HClO", c: ["acido hipocloroso", "oxoclorato (i) de hidrogeno"], v: "+1", hint: "Ácido oxácido con cloro en su estado de oxidación mínimo positivo (+1)." },
+        { f: "Na<sub>2</sub>O", c: ["oxido de sodio"], v: "+1", hint: "Óxido básico de metal alcalino." },
+        { f: "Ba(OH)<sub>2</sub>", c: ["hidroxido de bario"], v: "+2", hint: "Hidróxido alcalinotérreo fuerte." },
+        { f: "P<sub>2</sub>O<sub>5</sub>", c: ["pentaoxido de difosforo", "anhidrido fosforico"], v: "+5", hint: "Óxido ácido del fósforo con valencia +5." },
+        { f: "K<sub>2</sub>O", c: ["oxido de potasio"], v: "+1", hint: "Óxido básico monovalente." },
+        { f: "HBr", c: ["acido bromhidrico", "bromuro de hidrogeno"], v: "-1", hint: "Hidrácido derivado del bromo." },
+        // --- Nuevos compuestos de mayor complejidad añadidos ---
+        { f: "HIO<sub>3</sub>", c: ["acido iodico", "trioxoyodato (v) de hidrogeno", "acido yodico"], v: "+5", hint: "Ácido oxigenado del yodo con valencia pentavalente." },
+        { f: "Fe(OH)<sub>3</sub>", c: ["hidroxido ferrico", "hidroxido de hierro (iii)"], v: "+3", hint: "Hidróxido metálico con hierro trivalente." },
+        { f: "NaHSO<sub>4</sub>", c: ["sulfato acido de sodio", "hidrogenosulfato de sodio"], v: "+6", hint: "Sal ácida derivada del ácido sulfúrico." },
+        { f: "HClO<sub>4</sub>", c: ["acido perclorico", "tetraoxoclorato (vii) de hidrogeno"], v: "+7", hint: "Oxoácido hiperhalogenado. Cloro con valencia máxima +7." },
+        { f: "Cu<sub>2</sub>O", c: ["oxido cuproso", "oxido de cobre (i)", "monoxido de dicobre"], v: "+1", hint: "Óxido metálico. Cobre actuando con su menor valencia (+1)." },
+        { f: "Na<sub>2</sub>O<sub>2</sub>", c: ["peroxido de sodio"], v: "-1", hint: "Compuesto especial con enlace peróxido O-O." },
+        { f: "H<sub>4</sub>P<sub>2</sub>O<sub>7</sub>", c: ["acido pirofosforico", "heptaoxodifosfato (v) de hidrogeno"], v: "+5", hint: "Piroácido obtenido por deshidratación parcial de dos moléculas de ácido ortofosfórico." },
+        { f: "PtCl<sub>4</sub>", c: ["cloruro platinico", "cloruro de platino (iv)"], v: "+4", hint: "Sal binaria de metal de transición noble con estado de oxidación +4." }
+    ];
 
-  let currentQuestionIndex = 0;
-  let score = 0;
-  let selectedOption = null;
-  let studentData = { name: "", id: "" };
+    let examen = [];
+    let current = 0;
 
-  function startQuiz() {
-    const nameInput = document.getElementById("student-name").value.trim();
-    const idInput = document.getElementById("student-id").value.trim();
-
-    if (!nameInput || !idInput) {
-      alert("Por favor, ingresa tu Nombre y Cédula para comenzar.");
-      return;
+    function limpiarTexto(texto) {
+        return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
     }
 
-    studentData.name = nameInput;
-    studentData.id = idInput;
-
-    document.getElementById("screen-register").classList.add("hidden");
-    document.getElementById("screen-quiz").classList.remove("hidden");
-
-    loadQuestion();
-  }
-
-  function loadQuestion() {
-    selectedOption = null;
-    const btnNext = document.getElementById("btn-next");
-    btnNext.disabled = true;
-    btnNext.innerText = (currentQuestionIndex === questions.length - 1) ? "Finalizar y Enviar" : "Siguiente Pregunta";
-
-    const qData = questions[currentQuestionIndex];
-    document.getElementById("question-number").innerText = `Pregunta ${currentQuestionIndex + 1} de ${questions.length}`;
-    document.getElementById("question-text").innerText = qData.q;
-
-    const progressPct = ((currentQuestionIndex) / questions.length) * 100;
-    document.getElementById("progress-bar").style.width = `${progressPct}%`;
-
-    const optionsContainer = document.getElementById("options-container");
-    optionsContainer.innerHTML = "";
-
-    qData.options.forEach((optText, index) => {
-      const btn = document.createElement("button");
-      btn.className = "option-btn";
-      btn.innerText = optText;
-      btn.onclick = () => selectOption(index, btn);
-      optionsContainer.appendChild(btn);
-    });
-  }
-
-  function selectOption(index, element) {
-    selectedOption = index;
-    const allBtns = document.querySelectorAll(".option-btn");
-    allBtns.forEach(b => b.classList.remove("selected"));
-    element.classList.add("selected");
-
-    document.getElementById("btn-next").disabled = false;
-  }
-
-  function nextQuestion() {
-    if (selectedOption === null) return;
-
-    if (selectedOption === questions[currentQuestionIndex].answer) {
-      score++;
+    function mezclarYEmpezar() {
+        examen = [...bancoOriginal].sort(() => Math.random() - 0.5);
+        current = 0;
+        cargar();
     }
 
-    currentQuestionIndex++;
-
-    if (currentQuestionIndex < questions.length) {
-      loadQuestion();
-    } else {
-      finishQuiz();
+    function cargar() {
+        document.getElementById('formula-display').innerHTML = examen[current].f;
+        document.getElementById('feedback-box').style.display = 'none';
+        document.getElementById('tutor-box').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('user-name').value = '';
+        document.getElementById('user-valencia').value = '';
+        document.getElementById('user-name').disabled = false;
+        document.getElementById('user-valencia').disabled = false;
     }
-  }
 
-  function finishQuiz() {
-    document.getElementById("progress-bar").style.width = "100%";
-    document.getElementById("screen-quiz").classList.add("hidden");
-    document.getElementById("screen-results").classList.remove("hidden");
+    async function validar() {
+        const resNomOriginal = document.getElementById('user-name').value.trim();
+        const resVal = document.getElementById('user-valencia').value.trim();
+        const fBox = document.getElementById('feedback-box');
+        
+        if (!resNomOriginal || !resVal) {
+            alert("Por favor, completa ambos campos obligatorios.");
+            return;
+        }
 
-    const total = questions.length;
-    const percentage = Math.round((score / total) * 100);
+        const nombreLimpio = limpiarTexto(resNomOriginal);
+        const nombreValido = examen[current].c.some(opcion => limpiarTexto(opcion) === nombreLimpio);
+        const valenciaValida = resVal === examen[current].v;
 
-    document.getElementById("final-score").innerText = `${score} / ${total}`;
-    document.getElementById("percentage-display").innerText = `Calificación: ${percentage}%`;
+        fBox.style.display = 'block';
+        fBox.style.backgroundColor = "rgba(245, 158, 11, 0.2)";
+        fBox.style.border = "1px solid var(--accent-gold)";
+        fBox.style.color = "var(--accent-gold)";
+        fBox.innerHTML = "🧪 Procesando y validando respuesta...";
 
-    sendResults(percentage);
-  }
+        const datos = {
+            origen: "SEFAN_NIVEL_3_NOMENCLATURA",
+            nombre: "Estudiante_PSM",
+            formula: examen[current].f.replace(/<[^>]*>?/gm, ''),
+            respuestaAlumno: `Nombre: ${resNomOriginal} | Val: ${resVal}`,
+            respuestaCorrecta: `Nombre: ${examen[current].c[0]} | Val: ${examen[current].v}`,
+            modo: "Practica_Nomenclatura_Avanzada"
+        };
 
-  function sendResults(percentage) {
-    const statusMsg = document.getElementById("status-message");
-    statusMsg.innerText = "Guardando resultado en el sistema...";
-    statusMsg.className = "status-msg";
-    statusMsg.classList.remove("hidden");
+        const payload = new URLSearchParams();
+        for (const key in datos) {
+            payload.append(key, datos[key]);
+        }
 
-    const payload = {
-      modulo: "Reto Nomenclatura Química",
-      nombre: studentData.name,
-      cedula: studentData.id,
-      puntaje: score,
-      total: questions.length,
-      porcentaje: percentage
-    };
+        try {
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: payload.toString()
+            });
 
-    fetch(SCRIPT_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    })
-    .then(() => {
-      statusMsg.innerText = "¡Resultado registrado con éxito en la plataforma!";
-      statusMsg.classList.add("status-success");
-    })
-    .catch(err => {
-      console.error(err);
-      statusMsg.innerText = "Resultado guardado localmente (no se pudo sincronizar con el servidor).";
-      statusMsg.classList.add("status-error");
-    });
-  }
+            if (nombreValido && valenciaValida) {
+                fBox.style.backgroundColor = 'rgba(34, 197, 94, 0.2)';
+                fBox.style.border = '1px solid var(--accent-green)';
+                fBox.style.color = '#4ade80';
+                fBox.innerHTML = "✅ ¡Excelente! Nombre y estado de oxidación correctos.";
+            } else {
+                fBox.style.backgroundColor = 'rgba(239, 68, 68, 0.2)';
+                fBox.style.border = '1px solid var(--error)';
+                fBox.style.color = '#fca5a5';
+                fBox.innerHTML = "❌ Hay errores en tu nomenclatura o en el estado de oxidación indicado.";
+            }
+            
+            document.getElementById('next-btn').style.display = 'block';
+            document.getElementById('user-name').disabled = true;
+            document.getElementById('user-valencia').disabled = true;
+
+        } catch (error) {
+            fBox.innerHTML = "⚠️ Error de conexión al registrar los datos.";
+        }
+    }
+
+    function solicitarAyuda() {
+        const tBox = document.getElementById('tutor-box');
+        const tMsg = document.getElementById('tutor-msg');
+        tMsg.innerHTML = `<strong>Nombres válidos:</strong> ${examen[current].c.join(" / ")}<br><strong>Estado de Oxidación correcto:</strong> ${examen[current].v}<br><br><strong>Pista conceptual:</strong> ${examen[current].hint}`;
+        tBox.style.display = 'block';
+        document.getElementById('next-btn').style.display = 'block';
+    }
+
+    function siguiente() {
+        current++;
+        if (current < examen.length) {
+            cargar();
+        } else {
+            alert("¡Felicitaciones! Has completado todo el banco ampliado de nomenclatura.");
+            mezclarYEmpezar();
+        }
+    }
+
+    window.onload = mezclarYEmpezar;
 </script>
 </body>
 </html>
