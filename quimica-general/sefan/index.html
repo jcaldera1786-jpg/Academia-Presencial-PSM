@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SEFAN - Química General | PSM</title>
+    <!-- MathJax Configuration para renderizar sintaxis LaTeX correctamente -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -16,6 +27,7 @@
             --text-muted: #94a3b8;
             --border-color: rgba(255, 255, 255, 0.1);
             --locked-color: #475569;
+            --error: #f43f5e;
         }
 
         html {
@@ -236,6 +248,51 @@
             background: linear-gradient(135deg, #0f766e, #115e59);
         }
 
+        .option-btn-n2 { 
+            display: block; 
+            width: 100%; 
+            padding: 14px 18px; 
+            margin: 10px 0; 
+            border: 2px solid #334155; 
+            border-radius: 10px; 
+            background: #0f172a; 
+            cursor: pointer; 
+            text-align: left; 
+            font-size: 1rem; 
+            font-weight: 500; 
+            color: #f8fafc; 
+            transition: all 0.25s ease; 
+        }
+        .option-btn-n2:hover:not(:disabled) { 
+            border-color: var(--accent-blue); 
+            background: rgba(56, 189, 248, 0.08); 
+        }
+        .option-btn-n2.correct { 
+            background: rgba(34, 197, 94, 0.2) !important; 
+            border-color: var(--accent-green) !important; 
+            color: #4ade80 !important; 
+            font-weight: 600; 
+        }
+        .option-btn-n2.wrong { 
+            background: rgba(239, 68, 68, 0.2) !important; 
+            border-color: var(--error) !important; 
+            color: #fca5a5 !important; 
+            font-weight: 600; 
+        }
+        .progress-n2 { 
+            height: 8px; 
+            background: #334155; 
+            border-radius: 4px; 
+            margin: 15px 0; 
+            overflow: hidden; 
+        }
+        #progress-fill-n2 { 
+            height: 100%; 
+            background: linear-gradient(90deg, #0ea5e9, #6366f1); 
+            width: 0%; 
+            transition: width 0.4s ease; 
+        }
+
         footer {
             margin-top: auto;
             padding: 1.5rem 0;
@@ -260,7 +317,8 @@
         <div class="student-card" id="card-identificacion">
             <h3>Identificación del Estudiante</h3>
             <div class="form-grid">
-                <input type="text" id="ci-input" class="input-field" placeholder="Cédula de Identidad">
+                <!-- Se agregó onkeypress y onpaste para restringir solo a números -->
+                <input type="text" id="ci-input" class="input-field" placeholder="Cédula de Identidad" onkeypress="return soloNumeros(event)" onpaste="return false">
                 <input type="text" id="name-input" class="input-field" placeholder="Nombre y Apellido">
                 <button onclick="registrarEstudiante()" class="btn-action" style="flex: 1 1 120px; background: var(--accent-teal);">
                     Registrar / Conectar 📤
@@ -310,9 +368,9 @@
                     <span class="level-badge">Estructura</span>
                 </div>
                 <div class="level-desc">
-                    Números cuánticos, distribución electrónica de átomos e iones, y periodicidad química.
+                    Números cuánticos, distribución electrónica de átomos e iones, y periodicidad química (30 preguntas prácticas y teóricas).
                 </div>
-                <a href="https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/quimica-general/sefan/reto-atomico/index.html" class="btn-action">Iniciar Desafío Nivel 2 🧪</a>
+                <button onclick="iniciarNivel2Practico()" class="btn-action">Iniciar Desafío Nivel 2 🧪</button>
             </div>
 
             <!-- NIVEL 3 -->
@@ -327,7 +385,6 @@
                 <div style="display: flex; flex-direction: column; gap: 8px;">
                     <a href="https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/quimica-general/sefan/reto_nomenclatura/index.html" class="btn-action">Ir al Reto de Nomenclatura 🏷️</a>
                     <a href="https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/quimica-general/herramientas/balanceo/index.html" class="btn-action btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 0; text-align: center; text-decoration: none;">Ir al Reto de Balanceo ⚖️</a>
-                    
                 </div>
             </div>
 
@@ -427,6 +484,46 @@
             </div>
         </div>
 
+        <!-- CONTENEDOR ESPECÍFICO PARA EL NIVEL 2 PRÁCTICO -->
+        <div id="nivel2-container" class="quiz-card" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.8rem; margin-bottom: 1.2rem;">
+                <div>
+                    <h3 style="margin: 0; color: var(--accent-blue);">Desafío SEFAN - Nivel 2: Cuánticos y Configuración</h3>
+                    <span id="n2-q-number" style="font-size: 0.85rem; color: var(--text-muted);">Cargando...</span>
+                </div>
+                <button onclick="salirDelModulo()" class="btn-action btn-secondary" style="width: auto; padding: 0.4rem 0.8rem;">⬅ Salir al Menú</button>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; color:#64748b; font-weight:700; font-size:0.9em; margin-bottom: 5px;">
+                <span>Progreso del test práctico</span>
+                <span id="n2-score-text" style="color: var(--accent-blue);">Aciertos: 0</span>
+            </div>
+            <div class="progress-n2"><div id="progress-fill-n2"></div></div>
+            
+            <h2 id="n2-q-text" style="margin:20px 0 25px 0; min-height:60px; font-size: 1.1em; color: #f8fafc; line-height: 1.4;"></h2>
+            <div id="n2-options-area"></div>
+            <div id="n2-feedback" style="display:none; margin-top: 15px; padding: 15px; border-radius: 8px; border-left: 5px solid #ccc; font-size: 0.95em; line-height: 1.5; background: #0f172a; color: #f8fafc;"></div>
+            
+            <button id="n2-next-btn" class="btn-action" style="display:none; margin-top: 20px; background: var(--accent-green);" onclick="n2ShowNext()">Siguiente Pregunta →</button>
+        </div>
+
+        <!-- CONTENEDOR DE RESULTADOS DEL NIVEL 2 -->
+        <div id="nivel2-result-container" class="quiz-card" style="display: none; text-align:center;">
+            <h2 style="color: var(--accent-gold); margin-top:5px;">¡Evaluación Práctica Finalizada!</h2>
+            <div style="background:#0f172a; padding:20px; border-radius:12px; margin:20px 0; border:1px solid var(--border-color);">
+                <p style="font-size:3em; font-weight:900; margin:0; color:var(--accent-blue);" id="n2-res-percent">0%</p>
+                <p id="n2-res-detail" style="font-weight:600; color:var(--text-muted); margin-top: 8px;"></p>
+            </div>
+            
+            <div style="text-align:left; margin-bottom:15px;">
+                <p style="font-weight:700; color:var(--accent-blue); margin-bottom:5px; font-size: 0.9em;">Registro de Progresión (Sincronización):</p>
+                <textarea id="n2-csv-output" readonly style="width: 100%; height: 90px; margin-top: 5px; font-family: monospace; padding: 10px; box-sizing: border-box; font-size: 0.8em; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: #94a3b8;"></textarea>
+            </div>
+
+            <button id="n2-send-btn" class="btn-action" style="background:#0284c7; margin-bottom: 10px;" onclick="n2SendToGoogle()">🚀 Enviar Resultados a Google Sheets (GAS)</button>
+            <button onclick="salirDelModulo()" class="btn-action btn-secondary">Volver a la Ruta de Niveles</button>
+        </div>
+
     </div>
 
     <footer>
@@ -436,436 +533,629 @@
     <script>
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxk-sK0Ut4YJWe67OJEqAyq9-Zf6-pA1TFFS8FIxEbva1FyFe0VUQ2bFM1_W46EJKUI7A/exec";
 
-const BANCO_TEORICO = {
-    1: [
-        {
-            enunciado: "1. ¿Cuál fue el postulado principal de John Dalton sobre la naturaleza de la materia a principios del siglo XIX?",
-            opciones: [
-                "La materia está formada por átomos indivisibles e indestructibles.",
-                "El átomo contiene un núcleo denso con carga positiva.",
-                "Los electrones giran en órbitas cuantizadas de energía.",
-                "El átomo es una esfera con cargas negativas incrustadas."
-            ],
-            correcta: 0,
-            explicacion: "Dalton propuso el primer modelo atómico con base científica, postulando que la materia está compuesta por átomos indivisibles e indestructibles."
-        },
-        {
-            enunciado: "2. ¿Cuál fue una de las principales limitaciones o desventajas del modelo atómico de Dalton?",
-            opciones: [
-                "No explicaba la gravedad dentro del átomo.",
-                "No permitía la existencia de isótopos ni la naturaleza eléctrica de la materia.",
-                "Consideraba que el núcleo era demasiado grande.",
-                "Introdujo órbitas elípticas en lugar de circulares."
-            ],
-            correcta: 1,
-            explicacion: "El modelo de Dalton consideraba a los átomos de un elemento idénticos e indivisibles, sin prever la existencia de isótopos ni fenómenos eléctricos."
-        },
-        {
-            enunciado: "3. En el experimento de tubos de rayos catódicos realizado por J.J. Thomson, ¿qué evidencia demostró la existencia de los electrones?",
-            opciones: [
-                "La desviación de los rayos hacia la placa cargada positivamente en un campo eléctrico.",
-                "La emisión de partículas alfa tras golpear una lámina de oro.",
-                "El espectro de emisión discontinuo del hidrógeno.",
-                "La absorción de fotones por la materia a altas temperaturas."
-            ],
-            correcta: 0,
-            explicacion: "Los rayos catódicos se desviaban hacia la placa positiva, demostrando que estaban formados por corpúsculos con carga negativa (electrones)."
-        },
-        {
-            enunciado: "4. ¿Qué nombre recibe el modelo atómico propuesto por J.J. Thomson?",
-            opciones: [
-                "Modelo planetario.",
-                "Modelo del pastel de pasas (pudín de pasas).",
-                "Modelo mecánico cuántico.",
-                "Modelo de órbitas estacionarias."
-            ],
-            correcta: 1,
-            explicacion: "El modelo de Thomson imaginaba a los electrones incrustados en una masa esférica de carga positiva, asemejándose a un pudín de pasas."
-        },
-        {
-            enunciado: "5. ¿Cuál fue el acierto fundamental del modelo atómico de J.J. Thomson?",
-            opciones: [
-                "Descubrir el neutrón dentro del núcleo.",
-                "Reconocer por primera vez la naturaleza eléctrica y subatómica de la materia.",
-                "Calcular la masa exacta del protón.",
-                "Explicar el comportamiento de los gases ideales."
-            ],
-            correcta: 1,
-            explicacion: "Thomson introdujo el concepto de partículas subatómicas al demostrar que los átomos no eran indivisibles, sino que contenían cargas eléctricas."
-        },
-        {
-            enunciado: "6. En el experimento de Ernest Rutherford (lámina de oro), ¿qué observación crítica descartó el modelo de Thomson?",
-            opciones: [
-                "La mayoría de las partículas alfa rebotaron en la lámina.",
-                "Una pequeña fracción de partículas alfa se desviaron en ángulos muy grandes o rebotaron hacia atrás.",
-                "Las partículas alfa aumentaron su velocidad al atravesar el oro.",
-                "Las partículas alfa cambiaron su carga de positiva a negativa."
-            ],
-            correcta: 1,
-            explicacion: "Aunque casi todas las partículas pasaron de largo, unas pocas sufrieron grandes desviaciones, lo que evidenció un núcleo extremadamente denso y positivo."
-        },
-        {
-            enunciado: "7. ¿Qué conclusión crítica obtuvo Rutherford a partir del desvío de las partículas alfa?",
-            opciones: [
-                "El átomo es mayoritariamente espacio vacío con un núcleo pequeño, denso y positivo.",
-                "Los electrones están fusionados con los protones en el centro.",
-                "El átomo carece de carga eléctrica.",
-                "Los neutrones forman la corteza exterior del átomo."
-            ],
-            correcta: 0,
-            explicacion: "Rutherford concluyó que la masa y la carga positiva se concentran en un núcleo central diminuto, rodeado de un amplio espacio vacío."
-        },
-        {
-            enunciado: "8. ¿Cuál es la principal desventaja o falla teórica del modelo planetario de Rutherford según la física clásica?",
-            opciones: [
-                "No explicaba por qué los electrones no perdían energía y colapsaban contra el núcleo.",
-                "Afirmaba que los protones tenían carga negativa.",
-                "Negaba la presencia de electrones en el átomo.",
-                "No permitía calcular la masa del átomo de helio."
-            ],
-            correcta: 0,
-            explicacion: "Según la electrodinámica clásica, una carga acelerada (el electrón girando) emite radiación electromagnética y colapsaría rápidamente hacia el núcleo."
-        },
-        {
-            enunciado: "9. ¿Qué postuló Niels Bohr para resolver la inestabilidad del modelo atómico de Rutherford?",
-            opciones: [
-                "Los electrones orbitan en niveles discretos (cuantizados) de energía sin emitir radiación.",
-                "Los protones se mueven libremente fuera del núcleo.",
-                "El electrón es una onda estacionaria que llena todo el átomo.",
-                "La atracción electromagnética se anula con la masa del neutrón."
-            ],
-            correcta: 0,
-            explicacion: "Bohr introdujo la cuantización de la energía, postulando órbitas circulares estacionarias donde el electrón no radia energía."
-        },
-        {
-            enunciado: "10. ¿Cuál fue el gran acierto experimental del modelo atómico de Niels Bohr?",
-            opciones: [
-                "Explicar matemáticamente el espectro de emisión del átomo de hidrógeno.",
-                "Descubrir la existencia de los quarks.",
-                "Predecir la masa exacta de los átomos polielectrónicos.",
-                "Explicar el enlace covalente no polar."
-            ],
-            correcta: 0,
-            explicacion: "El modelo de Bohr encajó perfectamente con las líneas espectrales observadas experimentalmente en el átomo de hidrógeno."
-        },
-        {
-            enunciado: "11. ¿Cuál es una desventaja o limitación crítica del modelo atómico de Bohr?",
-            opciones: [
-                "Solo funciona con precisión para átomos hidrogenoides (un solo electrón).",
-                "Afirmaba que el núcleo contenía electrones.",
-                "No utilizaba las leyes de la física clásica en ningún punto.",
-                "Asumía que los electrones no tenían masa."
-            ],
-            correcta: 0,
-            explicacion: "El modelo de Bohr fallaba al intentar explicar los espectros de átomos con dos o más electrones debido a las interacciones interelectrónicas."
-        },
-        {
-            enunciado: "12. ¿Qué científico descubrió el neutrón en 1932, completando el modelo básico de partículas subatómicas?",
-            opciones: [
-                "James Chadwick.",
-                "Robert Millikan.",
-                "Louis de Broglie.",
-                "Erwin Schrödinger."
-            ],
-            correcta: 0,
-            explicacion: "James Chadwick descubrió el neutrón mediante experimentos con radiación penetrante, justificando la masa faltante en los núcleos atómicos."
-        },
-        {
-            enunciado: "13. El experimento de la gota de aceite de Robert Millikan permitió determinar experimentalmente:",
-            opciones: [
-                "La carga eléctrica del electrón.",
-                "La masa del núcleo atómico.",
-                "El radio atómico del hidrógeno.",
-                "La velocidad de la luz en el vacío."
-            ],
-            correcta: 0,
-            explicacion: "Mediante el equilibrio de gotas de aceite cargadas en un campo eléctrico, Millikan midió con precisión la carga elemental del electrón."
-        },
-        {
-            enunciado: "14. ¿Cómo se define el número atómico (Z) de un elemento químico?",
-            opciones: [
-                "El número total de protones presentes en el núcleo.",
-                "La suma de protones y neutrones en el núcleo.",
-                "El número de electrones en la última capa de valencia.",
-                "La masa promedio de los isótopos del elemento."
-            ],
-            correcta: 0,
-            explicacion: "El número atómico (Z) identifica de manera unívoca a cada elemento químico y representa la cantidad de protones en su núcleo."
-        },
-        {
-            enunciado: "15. ¿Cómo se define el número de masa (A) de un átomo?",
-            opciones: [
-                "La suma del número de protones (Z) y el número de neutrones (N).",
-                "El número total de electrones en el átomo neutro.",
-                "La diferencia entre protones y electrones.",
-                "La cantidad de niveles de energía ocupados."
-            ],
-            correcta: 0,
-            explicacion: "El número másico (A) engloba prácticamente toda la masa del átomo al sumar los nucleones fundamentales: protones y neutrones."
-        },
-        {
-            enunciado: "16. Dos átomos son considerados isótopos entre sí cuando poseen:",
-            opciones: [
-                "El mismo número atómico (Z), pero diferente número de masa (A).",
-                "El mismo número de masa (A), pero diferente número atómico (Z).",
-                "El mismo número de neutrones y diferente número de protones.",
-                "La misma masa y las mismas propiedades físicas."
-            ],
-            correcta: 0,
-            explicacion: "Los isótopos pertenecen al mismo elemento químico (igual Z), pero varían en su número de neutrones y por ende en su masa (A)."
-        },
-        {
-            enunciado: "17. Un catión se forma formalmente cuando un átomo neutro:",
-            opciones: [
-                "Pierde uno o más electrones, adquiriendo carga positiva.",
-                "Gana uno o más electrones, acquiring carga negativa.",
-                "Pierde protones del núcleo.",
-                "Gana neutrones en el núcleo."
-            ],
-            correcta: 0,
-            explicacion: "Al perder cargas negativas (electrones), el átomo desbalancea su proporción y queda con carga neta positiva (catión)."
-        },
-        {
-            enunciado: "18. ¿Qué diferencia a un anión de un átomo neutro del mismo elemento?",
-            opciones: [
-                "El anión tiene un número mayor de electrones que de protones.",
-                "El anión tiene mayor número de protones en el núcleo.",
-                "El anión no posee electrones en la capa externa.",
-                "El anión tiene un valor de Z más elevado."
-            ],
-            correcta: 0,
-            explicacion: "Un anión se produce al ganar electrones, por lo que el número de cargas negativas supera al de protones positivos."
-        },
-        {
-            enunciado: "19. El principio de dualidad onda-partícula propuesto por Louis de Broglie establece que:",
-            opciones: [
-                "Toda partícula en movimiento (como el electrón) lleva asociada una onda.",
-                "Los electrones son exclusivamente ondas electromagnéticas.",
-                "Los fotones tienen masa en reposo idéntica a la del protón.",
-                "La materia no puede convertirse en energía bajo ninguna circunstancia."
-            ],
-            correcta: 0,
-            explicacion: "De Broglie sugirió que las partículas materiales con cantidad de movimiento exhiben propiedades ondulatorias características."
-        },
-        {
-            enunciado: "20. ¿Qué establece el Principio de Incertidumbre de Heisenberg?",
-            opciones: [
-                "Es imposible conocer simultáneamente y con precisión la posición y el momento (velocidad) de un electrón.",
-                "Dos electrones en un mismo átomo no pueden tener sus cuatro números cuánticos iguales.",
-                "Los orbitales se llenan comenzando por los de menor energía.",
-                "La energía de un fotón es inversamente proporcional a la constante de Planck."
-            ],
-            correcta: 0,
-            explicacion: "El principio de Heisenberg marca una limitación fundamental en la medición a escala cuántica: cuanto con más precisión se conoce la posición, menos se conoce la velocidad y viceversa."
+        // Función para restringir la entrada a solo números en tiempo real
+        function soloNumeros(e) {
+            const charCode = (e.which) ? e.which : e.keyCode;
+            if (charCode === 8 || charCode === 9) {
+                return true;
+            }
+            if (charCode < 48 || charCode > 57) {
+                return false;
+            }
+            return true;
         }
-    ], // <- Se añadió la coma omitida
-    2: [
-        {
-            enunciado: "1. ¿Cuáles son los valores posibles para el número cuántico secundario (l) si n = 3?",
-            opciones: ["0, 1, 2", "1, 2, 3", "-3, -2, -1, 0, 1, 2, 3", "Sólo 2"],
-            correcta: 0,
-            explicacion: "El número cuántico azimutal 'l' toma valores enteros desde 0 hasta (n - 1). Para n = 3, l puede ser 0, 1 y 2."
-        },
-        {
-            enunciado: "2. La configuración electrónica externa de los halógenos (Grupo 17) corresponde a:",
-            opciones: ["ns¹", "ns² np⁴", "ns² np⁵", "ns² np⁶"],
-            correcta: 2,
-            explicacion: "Los halógenos pertenecen al grupo 17 y poseen 7 electrones en su capa de valencia (ns² np⁵)."
+
+        const BANCO_TEORICO = {
+            1: [
+                {
+                    enunciado: "1. ¿Cuál fue el postulado principal de John Dalton sobre la naturaleza de la materia a principios del siglo XIX?",
+                    opciones: [
+                        "La materia está formada por átomos indivisibles e indestructibles.",
+                        "El átomo contiene un núcleo denso con carga positiva.",
+                        "Los electrones giran en órbitas cuantizadas de energía.",
+                        "El átomo es una esfera con cargas negativas incrustadas."
+                    ],
+                    correcta: 0,
+                    explicacion: "Dalton propuso el primer modelo atómico con base científica, postulando que la materia está compuesta por átomos indivisibles e indestructibles."
+                },
+                {
+                    enunciado: "2. ¿Cuál fue una de las principales limitaciones o desventajas del modelo atómico de Dalton?",
+                    opciones: [
+                        "No explicaba la gravedad dentro del átomo.",
+                        "No permitía la existencia de isótopos ni la naturaleza eléctrica de la materia.",
+                        "Consideraba que el núcleo era demasiado grande.",
+                        "Introdujo órbitas elípticas en lugar de circulares."
+                    ],
+                    correcta: 1,
+                    explicacion: "El modelo de Dalton consideraba a los átomos de un elemento idénticos e indivisibles, sin prever la existencia de isótopos ni fenómenos eléctricos."
+                },
+                {
+                    enunciado: "3. En el experimento de tubos de rayos catódicos realizado por J.J. Thomson, ¿qué evidencia demostró la existencia de los electrones?",
+                    opciones: [
+                        "La desviación de los rayos hacia la placa cargada positivamente en un campo eléctrico.",
+                        "La emisión de partículas alfa tras golpear una lámina de oro.",
+                        "El espectro de emisión discontinuo del hidrógeno.",
+                        "La absorción de fotones por la materia a altas temperaturas."
+                    ],
+                    correcta: 0,
+                    explicacion: "Los rayos catódicos se desviaban hacia la placa positiva, demostrando que estaban formados por corpúsculos con carga negativa (electrones)."
+                },
+                {
+                    enunciado: "4. ¿Qué nombre recibe el modelo atómico propuesto por J.J. Thomson?",
+                    opciones: [
+                        "Modelo planetario.",
+                        "Modelo del pastel de pasas (pudín de pasas).",
+                        "Modelo mecánico cuántico.",
+                        "Modelo de órbitas estacionarias."
+                    ],
+                    correcta: 1,
+                    explicacion: "El modelo de Thomson imaginaba a los electrones incrustados en una masa esférica de carga positiva, asemejándose a un pudín de pasas."
+                },
+                {
+                    enunciado: "5. ¿Cuál fue el acierto fundamental del modelo atómico de J.J. Thomson?",
+                    opciones: [
+                        "Descubrir el neutrón dentro del núcleo.",
+                        "Reconocer por primera vez la naturaleza eléctrica y subatómica de la materia.",
+                        "Calcular la masa exacta del protón.",
+                        "Explicar el comportamiento de los gases ideales."
+                    ],
+                    correcta: 1,
+                    explicacion: "Thomson introdujo el concepto de partículas subatómicas al demostrar que los átomos no eran indivisibles, sino que contenían cargas eléctricas."
+                },
+                {
+                    enunciado: "6. En el experimento de Ernest Rutherford (lámina de oro), ¿qué observación crítica descartó el modelo de Thomson?",
+                    opciones: [
+                        "La mayoría de las partículas alfa rebotaron en la lámina.",
+                        "Una pequeña fracción de partículas alfa se desviaron en ángulos muy grandes o rebotaron hacia atrás.",
+                        "Las partículas alfa aumentaron su velocidad al atravesar el oro.",
+                        "Las partículas alfa cambiaron su carga de positiva a negativa."
+                    ],
+                    correcta: 1,
+                    explicacion: "Aunque casi todas las partículas pasaron de largo, unas pocas sufrieron grandes desviaciones, lo que evidenció un núcleo extremadamente denso y positivo."
+                },
+                {
+                    enunciado: "7. ¿Qué conclusión crítica obtuvo Rutherford a partir del desvío de las partículas alfa?",
+                    opciones: [
+                        "El átomo es mayoritariamente espacio vacío con un núcleo pequeño, denso y positivo.",
+                        "Los electrones están fusionados con los protones en el centro.",
+                        "El átomo carece de carga eléctrica.",
+                        "Los neutrones forman la corteza exterior del átomo."
+                    ],
+                    correcta: 0,
+                    explicacion: "Rutherford concluyó que la masa y la carga positiva se concentran en un núcleo central diminuto, rodeado de un amplio espacio vacío."
+                },
+                {
+                    enunciado: "8. ¿Cuál es la principal desventaja o falla teórica del modelo planetario de Rutherford según la física clásica?",
+                    opciones: [
+                        "No explicaba por qué los electrones no perdían energía y colapsaban contra el núcleo.",
+                        "Afirmaba que los protones tenían carga negativa.",
+                        "Negaba la presencia de electrones en el átomo.",
+                        "No permitía calcular la masa del átomo de helio."
+                    ],
+                    correcta: 0,
+                    explicacion: "Según la electrodinámica clásica, una carga acelerada (el electrón girando) emite radiación electromagnética y colapsaría rápidamente hacia el núcleo."
+                },
+                {
+                    enunciado: "9. ¿Qué postuló Niels Bohr para resolver la inestabilidad del modelo atómico de Rutherford?",
+                    opciones: [
+                        "Los electrones orbitan en niveles discretos (cuantizados) de energía sin emitir radiación.",
+                        "Los protones se mueven libremente fuera del núcleo.",
+                        "El electrón es una onda estacionaria que llena todo el átomo.",
+                        "La atracción electromagnética se anula con la masa del neutrón."
+                    ],
+                    correcta: 0,
+                    explicacion: "Bohr introdujo la cuantización de la energía, postulando órbitas circulares estacionarias donde el electrón no radia energía."
+                },
+                {
+                    enunciado: "10. ¿Cuál fue el gran acierto experimental del modelo atómico de Niels Bohr?",
+                    opciones: [
+                        "Explicar matemáticamente el espectro de emisión del átomo de hidrógeno.",
+                        "Descubrir la existencia de los quarks.",
+                        "Predecir la masa exacta de los átomos polielectrónicos.",
+                        "Explicar el enlace covalente no polar."
+                    ],
+                    correcta: 0,
+                    explicacion: "El modelo de Bohr encajó perfectamente con las líneas espectrales observadas experimentalmente en el átomo de hidrógeno."
+                },
+                {
+                    enunciado: "11. ¿Cuál es una desventaja o limitación crítica del modelo atómico de Bohr?",
+                    opciones: [
+                        "Solo funciona con precisión para átomos hidrogenoides (un solo electrón).",
+                        "Afirmaba que el núcleo contenía electrones.",
+                        "No utilizaba las leyes de la física clásica en ningún punto.",
+                        "Asumía que los electrones no tenían masa."
+                    ],
+                    correcta: 0,
+                    explicacion: "El modelo de Bohr fallaba al intentar explicar los espectros de átomos con dos o más electrones debido a las interacciones interelectrónicas."
+                },
+                {
+                    enunciado: "12. ¿Qué científico descubrió el neutrón en 1932, completando el modelo básico de partículas subatómicas?",
+                    opciones: [
+                        "James Chadwick.",
+                        "Robert Millikan.",
+                        "Louis de Broglie.",
+                        "Erwin Schrödinger."
+                    ],
+                    correcta: 0,
+                    explicacion: "James Chadwick descubrió el neutrón mediante experimentos con radiación penetrante, justificando la masa faltante en los núcleos atómicos."
+                },
+                {
+                    enunciado: "13. El experimento de la gota de aceite de Robert Millikan permitió determinar experimentalmente:",
+                    opciones: [
+                        "La carga eléctrica del electrón.",
+                        "La masa del núcleo atómico.",
+                        "El radio atómico del hidrógeno.",
+                        "La velocidad de la luz en el vacío."
+                    ],
+                    correcta: 0,
+                    explicacion: "Mediante el equilibrio de gotas de aceite cargadas en un campo eléctrico, Millikan midió con precisión la carga elemental del electrón."
+                },
+                {
+                    enunciado: "14. ¿Cómo se define el número atómico (Z) de un elemento químico?",
+                    opciones: [
+                        "El número total de protones presentes en el núcleo.",
+                        "La suma de protones y neutrones en el núcleo.",
+                        "El número de electrones en la última capa de valencia.",
+                        "La masa promedio de los isótopos del elemento."
+                    ],
+                    correcta: 0,
+                    explicacion: "El número atómico (Z) identifica de manera unívoca a cada elemento químico y representa la cantidad de protones en su núcleo."
+                },
+                {
+                    enunciado: "15. ¿Cómo se define el número de masa (A) de un átomo?",
+                    opciones: [
+                        "La suma del número de protones (Z) y el número de neutrones (N).",
+                        "El número total de electrones en el átomo neutro.",
+                        "La diferencia entre protones y electrones.",
+                        "La cantidad de niveles de energía ocupados."
+                    ],
+                    correcta: 0,
+                    explicacion: "El número másico (A) engloba prácticamente toda la masa del átomo al sumar los nucleones fundamentales: protones y neutrones."
+                },
+                {
+                    enunciado: "16. Dos átomos son considerados isótopos entre sí cuando poseen:",
+                    opciones: [
+                        "El mismo número atómico (Z), pero diferente número de masa (A).",
+                        "El mismo número de masa (A), pero diferente número atómico (Z).",
+                        "El mismo número de neutrones y diferente número de protones.",
+                        "La misma masa y las mismas propiedades físicas."
+                    ],
+                    correcta: 0,
+                    explicacion: "Los isótopos pertenecen al mismo elemento químico (igual Z), pero varían en su número de neutrones y por ende en su masa (A)."
+                },
+                {
+                    enunciado: "17. Un catión se forma formalmente cuando un átomo neutro:",
+                    opciones: [
+                        "Pierde uno o más electrones, adquiriendo carga positiva.",
+                        "Gana uno o más electrones, acquiring carga negativa.",
+                        "Pierde protones del núcleo.",
+                        "Gana neutrones en el núcleo."
+                    ],
+                    correcta: 0,
+                    explicacion: "Al perder cargas negativas (electrones), el átomo desbalancea su proporción y queda con carga neta positiva (catión)."
+                },
+                {
+                    enunciado: "18. ¿Qué diferencia a un anión de un átomo neutro del mismo elemento?",
+                    opciones: [
+                        "El anión tiene un número mayor de electrones que de protones.",
+                        "El anión tiene mayor número de protones en el núcleo.",
+                        "El anión no posee electrones en la capa externa.",
+                        "El anión tiene un valor de Z más elevado."
+                    ],
+                    correcta: 0,
+                    explicacion: "Un anión se produce al ganar electrones, por lo que el número de cargas negativas supera al de protones positivos."
+                },
+                {
+                    enunciado: "19. El principio de dualidad onda-partícula propuesto por Louis de Broglie establece que:",
+                    opciones: [
+                        "Toda partícula en movimiento (como el electrón) lleva asociada una onda.",
+                        "Los electrones son exclusivamente ondas electromagnéticas.",
+                        "Los fotones tienen masa en reposo idéntica a la del protón.",
+                        "La materia no puede convertirse en energía bajo ninguna circunstancia."
+                    ],
+                    correcta: 0,
+                    explicacion: "De Broglie sugirió que las partículas materiales con cantidad de movimiento exhiben propiedades ondulatorias características."
+                },
+                {
+                    enunciado: "20. ¿Qué establece el Principio de Incertidumbre de Heisenberg?",
+                    opciones: [
+                        "Es imposible conocer simultáneamente y con precisión la posición y el momento (velocidad) de un electrón.",
+                        "Dos electrones en un mismo átomo no pueden tener sus cuatro números cuánticos iguales.",
+                        "Los orbitales se llenan comenzando por los de menor energía.",
+                        "La energía de un fotón es inversamente proporcional a la constante de Planck."
+                    ],
+                    correcta: 0,
+                    explicacion: "El principio de Heisenberg marca una limitación fundamental en la medición a escala cuántica: cuanto con más precisión se conoce la posición, menos se conoce la velocidad y viceversa."
+                }
+            ],
+            3: [
+                {
+                    enunciado: "1. ¿Qué tipo de fuerza intermolecular predomina en moléculas de agua (H₂O) líquida?",
+                    opciones: ["Fuerzas de London", "Enlace iónico", "Puente de hidrógeno", "Enlace metálico"],
+                    correcta: 2,
+                    explicacion: "El hidrógeno unido covalentemente a átomos muy electronegativos como el oxígeno genera puentes de hidrógeno."
+                },
+                {
+                    enunciado: "2. En una reacción química, la ley que establece que la masa total de los reactivos es igual a la de los productos es:",
+                    opciones: ["Ley de Proust", "Ley de Lavoisier", "Ley de Dalton", "Ley de Gay-Lussac"],
+                    correcta: 1,
+                    explicacion: "Antoine Lavoisier formuló la Ley de Conservación de la Masa."
+                }
+            ]
+        };
+
+        const n2Bank = [
+            { q: "¿Qué indica el número cuántico principal ($n$)?", a: ["El nivel principal de energía y el tamaño del orbital", "La forma geométrica del orbital", "La orientación magnética espacial", "El sentido de giro del electrón"], c: 0, r: "El número cuántico principal ($n = 1, 2, 3, ...$) define la energía y el volumen aproximado del orbital." },
+            { q: "Si el nivel principal es $n = 4$, ¿cuántos valores puede tomar el número cuántico azimutal ($l$)?", a: ["4 valores ($0, 1, 2$ y $3$)", "3 valores ($1, 2$ y $3$)", "5 valores ($-2$ a $2$)", "Solo 1 valor"], c: 0, r: "Para un valor de $n$, $l$ toma valores enteros desde $0$ hasta $n-1$. Por tanto, para $n=4$ son $0, 1, 2, 3$." },
+            { q: "¿A qué tipo de subnivel de energía corresponde un valor del número cuántico azimutal $l = 2$?", a: ["Subnivel $d$", "Subnivel $s$", "Subnivel $p$", "Subnivel $f$"], c: 0, r: "Por convención: $l=0$ ($s$), $l=1$ ($p$), $l=2$ ($d$) y $l=3$ ($f$)." },
+            { q: "¿Cuántos orbitales y electrones máximos caben en un subnivel tipo $p$ ($l = 1$)?", a: ["3 orbitales y 6 electrones", "1 orbital y 2 electrones", "5 orbitales y 10 electrones", "7 orbitales y 14 electrones"], c: 0, r: "El subnivel $p$ posee 3 orientaciones magnéticas ($m_l = -1, 0, 1$), albergando un total de 6 electrones." },
+            { q: "¿Qué describe el número cuántico magnético ($m_l$)?", a: ["La orientación espacial del orbital en presencia de un campo magnético", "El nivel de energía general", "El giro intrínseco del electrón", "La masa del núcleo"], c: 0, r: "Indica las distintas orientaciones espaciales que puede adoptar un orbital bajo la influencia de un campo magnético externo." },
+            { q: "¿Cuál es el valor y significado del cuarto número cuántico o de espín ($m_s$)?", a: ["$+1/2$ o $-1/2$, indica el sentido de giro del electrón", "$0$ o $1$, indica la carga eléctrica neta", "$+1$ o $-1$, indica el nivel energético", "Cualquier número entero positivo"], c: 0, r: "El espín magnético describe los dos posibles sentidos de rotación del electrón sobre su propio eje." },
+            { q: "Según el Principio de Exclusión de Pauli, ¿qué es cierto para dos electrones en un mismo átomo?", a: ["No pueden tener los cuatro números cuánticos idénticos", "Deben tener obligatoriamente el mismo espín", "Deben estar en orbitales separados siempre", "Deben tener la misma energía cinética"], c: 0, r: "Pauli establece que dos electrones en un mismo orbital deben diferenciarse al menos en su número de espín ($m_s$)." },
+            { q: "¿Cuál conjunto de números cuánticos ($n, l, m_l, m_s$) es FÍSICAMENTE IMPOSIBLE?", a: ["$(3, 2, +3, +1/2)$", "$(3, 2, -2, -1/2)$", "$(2, 0, 0, +1/2)$", "$(4, 3, 0, -1/2)$"], c: 0, r: "Si $l=2$, los valores permitidos para $m_l$ van solo desde $-2$ hasta $+2$. Un valor de $+3$ para $m_l$ es inválido." },
+            { q: "¿Qué representa una región con probabilidad cero de encontrar un electrón (densidad de probabilidad nula)?", a: ["Un nodo o superficie nodal", "Un antinodo de vibración", "El núcleo atómico exacto", "Un fotón libre"], c: 0, r: "Los nodos son zonas donde la función de onda de probabilidad de hallar al electrón se anula." },
+            { q: "Para un electrón ubicado en un orbital $5s$, ¿cuáles son sus valores exactos de $n$ y $l$?", a: ["$n = 5, l = 0$", "$n = 5, l = 1$", "$n = 0, l = 5$", "$n = 4, l = 0$"], c: 0, r: "El coeficiente numérico indica $n=5$ y la letra '$s$' corresponde por definición a $l=0$." },
+            { q: "¿Qué establece el Principio de Construcción Progresiva o Aufbau?", a: ["Los electrones llenan los orbitales de menor a mayor energía relativa", "Los electrones se aparean de inmediato en el mismo orbital", "El núcleo atrae electrones al azar", "Los orbitales $f$ se llenan primero obligatoriamente"], c: 0, r: "Aufbau indica que se debe rellenar orbital por orbital respetando el orden creciente de energía ($n+l$)." },
+            { q: "Para determinar qué orbital se llena primero entre $3d$ y $4s$, aplicamos la regla de Madelung ($n+l$). ¿Cuál se llena antes?", a: ["El $4s$ ($n+l = 4$) se llena antes que el $3d$ ($n+l = 5$)", "El $3d$ se llena primero porque tiene menor $n$", "Se llenan exactamente al mismo tiempo", "Ninguno de los dos se llena"], c: 0, r: "El orbital $4s$ tiene una energía de $4+0=4$, mientras que $3d$ tiene $3+2=5$. Se llena primero el de menor suma." },
+            { q: "¿Qué postula la Regla de Hund de máxima multiplicidad?", a: ["Los electrones se distribuyen desparejados con espines paralelos antes de aparearse", "Los electrones prefieren estar siempre apareados", "Los orbitales $d$ se llenan al final de la tabla", "No importa el orden de llenado"], c: 0, r: "Hund minimiza la repulsión electrónica exigiendo que los orbitales degenerados se semiocupen primero." },
+            { q: "¿Cuál es la configuración electrónica abreviada (con gas noble) correcta para el Calcio ($Z = 20$)?", a: ["$[Ar] 4s^2$", "$[Ne] 3s^2 3p^6$", "$[Kr] 5s^2$", "$[Ar] 3d^2$"], c: 0, r: "El Argón ($Z=18$) cubre las primeras capas, restando los electrones externos $4s^2$." },
+            { q: "Configuración electrónica completa del Hierro ($Z = 26$):", a: ["$1s^2 2s^2 2p^6 3s^2 3p^6 4s^2 3d^6$", "$1s^2 2s^2 2p^6 3s^2 3p^6 4s^1 3d^7$", "$1s^2 2s^2 2p^6 3s^2 3p^6 3d^8$", "$1s^2 2s^2 2p^6 3s^2 3p^6 4s^2 4p^6$"], c: 0, r: "Suma exacta: $2+2+6+2+6+2+6 = 26$ electrones distribuidos en orden estricto de energía." },
+            { q: "¿Cuál es la famosa anomalía o excepción en la configuración del Cromo ($Z = 24$)?", a: ["$4s^1 3d^5$ en lugar de $4s^2 3d^4$", "$4s^2 3d^4$ exacto", "$4s^0 3d^6$", "$4s^2 3p^6$"], c: 0, r: "Un subnivel $d$ semilleno ($d^5$) otorga mayor simetría y estabilidad energética que un $d^4$." },
+            { q: "¿Cuál es la excepción anómala en la configuración del Cobre ($Z = 29$)?", a: ["$4s^1 3d^{10}$ en lugar de $4s^2 3d^9$", "$4s^2 3d^9$ exacto", "$4s^2 3p^6 3d^3$", "$4s^0 3d^{11}$"], c: 0, r: "Un subnivel $d$ completamente lleno ($d^{10}$) es sumamente estable, promoviendo un electrón del $4s$." },
+            { q: "¿Cuántos electrones de valencia posee un átomo de Fósforo ($Z = 15$ con configuración $1s^2 2s^2 2p^6 3s^2 3p^3$)?", a: ["5 electrones", "3 electrones", "2 electrones", "15 electrones"], c: 0, r: "Los electrones de valencia son los del nivel externo más alto ($n=3$), es decir, $3s^2 3p^3$ ($2+3 = 5$)." },
+            { q: "Cuando un átomo neutro de Azufre ($Z = 16$) se convierte en el anión sulfuro ($S^{2-}$), su configuración electrónica se asemeja la del gas noble:", a: ["Argón ($Ar$)", "Neón ($Ne$)", "Kriptón ($Kr$)", "Helio ($He$)" ], c: 0, r: "Al ganar 2 electrones, completa 18 electrones totales, igualando la estructura del Argón." },
+            { q: "¿Qué indica que una sustancia presente propiedades paramagnéticas?", a: ["Tiene electrones desapareados que responden a campos magnéticos", "Todos sus electrones están perfectamente apareados", "Carece por completo de electrones", "Solo contiene neutrones libres en su corteza"], c: 0, r: "La presencia de espines libres o desapareados genera un momento magnético neto detectable (paramagnetismo)." },
+            { q: "Si un átomo neutro pierde 2 electrones para formar un catión divalente ($M^{2+}$) con $Z=20$, ¿cuántos electrones totales le quedan?", a: ["18 electrones", "20 electrones", "22 electrones", "2 electrones"], c: 0, r: "Al tener $Z=20$ poseía 20 electrones; al perder 2, le quedan 18 electrones." },
+            { q: "¿Cuál es la configuración electrónica del catión Magnesio $Mg^{2+}$ ($Z = 12$)?", a: ["$1s^2 2s^2 2p^6$ (Igual al Neón)", "$1s^2 2s^2 2p^6 3s^2$", "$1s^2 2s^2 2p^4$", "$1s^2 2s^2 2p^6 3s^1$"], c: 0, r: "El magnesio neutro termina en $3s^2$. Al perder esos 2 electrones de valencia, su configuración externa queda en el nivel 2 lleno." },
+            { q: "¿Qué son los especies isoelectrónicas?", a: ["Átomos o iones que poseen exactamente el mismo número de electrones", "Átomos que tienen igual número de neutrones", "Elementos del mismo grupo vertical", "Átomos con idéntica masa atómica"], c: 0, r: "Isoelectrónico significa 'igual número de electrones', aunque pertenezcan a elementos químicos diferentes." },
+            { q: "Indica el número de electrones desapareados en el átomo de Nitrógeno ($Z = 7$, configuración $1s^2 2s^2 2p^3$):", a: ["3 electrones desapareados", "1 electrón desapareado", "Ninguno, todos apareados", "5 electrones desapareados"], c: 0, r: "Aplicando la regla de Hund, los 3 electrones del subnivel $2p$ ocupan orbitales distintos con espines paralelos." },
+            { q: "¿A qué bloque de la tabla periódica pertenece un elemento cuya configuración termina en $np^4$?", a: ["Bloque $p$", "Bloque $s$", "Bloque $d$", "Bloque $f$"], c: 0, r: "La letra final del subnivel de máxima energía ($s, p, d, f$) determina el bloque al que pertenece el elemento." },
+            { q: "¿Cuál es el valor máximo de electrones que puede albergar un nivel principal de energía dado por el número $n=3$?", a: ["18 electrones", "8 electrones", "32 electrones", "2 electrones"], c: 0, r: "Se calcula mediante la fórmula general de capacidad electrónica por nivel: $2n^2$. Para $n=3$, $2(3^2) = 18$." },
+            { q: "En la distribución electrónica del Zinc ($Z = 30$), ¿cuántos electrones hay en total en el tercer nivel ($n=3$)?", a: ["18 electrones ($3s^2 3p^6 3d^{10}$)", "8 electrones", "10 electrones", "2 electrones"], c: 0, r: "Sumamos todos los orbitales donde $n=3$: $3s$ (2) + $3p$ (6) + $3d$ (10) = 18 electrones." },
+            { q: "¿Qué describe el número cuántico azimutal o secundario ($l$)?", a: ["La forma geométrica del orbital atómico", "El tamaño de la nube electrónica", "El sentido de giro del electrón", "La energía principal del núcleo"], c: 0, r: "El parámetro $l$ define el tipo de subnivel ($s, p, d, f$) y por ende la forma geométrica tridimensional del orbital." },
+            { q: "Si un electrón se encuentra en el subnivel $4f$, ¿cuáles son los valores correspondientes de $n$ y $l$?", a: ["$n = 4, l = 3$", "$n = 4, l = 2$", "$n = 3, l = 4$", "$n = 4, l = 4$"], c: 0, r: "El coeficiente indica $n=4$ y el subnivel $f$ tiene asignado por convención el valor de $l=3$." },
+            { q: "Identifica la afirmación correcta sobre los isótopos de un elemento químico:", a: ["Tienen igual número de protones ($Z$) pero diferente número de neutrones y masa", "Tienen igual masa pero diferente número atómico", "Tienen distinta cantidad de electrones en estado neutro", "Tienen propiedades químicas completamente distintas"], c: 0, r: "Los isótopos comparten identidad química al tener el mismo número atómico $Z$, variando solo en sus neutrones." }
+        ];
+
+        let nivelActualGlobal = 1;
+        let preguntasModulo = [];
+        let indicePreguntaActual = 0;
+        let aciertosModulo = 0;
+
+        let n2State = { current: 0, score: 0, selected: [], answered: false, attempts: 0 };
+
+        async function registrarEstudiante() {
+            const ci = document.getElementById("ci-input").value.trim();
+            const nombre = document.getElementById("name-input").value.trim();
+            const statusDiv = document.getElementById("registro-status");
+
+            if (!ci || !nombre) {
+                alert("⚠️ Ingresa Cédula y Nombre Completo.");
+                return;
+            }
+
+            // Validación adicional para asegurar que la cédula sea puramente numérica
+            if (!/^\d+$/.test(ci)) {
+                alert("⚠️ La cédula de identidad debe contener únicamente números.");
+                document.getElementById("ci-input").focus();
+                return;
+            }
+
+            statusDiv.style.display = "block";
+            statusDiv.style.color = "var(--accent-gold)";
+            statusDiv.innerText = "⏳ Conectando con Google Sheets...";
+
+            const payload = new URLSearchParams();
+            payload.append("origen", "SEFAN_NIVELES");
+            payload.append("cedula", ci);
+            payload.append("nombre", nombre);
+            payload.append("nivelActual", "0");
+            payload.append("puntaje", "0");
+            payload.append("detalles", "Registro/Inicio de sesión inicial");
+
+            try {
+                await fetch(APPS_SCRIPT_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: payload.toString()
+                });
+                statusDiv.style.color = "#4ade80";
+                statusDiv.innerText = "✅ Datos registrados correctamente en la base de datos.";
+            } catch (err) {
+                console.error("Error al registrar:", err);
+                statusDiv.style.color = "#fca5a5";
+                statusDiv.innerText = "⚠️ Error de conexión al registrar.";
+            }
         }
-    ],
-    3: [
-        {
-            enunciado: "1. ¿Qué tipo de fuerza intermolecular predomina en moléculas de agua (H₂O) líquida?",
-            opciones: ["Fuerzas de London", "Enlace iónico", "Puente de hidrógeno", "Enlace metálico"],
-            correcta: 2,
-            explicacion: "El hidrógeno unido covalentemente a átomos muy electronegativos como el oxígeno genera puentes de hidrógeno."
-        },
-        {
-            enunciado: "2. En una reacción química, la ley que establece que la masa total de los reactivos es igual a la de los productos es:",
-            opciones: ["Ley de Proust", "Ley de Lavoisier", "Ley de Dalton", "Ley de Gay-Lussac"],
-            correcta: 1,
-            explicacion: "Antoine Lavoisier formuló la Ley de Conservación de la Masa."
+
+        function iniciarModuloNivel(nivel) {
+            const ci = document.getElementById("ci-input").value.trim();
+            const nombre = document.getElementById("name-input").value.trim();
+
+            if (!ci || !nombre) {
+                alert("⚠️ Por favor, ingresa tu Cédula y Nombre Completo en el módulo superior antes de iniciar.");
+                document.getElementById("ci-input").focus();
+                return;
+            }
+
+            if (!/^\d+$/.test(ci)) {
+                alert("⚠️ La cédula debe contener únicamente números.");
+                return;
+            }
+
+            nivelActualGlobal = nivel;
+            preguntasModulo = BANCO_TEORICO[nivel] || [];
+
+            if (preguntasModulo.length === 0) {
+                alert("Pronto se añadirán reactivos para este nivel.");
+                return;
+            }
+
+            document.getElementById("main-levels-grid").style.display = "none";
+            document.getElementById("card-bienvenida").style.display = "none";
+            document.getElementById("card-herramienta").style.display = "none";
+            document.getElementById("modulo-container").style.display = "block";
+
+            indicePreguntaActual = 0;
+            aciertosModulo = 0;
+
+            document.getElementById("quiz-area").style.display = "block";
+            document.getElementById("resumen-area").style.display = "none";
+
+            cargarPreguntaActual();
         }
-    ]
-};
 
-let nivelActualGlobal = 1;
-let preguntasModulo = [];
-let indicePreguntaActual = 0;
-let aciertosModulo = 0;
+        function cargarPreguntaActual() {
+            const preg = preguntasModulo[indicePreguntaActual];
+            document.getElementById("modulo-titulo").innerText = `Desafío SEFAN - Nivel ${nivelActualGlobal}`;
+            document.getElementById("modulo-progreso").innerText = `Pregunta ${indicePreguntaActual + 1} de ${preguntasModulo.length}`;
+            
+            document.getElementById("quiz-enunciado").innerText = preg.enunciado;
+            
+            const contenedorOpciones = document.getElementById("quiz-opciones");
+            contenedorOpciones.innerHTML = "";
 
-async function registrarEstudiante() {
-    const ci = document.getElementById("ci-input").value.trim();
-    const nombre = document.getElementById("name-input").value.trim();
-    const statusDiv = document.getElementById("registro-status");
+            preg.opciones.forEach((opc, idx) => {
+                contenedorOpciones.innerHTML += `
+                    <label style="display: flex; align-items: center; gap: 10px; background: #0f172a; padding: 0.8rem; border-radius: 6px; border: 1px solid #334155; cursor: pointer;">
+                        <input type="radio" name="opcion_teorica" value="${idx}">
+                        <span>${opc}</span>
+                    </label>
+                `;
+            });
 
-    if (!ci || !nombre) {
-        alert("⚠️ Ingresa Cédula y Nombre Completo.");
-        return;
-    }
+            document.getElementById("quiz-feedback").style.display = "none";
+            document.getElementById("btn-enviar-respuesta").style.display = "block";
+            document.getElementById("btn-siguiente-pregunta").style.display = "none";
+        }
 
-    statusDiv.style.display = "block";
-    statusDiv.style.color = "var(--accent-gold)";
-    statusDiv.innerText = "⏳ Conectando con Google Sheets...";
+        function validarRespuesta() {
+            const seleccion = document.querySelector('input[name="opcion_teorica"]:checked');
+            if (!seleccion) {
+                alert("Por favor selecciona una respuesta.");
+                return;
+            }
 
-    const payload = new URLSearchParams();
-    payload.append("origen", "SEFAN_NIVELES");
-    payload.append("cedula", ci);
-    payload.append("nombre", nombre);
-    payload.append("nivelActual", "0");
-    payload.append("puntaje", "0");
-    payload.append("detalles", "Registro/Inicio de sesión inicial");
+            const rtaIndex = parseInt(seleccion.value, 10);
+            const preg = preguntasModulo[indicePreguntaActual];
+            const feedback = document.getElementById("quiz-feedback");
+            const esCorrecto = (rtaIndex === preg.correcta);
 
-    try {
-        await fetch(APPS_SCRIPT_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: payload.toString()
-        });
-        statusDiv.style.color = "#4ade80";
-        statusDiv.innerText = "✅ Datos registrados correctamente en la base de datos.";
-    } catch (err) {
-        console.error("Error al registrar:", err);
-        statusDiv.style.color = "#fca5a5";
-        statusDiv.innerText = "⚠️ Error de conexión al registrar.";
-    }
-}
+            if (esCorrecto) aciertosModulo++;
 
-function iniciarModuloNivel(nivel) {
-    const ci = document.getElementById("ci-input").value.trim();
-    const nombre = document.getElementById("name-input").value.trim();
+            feedback.style.display = "block";
+            if (esCorrecto) {
+                feedback.style.background = "rgba(34, 197, 94, 0.2)";
+                feedback.style.border = "1px solid #22c55e";
+                feedback.style.color = "#4ade80";
+                feedback.innerHTML = `<strong>¡Correcto! 🎉</strong><br>${preg.explicacion}`;
+            } else {
+                feedback.style.background = "rgba(239, 68, 68, 0.2)";
+                feedback.style.border = "1px solid #ef4444";
+                feedback.style.color = "#fca5a5";
+                feedback.innerHTML = `<strong>Incorrecto.</strong><br>${preg.explicacion}`;
+            }
 
-    if (!ci || !nombre) {
-        alert("⚠️ Por favor, ingresa tu Cédula y Nombre Completo en el módulo superior antes de iniciar.");
-        document.getElementById("ci-input").focus();
-        return;
-    }
+            document.querySelectorAll('input[name="opcion_teorica"]').forEach(input => input.disabled = true);
 
-    nivelActualGlobal = nivel;
-    preguntasModulo = BANCO_TEORICO[nivel] || [];
+            document.getElementById("btn-enviar-respuesta").style.display = "none";
+            document.getElementById("btn-siguiente-pregunta").style.display = "block";
+        }
 
-    if (preguntasModulo.length === 0) {
-        alert("Pronto se añadirán reactivos para este nivel.");
-        return;
-    }
+        function siguientePregunta() {
+            indicePreguntaActual++;
+            if (indicePreguntaActual < preguntasModulo.length) {
+                cargarPreguntaActual();
+            } else {
+                finalizarModulo();
+            }
+        }
 
-    document.getElementById("main-levels-grid").style.display = "none";
-    document.getElementById("card-bienvenida").style.display = "none";
-    document.getElementById("card-herramienta").style.display = "none";
-    document.getElementById("modulo-container").style.display = "block";
+        async function finalizarModulo() {
+            const ci = document.getElementById("ci-input").value.trim();
+            const nombre = document.getElementById("name-input").value.trim();
 
-    indicePreguntaActual = 0;
-    aciertosModulo = 0;
+            const notaFinal = Math.round((aciertosModulo / preguntasModulo.length) * 100);
 
-    document.getElementById("quiz-area").style.display = "block";
-    document.getElementById("resumen-area").style.display = "none";
+            document.getElementById("quiz-area").style.display = "none";
+            document.getElementById("resumen-area").style.display = "block";
+            document.getElementById("resumen-texto").innerHTML = `Has completado el <strong>Nivel ${nivelActualGlobal}</strong>.<br>Aciertos: ${aciertosModulo} / ${preguntasModulo.length}<br>Calificación: <strong>${notaFinal} / 100 pts</strong>`;
 
-    cargarPreguntaActual();
-}
+            const payload = new URLSearchParams();
+            payload.append("origen", "SEFAN_NIVELES");
+            payload.append("cedula", ci);
+            payload.append("nombre", nombre);
+            payload.append("nivelActual", nivelActualGlobal.toString());
+            payload.append("puntaje", notaFinal.toString());
+            payload.append("detalles", `Aciertos: ${aciertosModulo}/${preguntasModulo.length}`);
 
-function cargarPreguntaActual() {
-    const preg = preguntasModulo[indicePreguntaActual];
-    document.getElementById("modulo-titulo").innerText = `Desafío SEFAN - Nivel ${nivelActualGlobal}`;
-    document.getElementById("modulo-progreso").innerText = `Pregunta ${indicePreguntaActual + 1} de ${preguntasModulo.length}`;
-    
-    document.getElementById("quiz-enunciado").innerText = preg.enunciado;
-    
-    const contenedorOpciones = document.getElementById("quiz-opciones");
-    contenedorOpciones.innerHTML = "";
+            try {
+                await fetch(APPS_SCRIPT_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: payload.toString()
+                });
+            } catch (err) {
+                console.error("Error al registrar en Google Sheets:", err);
+            }
+        }
 
-    preg.opciones.forEach((opc, idx) => {
-        contenedorOpciones.innerHTML += `
-            <label style="display: flex; align-items: center; gap: 10px; background: #0f172a; padding: 0.8rem; border-radius: 6px; border: 1px solid #334155; cursor: pointer;">
-                <input type="radio" name="opcion_teorica" value="${idx}">
-                <span>${opc}</span>
-            </label>
-        `;
-    });
+        function iniciarNivel2Practico() {
+            const ci = document.getElementById("ci-input").value.trim();
+            const nombre = document.getElementById("name-input").value.trim();
 
-    document.getElementById("quiz-feedback").style.display = "none";
-    document.getElementById("btn-enviar-respuesta").style.display = "block";
-    document.getElementById("btn-siguiente-pregunta").style.display = "none";
-}
+            if (!ci || !nombre) {
+                alert("⚠️ Por favor, ingresa tu Cédula y Nombre Completo en el módulo superior antes de iniciar.");
+                document.getElementById("ci-input").focus();
+                return;
+            }
 
-function validarRespuesta() {
-    const seleccion = document.querySelector('input[name="opcion_teorica"]:checked');
-    if (!seleccion) {
-        alert("Por favor selecciona una respuesta.");
-        return;
-    }
+            if (!/^\d+$/.test(ci)) {
+                alert("⚠️ La cédula debe contener únicamente números.");
+                return;
+            }
 
-    const rtaIndex = parseInt(seleccion.value, 10);
-    const preg = preguntasModulo[indicePreguntaActual];
-    const feedback = document.getElementById("quiz-feedback");
-    const esCorrecto = (rtaIndex === preg.correcta);
+            let history = localStorage.getItem('atomic_level2_practical_history') || "";
+            n2State.attempts = (history.split('\n').filter(x => x).length) + 1;
 
-    if (esCorrecto) aciertosModulo++;
+            n2State.selected = [...n2Bank].sort(() => 0.5 - Math.random()).slice(0, 30);
+            n2State.current = 0; 
+            n2State.score = 0;
+            
+            document.getElementById("main-levels-grid").style.display = "none";
+            document.getElementById("card-bienvenida").style.display = "none";
+            document.getElementById("card-herramienta").style.display = "none";
+            document.getElementById("nivel2-container").style.display = "block";
+            
+            n2Render();
+        }
 
-    feedback.style.display = "block";
-    if (esCorrecto) {
-        feedback.style.background = "rgba(34, 197, 94, 0.2)";
-        feedback.style.border = "1px solid #22c55e";
-        feedback.style.color = "#4ade80";
-        feedback.innerHTML = `<strong>¡Correcto! 🎉</strong><br>${preg.explicacion}`;
-    } else {
-        feedback.style.background = "rgba(239, 68, 68, 0.2)";
-        feedback.style.border = "1px solid #ef4444";
-        feedback.style.color = "#fca5a5";
-        feedback.innerHTML = `<strong>Incorrecto.</strong><br>${preg.explicacion}`;
-    }
+        function n2Render() {
+            n2State.answered = false;
+            const q = n2State.selected[n2State.current];
+            document.getElementById('n2-q-number').innerText = `PREGUNTA ${n2State.current + 1} DE 30`;
+            document.getElementById('n2-q-text').innerText = q.q;
+            document.getElementById('progress-fill-n2').style.width = `${((n2State.current)/30)*100}%`;
+            document.getElementById('n2-feedback').style.display = 'none';
+            document.getElementById('n2-next-btn').style.display = 'none';
+            
+            const area = document.getElementById('n2-options-area');
+            area.innerHTML = '';
+            
+            let opts = q.a.map((t, i) => ({ t, correct: i === 0 }));
+            opts.sort(() => 0.5 - Math.random());
+            
+            opts.forEach(o => {
+                const b = document.createElement('button');
+                b.className = 'option-btn-n2';
+                b.innerText = o.t;
+                b.onclick = () => n2Check(o.correct, b);
+                area.appendChild(b);
+            });
 
-    document.querySelectorAll('input[name="opcion_teorica"]').forEach(input => input.disabled = true);
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        }
 
-    document.getElementById("btn-enviar-respuesta").style.display = "none";
-    document.getElementById("btn-siguiente-pregunta").style.display = "block";
-}
+        function n2Check(isC, btn) {
+            if(n2State.answered) return;
+            n2State.answered = true;
+            const q = n2State.selected[n2State.current];
+            const btns = document.querySelectorAll('.option-btn-n2');
+            
+            if(isC) {
+                n2State.score++;
+                btn.classList.add('correct');
+            } else {
+                btn.classList.add('wrong');
+                btns.forEach(b => { 
+                    if(b.innerText === q.a[0]) b.classList.add('correct'); 
+                });
+            }
+            
+            document.getElementById('n2-score-text').innerText = `Aciertos: ${n2State.score}`;
+            const f = document.getElementById('n2-feedback');
+            f.style.display = 'block';
+            f.style.borderColor = isC ? 'var(--accent-green)' : 'var(--error)';
+            f.innerHTML = `<strong style="color:${isC ? '#4ade80' : '#fca5a5'};">${isC ? '¡EXCELENTE, CORRECTO!' : 'INCORRECTO'}</strong><br>${q.r}`;
+            document.getElementById('n2-next-btn').style.display = 'block';
 
-function siguientePregunta() {
-    indicePreguntaActual++;
-    if (indicePreguntaActual < preguntasModulo.length) {
-        cargarPreguntaActual();
-    } else {
-        finalizarModulo();
-    }
-}
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        }
 
-async function finalizarModulo() {
-    const ci = document.getElementById("ci-input").value.trim();
-    const nombre = document.getElementById("name-input").value.trim();
+        function n2ShowNext() {
+            n2State.current++;
+            if(n2State.current < 30) {
+                n2Render();
+            } else {
+                document.getElementById('progress-fill-n2').style.width = `100%`;
+                n2Finish();
+            }
+        }
 
-    const notaFinal = Math.round((aciertosModulo / preguntasModulo.length) * 100);
+        function n2Finish() {
+            document.getElementById('nivel2-container').style.display = 'none';
+            document.getElementById('nivel2-result-container').style.display = 'block';
+            
+            const p = Math.round((n2State.score/30)*100);
+            document.getElementById('n2-res-percent').innerText = p + "%";
+            document.getElementById('n2-res-detail').innerText = `Aciertos: ${n2State.score} de 30 | Intento N°: ${n2State.attempts}`;
+            
+            const newLine = `[Intento ${n2State.attempts}] Score: ${p}% (${n2State.score}/30) | ${new Date().toLocaleString()}`;
+            let history = localStorage.getItem('atomic_level2_practical_history') || "";
+            history += newLine + "\n";
+            localStorage.setItem('atomic_level2_practical_history', history);
+            document.getElementById('n2-csv-output').value = history;
+        }
 
-    document.getElementById("quiz-area").style.display = "none";
-    document.getElementById("resumen-area").style.display = "block";
-    document.getElementById("resumen-texto").innerHTML = `Has completado el <strong>Nivel ${nivelActualGlobal}</strong>.<br>Aciertos: ${aciertosModulo} / ${preguntasModulo.length}<br>Calificación: <strong>${notaFinal} / 100 pts</strong>`;
+        async function n2SendToGoogle() {
+            const btn = document.getElementById('n2-send-btn');
+            const ci = document.getElementById("ci-input").value.trim();
+            const nombre = document.getElementById("name-input").value.trim();
+            const p = Math.round((n2State.score/30)*100);
+            const historyData = document.getElementById('n2-csv-output').value;
 
-    const payload = new URLSearchParams();
-    payload.append("origen", "SEFAN_NIVELES");
-    payload.append("cedula", ci);
-    payload.append("nombre", nombre);
-    payload.append("nivelActual", nivelActualGlobal.toString());
-    payload.append("puntaje", notaFinal.toString());
-    payload.append("detalles", `Aciertos: ${aciertosModulo}/${preguntasModulo.length}`);
+            btn.innerText = "Sincronizando con Google Sheets...";
+            btn.disabled = true;
 
-    try {
-        await fetch(APPS_SCRIPT_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: payload.toString()
-        });
-    } catch (err) {
-        console.error("Error al registrar en Google Sheets:", err);
-    }
-}
+            const payload = new URLSearchParams();
+            payload.append("origen", "SEFAN_NIVELES");
+            payload.append("cedula", ci);
+            payload.append("nombre", nombre);
+            payload.append("nivelActual", "2");
+            payload.append("puntaje", p.toString());
+            payload.append("detalles", historyData);
 
-function salirDelModulo() {
-    document.getElementById("modulo-container").style.display = "none";
-    document.getElementById("main-levels-grid").style.display = "grid";
-    document.getElementById("card-bienvenida").style.display = "block";
-    document.getElementById("card-herramienta").style.display = "block";
-}
+            try {
+                await fetch(APPS_SCRIPT_URL, { 
+                    method: "POST", 
+                    mode: "no-cors", 
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: payload.toString() 
+                });
+                alert("¡Reporte del Nivel 2 enviado con éxito a Google Sheets!");
+                btn.innerText = "✅ Reporte Sincronizado";
+                btn.style.background = "var(--accent-green)";
+            } catch (e) {
+                alert("Error de conexión al enviar los datos. Por favor, inténtalo de nuevo.");
+                btn.innerText = "❌ Reintentar Envío";
+                btn.disabled = false;
+            }
+        }
+
+        function salirDelModulo() {
+            document.getElementById("modulo-container").style.display = "none";
+            document.getElementById("nivel2-container").style.display = "none";
+            document.getElementById("nivel2-result-container").style.display = "none";
+            document.getElementById("main-levels-grid").style.display = "grid";
+            document.getElementById("card-bienvenida").style.display = "block";
+            document.getElementById("card-herramienta").style.display = "block";
+        }
     </script>
 </body>
 </html>
