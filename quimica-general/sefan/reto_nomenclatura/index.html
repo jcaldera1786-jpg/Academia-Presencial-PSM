@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEFAN - Reto Avanzado de Nomenclatura y Valencia | PSM</title>
-    <!-- MathJax Configuration para renderizar sintaxis LaTeX correctamente -->
+    <title>SEFAN - Desafío de Nomenclatura y Valencias | PSM</title>
+    <!-- MathJax Configuration -->
     <script>
         window.MathJax = {
             tex: {
@@ -26,7 +26,6 @@
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: rgba(255, 255, 255, 0.1);
-            --locked-color: #475569;
             --error: #f43f5e;
             --help: #d35400;
         }
@@ -108,14 +107,54 @@
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
 
+        .card-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            color: var(--accent-blue);
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .btn-menu {
+            background: #334155;
+            color: #fff;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .btn-menu:hover {
+            background: #475569;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
         .instruction-box {
             background: rgba(15, 23, 42, 0.6);
             border: 1px solid var(--accent-teal);
-            padding: 1rem;
+            padding: 0.9rem;
             border-radius: 8px;
-            margin-bottom: 1.2rem;
+            margin-bottom: 1rem;
             text-align: left;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--text-muted);
             line-height: 1.4;
         }
@@ -129,14 +168,14 @@
             border: 2px solid #334155;
             border-radius: 12px;
             margin-bottom: 1.2rem;
-            height: 120px;
+            height: 110px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .formula-text {
-            font-size: 48px;
+            font-size: 46px;
             font-weight: bold;
             color: var(--text-main);
         }
@@ -144,11 +183,6 @@
         sub {
             font-size: 0.6em;
             vertical-align: sub;
-        }
-
-        sup {
-            font-size: 0.6em;
-            vertical-align: super;
         }
 
         .input-group {
@@ -186,7 +220,7 @@
             margin-top: 1rem;
         }
 
-        button {
+        button.action-btn {
             flex: 1;
             padding: 0.8rem;
             border: none;
@@ -239,20 +273,15 @@
             display: none;
             margin-top: 1rem;
             font-size: 1rem;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
         }
         #next-btn:hover {
             background: linear-gradient(135deg, #15803d, #166534);
-        }
-
-        .nav-back {
-            display: inline-block;
-            margin-bottom: 1rem;
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.85rem;
-        }
-        .nav-back:hover {
-            color: var(--accent-blue);
         }
 
         footer {
@@ -272,17 +301,29 @@
     </header>
 
     <div class="container">
-        <a href="index.html" class="nav-back">⬅ Volver al Menú Principal de SEFAN</a>
-
         <div class="card">
-            <h2 style="color: var(--accent-blue); margin-top: 0; margin-bottom: 5px;">Módulo Nivel 3: Reto Avanzado de Nomenclatura</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0; margin-bottom: 1rem;">Banco ampliado de compuestos inorgánicos de alta complejidad.</p>
+            <div class="card-header-row">
+                <h2 class="card-title">Desafío SEFAN - Nivel 3: Nomenclatura y Valencias</h2>
+                <a href="index.html" class="btn-menu">⬅ Salir al Menú</a>
+            </div>
+
+            <div class="progress-info">
+                <span id="pregunta-contador">PREGUNTA 1 DE 38</span>
+                <span id="aciertos-contador">Aciertos: 0</span>
+            </div>
             
             <div class="instruction-box">
                 <b>📝 Instrucciones Académicas:</b><br>
-                1. Se acepta el nombre en cualquier nomenclatura oficial (Tradicional, Stock o IUPAC/Sistemática).<br>
-                2. El <b>Estado de Oxidación</b> DEBE incluir obligatoriamente el signo positivo (+) o negativo (-).<br>
-                3. Analiza la estequiometría y verifica la valencia del átomo central antes de validar.
+                1. Ingresa tu <b>Cédula (solo números)</b> y completa los campos de nomenclatura y valencia.<br>
+                2. Se acepta cualquier nomenclatura oficial (Tradicional, Stock o IUPAC).<br>
+                3. El <b>Estado de Oxidación</b> debe incluir obligatoriamente el signo (+ o -).
+            </div>
+
+            <div class="input-group" style="max-width: 250px;">
+                <label>Cédula de Identidad:</label>
+                <!-- Restricción estricta: solo permite números mediante evento input y patrón -->
+                <input type="text" id="user-cedula" placeholder="Ej: 12345678" maxlength="10" 
+                       oninput="this.value = this.value.replace(/[^0-9]/g, '')" autocomplete="off">
             </div>
             
             <div class="formula-container">
@@ -300,8 +341,8 @@
             </div>
             
             <div class="btn-group">
-                <button class="btn-check" onclick="validar()">Verificar Respuesta</button>
-                <button class="btn-help" onclick="solicitarAyuda()">Solicitar Ayuda 💡</button>
+                <button class="action-btn btn-check" onclick="validar()">Verificar Respuesta</button>
+                <button class="action-btn btn-help" onclick="solicitarAyuda()">Solicitar Ayuda 💡</button>
             </div>
 
             <div id="feedback-box"></div>
@@ -322,13 +363,13 @@
 <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx3J3H_1IWvejJpjtquuHV-HmXeoZ29PGo828lazfCrTijX8Uk1_fgDdzC8Xe_MdgZUhA/exec"; 
 
-    // Banco de ejercicios ampliado y con mayor complejidad técnica (Química Inorgánica Avanzada)
+    // Banco de ejercicios ampliado y con mayor complejidad técnica
     const bancoOriginal = [
         { f: "NaCl", c: ["cloruro de sodio"], v: "+1", hint: "Sal binaria simple. El Na pertenece al grupo 1." },
         { f: "H<sub>2</sub>SO<sub>4</sub>", c: ["acido sulfurico", "tetraoxosulfato (vi) de hidrogeno"], v: "+6", hint: "Oxoácido fuerte. Azufre actuando con su valencia máxima." },
         { f: "KOH", c: ["hidroxido de potasio"], v: "+1", hint: "Hidróxido básico de metal alcalino." },
         { f: "Fe<sub>2</sub>O<sub>3</sub>", c: ["oxido ferrico", "oxido de hierro (iii)", "trioxido de dihierro"], v: "+3", hint: "Óxido metálico. El hierro emplea su valencia superior." },
-        { f: "KMnO<sub>4</sub>", c: ["permanganato de potasio", "tetraoxomanganato (vii) de potasio"], v: "+7", hint: "Oxisat con manganeso en su estado de oxidación más alto." },
+        { f: "KMnO<sub>4</sub>", c: ["permanganato de potasio", "tetraoxomanganato (vii) de potasio"], v: "+7", hint: "Oxisal con manganeso en su estado de oxidación más alto." },
         { f: "HCl", c: ["acido clorhidrico", "cloruro de hidrogeno"], v: "-1", hint: "Hidrácido en solución acuosa. Cloro con estado de oxidación negativo." },
         { f: "CO<sub>2</sub>", c: ["dioxido de carbono", "anhidrido carbonico"], v: "+4", hint: "Óxido ácido (anhídrido) del carbono." },
         { f: "NaOH", c: ["hidroxido de sodio", "sosa caustica"], v: "+1", hint: "Base fuerte de gran uso industrial." },
@@ -354,7 +395,6 @@
         { f: "P<sub>2</sub>O<sub>5</sub>", c: ["pentaoxido de difosforo", "anhidrido fosforico"], v: "+5", hint: "Óxido ácido del fósforo con valencia +5." },
         { f: "K<sub>2</sub>O", c: ["oxido de potasio"], v: "+1", hint: "Óxido básico monovalente." },
         { f: "HBr", c: ["acido bromhidrico", "bromuro de hidrogeno"], v: "-1", hint: "Hidrácido derivado del bromo." },
-        // --- Nuevos compuestos de mayor complejidad añadidos ---
         { f: "HIO<sub>3</sub>", c: ["acido iodico", "trioxoyodato (v) de hidrogeno", "acido yodico"], v: "+5", hint: "Ácido oxigenado del yodo con valencia pentavalente." },
         { f: "Fe(OH)<sub>3</sub>", c: ["hidroxido ferrico", "hidroxido de hierro (iii)"], v: "+3", hint: "Hidróxido metálico con hierro trivalente." },
         { f: "NaHSO<sub>4</sub>", c: ["sulfato acido de sodio", "hidrogenosulfato de sodio"], v: "+6", hint: "Sal ácida derivada del ácido sulfúrico." },
@@ -367,6 +407,7 @@
 
     let examen = [];
     let current = 0;
+    let aciertos = 0;
 
     function limpiarTexto(texto) {
         return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
@@ -375,11 +416,14 @@
     function mezclarYEmpezar() {
         examen = [...bancoOriginal].sort(() => Math.random() - 0.5);
         current = 0;
+        aciertos = 0;
         cargar();
     }
 
     function cargar() {
         document.getElementById('formula-display').innerHTML = examen[current].f;
+        document.getElementById('pregunta-contador').innerText = `PREGUNTA ${current + 1} DE ${examen.length}`;
+        document.getElementById('aciertos-contador').innerText = `Aciertos: ${aciertos}`;
         document.getElementById('feedback-box').style.display = 'none';
         document.getElementById('tutor-box').style.display = 'none';
         document.getElementById('next-btn').style.display = 'none';
@@ -390,12 +434,19 @@
     }
 
     async function validar() {
+        const cedula = document.getElementById('user-cedula').value.trim();
         const resNomOriginal = document.getElementById('user-name').value.trim();
         const resVal = document.getElementById('user-valencia').value.trim();
         const fBox = document.getElementById('feedback-box');
         
+        if (!cedula) {
+            alert("Por favor, ingresa tu número de cédula para registrar tu avance.");
+            document.getElementById('user-cedula').focus();
+            return;
+        }
+
         if (!resNomOriginal || !resVal) {
-            alert("Por favor, completa ambos campos obligatorios.");
+            alert("Por favor, completa ambos campos de respuesta.");
             return;
         }
 
@@ -407,11 +458,11 @@
         fBox.style.backgroundColor = "rgba(245, 158, 11, 0.2)";
         fBox.style.border = "1px solid var(--accent-gold)";
         fBox.style.color = "var(--accent-gold)";
-        fBox.innerHTML = "🧪 Procesando y validando respuesta...";
+        fBox.innerHTML = "🧪 Validando respuesta en el sistema...";
 
         const datos = {
             origen: "SEFAN_NIVEL_3_NOMENCLATURA",
-            nombre: "Estudiante_PSM",
+            cedula: cedula,
             formula: examen[current].f.replace(/<[^>]*>?/gm, ''),
             respuestaAlumno: `Nombre: ${resNomOriginal} | Val: ${resVal}`,
             respuestaCorrecta: `Nombre: ${examen[current].c[0]} | Val: ${examen[current].v}`,
@@ -436,6 +487,8 @@
                 fBox.style.border = '1px solid var(--accent-green)';
                 fBox.style.color = '#4ade80';
                 fBox.innerHTML = "✅ ¡Excelente! Nombre y estado de oxidación correctos.";
+                aciertos++;
+                document.getElementById('aciertos-contador').innerText = `Aciertos: ${aciertos}`;
             } else {
                 fBox.style.backgroundColor = 'rgba(239, 68, 68, 0.2)';
                 fBox.style.border = '1px solid var(--error)';
@@ -465,7 +518,7 @@
         if (current < examen.length) {
             cargar();
         } else {
-            alert("¡Felicitaciones! Has completado todo el banco ampliado de nomenclatura.");
+            alert(`¡Felicitaciones! Has completado el banco. Total de aciertos: ${aciertos} de ${examen.length}`);
             mezclarYEmpezar();
         }
     }
