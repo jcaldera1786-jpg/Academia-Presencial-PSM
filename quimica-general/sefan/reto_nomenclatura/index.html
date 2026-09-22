@@ -251,8 +251,9 @@
             margin-top: 1rem;
             padding: 1rem;
             border-radius: 8px;
-            font-weight: 600;
             font-size: 0.9rem;
+            text-align: left;
+            line-height: 1.4;
         }
 
         #tutor-box {
@@ -321,7 +322,7 @@
 
             <div class="input-group" style="max-width: 250px;">
                 <label>Cédula de Identidad:</label>
-                <!-- Restricción estricta: solo permite números mediante evento input y patrón -->
+                <!-- Restricción numérica estricta -->
                 <input type="text" id="user-cedula" placeholder="Ej: 12345678" maxlength="10" 
                        oninput="this.value = this.value.replace(/[^0-9]/g, '')" autocomplete="off">
             </div>
@@ -363,46 +364,45 @@
 <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx3J3H_1IWvejJpjtquuHV-HmXeoZ29PGo828lazfCrTijX8Uk1_fgDdzC8Xe_MdgZUhA/exec"; 
 
-    // Banco de ejercicios ampliado y con mayor complejidad técnica
     const bancoOriginal = [
-        { f: "NaCl", c: ["cloruro de sodio"], v: "+1", hint: "Sal binaria simple. El Na pertenece al grupo 1." },
-        { f: "H<sub>2</sub>SO<sub>4</sub>", c: ["acido sulfurico", "tetraoxosulfato (vi) de hidrogeno"], v: "+6", hint: "Oxoácido fuerte. Azufre actuando con su valencia máxima." },
-        { f: "KOH", c: ["hidroxido de potasio"], v: "+1", hint: "Hidróxido básico de metal alcalino." },
-        { f: "Fe<sub>2</sub>O<sub>3</sub>", c: ["oxido ferrico", "oxido de hierro (iii)", "trioxido de dihierro"], v: "+3", hint: "Óxido metálico. El hierro emplea su valencia superior." },
-        { f: "KMnO<sub>4</sub>", c: ["permanganato de potasio", "tetraoxomanganato (vii) de potasio"], v: "+7", hint: "Oxisal con manganeso en su estado de oxidación más alto." },
-        { f: "HCl", c: ["acido clorhidrico", "cloruro de hidrogeno"], v: "-1", hint: "Hidrácido en solución acuosa. Cloro con estado de oxidación negativo." },
-        { f: "CO<sub>2</sub>", c: ["dioxido de carbono", "anhidrido carbonico"], v: "+4", hint: "Óxido ácido (anhídrido) del carbono." },
-        { f: "NaOH", c: ["hidroxido de sodio", "sosa caustica"], v: "+1", hint: "Base fuerte de gran uso industrial." },
-        { f: "CuSO<sub>4</sub>", c: ["sulfato de cobre (ii)", "sulfato cuprico"], v: "+2", hint: "Sal oxisal derivada del cobre divalente." },
-        { f: "NH<sub>3</sub>", c: ["amoniaco", "trihidruro de nitrogeno"], v: "-3", hint: "Hidruro no metálico nitrogenado con valencia formal -3." },
-        { f: "H<sub>2</sub>O<sub>2</sub>", c: ["peroxido de hidrogeno", "agua oxigenada"], v: "-1", hint: "Excepción peróxidos: El oxígeno actúa con estado de oxidación -1." },
-        { f: "K<sub>2</sub>Cr<sub>2</sub>O<sub>7</sub>", c: ["dicromato de potasio", "heptaoxodicromato (vi) de potasio"], v: "+6", hint: "Sal oxisal compleja con cromo hexavalente." },
-        { f: "MgO", c: ["oxido de magnesio"], v: "+2", hint: "Óxido básico de metal alcalinotérreo." },
-        { f: "HNO<sub>3</sub>", c: ["acido nitrico", "trioxonitrato (v) de hidrogeno"], v: "+5", hint: "Oxoácido nitrogenado. Nitrógeno con valencia +5." },
-        { f: "Al(OH)<sub>3</sub>", c: ["hidroxido de aluminio"], v: "+3", hint: "Hidróxido anfótero del grupo 13." },
-        { f: "CaCO<sub>3</sub>", c: ["carbonato de calcio", "trioxocarbonato (iv) de calcio"], v: "+4", hint: "Sal oxisal. El carbono central opera con valencia +4." },
-        { f: "LiH", c: ["hidruro de litio"], v: "-1", hint: "Hidruro metálico salino. El hidrógeno actúa como hidruro (-1)." },
-        { f: "SO<sub>3</sub>", c: ["trioxido de azufre", "anhidrido sulfurico"], v: "+6", hint: "Anhídrido superior del azufre." },
-        { f: "AgCl", c: ["cloruro de plata"], v: "+1", hint: "Sal binaria insoluble. La plata mantiene número de oxidación fijo +1." },
-        { f: "FeSO<sub>4</sub>", c: ["sulfato ferroso", "sulfato de hierro (ii)"], v: "+2", hint: "Sal oxisal. El hierro actúa con su menor valencia (+2)." },
-        { f: "H<sub>3</sub>PO<sub>4</sub>", c: ["acido fosforico", "tetraoxofosfato (v) de hidrogeno"], v: "+5", hint: "Triácido oxigenado del fósforo pentavalente." },
-        { f: "PbO<sub>2</sub>", c: ["oxido plumbico", "oxido de plomo (iv)", "dioxido de plomo"], v: "+4", hint: "Óxido metálico superior. El plomo actúa con valencia +4." },
-        { f: "Ni(OH)<sub>2</sub>", c: ["hidroxido niqueloso", "hidroxido de niquel (ii)"], v: "+2", hint: "Hidróxido metálico con níquel divalente." },
-        { f: "ZnCl<sub>2</sub>", c: ["cloruro de zinc"], v: "+2", hint: "Sal haloidea. El zinc posee estado de oxidación fijo +2." },
-        { f: "HClO", c: ["acido hipocloroso", "oxoclorato (i) de hidrogeno"], v: "+1", hint: "Ácido oxácido con cloro en su estado de oxidación mínimo positivo (+1)." },
-        { f: "Na<sub>2</sub>O", c: ["oxido de sodio"], v: "+1", hint: "Óxido básico de metal alcalino." },
-        { f: "Ba(OH)<sub>2</sub>", c: ["hidroxido de bario"], v: "+2", hint: "Hidróxido alcalinotérreo fuerte." },
-        { f: "P<sub>2</sub>O<sub>5</sub>", c: ["pentaoxido de difosforo", "anhidrido fosforico"], v: "+5", hint: "Óxido ácido del fósforo con valencia +5." },
-        { f: "K<sub>2</sub>O", c: ["oxido de potasio"], v: "+1", hint: "Óxido básico monovalente." },
-        { f: "HBr", c: ["acido bromhidrico", "bromuro de hidrogeno"], v: "-1", hint: "Hidrácido derivado del bromo." },
-        { f: "HIO<sub>3</sub>", c: ["acido iodico", "trioxoyodato (v) de hidrogeno", "acido yodico"], v: "+5", hint: "Ácido oxigenado del yodo con valencia pentavalente." },
-        { f: "Fe(OH)<sub>3</sub>", c: ["hidroxido ferrico", "hidroxido de hierro (iii)"], v: "+3", hint: "Hidróxido metálico con hierro trivalente." },
-        { f: "NaHSO<sub>4</sub>", c: ["sulfato acido de sodio", "hidrogenosulfato de sodio"], v: "+6", hint: "Sal ácida derivada del ácido sulfúrico." },
-        { f: "HClO<sub>4</sub>", c: ["acido perclorico", "tetraoxoclorato (vii) de hidrogeno"], v: "+7", hint: "Oxoácido hiperhalogenado. Cloro con valencia máxima +7." },
-        { f: "Cu<sub>2</sub>O", c: ["oxido cuproso", "oxido de cobre (i)", "monoxido de dicobre"], v: "+1", hint: "Óxido metálico. Cobre actuando con su menor valencia (+1)." },
-        { f: "Na<sub>2</sub>O<sub>2</sub>", c: ["peroxido de sodio"], v: "-1", hint: "Compuesto especial con enlace peróxido O-O." },
-        { f: "H<sub>4</sub>P<sub>2</sub>O<sub>7</sub>", c: ["acido pirofosforico", "heptaoxodifosfato (v) de hidrogeno"], v: "+5", hint: "Piroácido obtenido por deshidratación parcial de dos moléculas de ácido ortofosfórico." },
-        { f: "PtCl<sub>4</sub>", c: ["cloruro platinico", "cloruro de platino (iv)"], v: "+4", hint: "Sal binaria de metal de transición noble con estado de oxidación +4." }
+        { f: "NaCl", c: ["cloruro de sodio"], v: "+1", hint: "Sal binaria simple. El Na pertenece al grupo 1.", feedback: "¡Correcto! El cloruro de sodio es una sal neutra donde el sodio opera con estado de oxidación fijo +1 y el cloro como halógeno con -1." },
+        { f: "H<sub>2</sub>SO<sub>4</sub>", c: ["acido sulfurico", "tetraoxosulfato (vi) de hidrogeno"], v: "+6", hint: "Oxoácido fuerte. Azufre actuando con su valencia máxima.", feedback: "¡Muy bien! En el ácido sulfúrico, el azufre alcanza su máxima valencia (+6), combinándose con hidrógeno (+1) y oxígeno (-2)." },
+        { f: "KOH", c: ["hidroxido de potasio"], v: "+1", hint: "Hidróxido básico de metal alcalino.", feedback: "¡Excelente! Corresponde a una base fuerte; el potasio (grupo 1) mantiene un estado de oxidación +1." },
+        { f: "Fe<sub>2</sub>O<sub>3</sub>", c: ["oxido ferrico", "oxido de hierro (iii)", "trioxido de dihierro"], v: "+3", hint: "Óxido metálico. El hierro emplea su valencia superior.", feedback: "¡Correcto! Aquí el hierro actúa con su mayor valencia (+3), formando el óxido férrico u óxido de hierro (III)." },
+        { f: "KMnO<sub>4</sub>", c: ["permanganato de potasio", "tetraoxomanganato (vii) de potasio"], v: "+7", hint: "Oxisal con manganeso en su estado de oxidación más alto.", feedback: "¡Perfecto! El manganeso actúa con estado de oxidación +7 en el anión permanganato, siendo un agente oxidante muy potente." },
+        { f: "HCl", c: ["acido clorhidrico", "cloruro de hidrogeno"], v: "-1", hint: "Hidrácido en solución acuosa. Cloro con estado de oxidación negativo.", feedback: "¡Acertado! En los hidrácidos, los halógenos actúan con su valencia negativa estricta (-1)." },
+        { f: "CO<sub>2</sub>", c: ["dioxido de carbono", "anhidrido carbonico"], v: "+4", hint: "Óxido ácido (anhídrido) del carbono.", feedback: "¡Muy bien! Es un óxido no metálico donde el carbono emplea la valencia tetravalente (+4)." },
+        { f: "NaOH", c: ["hidroxido de sodio", "sosa caustica"], v: "+1", hint: "Base fuerte de gran uso industrial.", feedback: "¡Correcto! El grupo hidróxido (OH⁻) se une al sodio que mantiene su valencia fija de +1." },
+        { f: "CuSO<sub>4</sub>", c: ["sulfato de cobre (ii)", "sulfato cuprico"], v: "+2", hint: "Sal oxisal derivada del cobre divalente.", feedback: "¡Excelente! El cobre actúa con valencia +2 (estado cúprico), combinándose con el anión sulfato." },
+        { f: "NH<sub>3</sub>", c: ["amoniaco", "trihidruro de nitrogeno"], v: "-3", hint: "Hidruro no metálico nitrogenado con valencia formal -3.", feedback: "¡Correcto! El nitrógeno en este hidruro actúa con su número de oxidación negativo formal (-3)." },
+        { f: "H<sub>2</sub>O<sub>2</sub>", c: ["peroxido de hidrogeno", "agua oxigenada"], v: "-1", hint: "Excepción peróxidos: El oxígeno actúa con estado de oxidación -1.", feedback: "¡Muy bien! Recuerda que en los peróxidos el enlace oxígeno-oxígeno obliga a asignar un estado de oxidación de -1 al oxígeno." },
+        { f: "K<sub>2</sub>Cr<sub>2</sub>O<sub>7</sub>", c: ["dicromato de potasio", "heptaoxodicromato (vi) de potasio"], v: "+6", hint: "Sal oxisal compleja con cromo hexavalente.", feedback: "¡Perfecto! El cromo en el ion dicromato actúa con estado de oxidación +6." },
+        { f: "MgO", c: ["oxido de magnesio"], v: "+2", hint: "Óxido básico de metal alcalinotérreo.", feedback: "¡Correcto! El magnesio es un metal del grupo 2 con valencia fija +2." },
+        { f: "HNO<sub>3</sub>", c: ["acido nitrico", "trioxonitrato (v) de hidrogeno"], v: "+5", hint: "Oxoácido nitrogenado. Nitrógeno con valencia +5.", feedback: "¡Excelente! El nitrógeno en este oxoácido presenta su valencia pentavalente (+5)." },
+        { f: "Al(OH)<sub>3</sub>", c: ["hidroxido de aluminio"], v: "+3", hint: "Hidróxido anfótero del grupo 13.", feedback: "¡Muy bien! El aluminio pertenece al grupo 13 y posee un estado de oxidación fijo de +3." },
+        { f: "CaCO<sub>3</sub>", c: ["carbonato de calcio", "trioxocarbonato (iv) de calcio"], v: "+4", hint: "Sal oxisal. El carbono central opera con valencia +4.", feedback: "¡Correcto! En la sal de carbonato, el carbono central actúa con valencia +4." },
+        { f: "LiH", c: ["hidruro de litio"], v: "-1", hint: "Hidruro metálico salino. El hidrógeno actúa como hidruro (-1).", feedback: "¡Perfecto! En los hidruros metálicos con elementos muy electropositivos, el hidrógeno toma valencia -1." },
+        { f: "SO<sub>3</sub>", c: ["trioxido de azufre", "anhidrido sulfurico"], v: "+6", hint: "Anhídrido superior del azufre.", feedback: "¡Correcto! Óxido ácido donde el azufre emplea su valencia máxima (+6)." },
+        { f: "AgCl", c: ["cloruro de plata"], v: "+1", hint: "Sal binaria insoluble. La plata mantiene número de oxidación fijo +1.", feedback: "¡Muy bien! La plata es un metal de transición con número de oxidación estrictamente fijo de +1." },
+        { f: "FeSO<sub>4</sub>", c: ["sulfato ferroso", "sulfato de hierro (ii)"], v: "+2", hint: "Sal oxisal. El hierro actúa con su menor valencia (+2).", feedback: "¡Correcto! El sufijo '-oso' o la romanización (II) indican que el hierro trabaja con su valencia menor (+2)." },
+        { f: "H<sub>3</sub>PO<sub>4</sub>", c: ["acido fosforico", "tetraoxofosfato (v) de hidrogeno"], v: "+5", hint: "Triácido oxigenado del fósforo pentavalente.", feedback: "¡Excelente! El fósforo en el ácido fosfórico actúa con valencia pentavalente (+5)." },
+        { f: "PbO<sub>2</sub>", c: ["oxido plumbico", "oxido de plomo (iv)", "dioxido de plomo"], v: "+4", hint: "Óxido metálico superior. El plomo actúa con valencia +4.", feedback: "¡Muy bien! El plomo muestra aquí su mayor estado de oxidación, actuando con valencia +4." },
+        { f: "Ni(OH)<sub>2</sub>", c: ["hidroxido niqueloso", "hidroxido de niquel (ii)"], v: "+2", hint: "Hidróxido metálico con níquel divalente.", feedback: "¡Correcto! El níquel divalente forma el hidróxido niqueloso." },
+        { f: "ZnCl<sub>2</sub>", c: ["cloruro de zinc"], v: "+2", hint: "Sal haloidea. El zinc posee estado de oxidación fijo +2.", feedback: "¡Perfecto! El zinc es un metal divalente con valencia única de +2." },
+        { f: "HClO", c: ["acido hipocloroso", "oxoclorato (i) de hidrogeno"], v: "+1", hint: "Ácido oxácido con cloro en su estado de oxidación mínimo positivo (+1).", feedback: "¡Correcto! El prefijo 'hipo-' y sufijo '-oso' indican que el cloro actúa con su valencia positiva más baja (+1)." },
+        { f: "Na<sub>2</sub>O", c: ["oxido de sodio"], v: "+1", hint: "Óxido básico de metal alcalino.", feedback: "¡Muy bien! Combinación estequiométrica clásica de un metal alcalino con oxígeno (-2)." },
+        { f: "Ba(OH)<sub>2</sub>", c: ["hidroxido de bario"], v: "+2", hint: "Hidróxido alcalinotérreo fuerte.", feedback: "¡Correcto! El bario pertenece al grupo 2 (alcalinotérreos) y presenta valencia +2." },
+        { f: "P<sub>2</sub>O<sub>5</sub>", c: ["pentaoxido de difosforo", "anhidrido fosforico"], v: "+5", hint: "Óxido ácido del fósforo con valencia +5.", feedback: "¡Excelente! Anhídrido del fósforo donde este actúa con valencia pentavalente (+5)." },
+        { f: "K<sub>2</sub>O", c: ["oxido de potasio"], v: "+1", hint: "Óxido básico monovalente.", feedback: "¡Correcto! El potasio monovalente forma este óxido básico fundamental." },
+        { f: "HBr", c: ["acido bromhidrico", "bromuro de hidrogeno"], v: "-1", hint: "Hidrácido derivado del bromo.", feedback: "¡Muy bien! El bromo actúa con su valencia negativa de -1 al encontrarse en un hidrácido." },
+        { f: "HIO<sub>3</sub>", c: ["acido iodico", "trioxoyodato (v) de hidrogeno", "acido yodico"], v: "+5", hint: "Ácido oxigenado del yodo con valencia pentavalente.", feedback: "¡Correcto! El yodo actúa con valencia +5 en este oxoácido halogenado." },
+        { f: "Fe(OH)<sub>3</sub>", c: ["hidroxido ferrico", "hidroxido de hierro (iii)"], v: "+3", hint: "Hidróxido metálico con hierro trivalente.", feedback: "¡Excelente! El hierro opera con su valencia mayor (+3) generando el hidróxido férrico." },
+        { f: "NaHSO<sub>4</sub>", c: ["sulfato acido de sodio", "hidrogenosulfato de sodio"], v: "+6", hint: "Sal ácida derivada del ácido sulfúrico.", feedback: "¡Muy bien! Es una sal ácida donde el hidrógeno remanente coexiste con el anión sulfato (azufre con valencia +6)." },
+        { f: "HClO<sub>4</sub>", c: ["acido perclorico", "tetraoxoclorato (vii) de hidrogeno"], v: "+7", hint: "Oxoácido hiperhalogenado. Cloro con valencia máxima +7.", feedback: "¡Perfecto! El ácido perclórico contiene cloro con su estado de oxidación máximo (+7)." },
+        { f: "Cu<sub>2</sub>O", c: ["oxido cuproso", "oxido de cobre (i)", "monoxido de dicobre"], v: "+1", hint: "Óxido metálico. Cobre actuando con su menor valencia (+1).", feedback: "¡Correcto! El cobre actúa con valencia +1 (cuproso), menor que su estado divalente." },
+        { f: "Na<sub>2</sub>O<sub>2</sub>", c: ["peroxido de sodio"], v: "-1", hint: "Compuesto especial con enlace peróxido O-O.", feedback: "¡Excelente! Estructura típica de peróxido donde los oxígenos comparten un enlace covalente y operan con valencia -1." },
+        { f: "H<sub>4</sub>P<sub>2</sub>O<sub>7</sub>", c: ["acido pirofosforico", "heptaoxodifosfato (v) de hidrogeno"], v: "+5", hint: "Piroácido obtenido por deshidratación parcial de dos moléculas de ácido ortofosfórico.", feedback: "¡Muy bien! Piroácido del fósforo pentavalente obtenido por condensación de dos moléculas de ácido fosfórico con pérdida de agua." },
+        { f: "PtCl<sub>4</sub>", c: ["cloruro platinico", "cloruro de platino (iv)"], v: "+4", hint: "Sal binaria de metal de transición noble con estado de oxidación +4.", feedback: "¡Correcto! El platino actúa con valencia +4 frente al cloro (-1) en esta sal binaria." }
     ];
 
     let examen = [];
@@ -486,14 +486,14 @@
                 fBox.style.backgroundColor = 'rgba(34, 197, 94, 0.2)';
                 fBox.style.border = '1px solid var(--accent-green)';
                 fBox.style.color = '#4ade80';
-                fBox.innerHTML = "✅ ¡Excelente! Nombre y estado de oxidación correctos.";
+                fBox.innerHTML = `<strong>¡Excelente! Respuesta Correcta.</strong><br>${examen[current].feedback}`;
                 aciertos++;
                 document.getElementById('aciertos-contador').innerText = `Aciertos: ${aciertos}`;
             } else {
                 fBox.style.backgroundColor = 'rgba(239, 68, 68, 0.2)';
                 fBox.style.border = '1px solid var(--error)';
                 fBox.style.color = '#fca5a5';
-                fBox.innerHTML = "❌ Hay errores en tu nomenclatura o en el estado de oxidación indicado.";
+                fBox.innerHTML = `<strong>❌ Respuesta Incorrecta o Incompleta.</strong><br>Recuerda que los nombres válidos son: <em>${examen[current].c.join(" / ")}</em> y el estado de oxidación correcto es <em>${examen[current].v}</em>.<br><br><b>💡 Retroalimentación conceptual:</b> ${examen[current].hint}`;
             }
             
             document.getElementById('next-btn').style.display = 'block';
