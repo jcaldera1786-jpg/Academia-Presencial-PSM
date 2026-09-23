@@ -395,122 +395,216 @@ const           delta_Tc_experimental = parseFloat((comp.i * molalidad_experimen
 
         // ====================================================
         // 🏆 ÉLITE DE SELECCIÓN: NIVEL 5 - ChemE-Bowl (Racha >= 40)
+        // Estructura híbrida: Práctica (2/5) y Teoría Conceptual (3/5)
         // ====================================================
         } else {
-            let enfoqueModelos = Math.floor(Math.random() * 3); 
+            // Decidimos aleatoriamente si sale un problema práctico (0 o 1) o una pregunta teórica (2)
+            // Para mantener la proporción 2:3 (Práctica:Teoría)
+            let tipoItemN5 = Math.floor(Math.random() * 5); // 0, 1 = Prácticos | 2, 3, 4 = Teóricos
 
-            if (enfoqueModelos === 0) {
-                const reactivosPlanta = [
-                    { nombre: "HNO₃ (Ácido Nítrico)", pm: 63.01 },
-                    { nombre: "H₂SO₄ (Ácido Sulfúrico)", pm: 98.08 },
-                    { nombre: "HCl (Ácido Clorhídrico)", pm: 36.46 },
-                    { nombre: "CH₃COOH (Ácido Acético)", pm: 60.05 },
-                    { nombre: "H₃PO₄ (Ácido Fosfórico)", pm: 97.99 }
-                ];
-                const compN5 = reactivosPlanta[Math.floor(Math.random() * reactivosPlanta.length)];
+            if (tipoItemN5 <= 1) {
+                // ==========================================
+                // BLOQUE PRÁCTICO (2 tipos de problemas numéricos)
+                // ==========================================
+                let enfoquePráctico = Math.floor(Math.random() * 2);
+
+                if (enfoquePráctico === 0) {
+                    // Problema 1: Síntesis multietapa y ebulloscopía (Mollet / Felder)
+                    const reactivosPlanta = [
+                        { nombre: "HNO₃ (Ácido Nítrico)", pm: 63.01 },
+                        { nombre: "H₂SO₄ (Ácido Sulfúrico)", pm: 98.08 },
+                        { nombre: "HCl (Ácido Clorhídrico)", pm: 36.46 },
+                        { nombre: "CH₃COOH (Ácido Acético)", pm: 60.05 },
+                        { nombre: "H₃PO₄ (Ácido Fosfórico)", pm: 97.99 }
+                    ];
+                    const compN5 = reactivosPlanta[Math.floor(Math.random() * reactivosPlanta.length)];
+                    
+                    const masa_bruta_A = parseFloat((Math.random() * 20 + 40).toFixed(1)); 
+                    const masa_solvente_g = parseFloat((Math.random() * 200 + 350).toFixed(0)); 
+                    const pureza_real_A = parseFloat((Math.random() * 12 + 83).toFixed(0)); 
+                    const Ke_solvente = parseFloat((Math.random() * 0.6 + 2.1).toFixed(2)); 
+                    
+                    const masa_pura_A = masa_bruta_A * (pureza_real_A / 100);
+                    const moles_reales_A = masa_pura_A / compN5.pm; 
+                    const molalidad_A = moles_reales_A / (masa_solvente_g / 1000);
+                    const delta_Te = parseFloat((molalidad_A * Ke_solvente).toFixed(3)); 
+                    
+                    const porc_conversion = parseFloat((Math.random() * 15 + 75).toFixed(0)); 
+                    const moles_Q_producidos = moles_reales_A * (porc_conversion / 100);
+                    const vol_tanque_empaque_L = parseFloat((Math.random() * 0.5 + 1.0).toFixed(2)); 
+                    
+                    metaVal = parseFloat((moles_Q_producidos / vol_tanque_empaque_L).toFixed(3));
+                    
+                    texto = '<b>[NIVEL 5 - PRÁCTICA: SÍNTESIS MULTIETAPA]</b><br>' +
+                            'En la planta piloto de ZUFORCA se procesa <b>' + masa_bruta_A + ' g</b> de materia prima cruda <b>' + compN5.nombre + '</b> ' +
+                            'en <b>' + masa_solvente_g + ' g</b> de solvente (\\(K_e = ' + Ke_solvente + '\\text{ }^{\\circ}\\text{C/m}\\)). ' +
+                            'El sensor registra un ascenso ebulloscópico de <b>\\(\\Delta T_e = ' + delta_Te + '\\text{ }^{\\circ}\\text{C}\\)</b>. ' +
+                            'Tras la reacción con un rendimiento del <b>' + porc_conversion + '%</b>, el producto se afora exactamente a un volumen de <b>' + vol_tanque_empaque_L + ' L</b>. ' +
+                            'Determine la <b>Molaridad (M) definitiva</b> en el tanque de empaque. (MM = ' + compN5.pm + ' g/mol).'; 
                 
-                const masa_bruta_A = parseFloat((Math.random() * 20 + 40).toFixed(1)); 
-                const masa_solvente_g = parseFloat((Math.random() * 200 + 350).toFixed(0)); 
-                const pureza_real_A = parseFloat((Math.random() * 12 + 83).toFixed(0)); 
-                const Ke_solvente = parseFloat((Math.random() * 0.6 + 2.1).toFixed(2)); 
-                
-                const masa_pura_A = masa_bruta_A * (pureza_real_A / 100);
-                const moles_reales_A = masa_pura_A / compN5.pm; 
-                const molalidad_A = moles_reales_A / (masa_solvente_g / 1000);
-                const delta_Te = parseFloat((molalidad_A * Ke_solvente).toFixed(3)); 
-                
-                const porc_conversion = parseFloat((Math.random() * 15 + 75).toFixed(0)); 
-                const moles_Q_producidos = moles_reales_A * (porc_conversion / 100);
-                const vol_tanque_empaque_L = parseFloat((Math.random() * 0.5 + 1.0).toFixed(2)); 
-                
-                metaVal = parseFloat((moles_Q_producidos / vol_tanque_empaque_L).toFixed(3));
-                
-                texto = '<b>[NIVEL 5 - ChemE-Bowl (FELDER MULTI-ETAPA)]</b><br>' +
-                        'En la planta piloto de ZUFORCA se evalúa un proceso continuo de síntesis. ' +
-                        'La <b>Corriente 1</b> se prepara disolviendo <b>' + masa_bruta_A + ' g</b> de materia prima cruda <b>' + compN5.nombre + '</b> ' +
-                        'en <b>' + masa_solvente_g + ' g</b> de un solvente orgánico industrial (\\(K_e = ' + Ke_solvente + '\\text{ }^{\\circ}\\text{C/m}\\)). ' +
-                        'El sensor térmico de la línea registra un ascenso ebulloscópico real en el equilibrio de <b>\\(\\Delta T_e = ' + delta_Te + '\\text{ }^{\\circ}\\text{C}\\)</b>.<br>' +
-                        'Esta corriente acondicionada se introduce a un reactor químico junto con una <b>Corriente 2</b> que suministra un reactivo complementario en exceso. ' +
-                        'En el reactor se suscita la conversión molecular con un <b>porcentaje de rendimiento del ' + porc_conversion + '%</b> respecto al reactivo limitante.<br>' +
-                        'El efluente del reactor pasa inmediatamente a una unidad de separación analítica, donde el 100% del producto de interés se aísla y se transfiere ' +
-                        'a un tanque pulmón de despacho, aforándose con precisión hasta alcanzar un volumen operativo rígido de <b>' + vol_tanque_empaque_L + ' L</b>.<br>' +
-                        'Determine rigurosamente primero la pureza real del lote crudo y calcule la <b>Molaridad (M) definitiva del analito</b> en el tanque de empaque terminal. (MM = ' + compN5.pm + ' g/mol).';    
-            
-            } else if (enfoqueModelos === 1) {
-                const reactivosPlanta = [
-                    { nombre: "FeCl_3", pm: 162.2 },
-                    { nombre: "H_3PO_4", pm: 97.99 },
-                    { nombre: "H_2C_2O_4", pm: 90.03 },
-                    { nombre: "H_2SO_4", pm: 98.08 }
-                ];
-                const compN5 = reactivosPlanta[Math.floor(Math.random() * reactivosPlanta.length)];
+                } else {
+                    // Problema 2: Mezclas reales no ideales con contracción volumétrica
+                    const v1 = parseFloat((Math.random() * 100 + 100).toFixed(0)); 
+                    const v2 = parseFloat((Math.random() * 100 + 150).toFixed(0)); 
+                    const c1 = parseFloat((Math.random() * 0.2 + 0.35).toFixed(2)); 
+                    const c2 = parseFloat((Math.random() * 0.15 + 0.20).toFixed(2)); 
+                    const p1 = parseFloat((Math.random() * 5 + 82).toFixed(0)); 
+                    const p2 = parseFloat((Math.random() * 4 + 88).toFixed(0)); 
 
-                const v1 = parseFloat((Math.random() * 100 + 100).toFixed(0)); 
-                const v2 = parseFloat((Math.random() * 100 + 150).toFixed(0)); 
-                const v3 = parseFloat((Math.random() * 50 + 80).toFixed(0));   
-                const v4 = parseFloat((Math.random() * 100 + 200).toFixed(0)); 
+                    const v_teorico_total = v1 + v2;
+                    const factor_desviacion = parseFloat((Math.random() * 0.04 + 0.95).toFixed(3)); 
+                    const v_real = parseFloat((v_teorico_total * factor_desviacion).toFixed(0));
 
-                const c1 = parseFloat((Math.random() * 0.2 + 0.35).toFixed(2)); 
-                const c2 = parseFloat((Math.random() * 0.15 + 0.20).toFixed(2)); 
-                const c3 = parseFloat((Math.random() * 0.06 + 0.07).toFixed(2)); 
-                const c4 = parseFloat((Math.random() * 0.03 + 0.03).toFixed(2)); 
+                    const moles1 = (v1 / 1000) * c1 * (p1 / 100);
+                    const moles2 = (v2 / 1000) * c2 * (p2 / 100);
+                    const moles_totales = moles1 + moles2;
 
-                const p1 = parseFloat((Math.random() * 5 + 82).toFixed(0)); 
-                const p2 = parseFloat((Math.random() * 4 + 88).toFixed(0)); 
-                const p3 = parseFloat((Math.random() * 3 + 93).toFixed(0)); 
-                const p4 = parseFloat((Math.random() * 2 + 97).toFixed(0)); 
+                    metaVal = parseFloat((moles_totales / (v_real / 1000)).toFixed(3));
 
-                const v_teorico_total = v1 + v2 + v3 + v4;
-                const factor_desviacion = parseFloat((Math.random() * 0.04 + 0.95).toFixed(3)); 
-                const v_real = parseFloat((v_teorico_total * factor_desviacion).toFixed(0));
+                    texto = '<b>[NIVEL 5 - PRÁCTICA: MEZCLA REAL NO ADITIVA]</b><br>' +
+                            'Se unifican dos corrientes industriales: <b>' + v1 + ' mL</b> de solución al <b>' + c1 + ' M</b> (pureza ' + p1 + '%) y <b>' + v2 + ' mL</b> al <b>' + c2 + ' M</b> (pureza ' + p2 + '%). ' +
+                            'Debido a efectos intermoleculares, el volumen real medido en el tanque es de <b>' + v_real + ' mL</b>. ' +
+                            'Calcule la <b>Molaridad (M) real de despacho</b> de la mezcla.';
+                }
 
-                const moles1 = (v1 / 1000) * c1 * (p1 / 100);
-                const moles2 = (v2 / 1000) * c2 * (p2 / 100);
-                const moles3 = (v3 / 1000) * c3 * (p3 / 100);
-                const moles4 = (v4 / 1000) * c4 * (p4 / 100);
-                const moles_totales = moles1 + moles2 + moles3 + moles4;
-
-                metaVal = parseFloat((moles_totales / (v_real / 1000)).toFixed(3));
-
-                texto = '<b>[NIVEL 5 - RETO MAESTRO INTEGRADOR DE PLANTA]</b><br>' +
-                        'En un reactor maestro de ZUFORCA se vacían cuatro tanques remanentes de <b>\\(' + compN5.nombre + '\\)</b> que provienen de materias primas con purezas degradadas:<br>' +
-                        '* Tanque 1: <b>' + v1 + ' mL</b> de <b>' + c1 + ' M</b> (materia prima al ' + p1 + '% de pureza).<br>' +
-                        '* Tanque 2: <b>' + v2 + ' mL</b> de <b>' + c2 + ' M</b> (materia prima al ' + p2 + '% de pureza).<br>' +
-                        '* Tanque 3: <b>' + v3 + ' mL</b> de <b>' + c3 + ' M</b> (materia prima al ' + p3 + '% de pureza).<br>' +
-                        '* Tanque 4: <b>' + v4 + ' mL</b> de <b>' + c4 + ' M</b> (materia prima al ' + p4 + '% de pureza).<br>' +
-                        'El indicador digital del domo reporta un volumen real definitivo de <b>' + v_real + ' mL</b> debido a las contracciones moleculares físicas de la mezcla. Calcule la <b>Molaridad (M) real de despacho</b> del lote industrial unificado. (MM = ' + compN5.pm + ' g/mol).';
-            
             } else {
-                const reactivosPlanta = [
-                    { nombre: "NaOH (Hidróxido de Sodio)", pm: 40.00 },
-                    { nombre: "KOH (Hidróxido de Potasio)", pm: 56.11 },
-                    { nombre: "Na₂CO₃ (Carbonato de Sodio)", pm: 105.99 },
-                    { nombre: "Ca(OH)₂ (Hidróxido de Calcio)", pm: 74.09 },
-                    { nombre: "NH₃ (Amoníaco Anhidro)", pm: 17.03 },
-                    { nombre: "K₂CO₃ (Carbonato de Potasio)", pm: 138.21 },
-                    { nombre: "LiOH (Hidróxido de Litio)", pm: 23.95 },
-                    { nombre: "Ba(OH)₂ (Hidróxido de Bario)", pm: 171.34 }
+                // ==========================================
+                // BLOQUE TEÓRICO (Banco de 30 Preguntas Conceptuales de Élite)
+                // ==========================================
+                const bancoTeoria = [
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #01]</b> ¿Por qué en soluciones electrolíticas concentradas se debe emplear la <i>actividad química (\\(a\\))</i> en lugar de la concentración molar nominal?",
+                        respuesta: "interacciones iónicas" // Palabra clave o valor esperado para validar
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #02]</b> ¿Cómo influye la atmósfera iónica circundante sobre el factor de van't Hoff experimental en soluciones de electrolitos fuertes comparado con el valor teórico estequiométrico?",
+                        respuesta: "menor"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #03]</b> En termodinámica de soluciones, ¿a qué se debe principalmente el fenómeno de contracción volumétrica en mezclas líquidas polares?",
+                        respuesta: "puentes de hidrógeno"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #04]</b> ¿Qué representa físicamente la constante crioscópica (\\(K_f\\)) de un solvente en relación con su potencial químico?",
+                        respuesta: "descenso del punto de congelación"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #05]</b> En un reactor continuo de tanque agitado (CSTR) operando en estado estacionario, ¿varía la concentración de los reactivos con respecto al tiempo en un punto interno?",
+                        respuesta: "no"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #06]</b> ¿Cuál es el efecto termodinámico principal sobre la solubilidad de sales poco solubles al incrementar la temperatura en un proceso endotérmico?",
+                        respuesta: "aumenta"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #07]</b> En la ley de acción de masas, ¿qué mide la constante de equilibrio termodinámico (\\(K_{eq}\\)) respecto a las actividades de los componentes?",
+                        respuesta: "cociente"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #08]</b> ¿Por qué los procesos reales de mezcla industrial generan entropía y se consideran termodinámicamente irreversibles?",
+                        respuesta: "disipación"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #09]</b> ¿Cómo se denomina el estado límite donde el potencial químico de un soluto es idéntico tanto en la fase líquida como en la fase vapor en equilibrio?",
+                        respuesta: "equilibrio líquido-vapor"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #10]</b> En el análisis de pureza por métodos coligativos, ¿qué propiedad térmica es menos propensa a errores por evaporación a presión atmosférica abierta?",
+                        respuesta: "crioscopía"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #11]</b> ¿Qué indica un coeficiente de actividad (\\(\\gamma\\)) menor a la unidad en disoluciones no ideales?",
+                        respuesta: "atracción"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #12]</b> En procesos de transferencia de masa, ¿cómo afecta el incremento de la fuerza iónica del medio al coeficiente de actividad de un ion neutro?",
+                        respuesta: "mínimo"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #13]</b> ¿Cuál es la principal limitación del modelo de Debye-Hückel en soluciones de alta concentración iónica industrial?",
+                        respuesta: "dilución"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #14]</b> ¿Qué describe la ecuación de Clausius-Clapeyron en el contexto de las transiciones de fase de solventes puros y disuciones?",
+                        respuesta: "presión de vapor"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #15]</b> En la preparación de soluciones amortiguadoras, ¿cómo influye la temperatura en la constante de disociación ácida (\\(K_a\\))?",
+                        respuesta: "varía"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #16]</b> ¿Qué representa el término de energía de red cristalina en el ciclo de Born-Haber al disolver sales iónicas?",
+                        respuesta: "separación"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #17]</b> ¿Por qué las propiedades coligativas dependen estrictamente del número de partículas y no de su naturaleza química?",
+                        respuesta: "coligativas"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #18]</b> ¿Qué error se comete al asumir volúmenes estrictamente aditivos en el diseño de tanques pulmón para grandes caudales?",
+                        respuesta: "sobreestimación"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #19]</b> En la ley de Raoult, ¿qué comportamiento ideal exhiben las soluciones binarias cuando las fuerzas intermoleculares A-B son equivalentes a A-A y B-B?",
+                        respuesta: "ideal"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #20]</b> ¿Cómo se manifiesta una desviación negativa de la ley de Raoult en el diagrama de presión de vapor de una mezcla líquida?",
+                        respuesta: "mínimo"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #21]</b> ¿Cuál es el significado físico de la presión osmótica en membranas semipermeables desde el punto de vista del potencial químico del solvente?",
+                        respuesta: "igualación"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #22]</b> En catálisis heterogénea aplicada a plantas de neutralización, ¿qué rol juega el área superficial específica del reactivo sólido?",
+                        respuesta: "cinética"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #23]</b> ¿Por qué la normalidad (N) de una solución oxidante puede cambiar según el tipo de reacción a la que se someta el agente químico?",
+                        respuesta: "equivalentes"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #24]</b> ¿Qué expresa la ley de Henry sobre la solubilidad de gases en líquidos a presiones moderadas?",
+                        respuesta: "proporcionalidad"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #25]</b> En los sistemas de refrigeración industrial basados en descenso crioscópico, ¿qué ocurre si se excede la concentración eutéctica de la salmuera?",
+                        respuesta: "precipitación"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #26]</b> ¿Cómo se define el estado estándar para solutos disueltos en termodinámica de disoluciones líquidas diluidas?",
+                        respuesta: "molalidad unitaria"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #27]</b> ¿Qué implicancia tiene el concepto de fugacidad en gases reales cuando se evalúan equilibrios de fases con soluciones líquidas?",
+                        respuesta: "presión efectiva"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #28]</b> ¿Por qué los cambios de entalpía de mezcla en soluciones altamente polares suelen ser fortemente exotérmicos?",
+                        respuesta: "hidratación"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #29]</b> En la optimización de torres de destilación, ¿cómo afecta la presencia de sales no volátiles a la volatilidad relativa del solvente?",
+                        respuesta: "aumenta"
+                    },
+                    {
+                        pregunta: "<b>[NIVEL 5 - TEORÍA #30]</b> ¿Qué evalúa el criterio de estabilidad termodinámica de Gibbs (\\(\\Delta G \\leq 0\\)) en un proceso de mezcla espontáneo a temperatura y presión constantes?",
+                        respuesta: "espontaneidad"
+                    }
                 ];
-                const compN5 = reactivosPlanta[Math.floor(Math.random() * reactivosPlanta.length)];
 
-                const caudal_disolvente = parseFloat((Math.random() * 15 + 45).toFixed(1)); 
-                const dosificacion_bruta_kg = parseFloat((Math.random() * 2 + 5).toFixed(2)); 
-                const pureza_lote_base = parseFloat((Math.random() * 8 + 88).toFixed(1)); 
-                const porc_conversion_cinetica = parseFloat((Math.random() * 10 + 80).toFixed(0)); 
+                // Seleccionamos una pregunta teórica aleatoria del banco de 30
+                let indexTeoria = Math.floor(Math.random() * bancoTeoria.length);
+                let preguntaSeleccionada = bancoTeoria[indexTeoria];
 
-                const masa_pura_base_g = (dosificacion_bruta_kg * 1000) * (pureza_lote_base / 100); 
-                const moles_base_entrada = masa_pura_base_g / compN5.pm; 
-                const moles_base_reaccionan = moles_base_entrada * (porc_conversion_cinetica / 100); 
-                const moles_base_remanentes = moles_base_entrada - moles_base_reaccionan; 
-
-                metaVal = parseFloat((moles_base_remanentes / caudal_disolvente).toFixed(4));
-
-                texto = '<b>[NIVEL 5 - DISEÑO CINÉTICO DE REACTORES CONTINUOS]</b><br>' +
-                        'Una unidad de neutralización industrial de ZUFORCA opera en estado estacionario y régimen permanente. Al reactor ingresa un caudal constante de <b>' + caudal_disolvente + ' L/min</b> de un efluente acuoso libre de soluto, alimentándose simultáneamente una tolva automatizada que dosifica <b>' + dosificacion_bruta_kg + ' kg/min</b> de una muestra cruda e impura de <b>\\(' + compN5.nombre + '\\)</b> con una <b>pureza del ' + pureza_lote_base + '%</b>.<br>' +
-                        'Si el perfil térmico interno restringe la cinética del proceso, alcanzándose un **porcentaje de conversión reactiva de apenas el ' + porc_conversion_cinetica + '%** de la base alimentada, calcule la <b>Molaridad (M) residual definitiva de la base</b> en la corriente continua de descarga. Suponga que la densidad de la corriente permanece constante y que no hay expansión volumétrica durante el mezclado reactivo. (MM = ' + compN5.pm + ' g/mol).';
+                texto = preguntaSeleccionada.pregunta + '<br><i>(Responda con el concepto o valor clave asociado solicitado en la literatura técnica).</i>';
+                
+                // Nota: Para que la plataforma valide la teoría, puedes asignar un código de respuesta o 
+                // configurar tu validador de texto según la palabra clave esperada.
+                metaVal = preguntaSeleccionada.respuesta; 
             }
         }
-
         // RENDERIZADO GENERAL EN INTERFAZ
         document.getElementById('enunciado').innerHTML = texto;
         document.getElementById('logic').value = "";
