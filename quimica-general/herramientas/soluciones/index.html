@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reactor Avanzado de Ingeniería Química</title>
     
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
     
     <style>
         :root {
@@ -94,7 +94,7 @@
             • Ciclos automatizados de 5 problemas complejos para validación de aptitud técnica.<br>
             • Racha de <b>0 a 39 puntos</b>: Evaluación de rangos de pregrado estándar.<br>
             • Racha de <b>40 a 49 puntos</b>: Nivel Avanzado con acoplamiento de variables coligativas.<br>
-            • Racha <b>&ge; 50 puntos (NIVEL 5)</b>: Filtro riguroso y exclusivo para estudiantes que aspiran a traslados de otras Ingenierías hacia <b>Ingeniería Química</b>.
+            • Racha <b>&ge; 50 puntos (NIVEL 5)</b>: Filtro riguroso y exclusivo. Requiere completar 25 ejercicios exitosos en este nivel para la acreditación del certificado.
         </div>
 
         <input type="text" id="user-name" placeholder="Nombre y Apellido" style="width:100%; padding:14px; margin-bottom:12px; border-radius:8px; border:none; background:rgba(255,255,255,0.1); color:white; outline:none;">
@@ -150,6 +150,7 @@
     const totalProblemas = 5; 
     const datosUser = { nombre: "", id: "" };
     let nivelActualLabel = "";
+    let ejerciciosNivel5Completados = 0; // Control estricto de los 25 ejercicios para el certificado
 
     const RANGOS = [
         { min: 0,  label: "Preparador de Soluciones Básico", color: "#bdc3c7", bg: "rgba(149, 165, 166, 0.2)" },
@@ -160,7 +161,7 @@
         { min: 50, label: "🏆 ÉLITE DE SELECCIÓN: ChemE-Bowl", color: "#e74c3c", bg: "rgba(231, 76, 60, 0.3)" }
     ];
 
-        const ELEMENTOS = {
+    const ELEMENTOS = {
         hidroxidos: [
             {n:"Al(OH)_3", mm:78.00, v:3, i:4}, 
             {n:"Fe(OH)_3", mm:106.86, v:3, i:4},
@@ -170,7 +171,7 @@
         ],
         sales: [
             {n:"FeCl_3", mm:162.2, v:3, i:4}, 
-            {n:"NiSO_4", mm:154.7, v:2, i:2}, // <--- Aquí ya está el i=2 para NiSO4
+            {n:"NiSO_4", mm:154.7, v:2, i:2}, 
             {n:"Al_2(SO_4)_3", mm:342.15, v:6, i:5}, 
             {n:"Ba(ClO_3)_2", mm:304.2, v:2, i:3}
         ],
@@ -181,7 +182,6 @@
             {n:"HNO_3", mm:63.01, v:1, i:2}
         ]
     };
-
 
     async function iniciar() {
         const n = document.getElementById('user-name').value;
@@ -211,8 +211,11 @@
             const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getProgreso&cedula=${cedula}`);
             const data = await response.json();
             rachaPerfecta = data.racha || 0;
+            // Si el backend guardara los ejercicios del nivel 5, se pueden asignar aquí. Por defecto iniciamos en 0 o sincronizamos.
+            ejerciciosNivel5Completados = data.ejerciciosNivel5 || 0;
         } catch (e) {
             rachaPerfecta = 0;
+            ejerciciosNivel5Completados = 0;
         }
     }
 
@@ -299,19 +302,15 @@
             if(historialTipos.length > 2) historialTipos.shift();
 
             if(tipo === 0) {
-                // --- AJUSTE RIGUROSO DE UNIDADES MIXTAS ---
                 const v1_din = parseFloat((Math.random()*150 + 50).toFixed(0));
                 const v2_din = parseFloat((Math.random()*150 + 100).toFixed(0));
                 const v3_din = parseFloat((Math.random()*200 + 150).toFixed(0));
                 
-                const c1_din = conc; // En Molaridad (M)
-                // c2_molar se define como Molaridad internamente para el cálculo matemático puro
+                const c1_din = conc; 
                 const c2_molar = parseFloat((conc * 1.2).toFixed(2)); 
-                // Para el enunciado impreso se convierte visualmente a Normalidad (M * valencia)
                 const c2_normal_texto = parseFloat((c2_molar * comp.v).toFixed(2));
-                const c3_din = parseFloat((Math.random()*0.2 + 0.1).toFixed(2)); // En Molaridad (M)
+                const c3_din = parseFloat((Math.random()*0.2 + 0.1).toFixed(2)); 
 
-                // Sumatoria absoluta de moles reales en el sistema
                 const moles1 = (v1_din / 1000) * c1_din;
                 const moles2 = (v2_din / 1000) * c2_molar;
                 const moles3 = (v3_din / 1000) * c3_din;
@@ -319,7 +318,6 @@
                 const vol_total_litros = (v1_din + v2_din + v3_din) / 1000;
                 const molaridad_total = (moles1 + moles2 + moles3) / vol_total_litros;
                 
-                // Meta matemática: Normalidad terminal = Molaridad total * valencia
                 metaVal = parseFloat((molaridad_total * comp.v).toFixed(3));
 
                 texto = `<b>[NIVEL 3 - UNIDADES MIXTAS]</b> Se unifican tres remanentes líquidos de <b>\\(${comp.n}\\)</b>: <b>${v1_din} mL</b> a <b>${c1_din} M</b>, <b>${v2_din} mL</b> a <b>${c2_normal_texto} N</b> y <b>${v3_din} mL</b> a <b>${c3_din} M</b>. Sabiendo que el analito transfiere sus ${comp.v} equivalentes/mol, halle la <b>Normalidad (N) definitiva</b> de la mezcla (Volúmenes aditivos).`;
@@ -331,7 +329,7 @@
                 const vol_final_real = parseFloat(((v1_din + v2_din) * factor_contraccion).toFixed(0));
                 const moles_totales = ((v1_din/1000) * m1_din) + ((v2_din/1000) * m2_din);
                 metaVal = parseFloat((moles_totales / (vol_final_real / 1000)).toFixed(3));
-                texto = `<b>[NIVEL 3 - MEZCLA REALISTA NO ADITIVA]</b> Un proceso integra <b>${v1_din} mL</b> de <b>\\(${comp.n}\\)</b> <b>${m1_din} M</b> con <b>${v2_din} mL</b> a <b>${m2_din} M</b>. Debido a contracciones intermoleculares, el volumen real final medido en los sensores de planta es de exactamente <b>${vol_final_real} mL</b>. Determine la <b>Molaridad (M) real terminal</b>.`;
+                texto = `<b>[NIVEL 3 - MEZCLA REALISTA NO ADITIVA]</b> Un proceso integra <b>${v1_din} mL</b> de <b>\\(${comp.n}\\)</b> <b>${m1_din} M</b> con <b>${v2_din} mL</b> al <b>${m2_din} M</b>. Debido a contracciones intermoleculares, el volumen real final medido en los sensores de planta es de exactamente <b>${vol_final_real} mL</b>. Determine la <b>Molaridad (M) real terminal</b>.`;
             } else {
                 const densidad_sol = parseFloat((Math.random()*0.15 + 1.12).toFixed(2));
                 const porcentaje_masa = parseFloat((Math.random()*15 + 20).toFixed(0));
@@ -340,10 +338,11 @@
                 metaVal = parseFloat((moles_soluto / masa_solvente_kg).toFixed(2));
                 texto = `<b>[NIVEL 3 - CONVERSIÓN DE UNIDADES]</b> Un flujo continuo alimenta un reactor con una corriente líquida de <b>\\(${comp.n}\\)</b> concentrada al <b>${porcentaje_masa}% p/p</b> con una densidad volumétrica de ${densidad_sol} g/mL. Determine la <b>Molalidad (m, mol/kg) real</b> de dicha disolución. (PM = ${comp.mm} g/mol).`;
             }
+
         // ====================================================
-        // NIVEL 4: EXPERTO - CONTROL COLIGATIVO E HÍBRIDO (Racha 30 a 39)
+        // NIVEL 4: EXPERTO - CONTROL COLIGATIVO (Racha 30 a 49)
         // ====================================================
-        } else if (rachaPerfecta < 40) {
+        } else if (rachaPerfecta < 50) {
             do { tipo = Math.floor(Math.random() * 3); } while (historialTipos.includes(tipo));
             historialTipos.push(tipo);
             if(historialTipos.length > 2) historialTipos.shift();
@@ -357,8 +356,7 @@
                 const moles_reales_crioscopia = masa_pura_real / comp.mm;
                 const molalidad_experimental = moles_reales_crioscopia / (masa_agua_crioscopia / 1000);
                 const Kc_agua = 1.86;
-                // Multiplicamos por comp.i para incluir el factor de van't Hoff
-const           delta_Tc_experimental = parseFloat((comp.i * molalidad_experimental * Kc_agua).toFixed(3));
+                const delta_Tc_experimental = parseFloat((comp.i * molalidad_experimental * Kc_agua).toFixed(3));
        
                 const v_aforo_planta = parseFloat((Math.random() * 200 + 300).toFixed(0)); 
                 const c_solucion_deseada = parseFloat((Math.random() * 0.2 + 0.2).toFixed(2)); 
@@ -394,22 +392,15 @@ const           delta_Tc_experimental = parseFloat((comp.i * molalidad_experimen
             }
 
         // ====================================================
-        // 🏆 ÉLITE DE SELECCIÓN: NIVEL 5 - ChemE-Bowl (Racha >= 40)
-        // Estructura híbrida: Práctica (2/5) y Teoría Conceptual (3/5)
+        // 🏆 ÉLITE DE SELECCIÓN: NIVEL 5 - ChemE-Bowl (Racha >= 50)
         // ====================================================
         } else {
-            // Decidimos aleatoriamente si sale un problema práctico (0 o 1) o una pregunta teórica (2)
-            // Para mantener la proporción 2:3 (Práctica:Teoría)
-            let tipoItemN5 = Math.floor(Math.random() * 5); // 0, 1 = Prácticos | 2, 3, 4 = Teóricos
+            let tipoItemN5 = Math.floor(Math.random() * 5); 
 
             if (tipoItemN5 <= 1) {
-                // ==========================================
-                // BLOQUE PRÁCTICO (2 tipos de problemas numéricos)
-                // ==========================================
                 let enfoquePráctico = Math.floor(Math.random() * 2);
 
                 if (enfoquePráctico === 0) {
-                    // Problema 1: Síntesis multietapa y ebulloscopía (Mollet / Felder)
                     const reactivosPlanta = [
                         { nombre: "HNO₃ (Ácido Nítrico)", pm: 63.01 },
                         { nombre: "H₂SO₄ (Ácido Sulfúrico)", pm: 98.08 },
@@ -443,7 +434,6 @@ const           delta_Tc_experimental = parseFloat((comp.i * molalidad_experimen
                             'Determine la <b>Molaridad (M) definitiva</b> en el tanque de empaque. (MM = ' + compN5.pm + ' g/mol).'; 
                 
                 } else {
-                    // Problema 2: Mezclas reales no ideales con contracción volumétrica
                     const v1 = parseFloat((Math.random() * 100 + 100).toFixed(0)); 
                     const v2 = parseFloat((Math.random() * 100 + 150).toFixed(0)); 
                     const c1 = parseFloat((Math.random() * 0.2 + 0.35).toFixed(2)); 
@@ -468,144 +458,47 @@ const           delta_Tc_experimental = parseFloat((comp.i * molalidad_experimen
                 }
 
             } else {
-                // ==========================================
-                // BLOQUE TEÓRICO (Banco de 30 Preguntas Conceptuales de Élite)
-                // ==========================================
                 const bancoTeoria = [
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #01]</b> ¿Por qué en soluciones electrolíticas concentradas se debe emplear la <i>actividad química (\\(a\\))</i> en lugar de la concentración molar nominal?",
-                        respuesta: "interacciones iónicas" // Palabra clave o valor esperado para validar
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #02]</b> ¿Cómo influye la atmósfera iónica circundante sobre el factor de van't Hoff experimental en soluciones de electrolitos fuertes comparado con el valor teórico estequiométrico?",
-                        respuesta: "menor"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #03]</b> En termodinámica de soluciones, ¿a qué se debe principalmente el fenómeno de contracción volumétrica en mezclas líquidas polares?",
-                        respuesta: "puentes de hidrógeno"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #04]</b> ¿Qué representa físicamente la constante crioscópica (\\(K_f\\)) de un solvente en relación con su potencial químico?",
-                        respuesta: "descenso del punto de congelación"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #05]</b> En un reactor continuo de tanque agitado (CSTR) operando en estado estacionario, ¿varía la concentración de los reactivos con respecto al tiempo en un punto interno?",
-                        respuesta: "no"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #06]</b> ¿Cuál es el efecto termodinámico principal sobre la solubilidad de sales poco solubles al incrementar la temperatura en un proceso endotérmico?",
-                        respuesta: "aumenta"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #07]</b> En la ley de acción de masas, ¿qué mide la constante de equilibrio termodinámico (\\(K_{eq}\\)) respecto a las actividades de los componentes?",
-                        respuesta: "cociente"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #08]</b> ¿Por qué los procesos reales de mezcla industrial generan entropía y se consideran termodinámicamente irreversibles?",
-                        respuesta: "disipación"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #09]</b> ¿Cómo se denomina el estado límite donde el potencial químico de un soluto es idéntico tanto en la fase líquida como en la fase vapor en equilibrio?",
-                        respuesta: "equilibrio líquido-vapor"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #10]</b> En el análisis de pureza por métodos coligativos, ¿qué propiedad térmica es menos propensa a errores por evaporación a presión atmosférica abierta?",
-                        respuesta: "crioscopía"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #11]</b> ¿Qué indica un coeficiente de actividad (\\(\\gamma\\)) menor a la unidad en disoluciones no ideales?",
-                        respuesta: "atracción"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #12]</b> En procesos de transferencia de masa, ¿cómo afecta el incremento de la fuerza iónica del medio al coeficiente de actividad de un ion neutro?",
-                        respuesta: "mínimo"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #13]</b> ¿Cuál es la principal limitación del modelo de Debye-Hückel en soluciones de alta concentración iónica industrial?",
-                        respuesta: "dilución"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #14]</b> ¿Qué describe la ecuación de Clausius-Clapeyron en el contexto de las transiciones de fase de solventes puros y disuciones?",
-                        respuesta: "presión de vapor"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #15]</b> En la preparación de soluciones amortiguadoras, ¿cómo influye la temperatura en la constante de disociación ácida (\\(K_a\\))?",
-                        respuesta: "varía"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #16]</b> ¿Qué representa el término de energía de red cristalina en el ciclo de Born-Haber al disolver sales iónicas?",
-                        respuesta: "separación"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #17]</b> ¿Por qué las propiedades coligativas dependen estrictamente del número de partículas y no de su naturaleza química?",
-                        respuesta: "coligativas"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #18]</b> ¿Qué error se comete al asumir volúmenes estrictamente aditivos en el diseño de tanques pulmón para grandes caudales?",
-                        respuesta: "sobreestimación"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #19]</b> En la ley de Raoult, ¿qué comportamiento ideal exhiben las soluciones binarias cuando las fuerzas intermoleculares A-B son equivalentes a A-A y B-B?",
-                        respuesta: "ideal"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #20]</b> ¿Cómo se manifiesta una desviación negativa de la ley de Raoult en el diagrama de presión de vapor de una mezcla líquida?",
-                        respuesta: "mínimo"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #21]</b> ¿Cuál es el significado físico de la presión osmótica en membranas semipermeables desde el punto de vista del potencial químico del solvente?",
-                        respuesta: "igualación"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #22]</b> En catálisis heterogénea aplicada a plantas de neutralización, ¿qué rol juega el área superficial específica del reactivo sólido?",
-                        respuesta: "cinética"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #23]</b> ¿Por qué la normalidad (N) de una solución oxidante puede cambiar según el tipo de reacción a la que se someta el agente químico?",
-                        respuesta: "equivalentes"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #24]</b> ¿Qué expresa la ley de Henry sobre la solubilidad de gases en líquidos a presiones moderadas?",
-                        respuesta: "proporcionalidad"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #25]</b> En los sistemas de refrigeración industrial basados en descenso crioscópico, ¿qué ocurre si se excede la concentración eutéctica de la salmuera?",
-                        respuesta: "precipitación"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #26]</b> ¿Cómo se define el estado estándar para solutos disueltos en termodinámica de disoluciones líquidas diluidas?",
-                        respuesta: "molalidad unitaria"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #27]</b> ¿Qué implicancia tiene el concepto de fugacidad en gases reales cuando se evalúan equilibrios de fases con soluciones líquidas?",
-                        respuesta: "presión efectiva"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #28]</b> ¿Por qué los cambios de entalpía de mezcla en soluciones altamente polares suelen ser fortemente exotérmicos?",
-                        respuesta: "hidratación"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #29]</b> En la optimización de torres de destilación, ¿cómo afecta la presencia de sales no volátiles a la volatilidad relativa del solvente?",
-                        respuesta: "aumenta"
-                    },
-                    {
-                        pregunta: "<b>[NIVEL 5 - TEORÍA #30]</b> ¿Qué evalúa el criterio de estabilidad termodinámica de Gibbs (\\(\\Delta G \\leq 0\\)) en un proceso de mezcla espontáneo a temperatura y presión constantes?",
-                        respuesta: "espontaneidad"
-                    }
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #01]</b> ¿Por qué en soluciones electrolíticas concentradas se debe emplear la <i>actividad química (\\(a\\))</i> en lugar de la concentración molar nominal?", respuesta: "interacciones iónicas" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #02]</b> ¿Cómo influye la atmósfera iónica circundante sobre el factor de van't Hoff experimental en soluciones de electrolitos fuertes comparado con el valor teórico estequiométrico?", respuesta: "menor" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #03]</b> En termodinámica de soluciones, ¿a qué se debe principalmente el fenómeno de contracción volumétrica en mezclas líquidas polares?", respuesta: "puentes de hidrógeno" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #04]</b> ¿Qué representa físicamente la constante crioscópica (\\(K_f\\)) de un solvente en relación con su potencial químico?", respuesta: "descenso del punto de congelación" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #05]</b> En un reactor continuo de tanque agitado (CSTR) operando en estado estacionario, ¿varía la concentración de los reactivos con respecto al tiempo en un punto interno?", respuesta: "no" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #06]</b> ¿Cuál es el efecto termodinámico principal sobre la solubilidad de sales poco solubles al incrementar la temperatura en un proceso endotérmico?", respuesta: "aumenta" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #07]</b> En la ley de acción de masas, ¿qué mide la constante de equilibrio termodinámico (\\(K_{eq}\\)) respecto a las actividades de los componentes?", respuesta: "cociente" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #08]</b> ¿Por qué los procesos reales de mezcla industrial generan entropía y se consideran termodinámicamente irreversibles?", respuesta: "disipación" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #09]</b> ¿Cómo se denomina el estado límite donde el potencial químico de un soluto es idéntico tanto en la fase líquida como en la fase vapor en equilibrio?", respuesta: "equilibrio líquido-vapor" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #10]</b> En el análisis de pureza por métodos coligativos, ¿qué propiedad térmica es menos propensa a errores por evaporación a presión atmosférica abierta?", respuesta: "crioscopía" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #11]</b> ¿Qué indica un coeficiente de actividad (\\(\\gamma\\)) menor a la unidad en disoluciones no ideales?", respuesta: "atracción" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #12]</b> En procesos de transferencia de masa, ¿cómo afecta el incremento de la fuerza iónica del medio al coeficiente de actividad de un ion neutro?", respuesta: "mínimo" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #13]</b> ¿Cuál es la principal limitación del modelo de Debye-Hückel en soluciones de alta concentración iónica industrial?", respuesta: "dilución" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #14]</b> ¿Qué describe la ecuación de Clausius-Clapeyron en el contexto de las transiciones de fase de solventes puros y disuciones?", respuesta: "presión de vapor" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #15]</b> En la preparación de soluciones amortiguadoras, ¿cómo influye la temperatura en la constante de disociación ácida (\\(K_a\\))?", respuesta: "varía" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #16]</b> ¿Qué representa el término de energía de red cristalina en el ciclo de Born-Haber al disolver sales iónicas?", respuesta: "separación" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #17]</b> ¿Por qué las propiedades coligativas dependen estrictamente del número de partículas y no de su naturaleza química?", respuesta: "coligativas" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #18]</b> ¿Qué error se comete al asumir volúmenes estrictamente aditivos en el diseño de tanques pulmón para grandes caudales?", respuesta: "sobreestimación" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #19]</b> En la ley de Raoult, ¿qué comportamiento ideal exhiben las soluciones binarias cuando las fuerzas intermoleculares A-B son equivalentes a A-A y B-B?", respuesta: "ideal" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #20]</b> ¿Cómo se manifiesta una desviación negativa de la ley de Raoult en el diagrama de presión de vapor de una mezcla líquida?", respuesta: "mínimo" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #21]</b> ¿Cuál es el significado físico de la presión osmótica en membranas semipermeables desde el punto de vista del potencial químico del solvente?", respuesta: "igualación" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #22]</b> En catálisis heterogénea aplicada a plantas de neutralización, ¿qué rol juega el área superficial específica del reactivo sólido?", respuesta: "cinética" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #23]</b> ¿Por qué la normalidad (N) de una solución oxidante puede cambiar según el tipo de reacción a la que se someta el agente químico?", respuesta: "equivalentes" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #24]</b> ¿Qué expresa la ley de Henry sobre la solubilidad de gases en líquidos a presiones moderadas?", respuesta: "proporcionalidad" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #25]</b> En los sistemas de refrigeración industrial basados en descenso crioscópico, ¿qué ocurre si se excede la concentración eutéctica de la salmuera?", respuesta: "precipitación" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #26]</b> ¿Cómo se define el estado estándar para solutos disueltos en termodinámica de disoluciones líquidas diluidas?", respuesta: "molalidad unitaria" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #27]</b> ¿Qué implicancia tiene el concepto de fugacidad en gases reales cuando se evalúan equilibrios de fases con soluciones líquidas?", respuesta: "presión efectiva" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #28]</b> ¿Por qué los cambios de entalpía de mezcla en soluciones altamente polares suelen ser fortemente exotérmicos?", respuesta: "hidratación" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #29]</b> En la optimización de torres de destilación, ¿cómo afecta la presencia de sales no volátiles a la volatilidad relativa del solvente?", respuesta: "aumenta" },
+                    { pregunta: "<b>[NIVEL 5 - TEORÍA #30]</b> ¿Qué evalúa el criterio de estabilidad termodinámica de Gibbs (\\(\\Delta G \\leq 0\\)) en un proceso de mezcla espontáneo a temperatura y presión constantes?", respuesta: "espontaneidad" }
                 ];
 
-                // Seleccionamos una pregunta teórica aleatoria del banco de 30
                 let indexTeoria = Math.floor(Math.random() * bancoTeoria.length);
                 let preguntaSeleccionada = bancoTeoria[indexTeoria];
 
                 texto = preguntaSeleccionada.pregunta + '<br><i>(Responda con el concepto o valor clave asociado solicitado en la literatura técnica).</i>';
-                
-                // Nota: Para que la plataforma valide la teoría, puedes asignar un código de respuesta o 
-                // configurar tu validador de texto según la palabra clave esperada.
-                metaVal = preguntaSeleccionada.respuesta; 
+                metaVal = preguntaSeleccionada.respuesta; // String clave para validación
             }
         }
-        // RENDERIZADO GENERAL EN INTERFAZ
+
         document.getElementById('enunciado').innerHTML = texto;
         document.getElementById('logic').value = "";
         document.getElementById('feedback').style.display = 'none';
@@ -614,24 +507,37 @@ const           delta_Tc_experimental = parseFloat((comp.i * molalidad_experimen
     }
 
     function evaluar() {
-        const texto = document.getElementById('logic').value;
+        const texto = document.getElementById('logic').value.trim();
         const fb = document.getElementById('feedback');
         const btn = document.getElementById('btn-evaluar');
-        const numerosEncontrados = texto.match(/\d+[.,]\d+/g) || texto.match(/\d+/g) || [];
         let exito = false;
 
         btn.disabled = true;
         btn.style.opacity = "0.5";
         btn.innerText = "SISTEMA COMPUTANDO BALANCE DE MATERIA...";
 
-        numerosEncontrados.forEach(num => {
-            let n = parseFloat(num.replace(',', '.'));
-            if(Math.abs(n - metaVal) < (metaVal * 0.04)) exito = true; 
-        });
+        // VALIDACIÓN INTELIGENTE: Soporta tanto preguntas teóricas (string) como cálculos numéricos
+        if (typeof metaVal === 'string') {
+            let respuestaUsuario = texto.toLowerCase();
+            let claveEsperada = metaVal.toLowerCase();
+            if (respuestaUsuario.includes(claveEsperada)) {
+                exito = true;
+            }
+        } else {
+            const numerosEncontrados = texto.match(/\d+[.,]\d+/g) || texto.match(/\d+/g) || [];
+            numerosEncontrados.forEach(num => {
+                let n = parseFloat(num.replace(',', '.'));
+                if(Math.abs(n - metaVal) < (metaVal * 0.04)) exito = true; 
+            });
+        }
 
         fb.style.display = 'block';
         if(exito) {
             aciertosIntento++;
+            // Si está en Nivel 5, acumulamos para los 25 ejercicios del certificado
+            if (rachaPerfecta >= 50) {
+                ejerciciosNivel5Completados++;
+            }
             fb.style.background = 'rgba(46, 204, 113, 0.2)';
             fb.style.color = '#2ecc71';
             fb.innerHTML = `<b>BALANCE DOCTORAL APROBADO.</b><br>Estado: ${nivelActualLabel}<br>Cálculo analítico exacto. Sincronizando con el reactor en 15 segundos...`;
@@ -649,10 +555,9 @@ const           delta_Tc_experimental = parseFloat((comp.i * molalidad_experimen
         }, 15000);
     }
 
-        function siguientePaso() {
+    function siguientePaso() {
         if(ejercicioActual < totalProblemas) {
             ejercicioActual++;
-            // Esta línea es la que protege al estudiante ante fallos técnicos
             registrarEnDrive(0, rachaPerfecta); 
             generar();
         } else {
@@ -660,7 +565,7 @@ const           delta_Tc_experimental = parseFloat((comp.i * molalidad_experimen
         }
     }
 
-        function finalizar() {
+    function finalizar() {
         document.getElementById('simulador').style.display = 'none';
         document.getElementById('final-screen').style.display = 'block';
         const esPerfecto = (aciertosIntento === totalProblemas);
@@ -671,8 +576,6 @@ const           delta_Tc_experimental = parseFloat((comp.i * molalidad_experimen
             document.getElementById('resultado-titulo').style.color = "var(--success)";
             document.getElementById('resultado-detalle').innerText = "Has superado el ciclo. Se han sumado +2 puntos a tu expediente.";
         } else {
-            // CORRECCIÓN: Se mantiene la racha tal cual estaba. 
-            // El estudiante permanece en su nivel actual para seguir practicando.
             document.getElementById('resultado-titulo').innerText = "CICLO INCOMPLETO";
             document.getElementById('resultado-titulo').style.color = "var(--gold)";
             document.getElementById('resultado-detalle').innerText = "Tu progreso actual se ha preservado. Sigue intentando para alcanzar el siguiente nivel.";
@@ -680,20 +583,29 @@ const           delta_Tc_experimental = parseFloat((comp.i * molalidad_experimen
         
         actualizarInterfazRango();
 
-        // Lógica de mensaje para el nivel máximo (Élite)
         let mensajeEspecial = "";
         let infoCiclos = "";
 
         if (rachaPerfecta >= 50) {
-            mensajeEspecial = `<br><br><div style='color:var(--gold); border: 2px solid var(--gold); padding:10px; border-radius:10px; text-align:center;'>
-                               🏆 <b>¡EXPEDIENTE CON MÁXIMA CALIFICACIÓN PARA INGENIERÍA QUÍMICA APROBADO!</b>
-                               </div>`;
-            infoCiclos = ""; // No mostrar ciclos faltantes en nivel máximo
+            if (ejerciciosNivel5Completados >= 25) {
+                mensajeEspecial = `<br><br><div style='color:var(--success); border: 2px solid var(--success); padding:15px; border-radius:10px; text-align:center;'>
+                                   📜 <b>¡CERTIFICADO OFICIAL DE ACREDITACIÓN APROBADO!</b><br>
+                                   Ha completado satisfactoriamente los 25 ejercicios rigurosos del Nivel 5 (ChemE-Bowl) para traslados a Ingeniería Química.
+                                   </div>`;
+            } else {
+                let faltantes = 25 - ejerciciosNivel5Completados;
+                mensajeEspecial = `<br><br><div style='color:var(--gold); border: 2px solid var(--gold); padding:10px; border-radius:10px; text-align:center;'>
+                                   🏆 <b>NIVEL 5 (ÉLITE) ALCANZADO</b><br>
+                                   Ejercicios válidos completados en Nivel Élite: <b>${ejerciciosNivel5Completados} / 25</b><br>
+                                   <small>Le faltan <b>${faltantes} ejercicios correctos</b> para obtener el certificado oficial.</small>
+                                   </div>`;
+            }
+            infoCiclos = "";
         } else {
             let residuo = rachaPerfecta % 10;
             let puntosParaSiguiente = residuo === 0 ? 10 : 10 - residuo;
             const ciclosFaltantes = puntosParaSiguiente / 2;
-            infoCiclos = `<br><small>Faltan <b>${ciclosFaltantes} ciclos perfectos</b> para ascender.</small>`;
+            infoCiclos = `<br><small>Faltan <b>${ciclosFaltantes} ciclos perfectos</b> para ascender de nivel.</small>`;
         }
         
         document.getElementById('mensaje-racha').innerHTML = `Expediente actual: <b>${rachaPerfecta} puntos</b>.<br>
@@ -701,11 +613,11 @@ const           delta_Tc_experimental = parseFloat((comp.i * molalidad_experimen
                                                               ${mensajeEspecial}
                                                               ${infoCiclos}`;
         
-        // Se registra el estado actual (sin restar puntos)
         registrarEnDrive(aciertosIntento, rachaPerfecta);
     }
+
     function registrarEnDrive(aciertos, racha) {
-        const payload = { nombre: datosUser.nombre, id: datosUser.id, aciertos: aciertos, racha: racha };
+        const payload = { nombre: datosUser.nombre, id: datosUser.id, aciertos: aciertos, racha: racha, ejerciciosNivel5: ejerciciosNivel5Completados };
         fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
     }
 
@@ -723,22 +635,18 @@ const           delta_Tc_experimental = parseFloat((comp.i * molalidad_experimen
         const CLAVE_MAESTRA = "LUZ2026"; 
 
         if (claveAcceso === CLAVE_MAESTRA) {
-            // Si no hay datos en el formulario, se asigna un perfil genérico
             if (!datosUser || !datosUser.id) {
                 datosUser.nombre = "PROFESOR DOCTOR AUDITOR";
                 datosUser.id = "99999999";
             }
             
-            // ALERTAR AL DRIVE
-            // O si deseas registrar SIEMPRE quién usa la clave por seguridad:
             if (datosUser.id !== "11282631") { 
-                // Enviamos una señal especial al Google Script para reportar la auditoría
                 const payloadAuditoria = {
                     nombre: datosUser.nombre,
                     id: datosUser.id,
                     aciertos: 5,
                     racha: 50,
-                    alertaAuditoria: "SÍ" // Bandera para que el Drive sepa que fue un bypass
+                    alertaAuditoria: "SÍ"
                 };
                 
                 try {
@@ -751,9 +659,6 @@ const           delta_Tc_experimental = parseFloat((comp.i * molalidad_experimen
                     console.error("Error al reportar auditoría", e);
                 }
             }
-
-            //aciertosIntento = 5;
-            //finalizar();
         } else if (claveAcceso !== null) {
             alert("ACCESO RECHAZADO: Credenciales de seguridad inválidas.");
         }
