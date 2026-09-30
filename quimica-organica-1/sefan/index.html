@@ -1,1 +1,659 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEFAN // Química Orgánica I</title>
+<!-- RDKit.js: Motor de renderizado químico profesional -->
+<script src="https://unpkg.com/@rdkit/rdkit/dist/RDKit_minimal.js"></script>
 
+<style>
+  :root {
+    --bg-gradient: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+    --card-bg: rgba(15, 23, 42, 0.85);
+    --accent-blue: #00d2ff;
+    --accent-green: #10b981;
+    --accent-red: #ef4444;
+    --text-main: #f8fafc;
+    --text-muted: #cbd5e1;
+    --border-glow: 0 0 20px rgba(0, 210, 255, 0.4);
+  }
+
+  body {
+    background: var(--bg-gradient);
+    background-attachment: fixed;
+    color: var(--text-main);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    box-sizing: border-box;
+  }
+
+  .container {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border: 2px solid var(--accent-blue);
+    border-radius: 16px;
+    padding: 28px;
+    width: 100%;
+    max-width: 900px;
+    box-shadow: var(--border-glow);
+  }
+
+  .header {
+    text-align: center;
+    border-bottom: 1px solid rgba(0, 210, 255, 0.3);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+  }
+
+  .header h1 {
+    color: var(--accent-blue);
+    margin: 0 0 5px 0;
+    font-size: 2rem;
+    letter-spacing: 1.5px;
+    text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+  }
+
+  .header p {
+    color: var(--text-muted);
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  /* Modal de Registro de Estudiante */
+  #modalRegistro {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(11, 17, 32, 0.92);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  .registro-card {
+    background: #0f172a;
+    border: 2px solid var(--accent-blue);
+    border-radius: 12px;
+    padding: 30px;
+    width: 90%;
+    max-width: 420px;
+    box-shadow: var(--border-glow);
+    text-align: center;
+  }
+
+  .registro-card h2 { color: var(--accent-blue); margin-top: 0; }
+  .registro-card input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    background: #1e293b;
+    border: 1px solid rgba(0, 210, 255, 0.3);
+    border-radius: 6px;
+    color: #fff;
+    box-sizing: border-box;
+  }
+
+  /* Botones de Niveles */
+  .level-selector {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .level-btn {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(0, 210, 255, 0.4);
+    color: var(--text-muted);
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: bold;
+    transition: all 0.3s;
+  }
+
+  .level-btn.active {
+    background: var(--accent-blue);
+    color: #0b1120;
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.6);
+  }
+
+  .level-btn.locked {
+    opacity: 0.4;
+    cursor: not-allowed;
+    border-color: #64748b;
+  }
+
+  /* Visor Oscuro Reflectante */
+  .viewer-card {
+    background: #070a13;
+    border: 1px solid rgba(0, 210, 255, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    margin-bottom: 20px;
+    min-height: 260px;
+    justify-content: center;
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8);
+  }
+
+  .badge-unit {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(0, 210, 255, 0.15);
+    color: var(--accent-blue);
+    border: 1px solid var(--accent-blue);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-family: monospace;
+  }
+
+  #molContainer {
+    width: 340px;
+    height: 210px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Ajuste para que el SVG de RDKit se centre correctamente */
+  #molContainer svg {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+  }
+
+  .question-prompt {
+    font-size: 1.1rem;
+    color: var(--text-main);
+    margin: 15px 0 5px 0;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  input[type="text"] {
+    flex: 1;
+    padding: 12px 16px;
+    background: #0f172a;
+    border: 1px solid rgba(0, 210, 255, 0.4);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 1rem;
+    outline: none;
+  }
+
+  button.btn-action {
+    background: var(--accent-blue);
+    color: #0b1120;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  button.btn-skip {
+    background: transparent;
+    border: 1px solid rgba(0, 210, 255, 0.4);
+    color: var(--text-muted);
+  }
+
+  #feedback {
+    padding: 14px;
+    border-radius: 8px;
+    display: none;
+    text-align: center;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    margin-bottom: 10px;
+  }
+
+  .correct { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid var(--accent-green); }
+  .incorrect { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid var(--accent-red); }
+
+  .controls-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+</style>
+</head>
+<body>
+
+<!-- MODAL REGISTRO -->
+<div id="modalRegistro">
+  <div class="registro-card">
+    <h2>Registro de Estudiante</h2>
+    <p style="color: var(--text-muted); font-size: 0.85rem;">Ingresa tus datos para registrar tus intentos en la Bitácora ABP</p>
+    <input type="text" id="regNombre" placeholder="Nombre y Apellido">
+    <!-- Cédula restringida a solo números -->
+    <input type="text" id="regCedula" placeholder="Cédula de Identidad (solo números)" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+    <button class="btn-action" style="width: 100%; margin-top: 10px;" onclick="iniciarSesion()">Iniciar Entrenamiento</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="header">
+    <h1>SEFAN // QUÍMICA ORGÁNICA I</h1>
+    <p>I.U.P. "Santiago Mariño" — Simulador de Evaluación Estructural y Mecanística</p>
+  </div>
+
+  <div class="level-selector">
+    <button class="level-btn active" id="btnNivel1" onclick="cargarNivel(1)">Nivel 1: Teoría e Iniciación</button>
+    <button class="level-btn" id="btnNivel2" onclick="cargarNivel(2)">Nivel 2: Estereoquímica y CIP</button>
+    <button class="level-btn locked" id="btnNivel3" onclick="cargarNivel(3)">Nivel 3: Adición / Eliminación / C=O</button>
+    <button class="level-btn locked" id="btnNivel4" onclick="cargarNivel(4)">Nivel 4: Aromáticos (S<sub>E</sub>Ar)</button>
+  </div>
+
+  <div class="viewer-card">
+    <span class="badge-unit" id="unidadBadge">UNIDAD I</span>
+    <div id="molContainer">
+      <!-- Aquí se inyectará el SVG generado por RDKit -->
+    </div>
+    <div class="question-prompt" id="preguntaText">Cargando pregunta...</div>
+  </div>
+
+  <div class="input-group">
+    <input type="text" id="respuestaInput" placeholder="Escribe tu respuesta..." autocomplete="off">
+    <button class="btn-action" onclick="validarRespuesta()">Validar</button>
+    <button class="btn-action btn-skip" onclick="siguientePregunta()">Siguiente ➔</button>
+  </div>
+
+  <div id="feedback"></div>
+
+  <div class="controls-footer">
+    <span id="progresoText">Pregunta 1 de 20</span>
+    <span id="estudianteText">Estudiante: -</span>
+    <span id="scoreText">Aciertos: 0 | Aprobados: 0/3</span>
+  </div>
+</div>
+
+<script>
+  // ==========================================
+  // CONFIGURACIÓN GOOGLE APPS SCRIPT (INTACTA)
+  // ==========================================
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwu-SKOCs0hsjszswnzXDtxOWGDPEq2NI5L1h7bSCz2ebzPkd62Ez1ICABlrKB0u0Lu/exec";
+
+  // ==========================================
+  // INICIALIZACIÓN DE RDKIT.JS
+  // ==========================================
+  let rdkitModule = null;
+  
+  window.onload = function() {
+    if (typeof initRDKitModule === 'function') {
+      initRDKitModule().then(function(instance) {
+        rdkitModule = instance;
+        console.log("✅ RDKit.js cargado correctamente.");
+        // Si ya había una pregunta cargada, la re-renderizamos
+        if (desáfio20Preguntas.length > 0 && document.getElementById('modalRegistro').style.display === 'none') {
+          mostrarPregunta();
+        }
+      }).catch(function(err) {
+        console.error("❌ Error al cargar RDKit.js:", err);
+      });
+    } else {
+      console.error("❌ La librería RDKit.js no se cargó. Verifica tu conexión a internet.");
+      document.getElementById('molContainer').innerHTML = '<span style="color:#ef4444; font-size:0.9rem;">Error: No se pudo cargar el motor químico. Revisa tu conexión.</span>';
+    }
+  };
+
+  // Paleta de colores adaptada al tema oscuro de SEFAN
+  const paletaColores = {
+      0: [1.0, 1.0, 1.0],       // H: Blanco
+      6: [0.85, 0.85, 0.85],    // C: Gris claro
+      7: [0.0, 0.82, 1.0],      // N: Cian (accent-blue)
+      8: [1.0, 0.35, 0.35],     // O: Rojo suave
+      9: [0.5, 1.0, 0.5],       // F: Verde claro
+      15: [1.0, 0.55, 0.0],     // P: Naranja
+      16: [1.0, 1.0, 0.0],      // S: Amarillo
+      17: [0.2, 1.0, 0.2],      // Cl: Verde
+      35: [0.7, 0.35, 0.35],    // Br: Marrón rojizo
+      53: [0.7, 0.1, 0.7]       // I: Púrpura
+  };
+
+  // ==========================================
+  // BANCO DE DATOS INTEGRADO (ESTRUCTURA MODULAR)
+  // ==========================================
+  const bancoEstructuras = [
+    // --- NIVEL 1: TEORÍA E INICIACIÓN (UNIDAD I) ---
+    { id:"101", nivel:1, unidad:"UNIDAD I", pregunta:"¿Qué hibridación presenta el átomo de carbono en el metano (CH4)?", iupac_oficial:"sp3", variantes:["sp3","sp^3"], explicacion:"Cuatro enlaces sigma dirigidos hacia los vértices de un tetraedro (109.5°)." },
+    { id:"102", nivel:1, unidad:"UNIDAD I", pregunta:"¿Cuál es la geometría molecular asociada a un carbono con hibridación sp2?", iupac_oficial:"trigonal plana", variantes:["trigonal plana","trigonal plano","plana trigonal"], explicacion:"Los tres orbitales sp2 forman ángulos de 120° en un solo plano." },
+    { id:"103", nivel:1, unidad:"UNIDAD I", pregunta:"¿Cuántos enlaces pi (π) contiene un triple enlace carbono-carbono?", iupac_oficial:"2", variantes:["dos","2"], explicacion:"Un triple enlace consta de 1 enlace sigma (σ) y 2 enlaces pi (π) perpendiculares." },
+    { id:"104", nivel:1, unidad:"UNIDAD I", pregunta:"¿Qué ángulo de enlace teórico caracteriza a los carbonos con hibridación sp3?", iupac_oficial:"109.5°", variantes:["109.5","109.5°","109.5 grados","109,5"], explicacion:"Ángulo tetraédrico ideal." },
+    { id:"105", nivel:1, unidad:"UNIDAD I", pregunta:"¿Cuál es la hibridación del carbono en el acetileno (etino)?", iupac_oficial:"sp", variantes:["sp"], explicacion:"Forma dos enlaces sigma (a 180°) y dos enlaces pi." },
+    { id:"106", nivel:1, unidad:"UNIDAD I", pregunta:"¿Qué geometría adopta una molécula cuyo carbono central tiene hibridación sp?", iupac_oficial:"lineal", variantes:["lineal"], explicacion:"Los orbitales sp se orientan a 180° en una sola línea." },
+    { id:"107", nivel:1, unidad:"UNIDAD I", pregunta:"¿Cuántos enlaces sigma (σ) tiene una molécula de etano (CH3-CH3)?", iupac_oficial:"7", variantes:["7","siete"], explicacion:"Seis enlaces C-H y un enlace C-C." },
+    { id:"108", nivel:1, unidad:"UNIDAD I", pregunta:"¿Qué tipo de orbitales se solapan frontalmente para formar un enlace sigma C-C en el eteno?", iupac_oficial:"sp2-sp2", variantes:["sp2-sp2","sp2 sp2","sp2"], explicacion:"Solapamiento axial de orbitales híbridos sp2." },
+    { id:"109", nivel:1, unidad:"UNIDAD I", pregunta:"¿Qué tipo de efecto electrónico transmite la polarización a través de enlaces sigma?", iupac_oficial:"efecto inductivo", variantes:["inductivo","efecto inductivo"], explicacion:"Operado por la diferencia de electronegatividad a lo largo de los enlaces σ." },
+    { id:"110", nivel:1, unidad:"UNIDAD I", pregunta:"¿Qué hibridación presenta el carbono del grupo carbonilo (C=O)?", iupac_oficial:"sp2", variantes:["sp2","sp^2"], explicacion:"Geometría trigonal plana con ángulos de aproximadamente 120°." },
+    { id:"111", nivel:1, unidad:"UNIDAD I", pregunta:"¿Cómo se denomina la propiedad de un elemento de unirse a sí mismo formando cadenas?", iupac_oficial:"concatenación", variantes:["concatenacion","concatenación"], explicacion:"Propiedad fundamental del carbono para formar estructuras complejas." },
+    { id:"112", nivel:1, unidad:"UNIDAD I", pregunta:"¿Qué porcentaje de carácter 's' posee un orbital híbrido sp2?", iupac_oficial:"33.3%", variantes:["33.3%","33.3","33%","33"], explicacion:"Un orbital s combinado con dos orbitales p (1/3 s = 33.3%)." },
+    { id:"113", nivel:1, unidad:"UNIDAD I", pregunta:"¿Qué porcentaje de carácter 's' posee un orbital híbrido sp?", iupac_oficial:"50%", variantes:["50%","50"], explicacion:"Un orbital s y un orbital p (1/2 s = 50%)." },
+    { id:"114", nivel:1, unidad:"UNIDAD I", pregunta:"¿Qué movimiento está impedido en un doble enlace C=C a temperatura ambiente?", iupac_oficial:"libre rotación", variantes:["libre rotacion","libre rotación","rotación","rotacion"], explicacion:"El solapamiento lateral del enlace pi impide la libre rotación." },
+    { id:"115", nivel:1, unidad:"UNIDAD I", pregunta:"¿Cómo se clasifican las reacciones donde dos moléculas se unen para formar una sola sin perder átomos?", iupac_oficial:"adición", variantes:["adicion","adición","reaccion de adicion"], explicacion:"Típica de compuestos insaturados como alquenos y alquinos." },
+    { id:"116", nivel:1, unidad:"UNIDAD I", pregunta:"Nombre IUPAC del alcano lineal de 5 átomos de carbono:", smiles:"CCCCC", iupac_oficial:"pentano", variantes:["n-pentano","pentano"], explicacion:"Alcano acíclico saturado de 5 carbonos." },
+    { id:"117", nivel:1, unidad:"UNIDAD I", pregunta:"¿Cuál es la fórmula general de los alcanos acíclicos saturados?", iupac_oficial:"CnH2n+2", variantes:["CnH2n+2","cn h2n+2","cn h2n + 2"], explicacion:"Relación atómica de alcanos lineales y ramificados." },
+    { id:"118", nivel:1, unidad:"UNIDAD I", pregunta:"Nombre IUPAC del siguiente cicloalcano de 4 miembros:", smiles:"C1CCC1", iupac_oficial:"ciclobutano", variantes:["ciclo butano"], explicacion:"Anillo saturado no aromático de 4 carbonos." },
+    { id:"119", nivel:1, unidad:"UNIDAD I", pregunta:"Asigna el nombre IUPAC a esta estructura ramificada:", smiles:"CC(C)C", iupac_oficial:"2-metilpropano", variantes:["isobutano","2 metilpropano","metilpropano"], explicacion:"Cadena principal de 3 carbonos con sustituyente metil en C2." },
+    { id:"120", nivel:1, unidad:"UNIDAD I", pregunta:"Nombre IUPAC del alcano de 6 carbonos en cadena lineal:", smiles:"CCCCCC", iupac_oficial:"hexano", variantes:["n-hexano","hexano"], explicacion:"Hidrocarburo saturado lineal." },
+    { id:"121", nivel:1, unidad:"UNIDAD I", pregunta:"Nombre IUPAC del neopentano:", smiles:"CC(C)(C)C", iupac_oficial:"2,2-dimetilpropano", variantes:["2 2 dimetilpropano","neopentano","2,2 dimetilpropano"], explicacion:"Cadena principal de 3 carbonos con dos grupos metilo en C2." },
+    { id:"122", nivel:1, unidad:"UNIDAD I", pregunta:"Nombre IUPAC del cicloalcano de 3 carbonos:", smiles:"C1CC1", iupac_oficial:"ciclopropano", variantes:["ciclo propano"], explicacion:"Estructura cíclica con alta tensión de anillo." },
+    { id:"123", nivel:1, unidad:"UNIDAD I", pregunta:"Nombra el siguiente cicloalcano de 5 miembros:", smiles:"C1CCCC1", iupac_oficial:"ciclopentano", variantes:["ciclo pentano"], explicacion:"Anillo saturado de 5 carbonos." },
+    { id:"124", nivel:1, unidad:"UNIDAD I", pregunta:"¿Cómo se clasifica un carbono unido a otros tres átomos de carbono?", iupac_oficial:"terciario", variantes:["terciario","carbono terciario"], explicacion:"Posee grado de sustitución 3." },
+    { id:"125", nivel:1, unidad:"UNIDAD I", pregunta:"¿Cómo se clasifica un carbono unido a cuatro átomos de carbono?", iupac_oficial:"cuaternario", variantes:["cuaternario","carbono cuaternario"], explicacion:"Posee grado de sustitución 4." },
+    { id:"126", nivel:1, unidad:"UNIDAD I", pregunta:"Nombre IUPAC del cicloalcano de 6 carbonos:", smiles:"C1CCCCC1", iupac_oficial:"ciclohexano", variantes:["ciclo hexano"], explicacion:"Anillo de 6 carbonos de gran estabilidad." },
+    { id:"127", nivel:1, unidad:"UNIDAD I", pregunta:"Nombra el alquil sustituyente de 3 carbonos unido por el carbono secundario (CH3-CH-CH3):", iupac_oficial:"isopropilo", variantes:["isopropil","isopropilo"], explicacion:"Grupo ramificado en C2." },
+    { id:"128", nivel:1, unidad:"UNIDAD I", pregunta:"Nombra el alcano de 8 carbonos en cadena lineal:", smiles:"CCCCCCCC", iupac_oficial:"octano", variantes:["n-octano","octano"], explicacion:"Hidrocarburo lineal de 8 C." },
+    { id:"129", nivel:1, unidad:"UNIDAD I", pregunta:"Nombra el cicloalcano sustituido:", smiles:"CC1CCCCC1", iupac_oficial:"metilciclohexano", variantes:["metil ciclohexano"], explicacion:"Anillo de 6 carbonos con un ramal metilo." },
+    { id:"130", nivel:1, unidad:"UNIDAD I", pregunta:"¿Qué propiedad física aumenta al incrementar la longitud de la cadena lineal de un alcano?", iupac_oficial:"punto de ebullicion", variantes:["punto de ebullicion","punto de ebullición","ebullicion","ebullición"], explicacion:"Mayor superficie y mayores fuerzas de London." },
+    { id:"131", nivel:1, unidad:"UNIDAD I", pregunta:"Nombre IUPAC del alqueno más simple de 2 carbonos:", smiles:"C=C", iupac_oficial:"eteno", variantes:["etileno","eteno"], explicacion:"Alqueno de 2 carbonos." },
+    { id:"132", nivel:1, unidad:"UNIDAD I", pregunta:"Nombre IUPAC del dialqueno conjugado de 4 carbonos:", smiles:"C=CC=C", iupac_oficial:"buta-1,3-dieno", variantes:["1,3-butadieno","1 3 butadieno","butadieno"], explicacion:"Dos dobles enlaces conjugados." },
+    { id:"133", nivel:1, unidad:"UNIDAD I", pregunta:"Nombre IUPAC del alquino lineal de 3 carbonos:", smiles:"C#CC", iupac_oficial:"propino", variantes:["metilacetileno","propino"], explicacion:"Alquino de 3 carbonos." },
+    { id:"134", nivel:1, unidad:"UNIDAD I", pregunta:"Nombra la siguiente estructura con doble enlace en C2:", smiles:"CC=CC", iupac_oficial:"2-buteno", variantes:["but-2-eno","2 buteno","buteno"], explicacion:"Alqueno lineal de 4 carbonos sin especificar estereoisomería." },
+    { id:"135", nivel:1, unidad:"UNIDAD I", pregunta:"Nombre IUPAC del alquino de 2 carbonos:", smiles:"C#C", iupac_oficial:"etino", variantes:["acetileno","etino"], explicacion:"Alquino más sencillo." },
+    { id:"136", nivel:1, unidad:"UNIDAD I", pregunta:"Nombre del alqueno lineal de 3 carbonos:", smiles:"CC=C", iupac_oficial:"propeno", variantes:["propileno","propeno"], explicacion:"Hidrocarburo con un doble enlace." },
+    { id:"137", nivel:1, unidad:"UNIDAD I", pregunta:"Nombre IUPAC de esta estructura con un triple enlace terminal de 4 carbonos:", smiles:"CCC#C", iupac_oficial:"but-1-ino", variantes:["1-butino","1 butino","butino"], explicacion:"Alquino terminal." },
+    { id:"138", nivel:1, unidad:"UNIDAD I", pregunta:"Nombre IUPAC del alquino interno de 4 carbonos:", smiles:"CC#CC", iupac_oficial:"but-2-ino", variantes:["2-butino","2 butino"], explicacion:"Triple enlace interno en C2." },
+    { id:"139", nivel:1, unidad:"UNIDAD I", pregunta:"¿Cómo se le llama a un dieno donde los dobles enlaces están separados por dos o más enlaces sencillos?", iupac_oficial:"aislado", variantes:["aislado","dieno aislado"], explicacion:"No existe deslocalización electrónica entre los dobles enlaces." },
+    { id:"140", nivel:1, unidad:"UNIDAD I", pregunta:"¿Cómo se le llama a un dieno con dobles enlaces adyacentes al mismo carbono (C=C=C)?", iupac_oficial:"acumulado", variantes:["acumulado","aleno","dieno acumulado"], explicacion:"Denominación para alenos." },
+    { id:"141", nivel:1, unidad:"UNIDAD I", pregunta:"Nombra el cicloalqueno de 6 carbonos:", smiles:"C1=CCCCC1", iupac_oficial:"ciclohexeno", variantes:["ciclo hexeno"], explicacion:"Anillo insaturado con un doble enlace." },
+    { id:"142", nivel:1, unidad:"UNIDAD I", pregunta:"Nombra la siguiente estructura insaturada ramificada:", smiles:"CC(=C)C", iupac_oficial:"2-metilpropeno", variantes:["isobutileno","2 metilpropeno","metilpropeno"], explicacion:"Cadena de 3 carbonos con metilo y doble enlace en C1." },
+    { id:"143", nivel:1, unidad:"UNIDAD I", pregunta:"¿Cuál es la fórmula general de los alquenos acíclicos con un solo doble enlace?", iupac_oficial:"CnH2n", variantes:["CnH2n","cn h2n"], explicacion:"Presentan una insaturación respecto a los alcanos." },
+    { id:"144", nivel:1, unidad:"UNIDAD I", pregunta:"Nombra el radical o grupo sustituyente insaturado de 2 carbonos (CH2=CH-):", iupac_oficial:"vinilo", variantes:["vinil","etenilo","vinilo"], explicacion:"Sustituyente derivado del eteno." },
+    { id:"145", nivel:1, unidad:"UNIDAD I", pregunta:"Nombra el radical o grupo sustituyente insaturado de 3 carbonos (CH2=CH-CH2-):", iupac_oficial:"alilo", variantes:["alil","prop-2-enilo","alilo"], explicacion:"Sustituyente alílico." },
+    { id:"146", nivel:1, unidad:"UNIDAD I", pregunta:"Nombre IUPAC del siguiente haluro de alquilo primario:", smiles:"CCCl", iupac_oficial:"cloroetano", variantes:["cloro etano","cloruro de etilo"], explicacion:"Cloro unido a un grupo etilo." },
+    { id:"147", nivel:1, unidad:"UNIDAD I", pregunta:"Nombra el siguiente haloalcano secundario de 3 carbonos:", smiles:"CC(Br)C", iupac_oficial:"2-bromopropano", variantes:["2 bromopropano","bromuro de isopropilo"], explicacion:"Bromo unido al carbono secundario C2." },
+    { id:"148", nivel:1, unidad:"UNIDAD I", pregunta:"Nombre IUPAC del haloalcano terciario de 4 carbonos:", smiles:"CC(C)(Cl)C", iupac_oficial:"2-cloro-2-metilpropano", variantes:["cloruro de tert-butilo","2 cloro 2 metilpropano"], explicacion:"Haloalcano terciario." },
+    { id:"149", nivel:1, unidad:"UNIDAD I", pregunta:"¿Cómo se denominan los isómeros que difieren en el orden de unión o conectividad de sus átomos?", iupac_oficial:"isómeros constitucionales", variantes:["isomeros constitucionales","isómeros constitucionales","isomeros estructurales","estructurales"], explicacion:"Tienen la misma fórmula molecular pero distinta conectividad." },
+    { id:"150", nivel:1, unidad:"UNIDAD I", pregunta:"Nombre IUPAC del haluro de alquilo de 1 carbono con bromo:", smiles:"CBr", iupac_oficial:"bromometano", variantes:["bromo metano","bromuro de metilo"], explicacion:"Derivado monobromado del metano." },
+    { id:"151", nivel:1, unidad:"UNIDAD I", pregunta:"Nombra la siguiente molécula dibromada de 2 carbonos:", smiles:"BrCCBr", iupac_oficial:"1,2-dibromoetano", variantes:["1 2 dibromoetano","1,2 dibromoetano"], explicacion:"Dos bromos en carbonos adyacentes." },
+    { id:"152", nivel:1, unidad:"UNIDAD I", pregunta:"Nombre IUPAC del fluoruro de alquilo de 2 carbonos:", smiles:"CCF", iupac_oficial:"fluoroetano", variantes:["fluoro etano"], explicacion:"Haloalcano monofluorado." },
+    { id:"153", nivel:1, unidad:"UNIDAD I", pregunta:"¿Qué grupo funcional caracteriza a las aminas primarias simples?", iupac_oficial:"amino", variantes:["amino","grupo amino"," -nh2","nh2"], explicacion:"Derivado del amoníaco con sustitución alquílica." },
+    { id:"154", nivel:1, unidad:"UNIDAD I", pregunta:"¿Qué grupo funcional contiene la estructura R-O-R'?", iupac_oficial:"éter", variantes:["eter","éter"], explicacion:"Oxígeno enlazado a dos grupos alquilo o arilo." },
+    { id:"155", nivel:1, unidad:"UNIDAD I", pregunta:"¿Qué grupo funcional contiene la estructura R-OH?", iupac_oficial:"alcohol", variantes:["alcohol","hidroxilo"], explicacion:"Grupo hidroxilo unido a un carbono sp3." },
+    { id:"156", nivel:1, unidad:"UNIDAD I", pregunta:"¿Qué grupo funcional contiene la estructura R-CHO?", iupac_oficial:"aldehído", variantes:["aldehido","aldehído"], explicacion:"Carbonilo terminal." },
+    { id:"157", nivel:1, unidad:"UNIDAD I", pregunta:"¿Qué grupo funcional contiene la estructura R-CO-R'?", iupac_oficial:"cetona", variantes:["cetona"], explicacion:"Carbonilo interno." },
+    { id:"158", nivel:1, unidad:"UNIDAD I", pregunta:"¿Qué grupo funcional contiene la estructura R-COOH?", iupac_oficial:"ácido carboxílico", variantes:["acido carboxilico","ácido carboxílico","carboxilo"], explicacion:"Grupo carboxilo." },
+    { id:"159", nivel:1, unidad:"UNIDAD I", pregunta:"¿Qué grupo funcional contiene la estructura R-COO-R'?", iupac_oficial:"éster", variantes:["ester","éster"], explicacion:"Derivado de ácido carboxílico y alcohol." },
+    { id:"160", nivel:1, unidad:"UNIDAD I", pregunta:"¿Qué grupo funcional representa la estructura R-SH?", iupac_oficial:"tiol", variantes:["tiol","mercaptano"], explicacion:"Análogo azufrado de un alcohol." },
+
+    // --- NIVEL 2: ESTEREOQUÍMICA Y REGLAS CIP (UNIDAD II) ---
+    { id: "201", nivel: 2, unidad: "UNIDAD II", pregunta: "¿Qué propiedad periódica determina en primer lugar la prioridad de un átomo según las reglas CIP?", iupac_oficial: "número atómico", variantes: ["numero atomico", "numero atómico", "número atómico", "z"], explicacion: "A mayor número atómico (Z), mayor es la prioridad asignada según el sistema Cahn-Ingold-Prelog." },
+    { id: "202", nivel: 2, unidad: "UNIDAD II", pregunta: "Ordena de MAYOR a MENOR prioridad CIP los siguientes halógenos: -F, -Cl, -Br, -I:", iupac_oficial: "-I > -Br > -Cl > -F", variantes: ["I > Br > Cl > F", "I, Br, Cl, F", "I Br Cl F", "-i > -br > -cl > -f"], explicacion: "El yodo (Z=53) tiene la mayor prioridad, seguido del bromo (Z=35), cloro (Z=17) y flúor (Z=9)." },
+    { id: "203", nivel: 2, unidad: "UNIDAD II", pregunta: "Al comparar dos isótopos como el Protio (1H) y el Deuterio (2H), ¿cuál tiene mayor prioridad CIP?", iupac_oficial: "deuterio", variantes: ["deuterio", "2h", "d"], explicacion: "A igual número atómico, el isótopo con mayor masa atómica tiene mayor prioridad." },
+    { id: "204", nivel: 2, unidad: "UNIDAD II", pregunta: "Según las reglas CIP, ¿a cuántos átomos de oxígeno 'fantasma' se considera unido el carbono de un grupo carbonilo (C=O)?", iupac_oficial: "2", variantes: ["dos", "2"], explicacion: "Un doble enlace se multiplica de forma ficticia equivaliendo a dos enlaces sencillos con átomos de oxígeno." },
+    { id: "205", nivel: 2, unidad: "UNIDAD II", pregunta: "¿Qué grupo sustituyente tiene mayor prioridad CIP: -CH2OH o -CHO?", iupac_oficial: "-CHO", variantes: ["-cho", "cho", "aldehido", "aldehído"], explicacion: "El -CHO equivale a un C unido a (O, O, H), mientras que el -CH2OH está unido a (O, H, H)." },
+    { id: "206", nivel: 2, unidad: "UNIDAD II", pregunta: "¿Cuál grupo presenta mayor prioridad según las reglas CIP: -CH2CH3 o -CH=CH2?", iupac_oficial: "-CH=CH2", variantes: ["-ch=ch2", "ch=ch2", "vinilo", "vinil"], explicacion: "El grupo vinilo equivale a un C unido a (C, C, H), superando al grupo etilo que está unido a (C, H, H)." },
+    { id: "207", nivel: 2, unidad: "UNIDAD II", pregunta: "¿Hacia qué posición del espacio debe orientarse el sustituyente de MENOR prioridad (4) para asignar R o S directamente?", iupac_oficial: "atrás", variantes: ["atras", "atrás", "fondo", "lejos del observador", "hacia atras"], explicacion: "Al proyectar el grupo de prioridad 4 hacia atrás (enlace discontinuo/guion), la dirección del giro 1->2->3 indica el descriptor correcto." },
+    { id: "208", nivel: 2, unidad: "UNIDAD II", pregunta: "Si el recorrido de los grupos prioritarios 1 -> 2 -> 3 sigue el sentido de las agujas del reloj con el grupo 4 atrás, la configuración es:", iupac_oficial: "R", variantes: ["r", "rectus"], explicacion: "Configuración R (del latín Rectus, derecha / horario)." },
+    { id: "209", nivel: 2, unidad: "UNIDAD II", pregunta: "Si el recorrido de las prioridades 1 -> 2 -> 3 va en sentido antihorario con el grupo 4 orientado hacia atrás, la configuración es:", iupac_oficial: "S", variantes: ["s", "sinister"], explicacion: "Configuración S (del latín Sinister, izquierda / antihorario)." },
+    { id: "210", nivel: 2, unidad: "UNIDAD II", pregunta: "Si en una proyección de Fischer el grupo de menor prioridad (4) se encuentra en la línea HORIZONTAL, ¿qué se debe hacer con la configuración obtenida del giro?", iupac_oficial: "invertir", variantes: ["invertir", "invertirla", "cambiar", "se invierte", "opuesto"], explicacion: "Como las líneas horizontales en Fischer apuntan hacia adelante, el resultado del sentido de giro se debe invertir." },
+    { id: "211", nivel: 2, unidad: "UNIDAD II", pregunta: "¿Qué descriptor geométrico se utiliza estrictamente en alquenos cuando hay dos sustituyentes idénticos del MISMO lado?", iupac_oficial: "cis", variantes: ["cis", "cis-"], explicacion: "La nomenclatura cis-trans se reserva para casos donde existen dos grupos o hidrógenos iguales para comparar su posición relativa." },
+    { id: "212", nivel: 2, unidad: "UNIDAD II", pregunta: "¿Qué descriptor geométrico se usa en alquenos cuando dos grupos idénticos están en lados OPUESTOS del doble enlace?", iupac_oficial: "trans", variantes: ["trans", "trans-"], explicacion: "Designación trans para grupos iguales en lados opuestos del plano del enlace pi." },
+    { id: "213", nivel: 2, unidad: "UNIDAD II", pregunta: "Asigna la configuración E o Z al alqueno donde los dos grupos de MAYOR prioridad CIP están del MISMO lado del doble enlace:", iupac_oficial: "Z", variantes: ["z", "zusammen"], explicacion: "Z proviene del alemán 'zusammen' (juntos): prioridades 1 en el mismo lado del plano." },
+    { id: "214", nivel: 2, unidad: "UNIDAD II", pregunta: "Asigna la configuración E o Z cuando los grupos de MAYOR prioridad CIP en cada carbono del doble enlace están en lados OPUESTOS:", iupac_oficial: "E", variantes: ["e", "entgegen"], explicacion: "E proviene del alemán 'entgegen' (opuestos): grupos prioritarios en lados contrarios." },
+    { id: "215", nivel: 2, unidad: "UNIDAD II", pregunta: "Asigna la nomenclatura al siguiente alqueno con 4 sustituyentes distintos: C1 con -Br(1) y -H(2); C2 con -Cl(1) y -CH3(2) opuestos a -Br:", smiles: "Cl/C=C(\\Br)C", iupac_oficial: "(E)-1-bromo-2-cloroprop-1-eno", variantes: ["(e)-1-bromo-2-cloroprop-1-eno", "e-1-bromo-2-cloropropeno", "(E) 1-bromo-2-cloropropeno"], explicacion: "Los grupos prioritarios en C1 (-Br) y en C2 (-Cl) se encuentran en lados opuestos (E)." },
+    { id: "216", nivel: 2, unidad: "UNIDAD II", pregunta: "Nombre IUPAC con estereoquímica del cicloalcano con dos grupos metilo hacia adelante en C1 y C2:", smiles: "C[C@H]1CCCC[C@H]1C", iupac_oficial: "cis-1,2-dimetilciclohexano", variantes: ["cis-1,2 dimetilciclohexano", "cis 1,2-dimetilciclohexano"], explicacion: "Al tener dos sustituyentes idénticos en un ciclo del mismo lado, se usa estrictamente 'cis'." },
+    { id: "217", nivel: 2, unidad: "UNIDAD II", pregunta: "Nombra con estereoquímica adecuada la siguiente estructura:", smiles: "C/C=C/C", iupac_oficial: "trans-2-buteno", variantes: ["trans-but-2-eno", "trans 2-buteno", "(E)-2-buteno", "(E)-but-2-eno"], explicacion: "Alqueno disustituido con los grupos metilo en lados opuestos; la nomenclatura clásica correcta es trans-2-buteno." },
+    { id: "218", nivel: 2, unidad: "UNIDAD II", pregunta: "¿Por qué no se debe usar la nomenclatura cis/trans en el (E)-2-bromo-1-cloro-1-fluorobut-1-eno?", iupac_oficial: "4 sustituyentes diferentes", variantes: ["sustituyentes diferentes", "los 4 grupos son diferentes", "4 grupos distintos", "no hay grupos iguales"], explicacion: "Sin grupos idénticos directamente comparables, es obligatorio emplear el sistema de prioridades CIP (E/Z)." },
+    { id: "219", nivel: 2, unidad: "UNIDAD II", pregunta: "Nombre completo con estereoquímica E/Z de la molécula indicada:", smiles: "F/C(Cl)=C(\\I)Br", iupac_oficial: "(Z)-2-bromo-1-cloro-1-fluoro-2-yodoeteno", variantes: ["(z)-2-bromo-1-cloro-1-fluoro-2-yodoeteno", "z-2-bromo-1-cloro-1-fluoro-2-yodoeteno"], explicacion: "En C1 la prioridad es Cl > F. En C2 la prioridad es I > Br. Cl e I están del mismo lado (Z)." },
+    { id: "220", nivel: 2, unidad: "UNIDAD II", pregunta: "¿Puede presentarse isomería geométrica (cis/trans o E/Z) en el 2-metilprop-1-eno?", iupac_oficial: "no", variantes: ["no", "falso"], explicacion: "Un carbono del doble enlace posee dos sustituyentes idénticos (-CH3 en C2), por lo que no existen isómeros geométricos." },
+    { id: "221", nivel: 2, unidad: "UNIDAD II", pregunta: "¿Cómo se denominan las imágenes especulares no superponibles?", iupac_oficial: "enantiómeros", variantes: ["enantiomeros", "enantiómeros"], explicacion: "Tienen configuraciones opuestas en todos sus centros quirales." },
+    { id: "222", nivel: 2, unidad: "UNIDAD II", pregunta: "¿Cómo se llaman los estereoisómeros que NO son imágenes especulares entre sí?", iupac_oficial: "diastereómeros", variantes: ["diastereomeros", "diastereoindex", "diastereoisomeros", "diastereoisómeros"], explicacion: "Difieren en al menos un centro quiral, pero no en todos." },
+    { id: "223", nivel: 2, unidad: "UNIDAD II", pregunta: "¿Cómo se denomina a una mezcla equimolar (50:50) de dos enantiómeros?", iupac_oficial: "mezcla racémica", variantes: ["mezcla racemica", "racemato", "mezcla racémica"], explicacion: "Inactiva ópticamente por compensación intermolecular." },
+    { id: "224", nivel: 2, unidad: "UNIDAD II", pregunta: "¿Cómo se le llama a un compuesto que posee centros quirales pero es ópticamente inactivo debido a un plano de simetría interno?", iupac_oficial: "compuesto meso", variantes: ["forma meso", "meso", "compuesto meso"], explicacion: "La actividad óptica de una mitad de la molécula anula la de la otra mitad por simetría." },
+    { id: "225", nivel: 2, unidad: "UNIDAD II", pregunta: "Asigna la configuración R o S para el C2 del (2R)-2-cloropropano:", smiles: "CC(Cl)C", iupac_oficial: "no quiral", variantes: ["aquiral", "no quiral", "ninguna", "no tiene"], explicacion: "El C2 tiene dos grupos metilo iguales (-CH3), por lo cual es un carbono aquiral." },
+    { id: "226", nivel: 2, unidad: "UNIDAD II", pregunta: "Nombre IUPAC completo con estereoquímica R/S de la siguiente estructura:", smiles: "C[C@H](O)C(=O)O", iupac_oficial: "(2S)-ácido láctico", variantes: ["ácido (2S)-láctico", "acido (2s)-lactico", "(2S)-2-hidroxipropanoico", "acido (2s)-2-hidroxipropanoico"], explicacion: "Prioridades en C2: -OH (1), -COOH (2), -CH3 (3), -H (4). Con H atrás, la secuencia va en sentido antihorario (S)." },
+    { id: "227", nivel: 2, unidad: "UNIDAD II", pregunta: "Nombra con configuración absoluta (R/S) el siguiente enantiómero del bromocloroetanol:", smiles: "OC[C@@H](Cl)Br", iupac_oficial: "(1R)-1-bromo-1-cloroetanol", variantes: ["(1r)-1-bromo-1-cloroetanol", "(R)-1-bromo-1-cloroetanol"], explicacion: "Prioridades en C1: -Br (1), -Cl (2), -CH2OH (3), -H (4)." },
+    { id: "228", nivel: 2, unidad: "UNIDAD II", pregunta: "En una proyección de Newman, ¿cuál es el ángulo de diedro entre grupos alternados (escalonados)?", iupac_oficial: "60°", variantes: ["60", "60°", "60 grados"], explicacion: "Ángulo de torsión o diedro de 60° característico de la conformación escalonada." },
+    { id: "229", nivel: 2, unidad: "UNIDAD II", pregunta: "En la proyección de Newman del n-butano, ¿cómo se denomina a la conformación escalonada con ángulo diedro de 60° entre los grupos metilo?", iupac_oficial: "gauche", variantes: ["gauche", "sesgada"], explicacion: "Conformación con interacción estérica moderada entre los grupos voluminosos a 60°." },
+    { id: "230", nivel: 2, unidad: "UNIDAD II", pregunta: "¿Cómo se llama la conformación del n-butano con ángulo diedro de 180° entre los grupos metilo?", iupac_oficial: "anti", variantes: ["anti", "anti-periplanar"], explicacion: "Conformación de mínima energía libre de tensión estérica y torsional." },
+    { id: "231", nivel: 2, unidad: "UNIDAD II", pregunta: "¿Cuál es la fórmula para calcular el número máximo de estereoisómeros de una molécula con 'n' centros estereogénicos no equivalentes?", iupac_oficial: "2^n", variantes: ["2^n", "2 a la n", "2n"], explicacion: "Regla de van 't Hoff: $2^n$ estereoisómeros posibles." },
+    { id: "232", nivel: 2, unidad: "UNIDAD II", pregunta: "En la representación en silla del ciclohexano, ¿cómo se orientan los enlaces paralelos al eje de simetría vertical del anillo?", iupac_oficial: "axiales", variantes: ["axial", "axiales"], explicacion: "Los enlaces axiales se orientan verticalmente, alternando hacia arriba y hacia abajo." },
+    { id: "233", nivel: 2, unidad: "UNIDAD II", pregunta: "En el ciclohexano, ¿qué posición adoptan preferentemente los sustituyentes voluminosos para minimizar la tensión estérica?", iupac_oficial: "ecuatorial", variantes: ["ecuatoriales", "ecuatorial"], explicacion: "Las posiciones ecuatoriales evitan las interacciones 1,3-diaxiales desfavorables." },
+    { id: "234", nivel: 2, unidad: "UNIDAD II", pregunta: "¿Qué tipo de proyección utiliza líneas horizontales (hacia adelante) y verticales (hacia atrás) para representar azúcares y aminoácidos?", iupac_oficial: "proyección de Fischer", variantes: ["proyeccion de fischer", "fischer", "proyección de fischer"], explicacion: "Fischer representa carbonos en una cadena vertical orientando sustituyentes horizontales hacia el observador." },
+    { id: "235", nivel: 2, unidad: "UNIDAD II", pregunta: "Asigna el descriptor R o S a una molécula cuya Fischer tiene -OH (1) a la izquierda, -CHO (2) arriba, -CH2OH (3) abajo y -H (4) a la derecha:", iupac_oficial: "S", variantes: ["s", "S"], explicacion: "Sentido del giro 1->2->3 es horario (R), pero como el grupo 4 está en la horizontal, se invierte a S." },
+    { id: "236", nivel: 2, unidad: "UNIDAD II", pregunta: "Nombra con configuración (R/S) el siguiente aminoácido L-Alanina:", smiles: "N[C@@H](C)C(=O)O", iupac_oficial: "(2S)-alanina", variantes: ["(2s)-alanina", "(S)-alanina", "s-alanina"], explicacion: "Prioridades CIP: -NH2 (1), -COOH (2), -CH3 (3), -H (4). Con el H hacia atrás, el giro 1->2->3 es antihorario. Configuración absoluta S." },
+    { id: "237", nivel: 2, unidad: "UNIDAD II", pregunta: "Nombre IUPAC estereoquímico de la siguiente molécula con dos carbonos quirales equivalentes:", smiles: "O[C@@H](C(=O)O)[C@H](O)C(=O)O", iupac_oficial: "ácido meso-tartárico", variantes: ["acido meso-tartarico", "acido mesotartarico", "ácido (2R,3S)-tartárico", "acido (2r,3s)-tartarico", "acido (2s,3r)-tartarico", "acido meso tartarico", "meso-tartarico", "acido tartarico meso"], explicacion: "Posee plano de simetría interno (2R, 3S) que anula la actividad óptica (Forma Meso)." },
+    { id: "238", nivel: 2, unidad: "UNIDAD II", pregunta: "Asigna la configuración absoluta (R/S) al carbono estereogénico de la siguiente molécula:", smiles: "CC[C@H](C)Br", iupac_oficial: "S", variantes: ["s", "(2s)-2-bromobutano", "(s)-2-bromobutano"], explicacion: "Prioridades CIP en C2: -Br (1), -CH2CH3 (2), -CH3 (3), -H (4). Con el -H hacia atrás, el giro 1->2->3 es antihorario (S)." },
+    { id: "239", nivel: 2, unidad: "UNIDAD II", pregunta: "¿Qué instrumento se utiliza en el laboratorio para medir la rotación del plano de la luz polarizada producida por un compuesto quiral?", iupac_oficial: "polarímetro", variantes: ["polarimetro", "polarímetro"], explicacion: "El polarímetro mide la rotación óptica en grados (+ dextrógiro, - levógiro)." },
+    { id: "240", nivel: 2, unidad: "UNIDAD II", pregunta: "¿Existe relación directa entre la configuración absoluta (R/S) y el signo de rotación óptica (+/-)?", iupac_oficial: "no", variantes: ["no", "ninguna", "falso"], explicacion: "La configuración R/S se determina teóricamente mediante CIP, mientras que el signo (+/-) es un dato experimental." }
+  ];
+
+  // ESTADO DE LA SESIÓN Y ESTUDIANTE
+  let datosEstudiante = { nombre: "", cedula: "", seccion: "" };
+  let preguntasNivelActual = [];
+  let desáfio20Preguntas = [];
+  let indiceActual = 0;
+  let aciertos = 0;
+  let nivelActivo = 1;
+
+  function iniciarSesion() {
+    const nom = document.getElementById('regNombre').value.trim();
+    const ced = document.getElementById('regCedula').value.trim();
+
+    if (!nom || !ced) {
+      alert("Por favor completa todos los campos del estudiante.");
+      return;
+    }
+
+    // Se eliminó la sección, se envía vacío o N/A
+    datosEstudiante = { nombre: nom, cedula: ced, seccion: "N/A" };
+    document.getElementById('modalRegistro').style.display = "none";
+    document.getElementById('estudianteText').innerText = nom; // Solo muestra el nombre
+    actualizarBotonesNivel();
+    cargarNivel(1);
+  }
+
+  function obtenerAprobados(nivel) {
+    return parseInt(localStorage.getItem(`sefan_aprobados_n${nivel}`) || "0");
+  }
+
+  function incrementarAprobado(nivel) {
+    let actual = obtenerAprobados(nivel) + 1;
+    localStorage.setItem(`sefan_aprobados_n${nivel}`, actual);
+    actualizarBotonesNivel();
+  }
+
+  function actualizarBotonesNivel() {
+    // RESTABLECIDO: Bloqueo estricto. Nivel 2+ requiere 3 aprobaciones del nivel anterior.
+    for (let i = 2; i <= 4; i++) {
+      const btn = document.getElementById(`btnNivel${i}`);
+      if (obtenerAprobados(i - 1) >= 3) {
+        btn.classList.remove('locked');
+      } else {
+        btn.classList.add('locked');
+      }
+    }
+  }
+
+  function cargarNivel(nivel) {
+    // RESTABLECIDO: Validación estricta para evitar saltarse el candado desde la consola
+    if (nivel > 1 && obtenerAprobados(nivel - 1) < 3) {
+      alert(`Debes aprobar el Nivel ${nivel - 1} al menos 3 veces para desbloquear este nivel.`);
+      return;
+    }
+
+    nivelActivo = nivel;
+    document.querySelectorAll('.level-btn').forEach((btn, idx) => {
+      btn.classList.toggle('active', idx + 1 === nivel);
+    });
+
+    preguntasNivelActual = bancoEstructuras.filter(item => item.nivel === nivel);
+    if (preguntasNivelActual.length === 0) preguntasNivelActual = bancoEstructuras;
+
+    desáfio20Preguntas = [...preguntasNivelActual].sort(() => 0.5 - Math.random()).slice(0, 20);
+
+    indiceActual = 0;
+    aciertos = 0;
+    mostrarPregunta();
+  }
+
+  function mostrarPregunta() {
+    const item = desáfio20Preguntas[indiceActual];
+    document.getElementById('unidadBadge').innerText = item.unidad;
+    document.getElementById('preguntaText').innerText = item.pregunta;
+    document.getElementById('respuestaInput').value = '';
+    document.getElementById('feedback').style.display = 'none';
+
+    document.getElementById('progresoText').innerText = `Pregunta ${indiceActual + 1} de ${desáfio20Preguntas.length}`;
+    document.getElementById('scoreText').innerText = `Aciertos: ${aciertos} | Aprobados N${nivelActivo}: ${obtenerAprobados(nivelActivo)}/3`;
+
+    const container = document.getElementById('molContainer');
+    container.innerHTML = ''; // Limpiar contenedor
+
+    if (item.smiles) {
+      if (!rdkitModule) {
+        container.innerHTML = '<span style="color:var(--accent-blue); font-size:0.9rem;">⏳ Cargando motor químico...</span>';
+        setTimeout(mostrarPregunta, 300);
+        return;
+      }
+      
+      let mol = null;
+      
+      try {
+        mol = rdkitModule.get_mol(item.smiles);
+      } catch(e) {
+        console.error("Error parsing SMILES:", e);
+      }
+
+      // SISTEMA DE RESPALDO (FALLBACK): Si falla la estereoquímica, dibuja la estructura plana
+      if (!mol) {
+        console.warn("⚠️ Error al parsear SMILES con estereoquímica:", item.smiles);
+        const plainSmiles = item.smiles.replace(/[\/\\@]/g, ''); // Elimina / \ @
+        try {
+            mol = rdkitModule.get_mol(plainSmiles);
+            console.log("✅ Renderizado alternativo (sin estereoquímica) exitoso:", plainSmiles);
+        } catch(e) {
+            mol = null;
+        }
+      }
+
+      if (mol) {
+        try {
+            const svg = mol.get_svg_with_highlights(JSON.stringify({
+              width: 340,
+              height: 210,
+              backgroundColour: [0.0, 0.0, 0.0, 0.0],
+              atomColourPalette: paletaColores,
+              addStereoAnnotation: false // ¡DESACTIVADO! Para que el estudiante deduzca R/S o E/Z
+            }));
+            container.innerHTML = svg;
+        } catch(e) {
+            console.error("Error generando SVG:", e);
+            container.innerHTML = `<span style="color:#ef4444;">⚠️ Error al generar imagen</span>`;
+        } finally {
+            mol.delete(); // Liberar memoria de WebAssembly
+        }
+      } else {
+        container.innerHTML = `<span style="color:#ef4444;">⚠️ Estructura no disponible (SMILES inválido)</span>`;
+      }
+    } else {
+      container.innerHTML = `<div style="color:var(--accent-blue); font-size:1.1rem; text-align:center; padding:20px;"><strong>MÓDULO DE CONCEPTOS Y PROPIEDADES</strong></div>`;
+    }
+  }
+
+  function normalizarTexto(str) {
+    return str.toLowerCase()
+              .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+              .replace(/[^a-z0-9]/g, "");
+  }
+
+  function validarRespuesta() {
+    const input = document.getElementById('respuestaInput').value.trim();
+    if (!input) return;
+
+    const item = desáfio20Preguntas[indiceActual];
+    const inputNorm = normalizarTexto(input);
+    const oficialNorm = normalizarTexto(item.iupac_oficial);
+    const variantesNorm = item.variantes.map(v => normalizarTexto(v));
+
+    const esCorrecto = (inputNorm === oficialNorm) || variantesNorm.includes(inputNorm);
+    const feedbackDiv = document.getElementById('feedback');
+
+    if (esCorrecto) {
+      aciertos++;
+      feedbackDiv.className = "correct";
+      feedbackDiv.innerHTML = `<strong>¡Correcto!</strong><br>${item.explicacion}`;
+    } else {
+      feedbackDiv.className = "incorrect";
+      feedbackDiv.innerHTML = `<strong>Incorrecto.</strong> Respuesta oficial: <em>${item.iupac_oficial}</em>.<br>${item.explicacion}`;
+    }
+    feedbackDiv.style.display = "block";
+
+    setTimeout(() => {
+      siguientePregunta();
+    }, 3500);
+  }
+
+  function siguientePregunta() {
+    if (indiceActual + 1 < desáfio20Preguntas.length) {
+      indiceActual++;
+      mostrarPregunta();
+    } else {
+      finalizarDesafio();
+    }
+  }
+
+  function finalizarDesafio() {
+    const porcentaje = (aciertos / desáfio20Preguntas.length) * 100;
+    const aprobo = aciertos >= 17; // Requisito: >= 85% para aprobar (17/20)
+
+    if (aprobo) {
+      incrementarAprobado(nivelActivo);
+      alert(`¡Felicidades ${datosEstudiante.nombre}! Has aprobado el desafío con ${aciertos}/20 aciertos (${porcentaje}%). Intentos aprobados en Nivel ${nivelActivo}: ${obtenerAprobados(nivelActivo)}/3.`);
+    } else {
+      alert(`Desafío completado: ${aciertos}/20 aciertos. Se requieren al menos 17 aciertos para aprobar el intento. ¡Repasa la teoría e inténtalo de nuevo para tu Bitácora!`);
+    }
+
+    registrarIntentoEnDrive(aciertos, desáfio20Preguntas.length, aprobo);
+    cargarNivel(nivelActivo);
+  }
+
+  // ==========================================
+  // REGISTRO EN GOOGLE DRIVE (INTACTO)
+  // ==========================================
+  function registrarIntentoEnDrive(score, total, aprobo) {
+    if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("AKfycbx_TU_URL_AQUI")) return;
+
+    const payload = {
+      fecha: new Date().toLocaleString("es-VE"),
+      nombre: datosEstudiante.nombre,
+      cedula: datosEstudiante.cedula,
+      seccion: datosEstudiante.seccion, // Ahora envía "N/A"
+      nivel: nivelActivo,
+      puntaje: `${score}/${total}`,
+      resultado: aprobo ? "APROBADO" : "REPROBADO"
+    };
+
+    fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    }).catch(e => console.error("Error al registrar en Drive:", e));
+  }
+</script>
+</body>
+</html>
