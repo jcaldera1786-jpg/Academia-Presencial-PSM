@@ -352,29 +352,24 @@
         btn.disabled = true; 
         btn.innerText = "Enviando registros...";
         
-        const data = { 
-            nombre: userData.nombre, 
-            cedula: userData.cedula, 
-            puntos: p, 
-            intento: userData.intento 
-        };
+        // Empaquetado dinámico con FormData compatible con CORS/no-cors
+        const formData = new FormData();
+        formData.append("cedula", userData.cedula);
+        formData.append("nombre", userData.nombre);
+        formData.append("puntos", p);
+        formData.append("intento", userData.intento);
 
         try {
             await fetch(GOOGLE_URL, { 
                 method: 'POST', 
                 mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    "data": JSON.stringify(data)
-                })
+                body: formData
             });
             
             alert("SISTEMA: Resultados de los 3 ciclos enviados con éxito al servidor institucional.");
             document.getElementById('action-area').innerHTML = `<button class="btn-action" onclick="reintentar()" style="background:var(--secondary)">Reiniciar Evaluación 🔄</button>`;
         } catch (e) {
-            alert("Error de conexión al enviar resultados.");
+            alert("Error de conexión al enviar resultados: " + e.message);
             btn.disabled = false; 
             btn.innerText = "Reintentar Envío";
         }
