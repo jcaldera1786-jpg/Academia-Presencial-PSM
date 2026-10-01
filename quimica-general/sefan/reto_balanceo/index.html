@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -140,7 +141,7 @@
         </p>
         <input type="text" id="name" class="user-input" placeholder="Nombre y Apellido Completo" autocomplete="off">
         <input type="text" id="cedula" class="user-input" placeholder="Cédula de Identidad (Solo números)" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '');" autocomplete="off">
-        <button class="btn-action" onclick="iniciar()" style="width: 100%;">Iniciar Evaluación de 3 Ciclos 🚀</button>
+        <button id="btn-start" class="btn-action" onclick="iniciar()" style="width: 100%;">Iniciar Evaluación de 3 Ciclos 🚀</button>
     </div>
 
     <div id="quiz" style="display:none;">
@@ -169,14 +170,13 @@
     const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbxGultFkezECyX0fEpoMpVI2z1we2qS66gn-jEtYspAj4IQJdgONIMRbD78ssINesZS6g/exec";
     
     let userData = { nombre: "", cedula: "", intento: 1 };
-    let correctCount = 0; // Aciertos acumulados en los 3 ciclos (hasta 60)
-    let cycleCorrect = 0; // Aciertos en el ciclo actual
-    let qIndex = 0;        // Índice de pregunta (0 al 19 por ciclo)
-    let currentCycle = 1; // Ciclo actual (1, 2, 3)
+    let correctCount = 0; 
+    let cycleCorrect = 0; 
+    let qIndex = 0;        
+    let currentCycle = 1; 
     let currentAnswer = [];
     let bancoActual = [];
 
-    // Banco completo de 60 reacciones estequiométricas
     const poolReacciones = [
         // Básico
         { ec: ["H₂", "+", "O₂", "→", "H₂O"], coefs: [2, 1, 2] },
@@ -247,21 +247,47 @@
 
     function shuffle(array) { return array.sort(() => Math.random() - 0.5); }
 
-    function iniciar() {
+    async function iniciar() {
         const n = document.getElementById('name').value.trim();
         const c = document.getElementById('cedula').value.trim();
         if(!n || !c) {
             alert("Por favor, ingrese su nombre y número de cédula.");
             return;
         }
+        
         userData.nombre = n; 
         userData.cedula = c;
-        
+
+        // Registrar inmediatamente al estudiante en la hoja de cálculo
+        const btnStart = document.getElementById('btn-start');
+        btnStart.disabled = true;
+        btnStart.innerText = "Registrando datos...";
+
+        await registrarEstudiante();
+
         bancoActual = shuffle([...poolReacciones]).slice(0, 20);
-        
         document.getElementById('setup').style.display = 'none';
         document.getElementById('quiz').style.display = 'block';
         cargar();
+    }
+
+    async function registrarEstudiante() {
+        const params = new URLSearchParams({
+            cedula: userData.cedula,
+            nombre: userData.nombre,
+            intento: userData.intento
+        });
+
+        try {
+            await fetch(GOOGLE_URL, { 
+                method: 'POST', 
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: params.toString()
+            });
+        } catch (e) {
+            console.error("Error al premATRICULAR:", e);
+        }
     }
 
     function cargar() {
@@ -352,22 +378,23 @@
         btn.disabled = true; 
         btn.innerText = "Enviando registros...";
         
-        // Empaquetado dinámico con FormData compatible con CORS/no-cors
-        const formData = new FormData();
-        formData.append("cedula", userData.cedula);
-        formData.append("nombre", userData.nombre);
-        formData.append("puntos", p);
-        formData.append("intento", userData.intento);
+        const params = new URLSearchParams({
+            cedula: userData.cedula,
+            nombre: userData.nombre,
+            puntos: p,
+            intento: userData.intento
+        });
 
         try {
             await fetch(GOOGLE_URL, { 
                 method: 'POST', 
                 mode: 'no-cors',
-                body: formData
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: params.toString()
             });
             
-            alert("SISTEMA: Resultados de los 3 ciclos enviados con éxito al servidor institucional.");
-            document.getElementById('action-area').innerHTML = `<button class="btn-action" onclick="reintentar()" style="background:var(--secondary)">Reiniciar Evaluación 🔄</button>`;
+            alert("SISTEMA: Resultados del Intento " + userData.intento + " enviados con éxito.");
+            document.getElementById('action-area').innerHTML = `<button class="btn-action" onclick="reintentar()" style="background:var(--secondary)">Reiniciar Evaluación (Intento ${userData.intento + 1}) 🔄</button>`;
         } catch (e) {
             alert("Error de conexión al enviar resultados: " + e.message);
             btn.disabled = false; 
