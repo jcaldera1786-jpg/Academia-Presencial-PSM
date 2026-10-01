@@ -171,7 +171,7 @@
     let userData = { nombre: "", cedula: "", intento: 1 };
     let correctCount = 0; // Aciertos acumulados en los 3 ciclos (hasta 60)
     let cycleCorrect = 0; // Aciertos en el ciclo actual
-    let qIndex = 0;       // Índice de pregunta (0 al 19 por ciclo)
+    let qIndex = 0;        // Índice de pregunta (0 al 19 por ciclo)
     let currentCycle = 1; // Ciclo actual (1, 2, 3)
     let currentAnswer = [];
     let bancoActual = [];
@@ -257,7 +257,6 @@
         userData.nombre = n; 
         userData.cedula = c;
         
-        // Generar un bloque de 20 preguntas aleatorias para el ciclo 1
         bancoActual = shuffle([...poolReacciones]).slice(0, 20);
         
         document.getElementById('setup').style.display = 'none';
@@ -329,16 +328,13 @@
             qIndex++;
             cargar();
         } else {
-            // Fin del ciclo actual
             if(currentCycle < 3) {
                 currentCycle++;
                 qIndex = 0;
-                // Cargar un nuevo bloque de 20 preguntas aleatorias para el siguiente ciclo
                 bancoActual = shuffle([...poolReacciones]).slice(0, 20);
                 alert(`¡Ciclo ${currentCycle - 1} completado! A continuación comienza el Ciclo ${currentCycle} de 3.`);
                 cargar();
             } else {
-                // Se completaron los 3 ciclos (60 preguntas en total)
                 prepararEnvio();
             }
         }
@@ -367,8 +363,12 @@
             await fetch(GOOGLE_URL, { 
                 method: 'POST', 
                 mode: 'no-cors',
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify(data) 
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    "data": JSON.stringify(data)
+                })
             });
             
             alert("SISTEMA: Resultados de los 3 ciclos enviados con éxito al servidor institucional.");
