@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -176,6 +175,7 @@
     let currentCycle = 1; 
     let currentAnswer = [];
     let bancoActual = [];
+    let poolDisponible = [];
 
     const poolReacciones = [
         // Básico
@@ -265,7 +265,10 @@
 
         await registrarEstudiante();
 
-        bancoActual = shuffle([...poolReacciones]).slice(0, 20);
+        // Desordenar las 60 reacciones una sola vez al inicio y extraer el primer bloque de 20
+        poolDisponible = shuffle([...poolReacciones]);
+        bancoActual = poolDisponible.splice(0, 20);
+
         document.getElementById('setup').style.display = 'none';
         document.getElementById('quiz').style.display = 'block';
         cargar();
@@ -286,7 +289,7 @@
                 body: params.toString()
             });
         } catch (e) {
-            console.error("Error al premATRICULAR:", e);
+            console.error("Error al registrar inicio:", e);
         }
     }
 
@@ -357,7 +360,8 @@
             if(currentCycle < 3) {
                 currentCycle++;
                 qIndex = 0;
-                bancoActual = shuffle([...poolReacciones]).slice(0, 20);
+                // Extraer el siguiente bloque de 20 preguntas únicas sin repetir
+                bancoActual = poolDisponible.splice(0, 20);
                 alert(`¡Ciclo ${currentCycle - 1} completado! A continuación comienza el Ciclo ${currentCycle} de 3.`);
                 cargar();
             } else {
@@ -408,7 +412,10 @@
         cycleCorrect = 0; 
         qIndex = 0; 
         currentCycle = 1;
-        bancoActual = shuffle([...poolReacciones]).slice(0, 20);
+        
+        // Reiniciar y volver a mezclar el pool de 60 reacciones
+        poolDisponible = shuffle([...poolReacciones]);
+        bancoActual = poolDisponible.splice(0, 20);
         
         document.getElementById('percent').innerText = "0";
         document.getElementById('total-correct').innerText = "0/60";
