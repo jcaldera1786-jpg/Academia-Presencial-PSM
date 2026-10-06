@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glosario Interactivo de Química General - PSM</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #38bdf8;
+            --accent-hover: #0284c7;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --tag-bg: #0369a1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto 30px auto;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .header h1 {
+            color: var(--accent);
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .search-container {
+            max-width: 900px;
+            margin: 0 auto 25px auto;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 20px;
+            font-size: 1rem;
+            border-radius: 10px;
+            border: 2px solid var(--border);
+            background-color: #1e293b;
+            color: var(--text-main);
+            outline: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            transition: border-color 0.3s;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent);
+        }
+
+        .nav-tags {
+            max-width: 900px;
+            margin: 0 auto 25px auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .tag-btn {
+            background-color: var(--card-bg);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tag-btn:hover, .tag-btn.active {
+            background-color: var(--tag-bg);
+            color: #ffffff;
+            border-color: var(--accent);
+        }
+
+        .content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            color: var(--accent);
+            font-size: 1.4rem;
+            margin: 30px 0 15px 0;
+            padding-left: 10px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .glossary-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .term-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px 22px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .term-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .term-title {
+            color: var(--accent);
+            font-size: 1.15rem;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .term-desc {
+            color: var(--text-main);
+            font-size: 0.95rem;
+            text-align: justify;
+        }
+
+        .formula {
+            display: inline-block;
+            background-color: #0f172a;
+            color: #38bdf8;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            margin: 2px 0;
+        }
+
+        .no-results {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 40px;
+            display: none;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Glosario Técnico de Química General</h1>
+    <p>Instituto Universitario Politécnico "Santiago Mariño" | Repositorio Académico</p>
+</div>
+
+<div class="search-container">
+    <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar término o concepto (ej. Covalente, Octeto, Hund, Electrófito)..." onkeyup="filterTerms()">
+</div>
+
+<div class="nav-tags">
+    <button class="tag-btn active" onclick="filterCategory('all')">Todos</button>
+    <button class="tag-btn" onclick="filterCategory('atomo')">Estructura Atómica</button>
+    <button class="tag-btn" onclick="filterCategory('cuantica')">Mecánica Cuántica</button>
+    <button class="tag-btn" onclick="filterCategory('tabla')">Tabla Periódica</button>
+    <button class="tag-btn" onclick="filterCategory('enlaces')">Enlaces y Fuerzas</button>
+    <button class="tag-btn" onclick="filterCategory('estequio')">Nomenclatura y Estequiometría</button>
+</div>
+
+<div class="content">
+
+    <!-- SECCIÓN 1 -->
+    <div class="category-block" data-category="atomo">
+        <h2 class="section-title">1. Teoría Atómica y Hechos Experimentales</h2>
+        <div class="glossary-grid">
+            <div class="term-card">
+                <div class="term-title">Descarga de Gases (Tubos de Rayos Catódicos)</div>
+                <div class="term-desc">Experimento físico realizado en tubos de vidrio al vacío sometidos a alto voltaje. Permitió a J.J. Thomson descubrir el electrón (1897) al observar que la radiación emitida se desviaba ante campos eléctricos y magnéticos, demostrando la naturaleza corpuscular negativa del átomo.</div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Electrólisis</div>
+                <div class="term-desc">Proceso mediante el cual el paso de una corriente eléctrica continua a través de una sustancia iónica disuelta o fundida induce una reacción química no espontánea de óxido-reducción. Demostró la relación fundamental entre la materia y las cargas eléctricas (Leyes de Faraday).</div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Espectroquímica y Espectros Atómicos</div>
+                <div class="term-desc">Estudio de la interacción entre la radiación electromagnética y la materia. Los espectros de emisión discontinuos (líneas espectrales) demostraron que los electrones no absorben ni emiten energía de forma continua, sino en paquetes discretos o cuantos de luz (fotones).</div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Modelo Atómico de Bohr</div>
+                <div class="term-desc">Modelo postulado en 1913 que introduce la cuantización de la energía. Establece que los electrones giran alrededor del núcleo en órbitas circulares estacionarias definidas sin emitir radiación, y solo absorben o emiten fotones al saltar entre niveles energéticos.</div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Modelo Atómico de Rutherford</div>
+                <div class="term-desc">Modelo nuclear propuesto en 1911 tras el experimento de la lámina de oro. Demostró que la mayor parte del átomo es espacio vacío y que toda su carga positiva y casi la totalidad de su masa están concentradas en un núcleo central minúsculo y denso.</div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Radiactividad</div>
+                <div class="term-desc">Fenómeno físico-químico mediante el cual los núcleos atómicos inestables se desintegran espontáneamente emitiendo radiación (partículas alfa α, beta β y rayos gamma γ). Su descubrimiento por Becquerel y los esposos Curie confirmó la divisibilidad del átomo.</div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Teoría Atómica Moderna</div>
+                <div class="term-desc">Modelo mecánico-cuántico basado en la ecuación de onda de Schrödinger y el principio de incertidumbre de Heisenberg. Describe al electrón no como una partícula en una órbita fija, sino mediante funciones de onda probabilísticas (orbitales).</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 2 -->
+    <div class="category-block" data-category="cuantica">
+        <h2 class="section-title">2. Mecánica Cuántica, Orbitales y Configuración Electrónica</h2>
+        <div class="glossary-grid">
+            <div class="term-card">
+                <div class="term-title">Configuración Electrónica</div>
+                <div class="term-desc">Representación del modo en que los electrones están distribuidos en los diferentes niveles, subniveles y orbitales atómicos de un átomo en su estado fundamental, siguiendo el principio de construcción de Aufbau.</div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Hibridación de Orbitales</div>
+                <div class="term-desc">Modelo matemático que describe la combinación o mezcla de orbitales atómicos puros (<span class="formula">s, p, d</span>) de un mismo átomo central para generar un nuevo conjunto de orbitales híbridos equivalentes en forma y energía (ej. <span class="formula">sp, sp², sp³</span>), justificando la geometría molecular observada.</div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Números Cuánticos</div>
+                <div class="term-desc">Conjunto de cuatro valores numéricos (<span class="formula">n, l, mₗ, mₛ</span>) que caracterizan completamente el estado energético y la región espacial probabilística de un electrón en un átomo:
+                <ul>
+                    <li><b>Principal (n):</b> Nivel de energía y tamaño del orbital (<span class="formula">n = 1, 2, 3...</span>).</li>
+                    <li><b>Secundario o Azimutal (l):</b> Forma del subnivel u orbital (<span class="formula">l = 0 a n-1</span>).</li>
+                    <li><b>Magnético (mₗ):</b> Orientación espacial del orbital (<span class="formula">mₗ = -l a +l</span>).</li>
+                    <li><b>Espín (mₛ):</b> Sentido de giro del electrón sobre su propio eje (<span class="formula">+1/2 o -1/2</span>).</li>
+                </ul>
+                </div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Orbital Atómico</div>
+                <div class="term-desc">Región espacial tridimensional alrededor del núcleo atómico donde existe una probabilidad igual o superior al 90% (definida matemáticamente por <span class="formula">Ψ²</span>) de encontrar a un electrón determinado.</div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Principio de Exclusión de Pauli</div>
+                <div class="term-desc">Regla cuántica que establece que dos electrones en un mismo átomo no pueden poseer los mismos cuatro números cuánticos de forma idéntica. Como consecuencia, un orbital atómico individual solo puede albergar un máximo de dos electrones con espines opuestos (apareados).</div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Regla de Hund (Principio de Máxima Multiplicidad)</div>
+                <div class="term-desc">Regla de llenado que establece que al ocupar orbitales degenerados (de la misma energía, como los tres orbitales <span class="formula">p</span> o cinco <span class="formula">d</span>), los electrones se distribuyen individualmente en cada orbital con espines paralelos antes de comenzar a aparearse.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 3 -->
+    <div class="category-block" data-category="tabla">
+        <h2 class="section-title">3. Tabla Periódica y Ley Periódica</h2>
+        <div class="glossary-grid">
+            <div class="term-card">
+                <div class="term-title">Afinidad Electrónica</div>
+                <div class="term-desc">Variación de energía asociada al proceso en el cual un átomo neutro en estado gaseoso captura un electrón para formar un anión monovalente: <span class="formula">X(g) + e⁻ → X⁻(g)</span>.</div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Electronegatividad</div>
+                <div class="term-desc">Capacidad o tendencia relativa de un átomo enlazado covalentemente para atraer hacia sí la densidad electrónica de los electrones compartidos en el enlace químico. Se mide mediante escalas como la de Pauling.</div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Grupos y Familias Periódicas</div>
+                <div class="term-desc">Columnas verticales de la tabla periódica (del 1 al 18). Los elementos que pertenecen a un mismo grupo poseen la misma configuración electrónica externa en su capa de valencia, por lo que exhiben propiedades químicas semejantes.</div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Ley Periódica</div>
+                <div class="term-desc">Principio postulado por Moseley que establece que las propiedades físicas y químicas de los elementos varían en función periódica y sistemática de sus números atómicos (<span class="formula">Z</span>).</div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Periodos</div>
+                <div class="term-desc">Filas horizontales de la tabla periódica. El número del periodo (1 al 7) indica el nivel de energía principal más alto (<span class="formula">n</span>) ocupado por electrones en los átomos de dichos elementos.</div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Potencial (Energía) de Ionización</div>
+                <div class="term-desc">Mínima cantidad de energía necesaria para remover el electrón más débilmente unido de un átomo neutro, aislado y en estado gaseoso, formando un catión monovalente: <span class="formula">X(g) + E.I. → X⁺(g) + e⁻</span>.</div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Radio Atómico</div>
+                <div class="term-desc">Mitad de la distancia comprendida entre los núcleos de dos átomos idénticos unidos mediante un enlace químico. Disminuye a lo largo de un periodo de izquierda a derecha y aumenta al descender en un grupo.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 4 -->
+    <div class="category-block" data-category="enlaces">
+        <h2 class="section-title">4. Enlaces Químicos y Fuerzas Intermoleculares</h2>
+        <div class="glossary-grid">
+            <div class="term-card">
+                <div class="term-title">Enlace Covalente</div>
+                <div class="term-desc">Enlace formado por la compartición de uno o más pares de electrones entre dos átomos no metálicos con electronegatividades similares. Puede ser apolar (diferencia de electronegatividad casi nula) o polar (diferencia apreciable que genera dipolos).</div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Enlace Iónico</div>
+                <div class="term-desc">Fuerza de atracción electrostática entre cationes cargados positivamente y aniones cargados negativamente. Se origina por la transferencia completa de electrones de un metal a un no metal con alta diferencia de electronegatividad (<span class="formula">ΔEN > 1.7</span>).</div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Enlace Metálico</div>
+                <div class="term-desc">Fuerza cohesiva que mantiene unidos a los átomos metálicos. Se describe como una red ordenada de cationes rodeados por un "mar" de electrones de valencia deslocalizados que se mueven libremente por la estructura.</div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Fuerzas de Dispersión de London</div>
+                <div class="term-desc">Fuerzas intermoleculares débiles y universales generadas por distorsiones instantáneas y temporales de las nubes electrónicas, produciendo dipolos instantáneos que inducen dipolos en las moléculas adyacentes. Son la única interacción presente en sustancias totalmente apolares.</div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Fuerzas Dipolo-Dipolo (Bipolares)</div>
+                <div class="term-desc">Interacciones atractivas electrostáticas permanentes entre el polo positivo (<span class="formula">δ+</span>) de una molécula polar y el polo negativo (<span class="formula">δ-</span>) de una molécula vecina.</div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Puente de Hidrógeno</div>
+                <div class="term-desc">Fuerza intermolecular de gran intensidad que ocurre cuando un átomo de hidrógeno unido covalentemente a un elemento pequeño y fuertemente electronegativo (<span class="formula">N, O, F</span>) es atraído por un par de electrones solitario de un átomo electronegativo de una molécula adyacente.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 5 -->
+    <div class="category-block" data-category="estequio">
+        <h2 class="section-title">5. Nomenclatura, Leyes Ponderales y Estequiometría</h2>
+        <div class="glossary-grid">
+            <div class="term-card">
+                <div class="term-title">Estequiometría de Reacciones</div>
+                <div class="term-desc">Cálculo de las relaciones cuantitativas de masa, moles y volumen entre reactivos y productos consumidos o formados durante el transcurso de una reacción química balanceada.</div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Ley de Conservación de la Masa (Lavoisier)</div>
+                <div class="term-desc">Ley ponderal fundamental que establece que en cualquier sistema cerrado que experimenta una reacción química ordinaria, la masa total permanece constante; es decir, la masa total de los reactivos es exactamente igual a la masa total de los productos.</div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Nomenclatura de Compuestos Químicos</div>
+                <div class="term-desc">Conjunto unificado de reglas y convenciones sistemáticas (normadas por la IUPAC) utilizadas para asignar nombres específicos e inequívocos a las sustancias químicas inorgánicas y orgánicas según su fórmula estructural o composición.</div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Reactivo Limitante</div>
+                <div class="term-desc">Sustancia reactiva que se consume por completo en primer lugar durante una reacción química, limitando la cantidad máxima teórica de producto que se puede obtener.</div>
+            </div>
+            <div class="term-card">
+                <div class="term-title">Rendimiento de Reacción</div>
+                <div class="term-desc">Proporción porcentual entre la cantidad de producto obtenido experimentalmente en el laboratorio y la cantidad teórica máxima calculada mediante relaciones estequiométricas: <span class="formula">% Rendimiento = (Masa Real / Masa Teórica) × 100</span>.</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="noResults" class="no-results">
+        <p>No se encontraron términos que coincidan con la búsqueda.</p>
+    </div>
+
+</div>
+
+<footer>
+    <p>Desarrollado para la Cátedra de Química | Instituto Universitario Politécnico "Santiago Mariño"</p>
+    <p>Código optimizado para alojamiento en GitHub Pages</p>
+</footer>
+
+<script>
+    function filterTerms() {
+        const input = document.getElementById('searchInput').value.toLowerCase();
+        const cards = document.getElementsByClassName('term-card');
+        const blocks = document.getElementsByClassName('category-block');
+        let hasResults = false;
+
+        for (let i = 0; i < cards.length; i++) {
+            const title = cards[i].querySelector('.term-title').innerText.toLowerCase();
+            const desc = cards[i].querySelector('.term-desc').innerText.toLowerCase();
+
+            if (title.includes(input) || desc.includes(input)) {
+                cards[i].style.display = "block";
+                hasResults = true;
+            } else {
+                cards[i].style.display = "none";
+            }
+        }
+
+        // Ocultar bloques de categoría vacíos durante la búsqueda
+        for (let i = 0; i < blocks.length; i++) {
+            const visibleCards = blocks[i].querySelectorAll('.term-card[style="display: block;"]');
+            if (input !== "" && visibleCards.length === 0) {
+                blocks[i].style.display = "none";
+            } else {
+                blocks[i].style.display = "block";
+            }
+        }
+
+        document.getElementById('noResults').style.display = hasResults ? "none" : "block";
+    }
+
+    function filterCategory(category) {
+        const buttons = document.getElementsByClassName('tag-btn');
+        for (let btn of buttons) {
+            btn.classList.remove('active');
+        }
+        event.target.classList.add('active');
+
+        const blocks = document.getElementsByClassName('category-block');
+        const cards = document.getElementsByClassName('term-card');
+        
+        // Limpiar campo de búsqueda
+        document.getElementById('searchInput').value = "";
+        for (let card of cards) {
+            card.style.display = "block";
+        }
+
+        for (let block of blocks) {
+            if (category === 'all' || block.getAttribute('data-category') === category) {
+                block.style.display = "block";
+            } else {
+                block.style.display = "none";
+            }
+        }
+        document.getElementById('noResults').style.display = "none";
+    }
+</script>
+
+</body>
+</html>
