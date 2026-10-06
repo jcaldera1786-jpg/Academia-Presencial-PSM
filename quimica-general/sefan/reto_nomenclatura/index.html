@@ -408,6 +408,7 @@
     let examen = [];
     let current = 0;
     let aciertos = 0;
+    let numeroDeIntento = 1;
 
     function limpiarTexto(texto) {
         return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
@@ -450,6 +451,14 @@
             return;
         }
 
+        // Obtener o inicializar el número de intento específico para esta cédula
+        let intentoGuardado = localStorage.getItem("sefan_intento_" + cedula);
+        if (!intentoGuardado) {
+            intentoGuardado = 1;
+            localStorage.setItem("sefan_intento_" + cedula, 1);
+        }
+        numeroDeIntento = parseInt(intentoGuardado);
+
         const nombreLimpio = limpiarTexto(resNomOriginal);
         const nombreValido = examen[current].c.some(opcion => limpiarTexto(opcion) === nombreLimpio);
         const valenciaValida = resVal === examen[current].v;
@@ -476,12 +485,12 @@
         document.getElementById('user-name').disabled = true;
         document.getElementById('user-valencia').disabled = true;
 
-        // REGISTRO PROGRESIVO ACUMULATIVO EN GOOGLE SHEETS
+        // REGISTRO Y SOBRESCRITURA DIRECTA EN GOOGLE SHEETS
         const payload = new URLSearchParams();
         payload.append("cedula", cedula);
-        payload.append("preguntaNum", (current + 1).toString());
+        payload.append("intentoNum", numeroDeIntento.toString());
+        payload.append("aciertos", aciertos.toString());
         payload.append("totalPreguntas", examen.length.toString());
-        payload.append("esCorrecto", esCorrecto ? "true" : "false");
 
         fetch(WEB_APP_URL, {
             method: 'POST',
@@ -506,6 +515,14 @@
             cargar();
         } else {
             alert(`¡Felicitaciones! Has completado el banco. Total de aciertos: ${aciertos} de ${examen.length}`);
+            
+            // Incrementar el número de intento para el siguiente ciclo del estudiante
+            const cedula = document.getElementById('user-cedula').value.trim();
+            if (cedula) {
+                let actual = parseInt(localStorage.getItem("sefan_intento_" + cedula)) || 1;
+                localStorage.setItem("sefan_intento_" + cedula, actual + 1);
+            }
+
             mezclarYEmpezar();
         }
     }
