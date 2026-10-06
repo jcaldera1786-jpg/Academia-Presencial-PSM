@@ -361,14 +361,13 @@
     </footer>
 
 <script>
-    // URL de la App Web desplegada en Google Apps Script
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyG5d9T6fL9Mo6wrZq9jnCFzfJoMRfb2j7igVsSSj3dQLwZholjt5VvvK5jaNJow6-F/exec"; 
 
     const bancoOriginal = [
         { f: "NaCl", c: ["cloruro de sodio"], v: "+1", hint: "Sal binaria simple. El Na pertenece al grupo 1.", feedback: "¡Correcto! El cloruro de sodio es una sal neutra donde el sodio opera con estado de oxidación fijo +1 y el cloro como halógeno con -1." },
         { f: "H<sub>2</sub>SO<sub>4</sub>", c: ["acido sulfurico", "tetraoxosulfato (vi) de hidrogeno"], v: "+6", hint: "Oxoácido fuerte. Azufre actuando con su valencia máxima.", feedback: "¡Muy bien! En el ácido sulfúrico, el azufre alcanza su máxima valencia (+6), combinándose con hidrógeno (+1) y oxígeno (-2)." },
         { f: "KOH", c: ["hidroxido de potasio"], v: "+1", hint: "Hidróxido básico de metal alcalino.", feedback: "¡Excelente! Corresponde a una base fuerte; el potasio (grupo 1) mantiene un estado de oxidación +1." },
-        { f: "Fe<sub>2</sub>O<sub>3</sub>", c: ["oxido ferrico", "oxido de hierro (iii)", "trioxido de dihierro"], v: "+3", hint: "Óxido metálico. El hierro emplea su valencia superior.", feedback: "¡Correcto! Aquí el hierro actúa con su mayor valencia (+3), formando el óxido férrico u óxido de hierro (III)." },
+        { f: "Fe<sub>2</sub>O<sub>3</sub>", c: ["oxido ferrico", "oxido de hierro (iii)", "trioxido de dihierro"], v: "+3", hint: "Óxido metálico. El hierro emplea su valencia superior.", feedback: "¡Correcto! Aquí el hierro actúa con su mayor valencia (+3), forming el óxido férrico u óxido de hierro (III)." },
         { f: "KMnO<sub>4</sub>", c: ["permanganato de potasio", "tetraoxomanganato (vii) de potasio"], v: "+7", hint: "Oxisal con manganeso en su estado de oxidación más alto.", feedback: "¡Perfecto! El manganeso actúa con estado de oxidación +7 en el anión permanganato, siendo un agente oxidante muy potente." },
         { f: "HCl", c: ["acido clorhidrico", "cloruro de hidrogeno"], v: "-1", hint: "Hidrácido en solución acuosa. Cloro con estado de oxidación negativo.", feedback: "¡Acertado! En los hidrácidos, los halógenos actúan con su valencia negativa estricta (-1)." },
         { f: "CO<sub>2</sub>", c: ["dioxido de carbono", "anhidrido carbonico"], v: "+4", hint: "Óxido ácido (anhídrido) del carbono.", feedback: "¡Muy bien! Es un óxido no metálico donde el carbono emplea la valencia tetravalente (+4)." },
@@ -400,7 +399,7 @@
         { f: "NaHSO<sub>4</sub>", c: ["sulfato acido de sodio", "hidrogenosulfato de sodio"], v: "+6", hint: "Sal ácida derivada del ácido sulfúrico.", feedback: "¡Muy bien! Es una sal ácida donde el hidrógeno remanente coexiste con el anión sulfato (azufre con valencia +6)." },
         { f: "HClO<sub>4</sub>", c: ["acido perclorico", "tetraoxoclorato (vii) de hidrogeno"], v: "+7", hint: "Oxoácido hiperhalogenado. Cloro con valencia máxima +7.", feedback: "¡Perfecto! El ácido perclórico contiene cloro con su estado de oxidación máximo (+7)." },
         { f: "Cu<sub>2</sub>O", c: ["oxido cuproso", "oxido de cobre (i)", "monoxido de dicobre"], v: "+1", hint: "Óxido metálico. Cobre actuando con su menor valencia (+1).", feedback: "¡Correcto! El cobre actúa con valencia +1 (cuproso), menor que su estado divalente." },
-        { f: "Na<sub>2</sub>O<sub>2</sub>", c: ["peroxido de sodio"], v: "-1", hint: "Compuesto especial con enlace peróxido O-O.", feedback: "¡Excelente! Estructura típica de peróxido donde los oxígenos comparten un enlace covalente y operan con valencia -1." },
+        { f: "Na<sub>2</sub>O<sub>2</sub>", c: ["peroxido de sodio"], v:-1, hint: "Compuesto especial con enlace peróxido O-O.", feedback: "¡Excelente! Estructura típica de peróxido donde los oxígenos comparten un enlace covalente y operan con valencia -1." },
         { f: "H<sub>4</sub>P<sub>2</sub>O<sub>7</sub>", c: ["acido pirofosforico", "heptaoxodifosfato (v) de hidrogeno"], v: "+5", hint: "Piroácido obtenido por deshidratación parcial de dos moléculas de ácido ortofosfórico.", feedback: "¡Muy bien! Piroácido del fósforo pentavalente obtenido por condensación de dos moléculas de ácido fosfórico con pérdida de agua." },
         { f: "PtCl<sub>4</sub>", c: ["cloruro platinico", "cloruro de platino (iv)"], v: "+4", hint: "Sal binaria de metal de transición noble con estado de oxidación +4.", feedback: "¡Correcto! El platino actúa con valencia +4 frente al cloro (-1) en esta sal binaria." }
     ];
@@ -408,7 +407,7 @@
     let examen = [];
     let current = 0;
     let aciertos = 0;
-    let numeroDeIntento = 1;
+    let numeroDeIntentoActual = null; // Mantiene fijo el número de intento durante toda la prueba
 
     function limpiarTexto(texto) {
         return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
@@ -418,6 +417,7 @@
         examen = [...bancoOriginal].sort(() => Math.random() - 0.5);
         current = 0;
         aciertos = 0;
+        numeroDeIntentoActual = null; // Reinicia el intento fijado para la nueva prueba
         cargar();
     }
 
@@ -432,6 +432,19 @@
         document.getElementById('user-valencia').value = '';
         document.getElementById('user-name').disabled = false;
         document.getElementById('user-valencia').disabled = false;
+    }
+
+    function obtenerNumeroIntento(cedula) {
+        // Fijar el intento durante toda la sesión del examen actual para no saltar de columna en cada pregunta
+        if (!numeroDeIntentoActual) {
+            let intentoGuardado = localStorage.getItem("sefan_intento_" + cedula);
+            if (!intentoGuardado) {
+                intentoGuardado = 1;
+                localStorage.setItem("sefan_intento_" + cedula, 1);
+            }
+            numeroDeIntentoActual = parseInt(intentoGuardado);
+        }
+        return numeroDeIntentoActual;
     }
 
     function validar() {
@@ -451,13 +464,8 @@
             return;
         }
 
-        // Obtener o inicializar el número de intento específico para esta cédula
-        let intentoGuardado = localStorage.getItem("sefan_intento_" + cedula);
-        if (!intentoGuardado) {
-            intentoGuardado = 1;
-            localStorage.setItem("sefan_intento_" + cedula, 1);
-        }
-        numeroDeIntento = parseInt(intentoGuardado);
+        // Obtener el intento fijado para este examen
+        const intentoNum = obtenerNumeroIntento(cedula);
 
         const nombreLimpio = limpiarTexto(resNomOriginal);
         const nombreValido = examen[current].c.some(opcion => limpiarTexto(opcion) === nombreLimpio);
@@ -485,10 +493,10 @@
         document.getElementById('user-name').disabled = true;
         document.getElementById('user-valencia').disabled = true;
 
-        // REGISTRO Y SOBRESCRITURA DIRECTA EN GOOGLE SHEETS
+        // REGISTRO Y SOBRESCRITURA DIRECTA EN LA MISMA COLUMNA DEL INTENTO ACTUAL
         const payload = new URLSearchParams();
         payload.append("cedula", cedula);
-        payload.append("intentoNum", numeroDeIntento.toString());
+        payload.append("intentoNum", intentoNum.toString());
         payload.append("aciertos", aciertos.toString());
         payload.append("totalPreguntas", examen.length.toString());
 
@@ -516,7 +524,7 @@
         } else {
             alert(`¡Felicitaciones! Has completado el banco. Total de aciertos: ${aciertos} de ${examen.length}`);
             
-            // Incrementar el número de intento para el siguiente ciclo del estudiante
+            // Solo al finalizar la prueba completa se incrementa el intento para la próxima vez
             const cedula = document.getElementById('user-cedula').value.trim();
             if (cedula) {
                 let actual = parseInt(localStorage.getItem("sefan_intento_" + cedula)) || 1;
