@@ -361,6 +361,7 @@
     </footer>
 
 <script>
+    // URL de la App Web desplegada en Google Apps Script
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyG5d9T6fL9Mo6wrZq9jnCFzfJoMRfb2j7igVsSSj3dQLwZholjt5VvvK5jaNJow6-F/exec"; 
 
     const bancoOriginal = [
@@ -453,9 +454,11 @@
         const nombreValido = examen[current].c.some(opcion => limpiarTexto(opcion) === nombreLimpio);
         const valenciaValida = resVal === examen[current].v;
 
+        const esCorrecto = (nombreValido && valenciaValida);
+
         fBox.style.display = 'block';
 
-        if (nombreValido && valenciaValida) {
+        if (esCorrecto) {
             fBox.style.backgroundColor = 'rgba(34, 197, 94, 0.2)';
             fBox.style.border = '1px solid var(--accent-green)';
             fBox.style.color = '#4ade80';
@@ -473,28 +476,20 @@
         document.getElementById('user-name').disabled = true;
         document.getElementById('user-valencia').disabled = true;
 
-        // Registro asíncrono no bloqueante en Apps Script
-        const datos = {
-            origen: "SEFAN_NIVEL_3_NOMENCLATURA",
-            cedula: cedula,
-            formula: examen[current].f.replace(/<[^>]*>?/gm, ''),
-            respuestaAlumno: `Nombre: ${resNomOriginal} | Val: ${resVal}`,
-            respuestaCorrecta: `Nombre: ${examen[current].c[0]} | Val: ${examen[current].v}`,
-            modo: "Practica_Nomenclatura_Avanzada"
-        };
-
+        // REGISTRO PROGRESIVO ACUMULATIVO EN GOOGLE SHEETS
         const payload = new URLSearchParams();
-        for (const key in datos) {
-            payload.append(key, datos[key]);
-        }
+        payload.append("cedula", cedula);
+        payload.append("preguntaNum", (current + 1).toString());
+        payload.append("totalPreguntas", examen.length.toString());
+        payload.append("esCorrecto", esCorrecto ? "true" : "false");
 
         fetch(WEB_APP_URL, {
             method: 'POST',
-            mode: 'no-cors',
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: payload.toString(),
+            mode: 'no-cors',
             keepalive: true
-        }).catch(err => console.error("Error al enviar registro de avance:", err));
+        }).catch(err => console.error("Error al registrar avance progresivo:", err));
     }
 
     function solicitarAyuda() {
