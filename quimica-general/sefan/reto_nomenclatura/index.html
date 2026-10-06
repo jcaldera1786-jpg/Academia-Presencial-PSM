@@ -322,7 +322,6 @@
 
             <div class="input-group" style="max-width: 250px;">
                 <label>Cédula de Identidad:</label>
-                <!-- Restricción numérica estricta -->
                 <input type="text" id="user-cedula" placeholder="Ej: 12345678" maxlength="10" 
                        oninput="this.value = this.value.replace(/[^0-9]/g, '')" autocomplete="off">
             </div>
@@ -383,7 +382,7 @@
         { f: "CaCO<sub>3</sub>", c: ["carbonato de calcio", "trioxocarbonato (iv) de calcio"], v: "+4", hint: "Sal oxisal. El carbono central opera con valencia +4.", feedback: "¡Correcto! En la sal de carbonato, el carbono central actúa con valencia +4." },
         { f: "LiH", c: ["hidruro de litio"], v: "-1", hint: "Hidruro metálico salino. El hidrógeno actúa como hidruro (-1).", feedback: "¡Perfecto! En los hidruros metálicos con elementos muy electropositivos, el hidrógeno toma valencia -1." },
         { f: "SO<sub>3</sub>", c: ["trioxido de azufre", "anhidrido sulfurico"], v: "+6", hint: "Anhídrido superior del azufre.", feedback: "¡Correcto! Óxido ácido donde el azufre emplea su valencia máxima (+6)." },
-        { f: "AgCl", c: ["cloruro de plata"], v: "+1", hint: "Sal binaria insoluble. La plata mantiene número de oxidación fijo +1.", feedback: "¡Muy bien! La plata es un metal de transición con número de oxidación estrictamente fijo de +1." },
+        { f: "AgCl", c: ["cloruro de plata"], v: "+1", hint: "Sal binaria insoluble. La plata mantiene número de oxidación fijo +1.", feedback: "¡Muy bien! La plata es un metal de transición con número de oxidación strictly fijo de +1." },
         { f: "FeSO<sub>4</sub>", c: ["sulfato ferroso", "sulfato de hierro (ii)"], v: "+2", hint: "Sal oxisal. El hierro actúa con su menor valencia (+2).", feedback: "¡Correcto! El sufijo '-oso' o la romanización (II) indican que el hierro trabaja con su valencia menor (+2)." },
         { f: "H<sub>3</sub>PO<sub>4</sub>", c: ["acido fosforico", "tetraoxofosfato (v) de hidrogeno"], v: "+5", hint: "Triácido oxigenado del fósforo pentavalente.", feedback: "¡Excelente! El fósforo en el ácido fosfórico actúa con valencia pentavalente (+5)." },
         { f: "PbO<sub>2</sub>", c: ["oxido plumbico", "oxido de plomo (iv)", "dioxido de plomo"], v: "+4", hint: "Óxido metálico superior. El plomo actúa con valencia +4.", feedback: "¡Muy bien! El plomo muestra aquí su mayor estado de oxidación, actuando con valencia +4." },
@@ -433,7 +432,7 @@
         document.getElementById('user-valencia').disabled = false;
     }
 
-    async function validar() {
+    function validar() {
         const cedula = document.getElementById('user-cedula').value.trim();
         const resNomOriginal = document.getElementById('user-name').value.trim();
         const resVal = document.getElementById('user-valencia').value.trim();
@@ -455,11 +454,26 @@
         const valenciaValida = resVal === examen[current].v;
 
         fBox.style.display = 'block';
-        fBox.style.backgroundColor = "rgba(245, 158, 11, 0.2)";
-        fBox.style.border = "1px solid var(--accent-gold)";
-        fBox.style.color = "var(--accent-gold)";
-        fBox.innerHTML = "🧪 Validando respuesta en el sistema...";
 
+        if (nombreValido && valenciaValida) {
+            fBox.style.backgroundColor = 'rgba(34, 197, 94, 0.2)';
+            fBox.style.border = '1px solid var(--accent-green)';
+            fBox.style.color = '#4ade80';
+            fBox.innerHTML = `<strong>¡Excelente! Respuesta Correcta.</strong><br>${examen[current].feedback}`;
+            aciertos++;
+            document.getElementById('aciertos-contador').innerText = `Aciertos: ${aciertos}`;
+        } else {
+            fBox.style.backgroundColor = 'rgba(239, 68, 68, 0.2)';
+            fBox.style.border = '1px solid var(--error)';
+            fBox.style.color = '#fca5a5';
+            fBox.innerHTML = `<strong>❌ Respuesta Incorrecta o Incompleta.</strong><br>Recuerda que los nombres válidos son: <em>${examen[current].c.join(" / ")}</em> y el estado de oxidación correcto es <em>${examen[current].v}</em>.<br><br><b>💡 Retroalimentación conceptual:</b> ${examen[current].hint}`;
+        }
+
+        document.getElementById('next-btn').style.display = 'block';
+        document.getElementById('user-name').disabled = true;
+        document.getElementById('user-valencia').disabled = true;
+
+        // Registro asíncrono no bloqueante en Apps Script
         const datos = {
             origen: "SEFAN_NIVEL_3_NOMENCLATURA",
             cedula: cedula,
@@ -474,35 +488,13 @@
             payload.append(key, datos[key]);
         }
 
-        try {
-            fetch(WEB_APP_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: payload.toString()
-            });
-
-            if (nombreValido && valenciaValida) {
-                fBox.style.backgroundColor = 'rgba(34, 197, 94, 0.2)';
-                fBox.style.border = '1px solid var(--accent-green)';
-                fBox.style.color = '#4ade80';
-                fBox.innerHTML = `<strong>¡Excelente! Respuesta Correcta.</strong><br>${examen[current].feedback}`;
-                aciertos++;
-                document.getElementById('aciertos-contador').innerText = `Aciertos: ${aciertos}`;
-            } else {
-                fBox.style.backgroundColor = 'rgba(239, 68, 68, 0.2)';
-                fBox.style.border = '1px solid var(--error)';
-                fBox.style.color = '#fca5a5';
-                fBox.innerHTML = `<strong>❌ Respuesta Incorrecta o Incompleta.</strong><br>Recuerda que los nombres válidos son: <em>${examen[current].c.join(" / ")}</em> y el estado de oxidación correcto es <em>${examen[current].v}</em>.<br><br><b>💡 Retroalimentación conceptual:</b> ${examen[current].hint}`;
-            }
-            
-            document.getElementById('next-btn').style.display = 'block';
-            document.getElementById('user-name').disabled = true;
-            document.getElementById('user-valencia').disabled = true;
-
-        } catch (error) {
-            fBox.innerHTML = "⚠️ Error de conexión al registrar los datos.";
-        }
+        fetch(WEB_APP_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: payload.toString(),
+            keepalive: true
+        }).catch(err => console.error("Error al enviar registro de avance:", err));
     }
 
     function solicitarAyuda() {
