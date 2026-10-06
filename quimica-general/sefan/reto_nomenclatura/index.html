@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SEFAN - Desafío de Nomenclatura y Valencias | PSM</title>
-    <!-- MathJax Configuration -->
     <script>
         window.MathJax = {
             tex: {
@@ -29,269 +28,60 @@
             --error: #f43f5e;
             --help: #d35400;
         }
-
-        html {
-            background-color: var(--bg-color);
-        }
-
+        html { background-color: var(--bg-color); }
         body {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            isolation: isolate;
+            display: flex; flex-direction: column; align-items: center;
+            position: relative; isolation: isolate;
         }
-
         body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
+            content: ""; position: fixed; inset: 0;
             background-image: url("https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/assets/psm.png");
-            background-repeat: no-repeat;
-            background-position: center center;
-            background-size: 320px 320px;
-            opacity: 0.15;
-            filter: blur(0.5px);
-            mix-blend-mode: screen;
-            pointer-events: none;
-            z-index: -1;
+            background-repeat: no-repeat; background-position: center center;
+            background-size: 320px 320px; opacity: 0.15;
+            filter: blur(0.5px); mix-blend-mode: screen;
+            pointer-events: none; z-index: -1;
         }
-
         header {
-            width: 100%;
-            background: rgba(15, 23, 42, 0.95);
+            width: 100%; background: rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border-color);
-            padding: 1rem 0;
-            text-align: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            padding: 1rem 0; text-align: center;
+            position: sticky; top: 0; z-index: 100;
         }
-
-        header h1 {
-            margin: 0;
-            font-size: 1.4rem;
-            color: var(--accent-blue);
-            letter-spacing: 1px;
-        }
-
-        header p {
-            margin: 0.2rem 0 0;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .container {
-            width: 90%;
-            max-width: 850px;
-            margin: 1.5rem auto;
-            display: flex;
-            flex-direction: column;
-            gap: 1.2rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--accent-blue);
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
-
-        .card-header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 0.8rem;
-            margin-bottom: 1rem;
-        }
-
-        .card-title {
-            color: var(--accent-blue);
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin: 0;
-        }
-
-        .btn-menu {
-            background: #334155;
-            color: #fff;
-            border: none;
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            text-decoration: none;
-            font-weight: 600;
-            transition: background 0.2s;
-        }
-        .btn-menu:hover {
-            background: #475569;
-        }
-
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 0.5rem;
-        }
-
-        .instruction-box {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid var(--accent-teal);
-            padding: 0.9rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            text-align: left;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            line-height: 1.4;
-        }
-
-        .instruction-box b {
-            color: var(--accent-teal);
-        }
-
-        .formula-container {
-            background: #0f172a;
-            border: 2px solid #334155;
-            border-radius: 12px;
-            margin-bottom: 1.2rem;
-            height: 110px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .formula-text {
-            font-size: 46px;
-            font-weight: bold;
-            color: var(--text-main);
-        }
-
-        sub {
-            font-size: 0.6em;
-            vertical-align: sub;
-        }
-
-        .input-group {
-            margin-bottom: 1rem;
-            text-align: left;
-        }
-
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.4rem;
-            color: var(--accent-blue);
-            font-size: 0.9rem;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 0.7rem 0.8rem;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            background: #0f172a;
-            color: #fff;
-            font-size: 1rem;
-            box-sizing: border-box;
-            outline: none;
-        }
-
-        input[type="text"]:focus {
-            border-color: var(--accent-blue);
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 1rem;
-        }
-
-        button.action-btn {
-            flex: 1;
-            padding: 0.8rem;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: background 0.3s ease;
-        }
-
-        .btn-check {
-            background: linear-gradient(135deg, #0284c7, #0369a1);
-        }
-        .btn-check:hover {
-            background: linear-gradient(135deg, #0369a1, #075985);
-        }
-
-        .btn-help {
-            background: linear-gradient(135deg, #d97706, #b45309);
-        }
-        .btn-help:hover {
-            background: linear-gradient(135deg, #b45309, #92400e);
-        }
-
-        #feedback-box {
-            display: none;
-            margin-top: 1rem;
-            padding: 1rem;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            text-align: left;
-            line-height: 1.4;
-        }
-
-        #tutor-box {
-            display: none;
-            margin-top: 1rem;
-            padding: 1rem;
-            background: rgba(15, 23, 42, 0.8);
-            border-left: 5px solid var(--accent-gold);
-            text-align: left;
-            font-size: 0.9rem;
-            border-radius: 0 8px 8px 0;
-            line-height: 1.4;
-        }
-
-        #next-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #16a34a, #15803d);
-            display: none;
-            margin-top: 1rem;
-            font-size: 1rem;
-            padding: 0.8rem;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        #next-btn:hover {
-            background: linear-gradient(135deg, #15803d, #166534);
-        }
-
-        footer {
-            margin-top: auto;
-            padding: 1.5rem 0;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            text-align: center;
-        }
+        header h1 { margin: 0; font-size: 1.4rem; color: var(--accent-blue); letter-spacing: 1px; }
+        header p { margin: 0.2rem 0 0; font-size: 0.85rem; color: var(--text-muted); }
+        .container { width: 90%; max-width: 850px; margin: 1.5rem auto; display: flex; flex-direction: column; gap: 1.2rem; position: relative; z-index: 1; }
+        .card { background: var(--card-bg); border: 1px solid var(--accent-blue); border-radius: 12px; padding: 1.5rem; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
+        .card-header-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.8rem; margin-bottom: 1rem; }
+        .card-title { color: var(--accent-blue); font-size: 1.1rem; font-weight: bold; margin: 0; }
+        .btn-menu { background: #334155; color: #fff; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer; text-decoration: none; font-weight: 600; transition: background 0.2s; }
+        .btn-menu:hover { background: #475569; }
+        .progress-info { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+        .instruction-box { background: rgba(15, 23, 42, 0.6); border: 1px solid var(--accent-teal); padding: 0.9rem; border-radius: 8px; margin-bottom: 1rem; text-align: left; font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
+        .instruction-box b { color: var(--accent-teal); }
+        .formula-container { background: #0f172a; border: 2px solid #334155; border-radius: 12px; margin-bottom: 1.2rem; height: 110px; display: flex; align-items: center; justify-content: center; }
+        .formula-text { font-size: 46px; font-weight: bold; color: var(--text-main); }
+        sub { font-size: 0.6em; vertical-align: sub; }
+        .input-group { margin-bottom: 1rem; text-align: left; }
+        label { display: block; font-weight: 600; margin-bottom: 0.4rem; color: var(--accent-blue); font-size: 0.9rem; }
+        input[type="text"] { width: 100%; padding: 0.7rem 0.8rem; border: 1px solid #334155; border-radius: 8px; background: #0f172a; color: #fff; font-size: 1rem; box-sizing: border-box; outline: none; }
+        input[type="text"]:focus { border-color: var(--accent-blue); }
+        .btn-group { display: flex; gap: 10px; margin-top: 1rem; }
+        button.action-btn { flex: 1; padding: 0.8rem; border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: 600; font-size: 0.95rem; transition: background 0.3s ease; }
+        .btn-check { background: linear-gradient(135deg, #0284c7, #0369a1); }
+        .btn-check:hover { background: linear-gradient(135deg, #0369a1, #075985); }
+        .btn-help { background: linear-gradient(135deg, #d97706, #b45309); }
+        .btn-help:hover { background: linear-gradient(135deg, #b45309, #92400e); }
+        #feedback-box { display: none; margin-top: 1rem; padding: 1rem; border-radius: 8px; font-size: 0.9rem; text-align: left; line-height: 1.4; }
+        #tutor-box { display: none; margin-top: 1rem; padding: 1rem; background: rgba(15, 23, 42, 0.8); border-left: 5px solid var(--accent-gold); text-align: left; font-size: 0.9rem; border-radius: 0 8px 8px 0; line-height: 1.4; }
+        #next-btn { width: 100%; background: linear-gradient(135deg, #16a34a, #15803d); display: none; margin-top: 1rem; font-size: 1rem; padding: 0.8rem; border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: 600; }
+        #next-btn:hover { background: linear-gradient(135deg, #15803d, #166534); }
+        footer { margin-top: auto; padding: 1.5rem 0; font-size: 0.8rem; color: var(--text-muted); text-align: center; }
     </style>
 </head>
 <body>
@@ -407,7 +197,7 @@
     let examen = [];
     let current = 0;
     let aciertos = 0;
-    let numeroDeIntentoActual = null; // Mantiene fijo el número de intento durante toda la prueba
+    let numeroDeIntentoActual = null;
 
     function limpiarTexto(texto) {
         return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
@@ -417,7 +207,7 @@
         examen = [...bancoOriginal].sort(() => Math.random() - 0.5);
         current = 0;
         aciertos = 0;
-        numeroDeIntentoActual = null; // Reinicia el intento fijado para la nueva prueba
+        numeroDeIntentoActual = null; // Se reinicia el intento en memoria
         cargar();
     }
 
@@ -435,7 +225,6 @@
     }
 
     function obtenerNumeroIntento(cedula) {
-        // Fijar el intento durante toda la sesión del examen actual para no saltar de columna en cada pregunta
         if (!numeroDeIntentoActual) {
             let intentoGuardado = localStorage.getItem("sefan_intento_" + cedula);
             if (!intentoGuardado) {
@@ -445,6 +234,24 @@
             numeroDeIntentoActual = parseInt(intentoGuardado);
         }
         return numeroDeIntentoActual;
+    }
+
+    // Función auxiliar para enviar el avance al Sheet
+    function registrarAvance(cedula, intentoNum, aciertosActuales, preguntasRespondidas, totalPreguntas) {
+        const payload = new URLSearchParams();
+        payload.append("cedula", cedula);
+        payload.append("intentoNum", intentoNum.toString());
+        payload.append("aciertos", aciertosActuales.toString());
+        payload.append("preguntasRespondidas", preguntasRespondidas.toString());
+        payload.append("totalPreguntas", totalPreguntas.toString());
+
+        fetch(WEB_APP_URL, {
+            method: 'POST',
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: payload.toString(),
+            mode: 'no-cors',
+            keepalive: true
+        }).catch(err => console.error("Error al registrar avance:", err));
     }
 
     function validar() {
@@ -464,13 +271,10 @@
             return;
         }
 
-        // Obtener el intento fijado para este examen
         const intentoNum = obtenerNumeroIntento(cedula);
-
         const nombreLimpio = limpiarTexto(resNomOriginal);
         const nombreValido = examen[current].c.some(opcion => limpiarTexto(opcion) === nombreLimpio);
         const valenciaValida = resVal === examen[current].v;
-
         const esCorrecto = (nombreValido && valenciaValida);
 
         fBox.style.display = 'block';
@@ -493,20 +297,9 @@
         document.getElementById('user-name').disabled = true;
         document.getElementById('user-valencia').disabled = true;
 
-        // REGISTRO Y SOBRESCRITURA DIRECTA EN LA MISMA COLUMNA DEL INTENTO ACTUAL
-        const payload = new URLSearchParams();
-        payload.append("cedula", cedula);
-        payload.append("intentoNum", intentoNum.toString());
-        payload.append("aciertos", aciertos.toString());
-        payload.append("totalPreguntas", examen.length.toString());
-
-        fetch(WEB_APP_URL, {
-            method: 'POST',
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: payload.toString(),
-            mode: 'no-cors',
-            keepalive: true
-        }).catch(err => console.error("Error al registrar avance progresivo:", err));
+        // <--- REGISTRO PROGRESIVO: Se envía el avance tras cada respuesta validada.
+        // preguntasRespondidas = current + 1 (porque current empieza en 0)
+        registrarAvance(cedula, intentoNum, aciertos, current + 1, examen.length);
     }
 
     function solicitarAyuda() {
@@ -522,10 +315,16 @@
         if (current < examen.length) {
             cargar();
         } else {
+            // <--- FIN DEL EXAMEN: Se envía el resultado final y se incrementa el intento
+            const cedula = document.getElementById('user-cedula').value.trim();
+            const intentoNum = obtenerNumeroIntento(cedula);
+
+            // Enviar el resultado final (con todas las preguntas respondidas)
+            registrarAvance(cedula, intentoNum, aciertos, examen.length, examen.length);
+
             alert(`¡Felicitaciones! Has completado el banco. Total de aciertos: ${aciertos} de ${examen.length}`);
             
-            // Solo al finalizar la prueba completa se incrementa el intento para la próxima vez
-            const cedula = document.getElementById('user-cedula').value.trim();
+            // Incrementar el intento SOLO al finalizar todo el banco
             if (cedula) {
                 let actual = parseInt(localStorage.getItem("sefan_intento_" + cedula)) || 1;
                 localStorage.setItem("sefan_intento_" + cedula, actual + 1);
