@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEFAN - Evaluación Modelo: Química Orgánica (Tipo A)</title>
+    
+    <!-- MathJax 3 Configuration for TeX/LaTeX Chemical Formatting -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.85);
+            --accent-blue: #38bdf8;
+            --accent-green: #22c55e;
+            --accent-gold: #f59e0b;
+            --accent-teal: #14b8a6;
+            --accent-pink: #f43f5e;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --code-bg: #0b1329;
+        }
+
+        html {
+            background-color: var(--bg-color);
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            isolation: isolate;
+            line-height: 1.6;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: url("https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/assets/psm.png");
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: 320px 320px;
+            opacity: 0.12;
+            filter: blur(0.5px);
+            mix-blend-mode: screen;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        header {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.4rem;
+            color: var(--accent-blue);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        header p {
+            margin: 0.3rem 0 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 2rem auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.8rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            backdrop-filter: blur(8px);
+        }
+
+        .section-header {
+            border-bottom: 2px solid var(--accent-teal);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            color: var(--accent-teal);
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .section-weight {
+            background: rgba(20, 184, 166, 0.15);
+            color: var(--accent-teal);
+            border: 1px solid var(--accent-teal);
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .instruction-box {
+            background: rgba(15, 23, 42, 0.6);
+            border-left: 4px solid var(--accent-gold);
+            padding: 0.9rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.2rem;
+            font-size: 0.88rem;
+            color: var(--text-muted);
+        }
+
+        .question-item {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.2rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .question-title {
+            color: var(--accent-blue);
+            font-weight: bold;
+            font-size: 0.98rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .options-list {
+            list-style-type: none;
+            padding-left: 0;
+            margin: 0.6rem 0;
+        }
+
+        .options-list li {
+            margin-bottom: 0.4rem;
+            font-size: 0.92rem;
+        }
+
+        .answer-space {
+            margin-top: 0.8rem;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 0.6rem;
+            font-size: 0.88rem;
+            color: var(--accent-gold);
+            font-style: italic;
+        }
+
+        .fischer-display {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 0.8rem 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn-navigation {
+            display: inline-block;
+            background: #334155;
+            color: #fff;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: background 0.2s ease;
+            margin-bottom: 1rem;
+        }
+
+        .btn-navigation:hover {
+            background: #475569;
+            color: var(--accent-blue);
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 2rem 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>SEFAN - EVALUACIÓN TEÓRICA MODELO (TIPO A)</h1>
+        <p>Estructura, Propiedades y Estereoquímica de las Moléculas Orgánicas | Ponderación: 10% (20 Pts)</p>
+    </header>
+
+    <div class="container">
+
+        <a href="index.html" class="btn-navigation">⬅ Volver al Menú Principal</a>
+
+        <!-- SECCIÓN 1 -->
+        <article class="card">
+            <div class="section-header">
+                <h2 class="section-title">Sección 1: Selección Simple con Justificación Obligatoria</h2>
+                <span class="section-weight">Valor: 4 Puntos (1 Pt c/u)</span>
+            </div>
+
+            <div class="instruction-box">
+                <b>📝 Instrucciones:</b> Selecciona la alternativa correcta y <b>justifica teóricamente</b> tu respuesta. Respuestas seleccionadas sin justificación válida no recibirán puntaje (0.4 pts. selección + 0.6 pts. justificación).
+            </div>
+
+            <div class="question-item">
+                <div class="question-title">1. Entre el metanotiol ($\text{CH}_3\text{SH}$) y el metanol ($\text{CH}_3\text{OH}$), ¿cuál molécula presenta mayor acidez y cuál es el factor determinante principal?</div>
+                <ul class="options-list">
+                    <li>a) El metanol, debido a la mayor electronegatividad del átomo de oxígeno.</li>
+                    <li>b) El metanotiol, debido al mayor tamaño y polarizabilidad del átomo de azufre.</li>
+                    <li>c) Ambos tienen idéntica acidez por poseer el mismo grupo alquilo.</li>
+                    <li>d) El metanol, porque el oxígeno forma puentes de hidrógeno más fuertes con el solvente.</li>
+                </ul>
+                <div class="answer-space">
+                    <b>Justificación Teórica:</b> ___________________________________________________________________________________
+                </div>
+            </div>
+
+            <div class="question-item">
+                <div class="question-title">2. Dada la estructura del 2-clorobutano, al evaluar la conformación de Newman observada a lo largo del enlace C2-C3, la conformación de menor energía (más estable) corresponde a:</div>
+                <ul class="options-list">
+                    <li>a) Conformación eclipsada entre el metilo (C1) y el cloro.</li>
+                    <li>b) Conformación alternada <i>Gauche</i> entre el grupo metilo (C1) y el metilo (C4).</li>
+                    <li>c) Conformación alternada <i>Anti</i> entre el grupo metilo (C4) y el átomo de cloro.</li>
+                    <li>d) Conformación totalmente eclipsada entre los dos grupos metilo.</li>
+                </ul>
+                <div class="answer-space">
+                    <b>Justificación Teórica:</b> ___________________________________________________________________________________
+                </div>
+            </div>
+
+            <div class="question-item">
+                <div class="question-title">3. ¿Cuál de las siguientes condiciones es requisito suficiente y necesario para que una molécula que contiene centros quirales sea clasificada como un compuesto Meso?</div>
+                <ul class="options-list">
+                    <li>a) Ser una mezcla equimolar de dos enantiómeros que desvía la luz polarizada a 0°.</li>
+                    <li>b) Poseer un solo centro estereogénico con configuración absoluta (R).</li>
+                    <li>c) Poseer dos o más centros estereogénicos y presentar un plano o centro de simetría interno.</li>
+                    <li>d) Presentar un eje de rotación $C_2$ sin planos de simetría.</li>
+                </ul>
+                <div class="answer-space">
+                    <b>Justificación Teórica:</b> ___________________________________________________________________________________
+                </div>
+            </div>
+
+            <div class="question-item">
+                <div class="question-title">4. Si una muestra pura del enantiómero $(R)$-2-bromobutano muestra una rotación específica de $-23.1^\circ$, una mezcla que contiene $75\%$ del enantiómero $(R)$ y $25\%$ del enantiómero $(S)$ presentará un exceso enantiomérico ($ee$) y una rotación observada de:</div>
+                <ul class="options-list">
+                    <li>a) $ee = 100\%$, rotación observada $= -23.1^\circ$</li>
+                    <li>b) $ee = 50\%$, rotación observada $= -11.55^\circ$</li>
+                    <li>c) $ee = 25\%$, rotación observada $= -5.77^\circ$</li>
+                    <li>d) $ee = 50\%$, rotación observada $= +11.55^\circ$</li>
+                </ul>
+                <div class="answer-space">
+                    <b>Justificación Teórica:</b> ___________________________________________________________________________________
+                </div>
+            </div>
+        </article>
+
+        <!-- SECCIÓN 2 -->
+        <article class="card">
+            <div class="section-header">
+                <h2 class="section-title">Sección 2: Verdadero o Falso con Justificación Teórica</h2>
+                <span class="section-weight">Valor: 4 Puntos (1 Pt c/u)</span>
+            </div>
+
+            <div class="instruction-box">
+                <b>📝 Instrucciones:</b> Indica si las siguientes afirmaciones son Verdaderas (V) o Falsas (F). <b>Es obligatorio justificar teóricamente</b> la respuesta (0.3 pts. V/F + 0.7 pts. justificación).
+            </div>
+
+            <div class="question-item">
+                <div class="question-title">1. (___) El efecto inductivo se transmite a través de los enlaces de tipo $\pi$ de un sistema conjugado y mantiene su intensidad constante a lo largo de toda la cadena carbonada sin importar la distancia.</div>
+                <div class="answer-space">
+                    <b>Justificación Teórica:</b> ___________________________________________________________________________________
+                </div>
+            </div>
+
+            <div class="question-item">
+                <div class="question-title">2. (___) Una mezcla racémica es ópticamente inactiva debido a la compensación intermolecular de las rotaciones ópticas de sus componentes enantioméricos.</div>
+                <div class="answer-space">
+                    <b>Justificación Teórica:</b> ___________________________________________________________________________________
+                </div>
+            </div>
+
+            <div class="question-item">
+                <div class="question-title">3. (___) Dos diastereoisómeros poseen propiedades físicas idénticas (puntos de fusión, ebullición, solubilidad) y solo se diferencian en la dirección en que desvían la luz polarizada plana.</div>
+                <div class="answer-space">
+                    <b>Justificación Teórica:</b> ___________________________________________________________________________________
+                </div>
+            </div>
+
+            <div class="question-item">
+                <div class="question-title">4. (___) En una reacción orgánica, un reactivo electrófilo actúa siempre como una base de Lewis, aceptando pares de electrones provenientes de un nucleófilo.</div>
+                <div class="answer-space">
+                    <b>Justificación Teórica:</b> ___________________________________________________________________________________
+                </div>
+            </div>
+        </article>
+
+        <!-- SECCIÓN 3 -->
+        <article class="card">
+            <div class="section-header">
+                <h2 class="section-title">Sección 3: Desarrollo Teórico-Conceptual</h2>
+                <span class="section-weight">Valor: 6 Puntos (3 Pts c/u)</span>
+            </div>
+
+            <div class="question-item">
+                <div class="question-title">1. Efectos Estructurales y Reactividad:</div>
+                <p style="font-size: 0.92rem;">
+                    Analiza la acidez comparativa del <b>ácido acético ($\text{CH}_3\text{COOH}$)</b>, <b>ácido fluoroacético ($\text{FCH}_2\text{COOH}$)</b> y <b>ácido tricloroacético ($\text{CCl}_3\text{COOH}$)</b>.
+                </p>
+                <ol style="font-size: 0.9rem;">
+                    <li>Ordénalos de menor a mayor acidez.</li>
+                    <li>Explica detalladamente cómo intervienen el efecto inductivo (morfología del halógeno y electronegatividad), la cantidad de sustituyentes y la estabilización del anión carboxilato por delocalización electrónica de la carga residual.</li>
+                </ol>
+            </div>
+
+            <div class="question-item">
+                <div class="question-title">2. Estereoquímica y Análisis Conformativo de Ciclos:</div>
+                <p style="font-size: 0.92rem;">
+                    Para el compuesto <b>1-bromo-4-metilciclohexano</b>:
+                </p>
+                <ol style="font-size: 0.9rem;">
+                    <li>Dibuja los estereoisómeros geométricos posibles (<i>cis</i> y <i>trans</i>) en su representación en perspectiva plana.</li>
+                    <li>Dibuja las dos conformaciones en silla posibles para el isómero <i>trans</i>.</li>
+                    <li>Identifica la conformación de menor energía (más estable) justificando tu respuesta mediante interacciones 1,3-diaxiales y tensión estérica.</li>
+                </ol>
+            </div>
+        </article>
+
+        <!-- SECCIÓN 4 -->
+        <article class="card">
+            <div class="section-header">
+                <h2 class="section-title">Sección 4: Análisis Crítico y Resolución de Problemas</h2>
+                <span class="section-weight">Valor: 6 Puntos (3 Pts c/u)</span>
+            </div>
+
+            <div class="question-item">
+                <div class="question-title">1. Asignación de Configuración Absoluta y Relaciones Estereoquímicas:</div>
+                <p style="font-size: 0.92rem;">
+                    Dada la siguiente proyección de Fischer para la molécula A:
+                </p>
+                
+                <div class="fischer-display">
+                    <svg width="180" height="150" viewBox="0 0 180 150">
+                        <line x1="90" y1="20" x2="90" y2="130" stroke="#38bdf8" stroke-width="2.5" />
+                        <line x1="50" y1="55" x2="130" y2="55" stroke="#38bdf8" stroke-width="2.5" />
+                        <line x1="50" y1="95" x2="130" y2="95" stroke="#38bdf8" stroke-width="2.5" />
+                        <text x="75" y="15" fill="#f8fafc" font-weight="bold" font-size="12">CHO</text>
+                        <text x="70" y="145" fill="#f8fafc" font-weight="bold" font-size="12">CH₂OH</text>
+                        <text x="32" y="60" fill="#4ade80" font-weight="bold" font-size="12">H</text>
+                        <text x="138" y="60" fill="#f43f5e" font-weight="bold" font-size="12">OH</text>
+                        <text x="30" y="100" fill="#f43f5e" font-weight="bold" font-size="12">HO</text>
+                        <text x="138" y="100" fill="#4ade80" font-weight="bold" font-size="12">H</text>
+                    </svg>
+                </div>
+
+                <ol style="font-size: 0.9rem;">
+                    <li>Asigna las reglas de prioridad Cahn-Ingold-Prelog (CIP) y determina la configuración absoluta $(R/S)$ de los centros quirales C2 y C3.</li>
+                    <li>Dibuja la proyección de Fischer del enantiómero de A y la de uno de sus diastereoisómeros.</li>
+                    <li>Determina si la molécula A es ópticamente activa o inactiva y justifica en función de sus elementos de simetría.</li>
+                </ol>
+            </div>
+
+            <div class="question-item">
+                <div class="question-title">2. Mecanismos y Ruptura de Enlaces:</div>
+                <p style="font-size: 0.92rem;">
+                    Considera la reacción de adición de $\text{HBr}$ al <b>2-metilpropeno [$(\text{CH}_3)_2\text{C=CH}_2$]</b>:
+                </p>
+                <ol style="font-size: 0.9rem;">
+                    <li>Explica la diferencia entre un proceso de ruptura homolítica y heterolítica. Indica cuál ocurre en el mecanismo de adición electrófila.</li>
+                    <li>Representa el intermedio carbocatiónico formado en la primera etapa y justifica su estabilidad teórica comparando la contribución del efecto inductivo dador de los grupos alquilo y la hiperconjugación.</li>
+                </ol>
+            </div>
+        </article>
+
+    </div>
+
+    <footer>
+        <p><b>Prof. Dr. José Ángel Caldera Luzardo</b> | Instituto Universitario Politécnico "Santiago Mariño"</p>
+        <p>Cátedra de Química Orgánica | Sistema SEFAN - Todos los derechos reservados</p>
+    </footer>
+
+</body>
+</html>
