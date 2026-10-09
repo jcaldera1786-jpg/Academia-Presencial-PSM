@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEFAN - Guía Teórica Integral: Estructura, Propiedades y Estereoquímica</title>
+    
+    <!-- MathJax 3 Configuration for TeX/LaTeX Chemical Formatting -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.85);
+            --accent-blue: #38bdf8;
+            --accent-green: #22c55e;
+            --accent-gold: #f59e0b;
+            --accent-teal: #14b8a6;
+            --accent-pink: #f43f5e;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --code-bg: #0b1329;
+        }
+
+        html {
+            background-color: var(--bg-color);
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            isolation: isolate;
+            line-height: 1.6;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: url("https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/assets/psm.png");
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: 320px 320px;
+            opacity: 0.12;
+            filter: blur(0.5px);
+            mix-blend-mode: screen;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        header {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--accent-blue);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        header p {
+            margin: 0.3rem 0 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 950px;
+            margin: 2rem auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            backdrop-filter: blur(8px);
+        }
+
+        .module-header {
+            border-bottom: 2px solid var(--accent-teal);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .module-title {
+            color: var(--accent-teal);
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            color: var(--accent-blue);
+            font-size: 1.15rem;
+            margin-top: 1.8rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid var(--accent-blue);
+            padding-left: 0.6rem;
+        }
+
+        h4 {
+            color: var(--accent-gold);
+            font-size: 1rem;
+            margin-top: 1.2rem;
+            margin-bottom: 0.4rem;
+        }
+
+        p, li {
+            color: var(--text-main);
+            font-size: 0.95rem;
+            text-align: justify;
+        }
+
+        ul, ol {
+            padding-left: 1.2rem;
+            margin-top: 0.4rem;
+        }
+
+        li {
+            margin-bottom: 0.4rem;
+        }
+
+        .highlight-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--accent-blue);
+            padding: 1.2rem;
+            border-radius: 8px;
+            margin: 1.2rem 0;
+        }
+
+        .highlight-box.gold {
+            border-color: var(--accent-gold);
+            background: rgba(245, 158, 11, 0.05);
+        }
+
+        .highlight-box.green {
+            border-color: var(--accent-green);
+            background: rgba(34, 197, 94, 0.05);
+        }
+
+        /* Contenedores de Diagramas de Cajas de Orbitales */
+        .orbital-container {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.2rem;
+            margin: 1rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .orbital-row {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .orbital-label {
+            width: 140px;
+            font-weight: bold;
+            color: var(--accent-gold);
+            font-size: 0.85rem;
+        }
+
+        .boxes-group {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .box-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .box {
+            width: 38px;
+            height: 38px;
+            border: 2px solid var(--accent-blue);
+            background: rgba(15, 23, 42, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #4ade80;
+            font-size: 1.1rem;
+            border-radius: 4px;
+        }
+
+        .box.hybrid {
+            border-color: var(--accent-teal);
+            background: rgba(20, 184, 166, 0.15);
+            color: var(--accent-teal);
+        }
+
+        .box.pure {
+            border-color: var(--accent-pink);
+            background: rgba(244, 63, 94, 0.15);
+            color: var(--accent-pink);
+        }
+
+        .sub-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* SVG Grid para Proyecciones Estereoquímicas */
+        .svg-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .svg-card {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .svg-card h5 {
+            margin: 0.5rem 0;
+            color: var(--accent-blue);
+            font-size: 0.95rem;
+        }
+
+        .svg-card p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin: 0;
+            text-align: center;
+        }
+
+        .btn-navigation {
+            display: inline-block;
+            background: #334155;
+            color: #fff;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: background 0.2s ease;
+            margin-bottom: 1rem;
+        }
+
+        .btn-navigation:hover {
+            background: #475569;
+            color: var(--accent-blue);
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 2rem 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>SEFAN - GUÍA TEÓRICA INTEGRAL COMPLETA</h1>
+        <p>Estructura, Propiedades, Reactividad y Estereoquímica Orgánica | PSM Maracaibo</p>
+    </header>
+
+    <div class="container">
+
+        <a href="index.html" class="btn-navigation">⬅ Volver al Menú Principal</a>
+
+        <!-- MÓDULO 1: ENLACE E HIBRIDACIÓN CON DIAGRAMAS DE CAJAS -->
+        <article class="card">
+            <div class="module-header">
+                <span style="font-size: 1.5rem;">🧪</span>
+                <h2 class="module-title">Módulo 1: Átomo de Carbono, Diagramas de Hibridación y Enlace</h2>
+            </div>
+
+            <h3>1.1 Configuración Electrónica Promovida y Diagrama de Cajas</h3>
+            <p>
+                El carbono en su estado fundamental posee la configuración $1s^2 2s^2 2p_x^1 2p_y^1 2p_z^0$. Como solo dispone de 2 electrones desapareados, promociona un electrón del orbital $2s$ al $2p_z$ consumiendo energía de excitación, generando un estado tetravalente con 4 electrones desapareados listos para hibridarse.
+            </p>
+
+            <h4>A) Hibridación $sp^3$ (Tetraédrica)</h4>
+            <p>
+                Se combinan el orbital $2s$ con los tres orbitales $2p$ ($p_x, p_y, p_z$). Se generan **4 orbitales híbridos $sp^3$ equivalentes** orientados a $109.5^\circ$. Todos forman enlaces $\sigma$.
+            </p>
+            <div class="orbital-container">
+                <div class="orbital-row">
+                    <span class="orbital-label">Estado Excitado:</span>
+                    <div class="boxes-group">
+                        <div class="box-unit"><div class="box">↿</div><span class="sub-label">2s</span></div>
+                        <div style="width: 15px;"></div>
+                        <div class="box-unit"><div class="box">↿</div><span class="sub-label">2px</span></div>
+                        <div class="box-unit"><div class="box">↿</div><span class="sub-label">2py</span></div>
+                        <div class="box-unit"><div class="box">↿</div><span class="sub-label">2pz</span></div>
+                    </div>
+                </div>
+                <div class="orbital-row">
+                    <span class="orbital-label">Hibridación $sp^3$:</span>
+                    <div class="boxes-group">
+                        <div class="box-unit"><div class="box hybrid">↿</div><span class="sub-label">sp³</span></div>
+                        <div class="box-unit"><div class="box hybrid">↿</div><span class="sub-label">sp³</span></div>
+                        <div class="box-unit"><div class="box hybrid">↿</div><span class="sub-label">sp³</span></div>
+                        <div class="box-unit"><div class="box hybrid">↿</div><span class="sub-label">sp³</span></div>
+                    </div>
+                    <span style="font-size: 0.8rem; color: #4ade80;">➔ 4 enlaces $\sigma$ (0 enlaces $\pi$)</span>
+                </div>
+            </div>
+
+            <h4>B) Hibridación $sp^2$ (Trigonal Plana)</h4>
+            <p>
+                Se mezcla el orbital $2s$ con dos orbitales $2p$ ($p_x, p_y$). Se obtienen **3 orbitales híbridos $sp^2$** a $120^\circ$ (para enlaces $\sigma$) y **1 orbital $2p_z$ puro no hibridado** perpendicular al plano, responsable de formar el enlace $\pi$.
+            </p>
+            <div class="orbital-container">
+                <div class="orbital-row">
+                    <span class="orbital-label">Hibridación $sp^2$:</span>
+                    <div class="boxes-group">
+                        <div class="box-unit"><div class="box hybrid">↿</div><span class="sub-label">sp²</span></div>
+                        <div class="box-unit"><div class="box hybrid">↿</div><span class="sub-label">sp²</span></div>
+                        <div class="box-unit"><div class="box hybrid">↿</div><span class="sub-label">sp²</span></div>
+                        <div style="width: 15px;"></div>
+                        <div class="box-unit"><div class="box pure">↿</div><span class="sub-label">2pz puro</span></div>
+                    </div>
+                    <span style="font-size: 0.8rem; color: #4ade80;">➔ 3 enlaces $\sigma$ + 1 enlace $\pi$</span>
+                </div>
+            </div>
+
+            <h4>C) Hibridación $sp$ (Lineal)</h4>
+            <p>
+                Se mezcla el orbital $2s$ con un solo orbital $2p$ ($p_x$). Se obtienen **2 orbitales híbridos $sp$** colineales a $180^\circ$ (enlaces $\sigma$) y **2 orbitales $p$ puros ($p_y, p_z$)** orientados a $90^\circ$, que forman dos enlaces $\pi$ independientes (ej. alquinos, nitrilos).
+            </p>
+            <div class="orbital-container">
+                <div class="orbital-row">
+                    <span class="orbital-label">Hibridación $sp$:</span>
+                    <div class="boxes-group">
+                        <div class="box-unit"><div class="box hybrid">↿</div><span class="sub-label">sp</span></div>
+                        <div class="box-unit"><div class="box hybrid">↿</div><span class="sub-label">sp</span></div>
+                        <div style="width: 15px;"></div>
+                        <div class="box-unit"><div class="box pure">↿</div><span class="sub-label">2py puro</span></div>
+                        <div class="box-unit"><div class="box pure">↿</div><span class="sub-label">2pz puro</span></div>
+                    </div>
+                    <span style="font-size: 0.8rem; color: #4ade80;">➔ 2 enlaces $\sigma$ + 2 enlaces $\pi$</span>
+                </div>
+            </div>
+
+            <h3>1.2 Momentos Dipolares y Geometría Vectorial</h3>
+            <p>
+                El **momento dipolar neto ($\mu$)** es la suma vectorial de los dipolos de cada enlace. Depende estrictamente de la simetría espacial:
+            </p>
+            <ul>
+                <li>$\text{CCl}_4$ (Tetraédrica simétrica): Enlaces polares pero $\mu = 0\text{ D}$ por anulación espacial.</li>
+                <li>$\text{CH}_2\text{Cl}_2$ (Tetraédrica asimétrica): Dipolo resultante neto $\mu = 1.60\text{ D}$.</li>
+                <li><i>trans</i>-1,2-dicloroeteno: Los dipolos C-Cl se oponen a $180^\circ$ ($\mu = 0\text{ D}$).</li>
+                <li><i>cis</i>-1,2-dicloroeteno: Los dipolos C-Cl se suman vectorialmente hacia el mismo lado ($\mu = 1.90\text{ D}$).</li>
+            </ul>
+        </article>
+
+        <!-- MÓDULO 2: EFECTOS ESTRUCTURALES Y REACTIVIDAD -->
+        <article class="card">
+            <div class="module-header">
+                <span style="font-size: 1.5rem;">⚡</span>
+                <h2 class="module-title">Módulo 2: Efectos Estructurales, Reactividad y Acidez/Basicidad</h2>
+            </div>
+
+            <h3>2.1 Efecto Inductivo ($I$) y Resonante ($M$)</h3>
+            <ul>
+                <li><b>Efecto Inductivo ($I$):</b> Polarización transmisible mediante enlaces $\sigma$. Cae de forma exponencial con la distancia (inexistente tras 3-4 enlaces $\sigma$).
+                    <ul>
+                        <li><b>$-I$ (Atractor):</b> $-\text{F} > -\text{Cl} > -\text{Br} > -\text{I} > -\text{OH} > -\text{NH}_2$.</li>
+                        <li><b>$+I$ (Dador):</b> Grupos alquilo tert-butilo $> $ isopropilo $> $ etilo $> $ metilo.</li>
+                    </ul>
+                </li>
+                <li><b>Efecto Resonante ($M$):</b> Deslocalización de electrones en sistemas $\pi$ conjugados. No pierde intensidad con la distancia a lo largo del sistema conjugado.
+                    <ul>
+                        <li><b>$+M$ (Dador por pares solitarios):</b> $-\text{NH}_2 > -\text{OH} > -\text{OR} > -\text{X}$.</li>
+                        <li><b>$-M$ (Atractor por insaturación electronegativa):</b> $-\text{NO}_2 > -\text{CN} > -\text{COOH} > -\text{COR}$.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>2.2 Estabilización de Bases Conjugadas y Acidez</h3>
+            <div class="highlight-box green">
+                <b>📌 Factores Determinantes de Acidez ($K_a$ / $pK_a$):</b>
+                <ol>
+                    <li><b>Efecto del Átomo Central:</b> En el mismo período, domina la electronegatividad ($\text{H-CH}_3 < \text{H-NH}_2 < \text{H-OH} < \text{H-F}$). En el mismo grupo, **domina el tamaño/polarizabilidad** ($\text{R-OH} < \text{R-SH}$; $\text{HF} < \text{HCl} < \text{HBr} < \text{HI}$).</li>
+                    <li><b>Efecto Inductivo del Sustituyente:</b> El ácido trichloroacético ($pK_a = 0.65$) es $10.000$ veces más fuerte que el ácido acético ($pK_a = 4.76$) debido a la dispersión de la carga negativa por tres átomos de cloro.</li>
+                    <li><b>Deslocalización Resonante:</b> El fenol ($pK_a = 10$) es $10^6$ veces más ácido que el ciclohexanol ($pK_a = 16$) porque el anión fenóxido deslocaliza la carga en el anillo aromático.</li>
+                </ol>
+            </div>
+        </article>
+
+        <!-- MÓDULO 3: ESTEREOQUÍMICA Y PROYECCIONES ILUSTRADAS EN CONFORMACIONES Y FISCHER -->
+        <article class="card">
+            <div class="module-header">
+                <span style="font-size: 1.5rem;">📐</span>
+                <h2 class="module-title">Módulo 3: Representaciones Espaciales y Estereoquímica</h2>
+            </div>
+
+            <h3>3.1 Proyecciones Conformativas: Caballete (Sawhorse) y Newman</h3>
+            <p>
+                Las conformaciones se originan por rotación alrededor del enlace sencillo $\text{C-C}$ ($\sigma$). Para visualizar espacialmente los grupos que salen (cuñas) o entran (líneas discontinuas), utilizamos las proyecciones estandarizadas:
+            </p>
+
+            <div class="svg-grid">
+                <!-- Proyección de Caballete (Sawhorse) con Cuñas Rellenas y Discontinuas -->
+                <div class="svg-card">
+                    <h5>Proyección en Caballete (Sawhorse)</h5>
+                    <p>Enlace C-C en perspectiva oblicua con cuñas para relieve tridimensional</p>
+                    <svg width="220" height="170" viewBox="0 0 220 170">
+                        <!-- Enlace C1-C2 Central -->
+                        <line x1="65" y1="115" x2="145" y2="55" stroke="#38bdf8" stroke-width="4" />
+                        
+                        <!-- C1 (Frontal) -->
+                        <line x1="65" y1="115" x2="65" y2="155" stroke="#f8fafc" stroke-width="2.5" /> <!-- H vertical abajo -->
+                        <!-- Cuña rellena C1 (Sale hacia adelante) -->
+                        <polygon points="65,115 30,135 35,142" fill="#38bdf8" /> 
+                        <!-- Cuña discontinua C1 (Entra al plano) -->
+                        <line x1="65" y1="115" x2="95" y2="90" stroke="#f43f5e" stroke-width="3" stroke-dasharray="4,3" />
+
+                        <!-- C2 (Trasero) -->
+                        <line x1="145" y1="55" x2="145" y2="15" stroke="#f8fafc" stroke-width="2.5" /> <!-- H vertical arriba -->
+                        <!-- Cuña rellena C2 (Sale hacia adelante) -->
+                        <polygon points="145,55 180,75 175,82" fill="#38bdf8" /> 
+                        <!-- Cuña discontinua C2 (Entra al plano) -->
+                        <line x1="145" y1="55" x2="115" y2="35" stroke="#f43f5e" stroke-width="3" stroke-dasharray="4,3" />
+
+                        <!-- Textos / Etiquetas -->
+                        <text x="12" y="152" fill="#38bdf8" font-weight="bold" font-size="12">CH₃ (Sale)</text>
+                        <text x="100" y="88" fill="#f43f5e" font-weight="bold" font-size="12">CH₃ (Entra)</text>
+                        <text x="182" y="88" fill="#38bdf8" font-weight="bold" font-size="12">H (Sale)</text>
+                        <text x="88" y="32" fill="#f43f5e" font-weight="bold" font-size="12">H (Entra)</text>
+                        <text x="60" y="168" fill="#f8fafc" font-size="11">H</text>
+                        <text x="140" y="12" fill="#f8fafc" font-size="11">H</text>
+                    </svg>
+                    <p style="color: var(--accent-gold); font-weight: bold; margin-top: 4px;">Perspectiva de Caballete (Gaucho)</p>
+                </div>
+
+                <!-- Proyección de Newman Anti -->
+                <div class="svg-card">
+                    <h5>Proyección de Newman (Frontal)</h5>
+                    <p>Eje de visión directo sobre el enlace C1-C2</p>
+                    <svg width="200" height="170" viewBox="0 0 200 170">
+                        <!-- Círculo C2 (Trasero) -->
+                        <circle cx="100" cy="85" r="45" stroke="#38bdf8" stroke-width="3" fill="none" />
+                        <!-- Enlaces C2 Trasero -->
+                        <line x1="100" y1="40" x2="100" y2="12" stroke="#38bdf8" stroke-width="2.5" /> <!-- CH3 arriba -->
+                        <line x1="61" y1="107" x2="30" y2="125" stroke="#38bdf8" stroke-width="2.5" />
+                        <line x1="139" y1="107" x2="170" y2="125" stroke="#38bdf8" stroke-width="2.5" />
+                        <!-- C1 Frontal (Punto) -->
+                        <circle cx="100" cy="85" r="5" fill="#4ade80" />
+                        <line x1="100" y1="85" x2="100" y2="158" stroke="#f43f5e" stroke-width="3" /> <!-- CH3 abajo -->
+                        <line x1="100" y1="85" x2="55" y2="60" stroke="#4ade80" stroke-width="2.5" />
+                        <line x1="100" y1="85" x2="145" y2="60" stroke="#4ade80" stroke-width="2.5" />
+                        <!-- Etiquetas -->
+                        <text x="92" y="9" fill="#38bdf8" font-weight="bold" font-size="12">CH₃</text>
+                        <text x="92" y="169" fill="#f43f5e" font-weight="bold" font-size="12">CH₃</text>
+                        <text x="15" y="132" fill="#94a3b8" font-size="11">H</text>
+                        <text x="175" y="132" fill="#94a3b8" font-size="11">H</text>
+                    </svg>
+                    <p style="color: #4ade80; font-weight: bold; margin-top: 4px;">Conformación Anti ($180^\circ$)</p>
+                </div>
+            </div>
+
+            <h3>3.2 Proyección de Fischer y su Equivalencia 3D (Cuñas y Trazos)</h3>
+            <p>
+                Por convención internacional en la **Proyección de Fischer**:
+            </p>
+            <ul>
+                <li>Las **líneas horizontales** representan enlaces en **cuña rellena** (salen del plano de la página hacia el observador).</li>
+                <li>Las **líneas verticales** representan enlaces en **cuña discontinua/trazo** (se dirigen hacia dentro del plano, alejándose del observador).</li>
+            </ul>
+
+            <div class="svg-grid">
+                <!-- Fischer Estándar vs Modelo de Cuñas Equivalente -->
+                <div class="svg-card" style="grid-column: 1 / -1;">
+                    <h5>Equivalencia Estereoquímica Universal en Proyección de Fischer</h5>
+                    <p>De la representación plana a la orientación tridimensional real con cuñas rellenas y discontinuas</p>
+                    <svg width="520" height="210" viewBox="0 0 520 210">
+                        <!-- FISCHER TRADICIONAL (IZQUIERDA) -->
+                        <g transform="translate(10, 0)">
+                            <text x="90" y="20" fill="#38bdf8" font-weight="bold" font-size="13">Fischer Plana</text>
+                            <line x1="110" y1="35" x2="110" y2="165" stroke="#38bdf8" stroke-width="3" />
+                            <line x1="60" y1="75" x2="160" y2="75" stroke="#38bdf8" stroke-width="3" />
+                            <line x1="60" y1="125" x2="160" y2="125" stroke="#38bdf8" stroke-width="3" />
+                            
+                            <text x="92" y="30" fill="#f8fafc" font-weight="bold" font-size="12">COOH</text>
+                            <text x="92" y="180" fill="#f8fafc" font-weight="bold" font-size="12">COOH</text>
+                            <text x="40" y="80" fill="#4ade80" font-weight="bold" font-size="13">H</text>
+                            <text x="168" y="80" fill="#f43f5e" font-weight="bold" font-size="13">OH</text>
+                            <text x="40" y="130" fill="#4ade80" font-weight="bold" font-size="13">H</text>
+                            <text x="168" y="130" fill="#f43f5e" font-weight="bold" font-size="13">OH</text>
+                        </g>
+
+                        <!-- SÍMBOLO EQUIVALENCIA -->
+                        <text x="245" y="105" fill="#f59e0b" font-weight="bold" font-size="22">⟺</text>
+
+                        <!-- MODELO EN CUÑAS REAL (DERECHA) -->
+                        <g transform="translate(280, 0)">
+                            <text x="70" y="20" fill="#4ade80" font-weight="bold" font-size="13">Interpretación Tridimensional</text>
+                            
+                            <!-- Eje Vertical (Discontinuas / Entran) -->
+                            <line x1="110" y1="35" x2="110" y2="65" stroke="#f8fafc" stroke-width="2.5" stroke-dasharray="4,3" />
+                            <line x1="110" y1="75" x2="110" y2="115" stroke="#f8fafc" stroke-width="2.5" stroke-dasharray="4,3" />
+                            <line x1="110" y1="125" x2="110" y2="165" stroke="#f8fafc" stroke-width="2.5" stroke-dasharray="4,3" />
+
+                            <!-- Cuñas Horizontales C2 (Rellenas / Salen) -->
+                            <polygon points="110,75 55,67 55,83" fill="#4ade80" /> <!-- H sale -->
+                            <polygon points="110,75 165,67 165,83" fill="#f43f5e" /> <!-- OH sale -->
+
+                            <!-- Cuñas Horizontales C3 (Rellenas / Salen) -->
+                            <polygon points="110,125 55,117 55,133" fill="#4ade80" /> <!-- H sale -->
+                            <polygon points="110,125 165,117 165,133" fill="#f43f5e" /> <!-- OH sale -->
+
+                            <!-- Carbonos Quirales C2 y C3 -->
+                            <circle cx="110" cy="75" r="4" fill="#38bdf8" />
+                            <circle cx="110" cy="125" r="4" fill="#38bdf8" />
+
+                            <text x="92" y="30" fill="#f8fafc" font-weight="bold" font-size="12">COOH</text>
+                            <text x="92" y="180" fill="#f8fafc" font-weight="bold" font-size="12">COOH</text>
+                            <text x="35" y="80" fill="#4ade80" font-weight="bold" font-size="13">H</text>
+                            <text x="172" y="80" fill="#f43f5e" font-weight="bold" font-size="13">OH</text>
+                            <text x="35" y="130" fill="#4ade80" font-weight="bold" font-size="13">H</text>
+                            <text x="172" y="130" fill="#f43f5e" font-weight="bold" font-size="13">OH</text>
+                        </g>
+                    </svg>
+                    <p style="color: var(--accent-gold); font-weight: bold; margin-top: 6px;">Ácido Meso-Tartárico $\rightarrow$ Plano $\sigma$ de Simetría Interno ($\alpha = 0^\circ$)</p>
+                </div>
+            </div>
+
+            <div class="highlight-box gold">
+                <b>⚖️ Regla CIP Simplificada para Fischer:</b>
+                <p style="margin: 0;">
+                    1. Determina prioridades (1 al 4) en el estereocentro.<br>
+                    2. Traza el sentido 1 $\rightarrow$ 2 $\rightarrow$ 3.<br>
+                    3. **Si el grupo de prioridad 4 (ej. H) está en la LÍNEA HORIZONTAL (cuña saliente)**, invierte la lectura: Horario es <b>$S$</b> y Antihorario es <b>$R$</b>.
+                </p>
+            </div>
+        </article>
+
+    </div>
+
+    <footer>
+        <p><b>Prof. Dr. José Ángel Caldera Luzardo</b> | Instituto Universitario Politécnico "Santiago Mariño"</p>
+        <p>Cátedra de Química Orgánica | Sistema SEFAN - Todos los derechos reservados</p>
+    </footer>
+
+</body>
+</html>
