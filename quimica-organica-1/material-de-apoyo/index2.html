@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEFAN - Guía de Estudio: Estructura, Propiedades y Estereoquímica</title>
+    
+    <!-- MathJax 3 Configuration for TeX/LaTeX Chemical Formatting -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.85);
+            --accent-blue: #38bdf8;
+            --accent-green: #22c55e;
+            --accent-gold: #f59e0b;
+            --accent-teal: #14b8a6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --code-bg: #0b1329;
+        }
+
+        html {
+            background-color: var(--bg-color);
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            isolation: isolate;
+            line-height: 1.6;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: url("https://jcaldera1786-jpg.github.io/Academia-Presencial-PSM/assets/psm.png");
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: 320px 320px;
+            opacity: 0.12;
+            filter: blur(0.5px);
+            mix-blend-mode: screen;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        header {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--accent-blue);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        header p {
+            margin: 0.3rem 0 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 2rem auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.8rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            backdrop-filter: blur(8px);
+        }
+
+        .module-header {
+            border-bottom: 2px solid var(--accent-teal);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .module-title {
+            color: var(--accent-teal);
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            color: var(--accent-blue);
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.6rem;
+            border-left: 4px solid var(--accent-blue);
+            padding-left: 0.6rem;
+        }
+
+        p, li {
+            color: var(--text-main);
+            font-size: 0.95rem;
+            text-align: justify;
+        }
+
+        ul, ol {
+            padding-left: 1.2rem;
+            margin-top: 0.4rem;
+        }
+
+        li {
+            margin-bottom: 0.4rem;
+        }
+
+        .highlight-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--accent-blue);
+            padding: 1.2rem;
+            border-radius: 8px;
+            margin: 1.2rem 0;
+        }
+
+        .highlight-box.gold {
+            border-color: var(--accent-gold);
+            background: rgba(245, 158, 11, 0.05);
+        }
+
+        .highlight-box.green {
+            border-color: var(--accent-green);
+            background: rgba(34, 197, 94, 0.05);
+        }
+
+        .diagram-box {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
+            color: var(--accent-blue);
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.3;
+            margin: 1rem 0;
+        }
+
+        .btn-navigation {
+            display: inline-block;
+            background: #334155;
+            color: #fff;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: background 0.2s ease;
+            margin-bottom: 1rem;
+        }
+
+        .btn-navigation:hover {
+            background: #475569;
+            color: var(--accent-blue);
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 2rem 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>SEFAN - GUÍA DE ESTUDIO INTEGRADORA</h1>
+        <p>Estructura, Propiedades y Estereoquímica de las Moléculas Orgánicas</p>
+    </header>
+
+    <div class="container">
+
+        <a href="index.html" class="btn-navigation">⬅ Volver al Menú Principal</a>
+
+        <!-- MÓDULO 1 -->
+        <article class="card">
+            <div class="module-header">
+                <span style="font-size: 1.5rem;">🧪</span>
+                <h2 class="module-title">Módulo 1: Introducción, Enlace y Propiedades Asociadas</h2>
+            </div>
+
+            <h3>1.1 El Átomo de Carbono e Hibridación</h3>
+            <p>
+                El carbono en su estado fundamental posee la configuración electrónica $1s^2 2s^2 2p_x^1 2p_y^1 2p_z^0$. Para formar cuatro enlaces covalentes equivalentes en las moléculas orgánicas, promueve un electrón del orbital $2s$ al $2p_z$, dando lugar a tres estados de hibridación fundamentales:
+            </p>
+            <ul>
+                <li><b>Hibridación $sp^3$:</b> Geometría tetraédrica con ángulos de enlace de $109.5^\circ$. Formada por la mezcla de un orbital $s$ y tres orbitales $p$. Genera cuatro enlaces $\sigma$ dirigidos hacia los vértices de un tetraedro regular (Ejemplo: Alcanos, C-sp3).</li>
+                <li><b>Hibridación $sp^2$:</b> Geometría trigonal plana con ángulos de enlace de $120^\circ$. Mezcla de un orbital $s$ y dos orbitales $p$. Genera tres enlaces $\sigma$ coplanares y conserva un orbital $p$ puro perpendicular que se solapa lateralmente para formar un enlace $\pi$ (Ejemplo: Alquenos, C-sp2).</li>
+                <li><b>Hibridación $sp$:</b> Geometría lineal con ángulos de enlace de $180^\circ$. Mezcla de un orbital $s$ y un orbital $p$. Forma dos enlaces $\sigma$ y conserva dos orbitales $p$ puros perpendiculares entre sí para formar dos enlaces $\pi$ (Ejemplo: Alquinos, C-sp).</li>
+            </ul>
+
+            <h3>1.2 Geometría, Polaridad de Enlace y Momento Dipolar ($\mu$)</h3>
+            <p>
+                Un enlace covalente se polariza cuando existe una diferencia de electronegatividad ($\Delta \chi$) entre los átomos que lo comparten. Sin embargo, el **momento dipolar neto ($\mu$)** de una molécula no depende exclusivamente de la polaridad de sus enlaces individuales, sino de la **geometría molecular (suma vectorial de dipolos)**.
+            </p>
+            <div class="highlight-box">
+                <b>📌 Ejemplo Comparativo:</b><br>
+                El tetracloruro de carbono ($\text{CCl}_4$) posee cuatro enlaces C-Cl fuertemente polares, pero debido a su geometría tetraédrica perfectamente simétrica, los vectores individuales se anulan mutuamente, resultando en un momento dipolar neto de $\mu = 0 \text{ D}$. En contraste, el diclorometano ($\text{CH}_2\text{Cl}_2$) presenta una geometría asimétrica donde la suma vectorial de los dipolos no se cancela, generando un momento dipolar permanente ($\mu > 0 \text{ D}$).
+            </div>
+        </article>
+
+        <!-- MÓDULO 2 -->
+        <article class="card">
+            <div class="module-header">
+                <span style="font-size: 1.5rem;">⚡</span>
+                <h2 class="module-title">Módulo 2: Efectos Estructurales sobre la Reactividad y Acidez/Basicidad</h2>
+            </div>
+
+            <h3>2.1 Efecto Inductivo ($I$) y Efecto Resonante o Mesómero ($M$)</h3>
+            <p>
+                La distribución electrónica en una molécula determina su reactividad química frente a agentes nucleófilos o electrófilos:
+            </p>
+            <ul>
+                <li>
+                    <b>Efecto Inductivo ($I$):</b> Transmisión de la polarización electrónica a través de los enlaces $\sigma$ por diferencias de electronegatividad. Es un efecto que **se atenúa drásticamente con la distancia** a lo largo de la cadena (prácticamente nulo a partir del cuarto enlace).
+                    <ul>
+                        <li><i>Atractor ($-\!I$):</i> Grupos más electronegativos que el carbono ($-\text{F}, -\text{Cl}, -\text{NO}_2, -\text{OH}, -\text{COOH}$).</li>
+                        <li><i>Dador ($+\!I$):</i> Grupos alquilo ($-\text{CH}_3, -\text{CH}_2\text{CH}_3$), los cuales ceden densidad electrónica a través de enlaces $\sigma$.</li>
+                    </ul>
+                </li>
+                <li>
+                    <b>Efecto Resonante ($M$):</b> Delocalización electrónica a través de orbitales $p$ paralelos dentro de un sistema conjugado o insaturado ($\pi$).
+                    <ul>
+                        <li><i>Dador ($+\!M$):</i> Grupos con pares de electrones libres adyacentes al sistema $\pi$ ($-\text{OH}, -\text{NH}_2, -\text{OR}, -\text{halogenos}$).</li>
+                        <li><i>Atractor ($-\!M$):</i> Grupos insaturados con átomos electronegativos en conjugación ($-\text{NO}_2, -\text{CHO}, -\text{COOH}, -\text{CN}$).</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>2.2 Acidez y Basicidad Orgánica (Brønsted-Lowry y Lewis)</h3>
+            <p>
+                La acidez de un compuesto de fórmula $\text{H-A}$ depende directamente de la **estabilidad de su base conjugada ($\text{A}^-$)**: a mayor estabilidad del anión resultante, mayor será la acidez del protón inicial.
+            </p>
+            <div class="highlight-box green">
+                <b>📊 Criterios de Estabilización del Anión Conjugado ($\text{A}^-$):</b>
+                <ol>
+                    <li><b>Electronegatividad y Tamaño:</b> En un mismo período, la acidez aumenta con la electronegatividad ($\text{C-H} < \text{N-H} < \text{O-H}$). En un mismo grupo del sistema periódico, **el tamaño atómico y la polarizabilidad dominan** sobre la electronegatividad ($\text{H}_2\text{S} > \text{H}_2\text{O}$; $\text{R-SH} > \text{R-OH}$).</li>
+                    <li><b>Efecto Inductivo Atractor:</b> La presencia de sustituyentes electronegativos dispersa la carga negativa de $\text{A}^-$, estabilizando la base conjugada y aumentando el $K_a$ (Ejemplo: Ácido fluoroacético vs. Ácido acético).</li>
+                    <li><b>Estabilización por Resonancia:</b> Si la carga negativa de $\text{A}^-$ puede delocalizarse sobre varios átomos (como en los carboxilatos o fenóxidos), el anión se estabiliza de manera excepcional.</li>
+                </ol>
+            </div>
+        </article>
+
+        <!-- MÓDULO 3 -->
+        <article class="card">
+            <div class="module-header">
+                <span style="font-size: 1.5rem;">🧊</span>
+                <h2 class="module-title">Módulo 3: Estereoquímica e Isomería</h2>
+            </div>
+
+            <h3>3.1 Árbol de Clasificación de Isómeros</h3>
+            <p>
+                Los isómeros son compuestos que comparten la misma fórmula molecular pero difieren en la conectividad de sus átomos o en su disposición espacial:
+            </p>
+            <div class="diagram-box">
+                                     ISÓMEROS
+                                        |
+            +---------------------------+---------------------------+
+            |                                                       |
+ISÓMEROS ESTRUCTURALES (CONSTITUCIONALES)              ESTEREOISÓMEROS
+(Misma fórmula, diferente conectividad)       (Misma conectividad, diferente orientación 3D)
+ (Cadena, Posición, Función)                                |
+                                            +---------------+---------------+
+                                            |                               |
+                                     CONFORMACIONALES                 CONFIGURACIONALES
+                                   (Rotación enlace σ)            (Ruptura/Formación de enlace)
+                                                                            |
+                                                            +---------------+---------------+
+                                                            |                               |
+                                                      ENANTIÓMEROS                   DIASTEREOISÓMEROS
+                                                 (Imágenes especulares)        (NO imágenes especulares)
+                                                                                  (Incluye Cis/Trans)
+            </div>
+
+            <h3>3.2 Chiralidad, Centros Quirales y Reglas CIP</h3>
+            <p>
+                Un **centro quiral (o estereocentro)** es un átomo de carbono $sp^3$ unido a cuatro sustituyentes químicamente diferentes. Una molécula es **quiral** si no es superponible con su imagen especular, lo cual ocurre cuando carece de elementos de simetría interna (plano de simetría $\sigma$ o centro de inversión $i$).
+            </p>
+            
+            <div class="highlight-box gold">
+                <b>📐 Reglas de Cahn-Ingold-Prelog (CIP) para Configuración Absoluta ($R/S$):</b>
+                <ol>
+                    <li>Asignar prioridades del <b>1 (mayor)</b> al <b>4 (menor)</b> a los cuatro átomos unidos directamente al estereocentro según su número atómico ($Z$).</li>
+                    <li>Si hay empate en número atómico, comparar el conjunto de átomos unidos a ellos a lo largo de la cadena secuencialmente hasta hallar el primer punto de diferencia.</li>
+                    <li>Orientar la molécula de forma que el grupo de menor prioridad (<b>4</b>) quede proyectado hacia **atrás** (alejado del observador).</li>
+                    <li>Trazar una trayectoria del grupo 1 $\rightarrow$ 2 $\rightarrow$ 3:
+                        <ul>
+                            <li>Si el sentido es <b>horario</b> $\rightarrow$ Configuración <b>$R$</b> (<i>Rectus</i>).</li>
+                            <li>Si el sentido es <b>antihorario</b> $\rightarrow$ Configuración <b>$S$</b> (<i>Sinister</i>).</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+
+            <h3>3.3 Enantiómeros, Diastereoisómeros y Compuestos Meso</h3>
+            <ul>
+                <li><b>Enantiómeros:</b> Pareja de estereoisómeros que son imágenes especulares no superponibles. Poseen propiedades físicas y químicas idénticas en ambientes achirales, pero desvían la luz polarizada plana en la misma magnitud y en sentidos opuestos.</li>
+                <li><b>Diastereoisómeros:</b> Estereoisómeros que no son imágenes especulares entre sí. Tienen propiedades físicas (puntos de fusión, ebullición, solubilidad) y reactividad química totalmente diferentes.</li>
+                <li><b>Compuesto Meso:</b> Molécula achiral que contiene dos o más centros quirales pero posee un **plano de simetría interno ($\sigma$)**. Es ópticamente inactiva por compensación intramolecular.</li>
+                <li><b>Mezcla Racémica:</b> Mezcla equimolar ($50:50$) de dos enantiómeros. Es ópticamente inactiva por compensación intermolecular.</li>
+            </ul>
+
+            <p style="margin-top: 1.2rem;">
+                <b>Ecuación para Exceso Enantiomérico ($ee$) o Pureza Óptica:</b>
+            </p>
+            $$\% \, ee = \frac{|\alpha_{\text{observada}}|}{|\alpha_{\text{pura}}|} \times 100 = \% \text{ Enantiómero mayoritario} - \% \text{ Enantiómero minoritario}$$
+        </article>
+
+    </div>
+
+    <footer>
+        <p><b>Prof. Dr. José Ángel Caldera Luzardo</b> | Instituto Universitario Politécnico "Santiago Mariño"</p>
+        <p>Cátedra de Química Orgánica | Sistema SEFAN - Todos los derechos reservados</p>
+    </footer>
+
+</body>
+</html>
