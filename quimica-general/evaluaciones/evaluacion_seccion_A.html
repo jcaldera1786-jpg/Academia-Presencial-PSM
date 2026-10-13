@@ -54,12 +54,12 @@
             font-size: 0.85rem; text-align: left; line-height: 1.4;
         }
         input[type="text"] {
-            width: 100%; padding: 0.7rem; margin: 0.8rem 0; border-radius: 8px;
+            width: 100%; padding: 0.7rem; margin: 0.5rem 0 1rem 0; border-radius: 8px;
             border: 1px solid #334155; background: #0f172a; color: #fff; font-size: 1rem; box-sizing: border-box;
         }
         .btn {
             background: linear-gradient(135deg, #0284c7, #0369a1); color: white;
-            border: none; padding: 0.8rem; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem;
+            border: none; padding: 0.8rem; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem; margin-top: 0.5rem;
         }
         .section-title { color: var(--accent-gold); font-size: 1rem; font-weight: bold; margin-top: 1.2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.3rem; }
         .question { font-size: 0.9rem; margin: 0.8rem 0; text-align: left; }
@@ -90,8 +90,13 @@
                     • <b>2da Infracción:</b> Registro automático de alerta disciplinaria en la base de datos.<br>
                     • <b>3ra Infracción:</b> Bloqueo irreversible y pérdida de la evaluación.
                 </div>
-                <label style="font-weight: 600; color: var(--accent-blue);">Ingrese su Cédula de Identidad:</label>
+                
+                <label style="font-weight: 600; color: var(--accent-blue);">Nombre y Apellido:</label>
+                <input type="text" id="user-nombre" placeholder="Ej: José Pérez" autocomplete="off">
+
+                <label style="font-weight: 600; color: var(--accent-blue);">Cédula de Identidad:</label>
                 <input type="text" id="user-cedula" placeholder="Ej: 11282631" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" autocomplete="off">
+                
                 <button class="btn" onclick="iniciarExamenSeguro()">Iniciar Evaluación</button>
             </div>
 
@@ -125,18 +130,17 @@
     <div id="bloqueo-screen">
         <h1 style="color: var(--error);">❌ EVALUACIÓN ANULADA</h1>
         <p>Ha abandonado la interfaz de evaluación en repetidas ocasiones infringiendo los protocolos de seguridad de la Cátedra de Química I.</p>
-        <p><b>Se ha registrado oficialmente la pérdida de la evaluación asociada a la cédula: <span id="cedula-bloqueada"></span>.</b></p>
+        <p><b>Se ha registrado oficialmente la pérdida de la evaluación asociada a: <span id="estudiante-bloqueado"></span>.</b></p>
     </div>
 
 <script>
-    // URL de su Apps Script configurado en Google Sheets
     const WEB_APP_URL = "SU_URL_DE_APPS_SCRIPT_AQUI"; 
     let wakeLock = null;
     let intentosSalida = 0;
     let cedulaActual = "";
+    let nombreActual = "";
     let examenIniciado = false;
 
-    // 1. Evitar que la pantalla del móvil se apague
     async function activarWakeLock() {
         try {
             if ('wakeLock' in navigator) {
@@ -148,22 +152,32 @@
     }
 
     function iniciarExamenSeguro() {
+        const nombre = document.getElementById('user-nombre').value.trim();
         const cedula = document.getElementById('user-cedula').value.trim();
+        
+        if (!nombre) {
+            alert("Por favor, ingrese su nombre y apellido.");
+            document.getElementById('user-nombre').focus();
+            return;
+        }
         if (!cedula) {
-            alert("Por favor, ingrese su número de cédula para comenzar.");
+            alert("Por favor, ingrese su número de cédula.");
             document.getElementById('user-cedula').focus();
             return;
         }
+        
+        nombreActual = nombre;
         cedulaActual = cedula;
         examenIniciado = true;
         
         document.getElementById('login-section').style.display = 'none';
         document.getElementById('examen-section').style.display = 'block';
         
+        // Registrar el ingreso inicial en Google Sheets de inmediato
+        enviarReporteAlServidor("EXAMEN_INICIADO");
         activarWakeLock();
     }
 
-    // 2. Control riguroso de visibilidad (Detección de cambio de pestaña o app)
     document.addEventListener("visibilitychange", () => {
         if (document.hidden && examenIniciado) {
             intentosSalida++;
@@ -173,21 +187,17 @@
 
     function manejarInfraccionSeguridad(nivel) {
         if (nivel === 1) {
-            // Primera Advertencia
             alert("⚠️ ¡ADVERTENCIA DE SEGURIDAD SEFAN (1/3)!\n\nSe ha detectado que salió de la pantalla del examen. Si vuelve a cambiar de aplicación o abrir otra ventana, se enviará un reporte de alerta disciplinaria a su hoja de vida.");
+            enviarReporteAlServidor("ADVERTENCIA_1");
         } 
         else if (nivel === 2) {
-            // Segunda Advertencia + Reporte en Base de Datos (Google Sheets)
             alert("🚨 ¡ALERTA GRAVE (2/3)!\n\nHa abandonado la evaluación por segunda vez. Se ha registrado una ALERTA DISCIPLINARIA en la base de datos institucional asociada a su cédula. Un tercer intento anulará definitivamente su examen.");
-            
             enviarReporteAlServidor("ALERTA_DISCIPLINARIA_INTENTO_2");
         } 
         else if (nivel >= 3) {
-            // Tercera Infracción: Bloqueo Definitivo y Pérdida
-            document.getElementById('cedula-bloqueada').innerText = cedulaActual;
+            document.getElementById('estudiante-bloqueado').innerText = nombreActual + " (Cédula: " + cedulaActual + ")";
             document.getElementById('main-container').style.display = 'none';
             document.getElementById('bloqueo-screen').style.display = 'flex';
-
             enviarReporteAlServidor("EXAMEN_ANULADO_TRAMPA");
         }
     }
@@ -197,9 +207,9 @@
 
         const payload = new URLSearchParams();
         payload.append("cedula", cedulaActual);
+        payload.append("nombre", nombreActual);
         payload.append("intentoNum", estadoAlerta);
-        payload.append("aciertos", "0");
-        payload.append("totalPreguntas", "10");
+        payload.append("seccion", "Sección A");
 
         fetch(WEB_APP_URL, {
             method: 'POST',
