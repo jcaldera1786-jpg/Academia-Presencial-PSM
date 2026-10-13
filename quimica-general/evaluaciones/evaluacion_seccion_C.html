@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEFAN - Examen 10% (Sección C) | Química I | PSM</title>
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f172a; --card-bg: rgba(30, 41, 59, 0.95);
+            --accent-blue: #38bdf8; --accent-green: #22c55e; --accent-gold: #f59e0b;
+            --error: #f43f5e; --text-main: #f8fafc; --text-muted: #94a3b8; --border-color: rgba(255, 255, 255, 0.1);
+        }
+        html { background-color: var(--bg-color); }
+        body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+        header { width: 100%; background: rgba(15, 23, 42, 0.95); border-bottom: 1px solid var(--border-color); padding: 1rem 0; text-align: center; position: sticky; top: 0; z-index: 100; }
+        header h1 { margin: 0; font-size: 1.2rem; color: var(--accent-blue); }
+        header p { margin: 0.2rem 0 0; font-size: 0.8rem; color: var(--text-muted); }
+        .container { width: 90%; max-width: 750px; margin: 1.5rem auto; display: flex; flex-direction: column; gap: 1rem; }
+        .card { background: var(--card-bg); border: 1px solid var(--accent-blue); border-radius: 12px; padding: 1.5rem; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37); }
+        .warning-box { background: rgba(244, 63, 94, 0.15); border: 1px solid var(--error); color: #fca5a5; padding: 0.9rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.85rem; text-align: left; line-height: 1.4; }
+        input[type="text"] { width: 100%; padding: 0.7rem; margin: 0.5rem 0 1rem 0; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: #fff; font-size: 1rem; box-sizing: border-box; }
+        .btn { background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: none; padding: 0.8rem; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem; margin-top: 0.5rem; }
+        .section-title { color: var(--accent-gold); font-size: 1rem; font-weight: bold; margin-top: 1.2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.3rem; }
+        .question { font-size: 0.9rem; margin: 0.8rem 0; text-align: left; }
+        #bloqueo-screen { display: none; position: fixed; inset: 0; background: #0f172a; z-index: 9999; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>I.U.P. "Santiago Mariño" - Evaluación 10% (Corte 1)</h1>
+        <p>Asignatura: Química I | Sección C | Prof. Dr. José Ángel Caldera Luzardo</p>
+    </header>
+
+    <div class="container">
+        <div class="card" id="main-container">
+            <h2>🛡️ Sistema de Evaluación Segura SEFAN</h2>
+            
+            <div id="login-section">
+                <div class="warning-box">
+                    <b>⚠️ NORMAS DE INTEGRIDAD ACADÉMICA:</b><br>
+                    • Está prohibido salir de esta pantalla o cambiar de aplicación (ej. abrir IAs o navegadores externos).<br>
+                    • <b>1ra Infracción:</b> Advertencia formal de riesgo.<br>
+                    • <b>2da Infracción:</b> Registro automático de alerta disciplinaria en la base de datos.<br>
+                    • <b>3ra Infracción:</b> Bloqueo irreversible y pérdida de la evaluación.
+                </div>
+                
+                <label style="font-weight: 600; color: var(--accent-blue);">Nombre y Apellido:</label>
+                <input type="text" id="user-nombre" placeholder="Ej: José Pérez" autocomplete="off">
+
+                <label style="font-weight: 600; color: var(--accent-blue);">Cédula de Identidad:</label>
+                <input type="text" id="user-cedula" placeholder="Ej: 11282631" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" autocomplete="off">
+                
+                <button class="btn" onclick="iniciarExamenSeguro()">Iniciar Evaluación</button>
+            </div>
+
+            <div id="examen-section" style="display: none;">
+                <p style="color: var(--accent-green); font-weight: bold; text-align: center;">🟢 Modo Protegido Activo - Resuelva en su hoja física</p>
+                
+                <div class="section-title">Sección I. Selección simple (4 puntos - 1 pt c/u)</div>
+                <div class="question"><b>1.</b> El modelo atómico que introdujo la idea del núcleo atómico fue:<br>a) Dalton &nbsp;&nbsp; b) Thomson &nbsp;&nbsp; c) Rutherford &nbsp;&nbsp; d) Schrödinger</div>
+                <div class="question"><b>2.</b> La espectroquímica aportó a la teoría atómica porque:<br>a) Demostró la existencia del neutrón &nbsp;&nbsp; b) Permitió identificar los niveles de energía mediante espectros de emisión &nbsp;&nbsp; c) Descubrió la radiactividad &nbsp;&nbsp; d) Explicó el enlace metálico</div>
+                <div class="question"><b>3.</b> ¿Cuántos electrones como máximo puede albergar un orbital d?<br>a) 2 &nbsp;&nbsp; b) 6 &nbsp;&nbsp; c) 10 &nbsp;&nbsp; d) 14</div>
+                <div class="question"><b>4.</b> La nomenclatura química se utiliza para:<br>a) Medir masas atómicas &nbsp;&nbsp; b) Nombrar y formular compuestos químicos &nbsp;&nbsp; c) Balancear ecuaciones &nbsp;&nbsp; d) Calcular el número de Avogadro</div>
+
+                <div class="section-title">Sección II. Verdadero y Falso (4 puntos - 1 pt c/u)</div>
+                <div class="question"><b>1. ( &nbsp; )</b> El potencial de ionización aumenta al descender en un grupo de la tabla periódica.</div>
+                <div class="question"><b>2. ( &nbsp; )</b> La hibridación $sp^3$ da lugar a geometrías tetraédricas con ángulos de $109.5^\circ$.</div>
+                <div class="question"><b>3. ( &nbsp; )</b> En una reacción química, el número de átomos de cada elemento se conserva.</div>
+                <div class="question"><b>4. ( &nbsp; )</b> Las fuerzas dipolares se presentan en moléculas polares.</div>
+
+                <div class="section-title">Sección III. Desarrollo (6 puntos - 2 pts c/u)</div>
+                <div class="question"><b>1.</b> Explique los hechos experimentales que llevaron a la formulación de la teoría atómica: electrólisis, descarga de gases y radiactividad.</div>
+                <div class="question"><b>2.</b> Defina los números cuánticos $n$, $l$, $m_l$ y $m_s$. Indique qué información aporta cada uno.</div>
+                <div class="question"><b>3.</b> Escriba la configuración electrónica del elemento con $Z=20$ y determine su grupo, período y familia en la tabla periódica.</div>
+
+                <div class="section-title">Sección IV. Análisis crítico (6 puntos)</div>
+                <div class="question"><b>Lea el siguiente planteamiento y responda:</b><br><em>"Un ingeniero afirma que la estequiometría solo sirve para balancear ecuaciones y que las leyes de conservación de la masa no tienen aplicación real en la industria."</em><br><br>Analice críticamente esta afirmación. Explique la importancia de la ley de conservación de la masa y de la estequiometría en procesos industriales (por ejemplo, en la producción de amoníaco o en la combustión). Fundamente con al menos dos ejemplos concretos.</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="bloqueo-screen">
+        <h1 style="color: var(--error);">❌ EVALUACIÓN ANULADA</h1>
+        <p>Ha abandonado la interfaz de evaluación en repetidas ocasiones infringiendo los protocolos de seguridad de la Cátedra de Química I.</p>
+        <p><b>Se ha registrado oficialmente la pérdida de la evaluación asociada a: <span id="estudiante-bloqueado"></span>.</b></p>
+    </div>
+
+<script>
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwum1Rshv1T3PxsNr2VZGt-F_oPqEC-zA4A_1U4hc-t6TB6t6XDpa6ODvmgfg9beQK5zw/exec"; 
+    let wakeLock = null; let intentosSalida = 0; let cedulaActual = ""; let nombreActual = ""; let examenIniciado = false;
+
+    async function activarWakeLock() {
+        try { if ('wakeLock' in navigator) { wakeLock = await navigator.requestWakeLock('screen'); } } catch (err) {}
+    }
+
+    function iniciarExamenSeguro() {
+        const nombre = document.getElementById('user-nombre').value.trim();
+        const cedula = document.getElementById('user-cedula').value.trim();
+        if (!nombre) { alert("Por favor, ingrese su nombre y apellido."); document.getElementById('user-nombre').focus(); return; }
+        if (!cedula) { alert("Por favor, ingrese su número de cédula."); document.getElementById('user-cedula').focus(); return; }
+        
+        nombreActual = nombre; cedulaActual = cedula; examenIniciado = true;
+        document.getElementById('login-section').style.display = 'none';
+        document.getElementById('examen-section').style.display = 'block';
+        enviarReporteAlServidor("EXAMEN_INICIADO");
+        activarWakeLock();
+    }
+
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden && examenIniciado) {
+            intentosSalida++;
+            manejarInfraccionSeguridad(intentosSalida);
+        }
+    });
+
+    function manejarInfraccionSeguridad(nivel) {
+        if (nivel === 1) {
+            alert("⚠️ ¡ADVERTENCIA DE SEGURIDAD SEFAN (1/3)!\n\nSe ha detectado que salió de la pantalla del examen. Si vuelve a cambiar de aplicación o abrir otra ventana, se enviará un reporte de alerta disciplinaria a su hoja de vida.");
+            enviarReporteAlServidor("ADVERTENCIA_1");
+        } else if (nivel === 2) {
+            alert("🚨 ¡ALERTA GRAVE (2/3)!\n\nHa abandonado la evaluación por segunda vez. Se ha registrado una ALERTA DISCIPLINARIA en la base de datos institucional asociada a su cédula. Un tercer intento anulará definitivamente su examen.");
+            enviarReporteAlServidor("ALERTA_DISCIPLINARIA_INTENTO_2");
+        } else if (nivel >= 3) {
+            document.getElementById('estudiante-bloqueado').innerText = nombreActual + " (Cédula: " + cedulaActual + ")";
+            document.getElementById('main-container').style.display = 'none';
+            document.getElementById('bloqueo-screen').style.display = 'flex';
+            enviarReporteAlServidor("EXAMEN_ANULADO_TRAMPA");
+        }
+    }
+
+    function enviarReporteAlServidor(estadoAlerta) {
+        if (!cedulaActual) return;
+        const payload = new URLSearchParams();
+        payload.append("cedula", cedulaActual); payload.append("nombre", nombreActual);
+        payload.append("intentoNum", estadoAlerta); payload.append("seccion", "Sección C");
+
+        fetch(WEB_APP_URL, { method: 'POST', headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: payload.toString(), mode: 'no-cors', keepalive: true }).catch(err => {});
+    }
+</script>
+</body>
+</html>
