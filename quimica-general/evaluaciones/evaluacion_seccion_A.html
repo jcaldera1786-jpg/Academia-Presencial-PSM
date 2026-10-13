@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEFAN - Examen 10% Primer Corte | Química I | PSM</title>
+    <!-- MathJax Configuration para renderizar fórmulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.95);
+            --accent-blue: #38bdf8;
+            --accent-green: #22c55e;
+            --accent-gold: #f59e0b;
+            --error: #f43f5e;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+        html { background-color: var(--bg-color); }
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color); color: var(--text-main);
+            min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+        }
+        header {
+            width: 100%; background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid var(--border-color); padding: 1rem 0; text-align: center;
+            position: sticky; top: 0; z-index: 100;
+        }
+        header h1 { margin: 0; font-size: 1.2rem; color: var(--accent-blue); }
+        header p { margin: 0.2rem 0 0; font-size: 0.8rem; color: var(--text-muted); }
+
+        .container { width: 90%; max-width: 750px; margin: 1.5rem auto; display: flex; flex-direction: column; gap: 1rem; }
+        
+        .card {
+            background: var(--card-bg); border: 1px solid var(--accent-blue);
+            border-radius: 12px; padding: 1.5rem; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+        }
+        .warning-box {
+            background: rgba(244, 63, 94, 0.15); border: 1px solid var(--error);
+            color: #fca5a5; padding: 0.9rem; border-radius: 8px; margin-bottom: 1rem;
+            font-size: 0.85rem; text-align: left; line-height: 1.4;
+        }
+        input[type="text"] {
+            width: 100%; padding: 0.7rem; margin: 0.8rem 0; border-radius: 8px;
+            border: 1px solid #334155; background: #0f172a; color: #fff; font-size: 1rem; box-sizing: border-box;
+        }
+        .btn {
+            background: linear-gradient(135deg, #0284c7, #0369a1); color: white;
+            border: none; padding: 0.8rem; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem;
+        }
+        .section-title { color: var(--accent-gold); font-size: 1rem; font-weight: bold; margin-top: 1.2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.3rem; }
+        .question { font-size: 0.9rem; margin: 0.8rem 0; text-align: left; }
+        
+        /* Pantalla de Bloqueo Definitivo */
+        #bloqueo-screen {
+            display: none; position: fixed; inset: 0; background: #0f172a;
+            z-index: 9999; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>I.U.P. "Santiago Mariño" - Evaluación 10% (Corte 1)</h1>
+        <p>Asignatura: Química I | Sección A | Prof. Dr. José Ángel Caldera Luzardo</p>
+    </header>
+
+    <div class="container">
+        <div class="card" id="main-container">
+            <h2>🛡️ Sistema de Evaluación Segura SEFAN</h2>
+            
+            <div id="login-section">
+                <div class="warning-box">
+                    <b>⚠️ NORMAS DE INTEGRIDAD ACADÉMICA:</b><br>
+                    • Está prohibido salir de esta pantalla o cambiar de aplicación (ej. abrir IAs o navegadores externos).<br>
+                    • <b>1ra Infracción:</b> Advertencia formal de riesgo.<br>
+                    • <b>2da Infracción:</b> Registro automático de alerta disciplinaria en la base de datos.<br>
+                    • <b>3ra Infracción:</b> Bloqueo irreversible y pérdida de la evaluación.
+                </div>
+                <label style="font-weight: 600; color: var(--accent-blue);">Ingrese su Cédula de Identidad:</label>
+                <input type="text" id="user-cedula" placeholder="Ej: 11282631" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" autocomplete="off">
+                <button class="btn" onclick="iniciarExamenSeguro()">Iniciar Evaluación</button>
+            </div>
+
+            <div id="examen-section" style="display: none;">
+                <p style="color: var(--accent-green); font-weight: bold; text-align: center;">🟢 Modo Protegido Activo - Resuelva en su hoja física</p>
+                
+                <div class="section-title">Sección I. Selección simple (4 puntos - 1 pt c/u)</div>
+                <div class="question"><b>1.</b> El modelo atómico que introdujo la idea de los niveles de energía cuantizados y explicó el espectro del hidrógeno fue:<br>a) Dalton &nbsp;&nbsp; b) Thomson &nbsp;&nbsp; c) Bohr &nbsp;&nbsp; d) Rutherford</div>
+                <div class="question"><b>2.</b> El hecho experimental que permitió descubrir la existencia del electrón fue:<br>a) La electrólisis &nbsp;&nbsp; b) Los rayos catódicos en tubos de descarga &nbsp;&nbsp; c) La radiactividad &nbsp;&nbsp; d) La espectroquímica</div>
+                <div class="question"><b>3.</b> ¿Cuál de los siguientes números cuánticos determina la orientación espacial del orbital?<br>a) n &nbsp;&nbsp; b) l &nbsp;&nbsp; c) m &nbsp;&nbsp; d) ms</div>
+                <div class="question"><b>4.</b> El enlace que se forma por transferencia de electrones entre un metal y un no metal se denomina:<br>a) Covalente polar &nbsp;&nbsp; b) Iónico &nbsp;&nbsp; c) Metálico &nbsp;&nbsp; d) Puente de hidrógeno</div>
+
+                <div class="section-title">Sección II. Verdadero y Falso (4 puntos - 1 pt c/u)</div>
+                <div class="question"><b>1. ( &nbsp; )</b> El principio de exclusión de Pauli establece que dos electrones en un mismo átomo no pueden tener los cuatro números cuánticos iguales.</div>
+                <div class="question"><b>2. ( &nbsp; )</b> La regla de Hund indica que los electrones se aparean primero en un subnivel antes de ocupar orbitales vacíos.</div>
+                <div class="question"><b>3. ( &nbsp; )</b> La electronegatividad aumenta de izquierda a derecha y de abajo hacia arriba en la tabla periódica.</div>
+                <div class="question"><b>4. ( &nbsp; )</b> Las fuerzas de dispersión de London son las más fuertes entre las fuerzas intermoleculares.</div>
+
+                <div class="section-title">Sección III. Desarrollo (6 puntos - 2 pts c/u)</div>
+                <div class="question"><b>1.</b> Explique brevemente los postulados del modelo atómico de Dalton y señale dos limitaciones del mismo.</div>
+                <div class="question"><b>2.</b> Defina hibridación y describa los tipos $sp$, $sp^2$ y $sp^3$ indicando un ejemplo de molécula para cada uno.</div>
+                <div class="question"><b>3.</b> Escriba la configuración electrónica del elemento con $Z=26$ y determine su grupo, período y familia en la tabla periódica.</div>
+
+                <div class="section-title">Sección IV. Análisis crítico (6 puntos)</div>
+                <div class="question"><b>Lea el siguiente planteamiento y responda:</b><br><em>"Un estudiante afirma que la electrólisis y la radiactividad son fenómenos que no aportaron nada al desarrollo de la teoría atómica, ya que solo sirven para aplicaciones industriales."</em><br><br>Analice la veracidad de esta afirmación. Explique cómo la electrólisis, la radiactividad y la espectroquímica contribuyeron experimentalmente a la formulación de la teoría atómica moderna. Fundamente su respuesta con al menos dos argumentos técnicos.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pantalla de Bloqueo Definitivo -->
+    <div id="bloqueo-screen">
+        <h1 style="color: var(--error);">❌ EVALUACIÓN ANULADA</h1>
+        <p>Ha abandonado la interfaz de evaluación en repetidas ocasiones infringiendo los protocolos de seguridad de la Cátedra de Química I.</p>
+        <p><b>Se ha registrado oficialmente la pérdida de la evaluación asociada a la cédula: <span id="cedula-bloqueada"></span>.</b></p>
+    </div>
+
+<script>
+    // URL de su Apps Script configurado en Google Sheets
+    const WEB_APP_URL = "SU_URL_DE_APPS_SCRIPT_AQUI"; 
+    let wakeLock = null;
+    let intentosSalida = 0;
+    let cedulaActual = "";
+    let examenIniciado = false;
+
+    // 1. Evitar que la pantalla del móvil se apague
+    async function activarWakeLock() {
+        try {
+            if ('wakeLock' in navigator) {
+                wakeLock = await navigator.requestWakeLock('screen');
+            }
+        } catch (err) {
+            console.log("Wake Lock no disponible:", err);
+        }
+    }
+
+    function iniciarExamenSeguro() {
+        const cedula = document.getElementById('user-cedula').value.trim();
+        if (!cedula) {
+            alert("Por favor, ingrese su número de cédula para comenzar.");
+            document.getElementById('user-cedula').focus();
+            return;
+        }
+        cedulaActual = cedula;
+        examenIniciado = true;
+        
+        document.getElementById('login-section').style.display = 'none';
+        document.getElementById('examen-section').style.display = 'block';
+        
+        activarWakeLock();
+    }
+
+    // 2. Control riguroso de visibilidad (Detección de cambio de pestaña o app)
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden && examenIniciado) {
+            intentosSalida++;
+            manejarInfraccionSeguridad(intentosSalida);
+        }
+    });
+
+    function manejarInfraccionSeguridad(nivel) {
+        if (nivel === 1) {
+            // Primera Advertencia
+            alert("⚠️ ¡ADVERTENCIA DE SEGURIDAD SEFAN (1/3)!\n\nSe ha detectado que salió de la pantalla del examen. Si vuelve a cambiar de aplicación o abrir otra ventana, se enviará un reporte de alerta disciplinaria a su hoja de vida.");
+        } 
+        else if (nivel === 2) {
+            // Segunda Advertencia + Reporte en Base de Datos (Google Sheets)
+            alert("🚨 ¡ALERTA GRAVE (2/3)!\n\nHa abandonado la evaluación por segunda vez. Se ha registrado una ALERTA DISCIPLINARIA en la base de datos institucional asociada a su cédula. Un tercer intento anulará definitivamente su examen.");
+            
+            enviarReporteAlServidor("ALERTA_DISCIPLINARIA_INTENTO_2");
+        } 
+        else if (nivel >= 3) {
+            // Tercera Infracción: Bloqueo Definitivo y Pérdida
+            document.getElementById('cedula-bloqueada').innerText = cedulaActual;
+            document.getElementById('main-container').style.display = 'none';
+            document.getElementById('bloqueo-screen').style.display = 'flex';
+
+            enviarReporteAlServidor("EXAMEN_ANULADO_TRAMPA");
+        }
+    }
+
+    function enviarReporteAlServidor(estadoAlerta) {
+        if (!cedulaActual) return;
+
+        const payload = new URLSearchParams();
+        payload.append("cedula", cedulaActual);
+        payload.append("intentoNum", estadoAlerta);
+        payload.append("aciertos", "0");
+        payload.append("totalPreguntas", "10");
+
+        fetch(WEB_APP_URL, {
+            method: 'POST',
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: payload.toString(),
+            mode: 'no-cors',
+            keepalive: true
+        }).catch(err => console.error("Error registrando incidencia:", err));
+    }
+</script>
+</body>
+</html>
