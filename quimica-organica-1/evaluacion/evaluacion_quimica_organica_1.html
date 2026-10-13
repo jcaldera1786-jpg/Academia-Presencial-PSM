@@ -29,6 +29,7 @@
         .btn { background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: none; padding: 0.8rem; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem; margin-top: 0.5rem; }
         .section-title { color: var(--accent-gold); font-size: 1rem; font-weight: bold; margin-top: 1.2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.3rem; }
         .question { font-size: 0.9rem; margin: 0.8rem 0; text-align: left; }
+        .molecule-box { background: #0b1329; border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; text-align: center; margin: 0.8rem 0; display: flex; justify-content: center; align-items: center; }
         #bloqueo-screen { display: none; position: fixed; inset: 0; background: #0f172a; z-index: 9999; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; text-align: center; }
     </style>
 </head>
@@ -65,19 +66,37 @@
                 <p style="color: var(--accent-green); font-weight: bold; text-align: center;">🟢 Modo Protegido Activo - Resuelva en su hoja física</p>
                 
                 <div class="section-title">SECCIÓN 1: Nomenclatura (Valor: 6 Puntos - 2 Pts c/u)</div>
-                <div class="question"><b>Instrucciones:</b> Nombre correctamente cada uno de los compuestos orgánicos presentados en la estructura gráfica oficial de la evaluación[cite: 5].<br>
-                <b>a.</b> Estructura ramificada con ciclohexilo y grupo hidroxilo ($-\text{OH}$)[cite: 5].<br>
-                <b>b.</b> Compuesto policarbonado con sustituyentes halógenos y alcohol[cite: 5].<br>
-                <b>c.</b> Sistema hidrocarbonado con múltiples insaturaciones y grupos funcionales oxigenados[cite: 5].</div>
+                <div class="question"><b>Instrucciones:</b> Nombre correctamente cada uno de los siguientes compuestos químicos presentados en las estructuras:</div>
+                
+                <div class="question"><b>a.</b></div>
+                <div class="molecule-box">
+                    <svg width="280" height="110" viewBox="0 0 280 110">
+                        <text x="10" y="65" fill="#38bdf8" font-family="monospace" font-size="14">Ciclohexil — CH(CH₃) — CH(OH) — CH₂ — CH(CH₃) — CH₂Br</text>
+                    </svg>
+                </div>
+
+                <div class="question"><b>b.</b></div>
+                <div class="molecule-box">
+                    <svg width="260" height="90" viewBox="0 0 260 90">
+                        <text x="10" y="50" fill="#38bdf8" font-family="monospace" font-size="14">CH₃ — CH(OH) — CH₂ — CH(CH₃) — CH₂ — OH</text>
+                    </svg>
+                </div>
+
+                <div class="question"><b>c.</b></div>
+                <div class="molecule-box">
+                    <svg width="260" height="90" viewBox="0 0 260 90">
+                        <text x="10" y="50" fill="#38bdf8" font-family="monospace" font-size="14">HC≡C — CH(OH) — CH(CH₃) — CH₂ — CH₃</text>
+                    </svg>
+                </div>
 
                 <div class="section-title">SECCIÓN 2: Verdadero o Falso con Justificación Teórica (Valor: 4 Puntos - 1 Pt c/u)</div>
-                <div class="question"><b>1. ( &nbsp; )</b> El fenol es considerablemente más ácido que el ciclohexanol[cite: 6].</div>
-                <div class="question"><b>2. ( &nbsp; )</b> Todas las moléculas que contienen al menos un plano de simetría interno son quirales[cite: 6].</div>
-                <div class="question"><b>3. ( &nbsp; )</b> Entre el metanotiol ($\text{CH}_3\text{SH}$) y el metanol ($\text{CH}_3\text{OH}$), ¿cuál molécula presenta mayor acidez y cuál es el factor determinante principal?[cite: 6]</div>
-                <div class="question"><b>4. ( &nbsp; )</b> ¿Cuál de las siguientes condiciones es requisito suficiente y necesario para que una molécula que contiene centros quirales sea clasificada como un compuesto Meso? (Seleccione la opción correcta y justifique)[cite: 6].</div>
+                <div class="question"><b>1. ( &nbsp; )</b> El fenol es considerablemente más ácido que el ciclohexanol[cite: 5].</div>
+                <div class="question"><b>2. ( &nbsp; )</b> Todas las moléculas que contienen al menos un plano de simetría interno son quirales[cite: 5].</div>
+                <div class="question"><b>3. ( &nbsp; )</b> Entre el metanotiol ($\text{CH}_3\text{SH}$) y el metanol ($\text{CH}_3\text{OH}$), ¿cuál molécula presenta mayor acidez y cuál es el factor determinante principal?[cite: 5]</div>
+                <div class="question"><b>4. ( &nbsp; )</b> ¿Cuál de las siguientes condiciones es requisito suficiente y necesario para que una molécula que contiene centros quirales sea clasificada como un compuesto Meso?[cite: 5]</div>
 
                 <div class="section-title">SECCIÓN 3: Desarrollo Teórico-Conceptual (Valor: 6 Puntos - 3 Pts c/u)</div>
-                <div class="question"><b>1. Efectos Electrónicos y Reactividad (Basicidad Comparativa):</b> Compare la basicidad de la metilamina ($\text{CH}_3\text{NH}_2$), la anilina ($\text{C}_6\text{H}_5\text{NH}_2$) y la acetamida ($\text{CH}_3\text{CONH}_2$)[cite: 6].<br>a) Ordene de mayor a menor basicidad según Brønsted-Lowry y Lewis[cite: 6].<br>b) Explique el comportamiento basándose en la disponibilidad del par solitario del nitrógeno y los efectos electrónicos[cite: 6].</div>
+                <div class="question"><b>1. Efectos Electrónicos y Reactividad (Basicidad Comparativa):</b> Compare la basicidad de la metilamina ($\text{CH}_3\text{NH}_2$), la anilina ($\text{C}_6\text{H}_5\text{NH}_2$) y la acetamida ($\text{CH}_3\text{CONH}_2$)[cite: 6]:<br>a) Ordene de mayor a menor basicidad según Brønsted-Lowry y Lewis[cite: 6].<br>b) Explique el comportamiento basándose en la disponibilidad del par solitario del nitrógeno y los efectos electrónicos[cite: 6].</div>
                 <div class="question"><b>2. Análisis Conformativo en Sistemas Acíclicos:</b> Para el 1,2-dicloroetano ($\text{ClCH}_2\text{CH}_2\text{Cl}$)[cite: 6]:<br>a) Dibuja mediante proyecciones de Newman todas las conformaciones alternadas (*Anti*, *Gauche*) y eclipsadas a lo largo del enlace $\text{C1-C2}$[cite: 6].<br>b) Elabora una gráfica cualitativa de Energía Potencial vs. Ángulo Diedro ($0^\circ$ a $360^\circ$)[cite: 6].<br>c) Explica las interacciones estéricas y electrónicas que justifican la estabilidad de cada conformación[cite: 6].</div>
 
                 <div class="section-title">SECCIÓN 4: Análisis Crítico y Resolución de Problemas (Valor: 4 Puntos)</div>
