@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MasteryLimits - Plataforma Adaptativa de Cálculo de Límites</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- KaTeX para renderizado matemático -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="initKaTeX();"></script>
+
+    <!-- Chart.js para Estadísticas -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .katex-display { margin: 0.5em 0 !important; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+        }
+        .dark .glass-panel {
+            background: rgba(17, 24, 39, 0.85);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-full flex flex-col font-sans antialiased transition-colors duration-200">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800 glass-panel">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('theory')">
+                    <div class="bg-gradient-to-tr from-brand-600 to-indigo-500 p-2 rounded-xl text-white shadow-md shadow-brand-500/20">
+                        <i data-lucide="infinity" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-600 to-indigo-500">MasteryLimits</span>
+                        <span class="block text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Cálculo Diferencial</span>
+                    </div>
+                </div>
+
+                <!-- Nav Items -->
+                <nav class="hidden md:flex space-x-1">
+                    <button onclick="switchTab('theory')" id="nav-theory" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2 text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/30">
+                        <i data-lucide="book-open" class="w-4 h-4"></i>
+                        <span>Teoría y Métodos</span>
+                    </button>
+                    <button onclick="switchTab('examples')" id="nav-examples" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                        <i data-lucide="file-text" class="w-4 h-4"></i>
+                        <span>Ejemplos Guiados</span>
+                    </button>
+                    <button onclick="switchTab('quiz')" id="nav-quiz" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                        <i data-lucide="brain-circuit" class="w-4 h-4"></i>
+                        <span>Práctica Adaptativa</span>
+                    </button>
+                    <button onclick="switchTab('stats')" id="nav-stats" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                        <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+                        <span>Diagnóstico y Diagnóstico</span>
+                    </button>
+                </nav>
+
+                <!-- Actions -->
+                <div class="flex items-center space-x-3">
+                    <button id="theme-toggle" onclick="toggleTheme()" class="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                        <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                        <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Bar -->
+        <div class="md:hidden flex justify-around border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-2">
+            <button onclick="switchTab('theory')" id="mnav-theory" class="p-2 text-brand-600 flex flex-col items-center text-xs font-medium">
+                <i data-lucide="book-open" class="w-5 h-5 mb-1"></i>
+                <span>Teoría</span>
+            </button>
+            <button onclick="switchTab('examples')" id="mnav-examples" class="p-2 text-slate-500 flex flex-col items-center text-xs font-medium">
+                <i data-lucide="file-text" class="w-5 h-5 mb-1"></i>
+                <span>Ejemplos</span>
+            </button>
+            <button onclick="switchTab('quiz')" id="mnav-quiz" class="p-2 text-slate-500 flex flex-col items-center text-xs font-medium">
+                <i data-lucide="brain-circuit" class="w-5 h-5 mb-1"></i>
+                <span>Práctica</span>
+            </button>
+            <button onclick="switchTab('stats')" id="mnav-stats" class="p-2 text-slate-500 flex flex-col items-center text-xs font-medium">
+                <i data-lucide="bar-chart-2" class="w-5 h-5 mb-1"></i>
+                <span>Progreso</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- TAB 1: TEORÍA -->
+        <section id="tab-theory" class="tab-content space-y-8">
+            <div class="bg-gradient-to-r from-brand-600 to-indigo-700 rounded-2xl p-6 sm:p-10 text-white shadow-xl">
+                <div class="max-w-3xl space-y-4">
+                    <span class="inline-block bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider">Fundamentos Clave</span>
+                    <h1 class="text-3xl sm:text-4xl font-extrabold leading-tight">Estudio de Límites y Módulos de Cálculo</h1>
+                    <p class="text-indigo-100 text-sm sm:text-base">
+                        El concepto de límite describe el comportamiento de una función a medida que la variable independiente se aproxima a un valor determinado. Explora las leyes fundamentales y las técnicas algebraicas para eliminar indeterminaciones.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Grid de Propiedades Básicas -->
+            <div>
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <i data-lucide="layers" class="text-brand-600"></i>
+                    Propiedades Fundamentales de los Límites
+                </h2>
+                <p class="text-slate-600 dark:text-slate-400 text-sm mb-6">
+                    Si $\lim_{x \to a} f(x) = L$ y $\lim_{x \to a} g(x) = M$, se verifican las siguientes propiedades algebraicas:
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Tarjeta Propiedad 1 -->
+                    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-700">
+                        <div class="text-xs font-semibold text-brand-600 dark:text-brand-400 uppercase tracking-wide mb-1">Suma y Resta</div>
+                        <h3 class="font-bold text-lg mb-2">Límite de una Suma / Diferencia</h3>
+                        <div class="bg-slate-50 dark:bg-slate-900 p-3 rounded-lg text-center font-mono text-sm mb-3">
+                            $$\lim_{x \to a} [f(x) \pm g(x)] = L \pm M$$
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">El límite de la suma es la suma de los límites de cada función individualmente.</p>
+                    </div>
+
+                    <!-- Tarjeta Propiedad 2 -->
+                    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-700">
+                        <div class="text-xs font-semibold text-brand-600 dark:text-brand-400 uppercase tracking-wide mb-1">Producto</div>
+                        <h3 class="font-bold text-lg mb-2">Límite de un Producto</h3>
+                        <div class="bg-slate-50 dark:bg-slate-900 p-3 rounded-lg text-center font-mono text-sm mb-3">
+                            $$\lim_{x \to a} [f(x) \cdot g(x)] = L \cdot M$$
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">El límite del producto de dos funciones es el producto de sus respectivos límites.</p>
+                    </div>
+
+                    <!-- Tarjeta Propiedad 3 -->
+                    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-700">
+                        <div class="text-xs font-semibold text-brand-600 dark:text-brand-400 uppercase tracking-wide mb-1">Cociente</div>
+                        <h3 class="font-bold text-lg mb-2">Límite de un Cociente</h3>
+                        <div class="bg-slate-50 dark:bg-slate-900 p-3 rounded-lg text-center font-mono text-sm mb-3">
+                            $$\lim_{x \to a} \frac{f(x)}{g(x)} = \frac{L}{M}, \quad M \neq 0$$
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Válido siempre y cuando el límite del denominador $M$ sea distinto de cero.</p>
+                    </div>
+
+                    <!-- Tarjeta Propiedad 4 -->
+                    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-700">
+                        <div class="text-xs font-semibold text-brand-600 dark:text-brand-400 uppercase tracking-wide mb-1">Potencia y Raíz</div>
+                        <h3 class="font-bold text-lg mb-2">Límite de una Potencia</h3>
+                        <div class="bg-slate-50 dark:bg-slate-900 p-3 rounded-lg text-center font-mono text-sm mb-3">
+                            $$\lim_{x \to a} [f(x)]^n = L^n$$
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">El límite de la función elevada a un exponente equivale al límite elevado a esa potencia.</p>
+                    </div>
+
+                    <!-- Tarjeta Propiedad 5 -->
+                    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-700">
+                        <div class="text-xs font-semibold text-brand-600 dark:text-brand-400 uppercase tracking-wide mb-1">Multiplicación por Constante</div>
+                        <h3 class="font-bold text-lg mb-2">Factor Constante</h3>
+                        <div class="bg-slate-50 dark:bg-slate-900 p-3 rounded-lg text-center font-mono text-sm mb-3">
+                            $$\lim_{x \to a} [c \cdot f(x)] = c \cdot L$$
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Las constantes multiplicativas pueden salir fuera del operador de límite libremente.</p>
+                    </div>
+
+                    <!-- Tarjeta Propiedad 6 -->
+                    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-700">
+                        <div class="text-xs font-semibold text-brand-600 dark:text-brand-400 uppercase tracking-wide mb-1">Límite Trigonométrico Notables</div>
+                        <h3 class="font-bold text-lg mb-2">Seno Fundamental</h3>
+                        <div class="bg-slate-50 dark:bg-slate-900 p-3 rounded-lg text-center font-mono text-sm mb-3">
+                            $$\lim_{x \to 0} \frac{\sin(x)}{x} = 1$$
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Uno de los límites trigonométricos especiales más ampliamente utilizados.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formas Indeterminadas & Técnicas de Resolución -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 space-y-6">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <i data-lucide="wrench" class="text-brand-600"></i>
+                    Formas Indeterminadas y Técnicas Algebraicas
+                </h2>
+                <p class="text-slate-600 dark:text-slate-400 text-sm">
+                    Al sustituir directamente $x = a$, con frecuencia obtenemos expresiones indeterminadas como $\frac{0}{0}$ o $\frac{\infty}{\infty}$. Estas formas <strong>no representan la inexistencia del límite</strong>, sino que exigen simplificar la expresión mediante herramientas matemáticas específicas:
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Técnica 1: Factorización -->
+                    <div class="border-l-4 border-indigo-500 pl-4 py-1 space-y-2">
+                        <h4 class="font-bold text-base">1. Factorización y Cancelación ($\frac{0}{0}$)</h4>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">
+                            Se utiliza para polinomios. El factor $(x - a)$ suele causar que el numerador y el denominador se anulen simultáneamente. Factorizar (utilizando diferencia de cuadrados, trinomios o suma/diferencia de cubos) permite simplificar este factor nulo.
+                        </p>
+                        <div class="bg-slate-100 dark:bg-slate-900 p-2 rounded text-xs font-mono">
+                            Fórmulas útiles: $a^2-b^2=(a-b)(a+b)$ <br>
+                            $a^3-b^3=(a-b)(a^2+ab+b^2)$
+                        </div>
+                    </div>
+
+                    <!-- Técnica 2: Racionalización -->
+                    <div class="border-l-4 border-indigo-500 pl-4 py-1 space-y-2">
+                        <h4 class="font-bold text-base">2. Racionalización ($\frac{0}{0}$)</h4>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">
+                            Cuando aparecen raíces cuadradas o cúbicas, multiplicamos el numerador y denominador por la <strong>expresión conjugada</strong> para transformar las raíces en expresiones algebraicas que permitan aislar y cancelar el factor crítico $(x - a)$.
+                        </p>
+                        <div class="bg-slate-100 dark:bg-slate-900 p-2 rounded text-xs font-mono">
+                            Conjugado: $(\sqrt{A} - \sqrt{B}) \rightarrow (\sqrt{A} + \sqrt{B})$
+                        </div>
+                    </div>
+
+                    <!-- Técnica 3: División por la Máxima Potencia -->
+                    <div class="border-l-4 border-indigo-500 pl-4 py-1 space-y-2">
+                        <h4 class="font-bold text-base">3. Divisibilidad al Infinito ($\frac{\infty}{\infty}$)</h4>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">
+                            Para límites donde $x \to \infty$ o $x \to -\infty$ en funciones racionales, dividimos tanto el numerador como el denominador entre $x^k$, donde $k$ representa la mayor potencia del denominador. Aprovechamos la propiedad $\lim_{x \to \infty} \frac{1}{x^n} = 0$.
+                        </p>
+                    </div>
+
+                    <!-- Técnica 4: Regla de L'Hôpital -->
+                    <div class="border-l-4 border-indigo-500 pl-4 py-1 space-y-2">
+                        <h4 class="font-bold text-base">4. Regla de L'Hôpital</h4>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">
+                            Si $\lim_{x \to a} \frac{f(x)}{g(x)}$ produce las indeterminaciones $\frac{0}{0}$ o $\frac{\pm \infty}{\pm \infty}$, y las funciones son derivables:
+                        </p>
+                        <div class="bg-slate-100 dark:bg-slate-900 p-2 rounded text-xs font-mono">
+                            $$\lim_{x \to a} \frac{f(x)}{g(x)} = \lim_{x \to a} \frac{f'(x)}{g'(x)}$$
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: EJEMPLOS RESUELTOS -->
+        <section id="tab-examples" class="tab-content hidden space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold">Ejemplos Detallados Paso a Paso</h2>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">Analiza el procedimiento paso a paso para resolver los principales tipos de límites.</p>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Ejemplo 1 -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 text-xs font-semibold">Factorización</span>
+                        <h3 class="text-lg font-bold">Ejemplo 1: Indeterminación $\frac{0}{0}$ mediante Diferencia de Cuadrados</h3>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <p class="text-sm">Calcular el siguiente límite: <span class="font-semibold">$$\lim_{x \to 3} \frac{x^2 - 9}{x - 3}$$</span></p>
+                        
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl space-y-3 text-sm border border-slate-200 dark:border-slate-700">
+                            <p class="font-semibold text-slate-700 dark:text-slate-300">Paso 1: Evaluación por sustitución directa</p>
+                            <p class="text-slate-600 dark:text-slate-400">$$\frac{(3)^2 - 9}{3 - 3} = \frac{9 - 9}{0} = \frac{0}{0} \quad \text{(Indeterminación)}$$</p>
+                            
+                            <p class="font-semibold text-slate-700 dark:text-slate-300">Paso 2: Factorizar el numerador</p>
+                            <p class="text-slate-600 dark:text-slate-400">Aplicando diferencia de cuadrados $a^2 - b^2 = (a-b)(a+b)$ en el numerador $x^2 - 9$:</p>
+                            <p>$$\lim_{x \to 3} \frac{(x - 3)(x + 3)}{x - 3}$$</p>
+
+                            <p class="font-semibold text-slate-700 dark:text-slate-300">Paso 3: Cancelar el factor común $(x-3)$</p>
+                            <p class="text-slate-600 dark:text-slate-400">Como $x \to 3$, $x \neq 3$, por lo que $(x - 3) \neq 0$ y es válido simplificarlo:</p>
+                            <p>$$\lim_{x \to 3} (x + 3)$$</p>
+
+                            <p class="font-semibold text-slate-700 dark:text-slate-300">Paso 4: Sustituir nuevamente</p>
+                            <p class="text-slate-600 dark:text-slate-400 font-semibold text-brand-600 dark:text-brand-400">$$3 + 3 = 6$$</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ejemplo 2 -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 text-xs font-semibold">Racionalización</span>
+                        <h3 class="text-lg font-bold">Ejemplo 2: Indeterminación con Raíces Cuadradas</h3>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <p class="text-sm">Calcular el límite: <span class="font-semibold">$$\lim_{x \to 4} \frac{\sqrt{x} - 2}{x - 4}$$</span></p>
+                        
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl space-y-3 text-sm border border-slate-200 dark:border-slate-700">
+                            <p class="font-semibold text-slate-700 dark:text-slate-300">Paso 1: Evaluar la expresión</p>
+                            <p class="text-slate-600 dark:text-slate-400">$$\frac{\sqrt{4} - 2}{4 - 4} = \frac{2 - 2}{0} = \frac{0}{0} \quad \text{(Indeterminación)}$$</p>
+
+                            <p class="font-semibold text-slate-700 dark:text-slate-300">Paso 2: Multiplicar por el conjugado del numerador</p>
+                            <p class="text-slate-600 dark:text-slate-400">Multiplicamos numerador y denominador por $(\sqrt{x} + 2)$:</p>
+                            <p>$$\lim_{x \to 4} \frac{(\sqrt{x} - 2)(\sqrt{x} + 2)}{(x - 4)(\sqrt{x} + 2)}$$</p>
+
+                            <p class="font-semibold text-slate-700 dark:text-slate-300">Paso 3: Simplificar mediante $(\sqrt{a})^2 - b^2$</p>
+                            <p>$$\lim_{x \to 4} \frac{x - 4}{(x - 4)(\sqrt{x} + 2)}$$</p>
+
+                            <p class="font-semibold text-slate-700 dark:text-slate-300">Paso 4: Cancelar el factor $(x-4)$ y sustituir</p>
+                            <p>$$\lim_{x \to 4} \frac{1}{\sqrt{x} + 2} = \frac{1}{\sqrt{4} + 2} = \frac{1}{2 + 2} = \frac{1}{4}$$</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ejemplo 3 -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 text-xs font-semibold">Límites al Infinito</span>
+                        <h3 class="text-lg font-bold">Ejemplo 3: Función Racional cuando $x \to \infty$</h3>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <p class="text-sm">Resolver el límite: <span class="font-semibold">$$\lim_{x \to \infty} \frac{5x^3 - 2x + 1}{2x^3 + 4x^2 - 7}$$</span></p>
+                        
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl space-y-3 text-sm border border-slate-200 dark:border-slate-700">
+                            <p class="font-semibold text-slate-700 dark:text-slate-300">Paso 1: Identificar la mayor potencia del denominador</p>
+                            <p class="text-slate-600 dark:text-slate-400">La máxima potencia de $x$ presente en el denominador es $x^3$.</p>
+
+                            <p class="font-semibold text-slate-700 dark:text-slate-300">Paso 2: Dividir cada término entre $x^3$</p>
+                            <p>$$\lim_{x \to \infty} \frac{\frac{5x^3}{x^3} - \frac{2x}{x^3} + \frac{1}{x^3}}{\frac{2x^3}{x^3} + \frac{4x^2}{x^3} - \frac{7}{x^3}} = \lim_{x \to \infty} \frac{5 - \frac{2}{x^2} + \frac{1}{x^3}}{2 + \frac{4}{x} - \frac{7}{x^3}}$$</p>
+
+                            <p class="font-semibold text-slate-700 dark:text-slate-300">Paso 3: Aplicar el límite al infinito</p>
+                            <p class="text-slate-600 dark:text-slate-400">Dado que $\lim_{x \to \infty} \frac{k}{x^n} = 0$ para todo $n > 0$:</p>
+                            <p class="font-semibold text-brand-600 dark:text-brand-400">$$\frac{5 - 0 + 0}{2 + 0 - 0} = \frac{5}{2}$$</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: PRÁCTICA ADAPTATIVA -->
+        <section id="tab-quiz" class="tab-content hidden space-y-6">
+            <!-- Banner Módulo Adaptativo -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center space-x-2">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span> Generador Paramétrico Activo
+                        </span>
+                    </div>
+                    <h2 class="text-2xl font-bold">Práctica Guiada con Motor Adaptativo</h2>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">
+                        El sistema generará ejercicios infinitos no repetitivos y ajustará automáticamente el enfoque según tus áreas de oportunidad.
+                    </p>
+                </div>
+
+                <!-- Selector Manual / Modo Inteligente -->
+                <div class="flex items-center bg-slate-100 dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold">
+                    <button onclick="setQuizMode('adaptive')" id="btn-mode-adaptive" class="px-3 py-2 rounded-lg transition-all bg-white dark:bg-slate-800 text-brand-600 dark:text-brand-400 shadow-sm">
+                        Modo Inteligente
+                    </button>
+                    <button onclick="setQuizMode('random')" id="btn-mode-random" class="px-3 py-2 rounded-lg transition-all text-slate-500 dark:text-slate-400">
+                        Alea Global
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quiz Card -->
+            <div id="quiz-card" class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <!-- Header del Ejercicio -->
+                <div class="bg-slate-50 dark:bg-slate-900/50 px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <span id="quiz-topic-tag" class="px-3 py-1 rounded-full text-xs font-semibold bg-brand-100 text-brand-700 dark:bg-brand-900/50 dark:text-brand-300">
+                            Categoría
+                        </span>
+                        <span id="quiz-difficulty-tag" class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 font-medium">
+                            Nivel Medio
+                        </span>
+                    </div>
+                    <div class="text-xs text-slate-400 font-mono">
+                        Ejercicio #<span id="quiz-count">1</span>
+                    </div>
+                </div>
+
+                <!-- Pregunta / Expresión Matemática -->
+                <div class="p-6 sm:p-8 space-y-6">
+                    <div class="text-center space-y-3">
+                        <p class="text-slate-600 dark:text-slate-300 font-medium">Evalúa o calcula el valor exacto del siguiente límite:</p>
+                        <div id="quiz-math-container" class="text-2xl sm:text-3xl font-bold py-4 text-slate-900 dark:text-white bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 shadow-inner">
+                            $$\lim_{x \to 2} \frac{x^2 - 4}{x - 2}$$
+                        </div>
+                    </div>
+
+                    <!-- Opciones de Respuesta -->
+                    <div id="quiz-options" class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                        <!-- Generado por JS -->
+                    </div>
+
+                    <!-- Explicación / Retroalimentación -->
+                    <div id="quiz-feedback" class="hidden rounded-xl p-5 border space-y-3">
+                        <!-- Generado por JS tras responder -->
+                    </div>
+                </div>
+
+                <!-- Footer / Navegación -->
+                <div class="bg-slate-50 dark:bg-slate-900/50 px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                    <div class="text-xs text-slate-500">
+                        Puntuación: <span id="quiz-score-val" class="font-bold text-slate-800 dark:text-slate-200">0</span> aciertos
+                    </div>
+                    <button id="quiz-next-btn" onclick="generateNewExercise()" class="hidden bg-brand-600 hover:bg-brand-700 text-white px-5 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2 shadow-md shadow-brand-500/20">
+                        <span>Siguiente Ejercicio</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: DIAGNÓSTICO Y ESTADÍSTICAS -->
+        <section id="tab-stats" class="tab-content hidden space-y-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-2xl font-bold">Diagnóstico Continuo y Panel de Dominio</h2>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">Análisis detallado de rendimiento y áreas de fortaleza detectadas por el sistema.</p>
+                </div>
+                <button onclick="resetStats()" class="text-xs text-rose-600 dark:text-rose-400 hover:underline flex items-center gap-1 font-medium">
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                    Reiniciar Progreso
+                </button>
+            </div>
+
+            <!-- Métricas Resumen -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-4">
+                    <div class="p-3 bg-brand-100 dark:bg-brand-900/40 text-brand-600 dark:text-brand-300 rounded-xl">
+                        <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold" id="stat-total-correct">0</div>
+                        <div class="text-xs text-slate-500">Ejercicios Correctos</div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-4">
+                    <div class="p-3 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300 rounded-xl">
+                        <i data-lucide="target" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold" id="stat-accuracy">0%</div>
+                        <div class="text-xs text-slate-500">Tasa de Acierto Global</div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-4">
+                    <div class="p-3 bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-300 rounded-xl">
+                        <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-amber-600 dark:text-amber-400" id="stat-weakest-topic">N/A</div>
+                        <div class="text-xs text-slate-500">Punto Débil Principal</div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-4">
+                    <div class="p-3 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 rounded-xl">
+                        <i data-lucide="award" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400" id="stat-strongest-topic">N/A</div>
+                        <div class="text-xs text-slate-500">Área de Mayor Dominio</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráficos -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Gráfico de Radar de Dominio -->
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
+                    <h3 class="font-bold text-base flex items-center gap-2">
+                        <i data-lucide="pie-chart" class="w-4 h-4 text-brand-600"></i>
+                        Perfil de Dominio por Categoria (%)
+                    </h3>
+                    <div class="relative h-64 w-full">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Gráfico de Aciertos vs Errores -->
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
+                    <h3 class="font-bold text-base flex items-center gap-2">
+                        <i data-lucide="bar-chart" class="w-4 h-4 text-brand-600"></i>
+                        Distribución de Respuestas por Tema
+                    </h3>
+                    <div class="relative h-64 w-full">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reporte Inteligente Diagnóstico -->
+            <div class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white rounded-2xl p-6 shadow-md space-y-3">
+                <div class="flex items-center space-x-2 text-brand-400 font-semibold text-xs uppercase tracking-wider">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    <span>Diagnóstico Adaptativo del Sistema</span>
+                </div>
+                <h4 class="text-lg font-bold">Recomendación Personalizada de Estudio</h4>
+                <p id="diagnostic-recommendation" class="text-slate-300 text-sm leading-relaxed">
+                    Resuelve al menos 5 ejercicios en el módulo de Práctica Adaptativa para que el motor identifique tus patrones de error y genere recomendaciones personalizadas.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 dark:border-slate-800 py-6 bg-white dark:bg-slate-900 text-center text-xs text-slate-500">
+        <p>MasteryLimits &copy; 2026 - Plataforma Educativa Interactiva para el Cálculo Diferencial</p>
+    </footer>
+
+    <!-- LÓGICA DE LA APLICACIÓN -->
+    <script>
+        // --- ESTADO GLOBAL Y CATEGORÍAS ---
+        const TOPICS = {
+            DIRECT: 'Sustitución Directa',
+            FACT_QUAD: 'Factorización (Trinomios y Diferencia de Cuadrados)',
+            RACIONALIZATION: 'Racionalización de Raíces',
+            INFINITY: 'Límites al Infinito (∞/∞)',
+            TRIG: 'Límites Trigonométricos Notables'
+        };
+
+        let stats = {
+            [TOPICS.DIRECT]: { correct: 0, wrong: 0 },
+            [TOPICS.FACT_QUAD]: { correct: 0, wrong: 0 },
+            [TOPICS.RACIONALIZATION]: { correct: 0, wrong: 0 },
+            [TOPICS.INFINITY]: { correct: 0, wrong: 0 },
+            [TOPICS.TRIG]: { correct: 0, wrong: 0 }
+        };
+
+        let quizMode = 'adaptive'; // 'adaptive' | 'random'
+        let currentExercise = null;
+        let exerciseCount = 0;
+        let totalScore = 0;
+        let radarChartInstance = null;
+        let barChartInstance = null;
+
+        // --- INICIALIZACIÓN ---
+        window.addEventListener('DOMContentLoaded', () => {
+            loadStatsFromStorage();
+            initLucideIcons();
+            initCharts();
+            generateNewExercise();
+            updateStatsUI();
+        });
+
+        function initKaTeX() {
+            if (window.renderMathInElement) {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function reRenderMath() {
+            setTimeout(() => {
+                if (window.renderMathInElement) {
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: '$$', right: '$$', display: true},
+                            {left: '$', right: '$', display: false}
+                        ],
+                        throwOnError: false
+                    });
+                }
+            }, 50);
+        }
+
+        function initLucideIcons() {
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        }
+
+        // --- NAVEGACIÓN ENTRE TABS ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            // Actualizar botones Nav Desktop
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.className = "nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800";
+            });
+            const activeBtn = document.getElementById(`nav-${tabId}`);
+            if (activeBtn) {
+                activeBtn.className = "nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2 text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/30";
+            }
+
+            // Actualizar botones Nav Mobile
+            document.querySelectorAll('[id^="mnav-"]').forEach(btn => {
+                btn.className = "p-2 text-slate-500 flex flex-col items-center text-xs font-medium";
+            });
+            const activeMNav = document.getElementById(`mnav-${tabId}`);
+            if (activeMNav) {
+                activeMNav.className = "p-2 text-brand-600 flex flex-col items-center text-xs font-medium";
+            }
+
+            if (tabId === 'stats') {
+                updateCharts();
+            }
+
+            reRenderMath();
+        }
+
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        function setQuizMode(mode) {
+            quizMode = mode;
+            const btnAdaptive = document.getElementById('btn-mode-adaptive');
+            const btnRandom = document.getElementById('btn-mode-random');
+
+            if (mode === 'adaptive') {
+                btnAdaptive.className = "px-3 py-2 rounded-lg transition-all bg-white dark:bg-slate-800 text-brand-600 dark:text-brand-400 shadow-sm font-semibold";
+                btnRandom.className = "px-3 py-2 rounded-lg transition-all text-slate-500 dark:text-slate-400 font-normal";
+            } else {
+                btnRandom.className = "px-3 py-2 rounded-lg transition-all bg-white dark:bg-slate-800 text-brand-600 dark:text-brand-400 shadow-sm font-semibold";
+                btnAdaptive.className = "px-3 py-2 rounded-lg transition-all text-slate-500 dark:text-slate-400 font-normal";
+            }
+            generateNewExercise();
+        }
+
+        // --- MOTOR DEDICADO DE GENERACIÓN ALEATORIA PARAMÉTRICA ---
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function pickTopicByWeakness() {
+            if (quizMode === 'random') {
+                const keys = Object.values(TOPICS);
+                return keys[Math.floor(Math.random() * keys.length)];
+            }
+
+            // Algoritmo Adaptativo: Pondera según tasa de error (o bajo número de intentos)
+            let maxWeight = -1;
+            let chosenTopic = TOPICS.DIRECT;
+
+            Object.keys(stats).forEach(topic => {
+                const data = stats[topic];
+                const total = data.correct + data.wrong;
+                let weight = 0;
+
+                if (total === 0) {
+                    weight = 50; // Peso inicial para explorar temas no probados
+                } else {
+                    const errorRate = data.wrong / total;
+                    weight = errorRate * 100 + (10 / total); // Más peso a fallas
+                }
+
+                // Añadir pequeña variabilidad aleatoria para no estancar
+                weight += Math.random() * 15;
+
+                if (weight > maxWeight) {
+                    maxWeight = weight;
+                    chosenTopic = topic;
+                }
+            });
+
+            return chosenTopic;
+        }
+
+        function generateExerciseData() {
+            const topic = pickTopicByWeakness();
+
+            switch (topic) {
+                case TOPICS.DIRECT: {
+                    const a = getRandomInt(1, 5);
+                    const b = getRandomInt(-4, 6);
+                    const c = getRandomInt(1, 4);
+                    const latex = `\\lim_{x \\to ${a}} (${c}x^2 ${b >= 0 ? '+' + b : b})`;
+                    const correctAns = c * a * a + b;
+                    
+                    const options = [
+                        correctAns.toString(),
+                        (correctAns + getRandomInt(2, 5)).toString(),
+                        (correctAns - getRandomInt(2, 4)).toString(),
+                        (c * a + b).toString()
+                    ];
+
+                    return {
+                        topic: TOPICS.DIRECT,
+                        difficulty: 'Fácil',
+                        latex: latex,
+                        correct: correctAns.toString(),
+                        options: shuffleArray(options),
+                        explanation: `Sustitución directa inmediata: $x = ${a} \\Rightarrow ${c}(${a})^2 + (${b}) = ${correctAns}$.`
+                    };
+                }
+
+                case TOPICS.FACT_QUAD: {
+                    const a = getRandomInt(1, 6);
+                    // (x^2 - a^2) / (x - a)
+                    const latex = `\\lim_{x \\to ${a}} \\frac{x^2 - ${a*a}}{x - ${a}}`;
+                    const correctAns = (2 * a).toString();
+
+                    const options = [
+                        correctAns,
+                        (a).toString(),
+                        (2 * a + 2).toString(),
+                        "0"
+                    ];
+
+                    return {
+                        topic: TOPICS.FACT_QUAD,
+                        difficulty: 'Intermedio',
+                        latex: latex,
+                        correct: correctAns,
+                        options: shuffleArray(options),
+                        explanation: `1) Al evaluar da $\\frac{0}{0}$.<br>2) Factorizamos diferencia de cuadrados: $x^2 - ${a*a} = (x - ${a})(x + ${a})$.<br>3) Cancelamos $(x - ${a})$: $\\lim_{x \\to ${a}} (x + ${a}) = ${a} + ${a} = ${correctAns}$.`
+                    };
+                }
+
+                case TOPICS.RACIONALIZATION: {
+                    const k = getRandomInt(1, 9);
+                    const sqrtK = Math.sqrt(k);
+                    // Para números exactos elegimos cuadrados perfectos
+                    const squares = [1, 4, 9, 16, 25];
+                    const a = squares[Math.floor(Math.random() * squares.length)];
+                    const sqrtA = Math.sqrt(a);
+
+                    const latex = `\\lim_{x \\to ${a}} \\frac{\\sqrt{x} - ${sqrtA}}{x - ${a}}`;
+                    const correctVal = `1/${2 * sqrtA}`;
+
+                    const options = [
+                        `1/${2 * sqrtA}`,
+                        `${2 * sqrtA}`,
+                        `1/${sqrtA}`,
+                        "0"
+                    ];
+
+                    return {
+                        topic: TOPICS.RACIONALIZATION,
+                        difficulty: 'Avanzado',
+                        latex: latex,
+                        correct: correctVal,
+                        options: shuffleArray(options),
+                        explanation: `1) Genera la indeterminación $\\frac{0}{0}$.<br>2) Multiplicamos por la expresión conjugada $(\\sqrt{x} + ${sqrtA})$ arriba y abajo.<br>3) Se simplifica a $\\lim_{x \\to ${a}} \\frac{x - ${a}}{(x - ${a})(\\sqrt{x} + ${sqrtA})} = \\lim_{x \\to ${a}} \\frac{1}{\\sqrt{x} + ${sqrtA}} = \\frac{1}{2 \\cdot ${sqrtA}} = ${correctVal}$.`
+                    };
+                }
+
+                case TOPICS.INFINITY: {
+                    const n = getRandomInt(2, 5);
+                    const d = getRandomInt(2, 5);
+                    const p = getRandomInt(2, 4);
+
+                    const latex = `\\lim_{x \\to \\infty} \\frac{${n}x^${p} + ${getRandomInt(1, 9)}x}{${d}x^${p} - ${getRandomInt(1, 9)}}`;
+                    const correctAns = `${n}/${d}`;
+
+                    const options = [
+                        `${n}/${d}`,
+                        `${n}`,
+                        "\\infty",
+                        "0"
+                    ];
+
+                    return {
+                        topic: TOPICS.INFINITY,
+                        difficulty: 'Intermedio',
+                        latex: latex,
+                        correct: correctAns,
+                        options: shuffleArray(options),
+                        explanation: `1) Indeterminación $\\frac{\\infty}{\\infty}$.<br>2) Dividimos término a término entre la máxima potencia $x^${p}$.<br>3) Las fracciones con $x$ en el denominador tienden a 0, quedando únicamente la razón de los coeficientes principales: $\\frac{${n}}{${d}}$.`
+                    };
+                }
+
+                case TOPICS.TRIG: {
+                    const k = getRandomInt(2, 8);
+                    const latex = `\\lim_{x \\to 0} \\frac{\\sin(${k}x)}{x}`;
+                    const correctAns = k.toString();
+
+                    const options = [
+                        correctAns,
+                        "1",
+                        `1/${k}`,
+                        "0"
+                    ];
+
+                    return {
+                        topic: TOPICS.TRIG,
+                        difficulty: 'Intermedio',
+                        latex: latex,
+                        correct: correctAns,
+                        options: shuffleArray(options),
+                        explanation: `Utilizando la propiedad fundamental del límite trigonométrico notable $\\lim_{u \\to 0} \\frac{\\sin(u)}{u} = 1$:<br>Multiplicamos y dividimos por $${k}$: $\\lim_{x \\to 0} ${k} \\cdot \\frac{\\sin(${k}x)}{${k}x} = ${k} \\cdot (1) = ${k}$.`
+                    };
+                }
+            }
+        }
+
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // --- RENDERIZADO DEL EJERCICIO EN PANTALLA ---
+        function generateNewExercise() {
+            currentExercise = generateExerciseData();
+            exerciseCount++;
+
+            document.getElementById('quiz-count').innerText = exerciseCount;
+            document.getElementById('quiz-topic-tag').innerText = currentExercise.topic;
+            document.getElementById('quiz-difficulty-tag').innerText = `Dificultad: ${currentExercise.difficulty}`;
+            
+            const mathContainer = document.getElementById('quiz-math-container');
+            mathContainer.innerHTML = `$$${currentExercise.latex}$$`;
+
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+
+            currentExercise.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn text-left p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 hover:bg-brand-50 dark:hover:bg-brand-900/30 hover:border-brand-300 transition-all text-sm font-medium flex items-center justify-between";
+                btn.onclick = () => checkAnswer(opt, btn);
+                btn.innerHTML = `
+                    <span class="font-mono text-slate-800 dark:text-slate-200">$${opt}$</span>
+                    <span class="w-5 h-5 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-xs font-bold text-slate-400 opacity-60">${String.fromCharCode(65 + index)}</span>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+
+            // Ocultar feedback y botón siguiente
+            const feedbackEl = document.getElementById('quiz-feedback');
+            feedbackEl.className = "hidden rounded-xl p-5 border space-y-3";
+            document.getElementById('quiz-next-btn').classList.add('hidden');
+
+            reRenderMath();
+        }
+
+        function checkAnswer(selectedOpt, selectedBtn) {
+            const isCorrect = (selectedOpt === currentExercise.correct);
+            const feedbackEl = document.getElementById('quiz-feedback');
+            const allOptionBtns = document.querySelectorAll('.option-btn');
+
+            // Deshabilitar botones de opciones
+            allOptionBtns.forEach(btn => btn.disabled = true);
+
+            if (isCorrect) {
+                selectedBtn.classList.add('bg-emerald-100', 'dark:bg-emerald-900/40', 'border-emerald-500', 'text-emerald-900', 'dark:text-emerald-200');
+                feedbackEl.className = "block bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 rounded-xl p-5 text-sm space-y-2";
+                feedbackEl.innerHTML = `
+                    <div class="flex items-center gap-2 font-bold text-emerald-700 dark:text-emerald-400">
+                        <i data-lucide="check-circle" class="w-5 h-5"></i>
+                        <span>¡Respuesta Correcta! Excelente procedimiento.</span>
+                    </div>
+                    <div class="pt-2 border-t border-emerald-200/60 dark:border-emerald-800/60">${currentExercise.explanation}</div>
+                `;
+                stats[currentExercise.topic].correct++;
+                totalScore++;
+            } else {
+                selectedBtn.classList.add('bg-rose-100', 'dark:bg-rose-900/40', 'border-rose-500', 'text-rose-900', 'dark:text-rose-200');
+                feedbackEl.className = "block bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800 text-rose-900 dark:text-rose-200 rounded-xl p-5 text-sm space-y-2";
+                feedbackEl.innerHTML = `
+                    <div class="flex items-center gap-2 font-bold text-rose-700 dark:text-rose-400">
+                        <i data-lucide="x-circle" class="w-5 h-5"></i>
+                        <span>Respuesta Incorrecta. Revisa la explicación paso a paso:</span>
+                    </div>
+                    <div class="pt-2 border-t border-rose-200/60 dark:border-rose-800/60">${currentExercise.explanation}</div>
+                `;
+                stats[currentExercise.topic].wrong++;
+            }
+
+            document.getElementById('quiz-score-val').innerText = totalScore;
+            document.getElementById('quiz-next-btn').classList.remove('hidden');
+
+            saveStatsToStorage();
+            updateStatsUI();
+            initLucideIcons();
+            reRenderMath();
+        }
+
+        // --- SISTEMA DE ESTADÍSTICAS Y GRÁFICOS (CHART.JS) ---
+        function initCharts() {
+            const ctxRadar = document.getElementById('radarChart').getContext('2d');
+            const ctxBar = document.getElementById('barChart').getContext('2d');
+
+            const labels = Object.keys(TOPICS).map(k => TOPICS[k]);
+
+            radarChartInstance = new Chart(ctxRadar, {
+                type: 'radar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '% de Dominio',
+                        data: [0, 0, 0, 0, 0],
+                        backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                        borderColor: '#6366f1',
+                        pointBackgroundColor: '#4f46e5',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#4f46e5'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            min: 0,
+                            max: 100,
+                            ticks: { display: false }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            barChartInstance = new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Aciertos',
+                            data: [0, 0, 0, 0, 0],
+                            backgroundColor: '#10b981'
+                        },
+                        {
+                            label: 'Errores',
+                            data: [0, 0, 0, 0, 0],
+                            backgroundColor: '#f43f5e'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { stacked: true, ticks: { font: { size: 9 } } },
+                        y: { stacked: true, beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function updateCharts() {
+            if (!radarChartInstance || !barChartInstance) return;
+
+            const labels = Object.keys(TOPICS).map(k => TOPICS[k]);
+            const masteryData = [];
+            const correctData = [];
+            const wrongData = [];
+
+            labels.forEach(topic => {
+                const s = stats[topic];
+                const total = s.correct + s.wrong;
+                const mastery = total === 0 ? 0 : Math.round((s.correct / total) * 100);
+
+                masteryData.push(mastery);
+                correctData.push(s.correct);
+                wrongData.push(s.wrong);
+            });
+
+            radarChartInstance.data.datasets[0].data = masteryData;
+            radarChartInstance.update();
+
+            barChartInstance.data.datasets[0].data = correctData;
+            barChartInstance.data.datasets[1].data = wrongData;
+            barChartInstance.update();
+        }
+
+        function updateStatsUI() {
+            let totalCorrect = 0;
+            let totalWrong = 0;
+
+            let minAccuracy = 101;
+            let maxAccuracy = -1;
+            let weakestTopic = 'N/A';
+            let strongestTopic = 'N/A';
+
+            Object.keys(stats).forEach(topic => {
+                const s = stats[topic];
+                totalCorrect += s.correct;
+                totalWrong += s.wrong;
+
+                const totalTopic = s.correct + s.wrong;
+                if (totalTopic > 0) {
+                    const acc = (s.correct / totalTopic) * 100;
+                    if (acc < minAccuracy) {
+                        minAccuracy = acc;
+                        weakestTopic = topic;
+                    }
+                    if (acc > maxAccuracy) {
+                        maxAccuracy = acc;
+                        strongestTopic = topic;
+                    }
+                }
+            });
+
+            const totalAns = totalCorrect + totalWrong;
+            const globalAccuracy = totalAns === 0 ? 0 : Math.round((totalCorrect / totalAns) * 100);
+
+            document.getElementById('stat-total-correct').innerText = totalCorrect;
+            document.getElementById('stat-accuracy').innerText = `${globalAccuracy}%`;
+            document.getElementById('stat-weakest-topic').innerText = weakestTopic === 'N/A' ? 'N/A' : truncateString(weakestTopic, 18);
+            document.getElementById('stat-strongest-topic').innerText = strongestTopic === 'N/A' ? 'N/A' : truncateString(strongestTopic, 18);
+
+            // Generar recomendación inteligente en el panel
+            const recEl = document.getElementById('diagnostic-recommendation');
+            if (totalAns < 3) {
+                recEl.innerText = "Completa más ejercicios en el módulo de Práctica para obtener un diagnóstico adaptativo preciso.";
+            } else if (weakestTopic !== 'N/A') {
+                recEl.innerHTML = `El motor adaptativo ha detectado dificultades en: <strong class="text-brand-300">${weakestTopic}</strong>. El sistema continuará priorizando este tema en tus sesiones de práctica para reforzar tus habilidades.`;
+            } else {
+                recEl.innerText = "¡Excelente desempeño general! Continúa practicando para mantener el dominio absoluto del Cálculo de Límites.";
+            }
+        }
+
+        function truncateString(str, num) {
+            if (str.length <= num) return str;
+            return str.slice(0, num) + '...';
+        }
+
+        function saveStatsToStorage() {
+            try {
+                localStorage.setItem('mastery_limits_stats', JSON.stringify(stats));
+            } catch(e) {}
+        }
+
+        function loadStatsFromStorage() {
+            try {
+                const saved = localStorage.getItem('mastery_limits_stats');
+                if (saved) {
+                    stats = JSON.parse(saved);
+                }
+            } catch(e) {}
+        }
+
+        function resetStats() {
+            stats = {
+                [TOPICS.DIRECT]: { correct: 0, wrong: 0 },
+                [TOPICS.FACT_QUAD]: { correct: 0, wrong: 0 },
+                [TOPICS.RACIONALIZATION]: { correct: 0, wrong: 0 },
+                [TOPICS.INFINITY]: { correct: 0, wrong: 0 },
+                [TOPICS.TRIG]: { correct: 0, wrong: 0 }
+            };
+            totalScore = 0;
+            exerciseCount = 0;
+            saveStatsToStorage();
+            updateStatsUI();
+            updateCharts();
+            generateNewExercise();
+        }
+    </script>
+</body>
+</html>
