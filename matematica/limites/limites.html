@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MasteryLimits - Plataforma Adaptativa de Cálculo de Límites</title>
+    <title>MasteryLimits - Aprendizaje Paso a Paso de Límites</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -26,415 +26,366 @@
                 extend: {
                     colors: {
                         brand: {
-                            50: '#eef2ff',
+                            50: '#f0f3ff',
                             100: '#e0e7ff',
                             500: '#6366f1',
                             600: '#4f46e5',
                             700: '#4338ca',
-                            900: '#312e81',
+                        },
+                        calm: {
+                            bg: '#f8fafc',
+                            card: '#ffffff',
+                            border: '#e2e8f0',
+                            accent: '#3b82f6',
+                            highlight: '#fef3c7'
                         }
+                    },
+                    lineHeight: {
+                        'relaxed-extra': '1.8'
                     }
                 }
             }
         }
     </script>
     <style>
-        .katex-display { margin: 0.5em 0 !important; }
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
+        .katex-display { margin: 0.6em 0 !important; }
+        .focus-mode-active #secondary-header-info,
+        .focus-mode-active footer,
+        .focus-mode-active #tab-nav-bar {
+            display: none !important;
         }
-        .dark .glass-panel {
-            background: rgba(17, 24, 39, 0.85);
+        .step-accordion-content {
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
         }
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
+        /* Custom friendly scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
         }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: transparent;
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
+        .dark ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
             background: #cbd5e1;
-            border-radius: 4px;
+            border-radius: 9999px;
         }
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #475569;
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155;
         }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-full flex flex-col font-sans antialiased transition-colors duration-200">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-full flex flex-col font-sans antialiased transition-colors duration-200">
 
-    <!-- Header / Navbar -->
-    <header class="sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800 glass-panel">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Top Navigation & Focus Toggle -->
+    <header class="sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo -->
                 <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('theory')">
-                    <div class="bg-gradient-to-tr from-brand-600 to-indigo-500 p-2 rounded-xl text-white shadow-md shadow-brand-500/20">
-                        <i data-lucide="infinity" class="w-6 h-6"></i>
+                    <div class="bg-indigo-600 text-white p-2.5 rounded-xl shadow-sm">
+                        <i data-lucide="compass" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-600 to-indigo-500">MasteryLimits</span>
-                        <span class="block text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Cálculo Diferencial</span>
+                        <span class="text-lg font-bold text-slate-900 dark:text-slate-100 tracking-tight">MasteryLimits</span>
+                        <span class="block text-[11px] font-medium text-slate-500 dark:text-slate-400">Guía Adaptativa de Límites</span>
                     </div>
                 </div>
 
-                <!-- Nav Items -->
-                <nav class="hidden md:flex space-x-1">
-                    <button onclick="switchTab('theory')" id="nav-theory" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2 text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/30">
+                <!-- Desktop Nav -->
+                <nav id="tab-nav-bar" class="hidden md:flex space-x-2">
+                    <button onclick="switchTab('theory')" id="nav-theory" class="nav-btn px-3.5 py-2 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2 text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60">
                         <i data-lucide="book-open" class="w-4 h-4"></i>
-                        <span>Teoría y Métodos</span>
+                        <span>Teoría Estructurada</span>
                     </button>
-                    <button onclick="switchTab('examples')" id="nav-examples" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
-                        <i data-lucide="file-text" class="w-4 h-4"></i>
+                    <button onclick="switchTab('examples')" id="nav-examples" class="nav-btn px-3.5 py-2 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                        <i data-lucide="layers" class="w-4 h-4"></i>
                         <span>Ejemplos Guiados</span>
                     </button>
-                    <button onclick="switchTab('quiz')" id="nav-quiz" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
-                        <i data-lucide="brain-circuit" class="w-4 h-4"></i>
-                        <span>Práctica Adaptativa</span>
+                    <button onclick="switchTab('quiz')" id="nav-quiz" class="nav-btn px-3.5 py-2 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        <span>Práctica Asistida</span>
                     </button>
-                    <button onclick="switchTab('stats')" id="nav-stats" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
-                        <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
-                        <span>Diagnóstico y Diagnóstico</span>
+                    <button onclick="switchTab('stats')" id="nav-stats" class="nav-btn px-3.5 py-2 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                        <i data-lucide="pie-chart" class="w-4 h-4"></i>
+                        <span>Mi Progreso</span>
                     </button>
                 </nav>
 
-                <!-- Actions -->
-                <div class="flex items-center space-x-3">
-                    <button id="theme-toggle" onclick="toggleTheme()" class="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-                        <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
-                        <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
+                <!-- Action Controls (Focus Mode & Dark Mode) -->
+                <div class="flex items-center space-x-2">
+                    <!-- Modo Enfoque Toggle -->
+                    <button id="focus-toggle" onclick="toggleFocusMode()" class="px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1.5" title="Ocultar distracciones visuales">
+                        <i data-lucide="eye-off" class="w-3.5 h-3.5"></i>
+                        <span id="focus-btn-text">Modo Enfoque</span>
+                    </button>
+
+                    <button onclick="toggleTheme()" class="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                        <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
+                        <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Mobile Navigation Bar -->
+        <!-- Mobile Nav Bar -->
         <div class="md:hidden flex justify-around border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-2">
-            <button onclick="switchTab('theory')" id="mnav-theory" class="p-2 text-brand-600 flex flex-col items-center text-xs font-medium">
-                <i data-lucide="book-open" class="w-5 h-5 mb-1"></i>
+            <button onclick="switchTab('theory')" id="mnav-theory" class="p-2 text-indigo-600 flex flex-col items-center text-xs font-medium">
+                <i data-lucide="book-open" class="w-4 h-4 mb-1"></i>
                 <span>Teoría</span>
             </button>
             <button onclick="switchTab('examples')" id="mnav-examples" class="p-2 text-slate-500 flex flex-col items-center text-xs font-medium">
-                <i data-lucide="file-text" class="w-5 h-5 mb-1"></i>
+                <i data-lucide="layers" class="w-4 h-4 mb-1"></i>
                 <span>Ejemplos</span>
             </button>
             <button onclick="switchTab('quiz')" id="mnav-quiz" class="p-2 text-slate-500 flex flex-col items-center text-xs font-medium">
-                <i data-lucide="brain-circuit" class="w-5 h-5 mb-1"></i>
+                <i data-lucide="sparkles" class="w-4 h-4 mb-1"></i>
                 <span>Práctica</span>
             </button>
             <button onclick="switchTab('stats')" id="mnav-stats" class="p-2 text-slate-500 flex flex-col items-center text-xs font-medium">
-                <i data-lucide="bar-chart-2" class="w-5 h-5 mb-1"></i>
+                <i data-lucide="pie-chart" class="w-4 h-4 mb-1"></i>
                 <span>Progreso</span>
             </button>
         </div>
     </header>
 
-    <!-- Main Content Container -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Main Container -->
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 space-y-8">
 
-        <!-- TAB 1: TEORÍA -->
+        <!-- TAB 1: TEORÍA REESTRUCTURADA (BAJA CARGA COGNITIVA) -->
         <section id="tab-theory" class="tab-content space-y-8">
-            <div class="bg-gradient-to-r from-brand-600 to-indigo-700 rounded-2xl p-6 sm:p-10 text-white shadow-xl">
-                <div class="max-w-3xl space-y-4">
-                    <span class="inline-block bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider">Fundamentos Clave</span>
-                    <h1 class="text-3xl sm:text-4xl font-extrabold leading-tight">Estudio de Límites y Módulos de Cálculo</h1>
-                    <p class="text-indigo-100 text-sm sm:text-base">
-                        El concepto de límite describe el comportamiento de una función a medida que la variable independiente se aproxima a un valor determinado. Explora las leyes fundamentales y las técnicas algebraicas para eliminar indeterminaciones.
-                    </p>
+            <div id="secondary-header-info" class="bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/50 rounded-2xl p-6 text-slate-800 dark:text-slate-200 space-y-3">
+                <div class="flex items-center gap-2 text-indigo-700 dark:text-indigo-300 font-bold text-sm uppercase tracking-wider">
+                    <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                    <span>Ruta Clara de Aprendizaje</span>
                 </div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">¿Qué es un Límite? Paso a Paso</h1>
+                <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed-extra">
+                    Un límite es simplemente responder a la pregunta: <strong>"¿A qué valor vertical $f(x)$ se está acercando la función cuando nos aproximamos mucho a un punto $x = a$, aunque nunca lo toquemos del todo?"</strong>
+                </p>
             </div>
 
-            <!-- Grid de Propiedades Básicas -->
-            <div>
-                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-                    <i data-lucide="layers" class="text-brand-600"></i>
-                    Propiedades Fundamentales de los Límites
+            <!-- Mapa Rápido Visual -->
+            <div class="space-y-4">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <i data-lucide="compass" class="text-indigo-600"></i>
+                    1. Mapa Visual de las Leyes de Límites
                 </h2>
-                <p class="text-slate-600 dark:text-slate-400 text-sm mb-6">
-                    Si $\lim_{x \to a} f(x) = L$ y $\lim_{x \to a} g(x) = M$, se verifican las siguientes propiedades algebraicas:
+                <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                    Si sabemos que $\lim_{x \to a} f(x) = L$ y que $\lim_{x \to a} g(x) = M$, podemos usar estas reglas directas:
                 </p>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Tarjeta Propiedad 1 -->
-                    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-700">
-                        <div class="text-xs font-semibold text-brand-600 dark:text-brand-400 uppercase tracking-wide mb-1">Suma y Resta</div>
-                        <h3 class="font-bold text-lg mb-2">Límite de una Suma / Diferencia</h3>
-                        <div class="bg-slate-50 dark:bg-slate-900 p-3 rounded-lg text-center font-mono text-sm mb-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Tarjeta 1 -->
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
+                        <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">Regla 1: Suma y Resta</span>
+                        <h3 class="font-bold text-slate-900 dark:text-white">Límite de Sumas</h3>
+                        <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl text-center text-sm font-mono border border-slate-100 dark:border-slate-800">
                             $$\lim_{x \to a} [f(x) \pm g(x)] = L \pm M$$
                         </div>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">El límite de la suma es la suma de los límites de cada función individualmente.</p>
+                        <p class="text-xs text-slate-500 leading-relaxed"><strong>Significado:</strong> Puedes calcular los límites por separado y luego sumar o restar los resultados.</p>
                     </div>
 
-                    <!-- Tarjeta Propiedad 2 -->
-                    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-700">
-                        <div class="text-xs font-semibold text-brand-600 dark:text-brand-400 uppercase tracking-wide mb-1">Producto</div>
-                        <h3 class="font-bold text-lg mb-2">Límite de un Producto</h3>
-                        <div class="bg-slate-50 dark:bg-slate-900 p-3 rounded-lg text-center font-mono text-sm mb-3">
+                    <!-- Tarjeta 2 -->
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
+                        <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300">Regla 2: Producto</span>
+                        <h3 class="font-bold text-slate-900 dark:text-white">Límite de Multiplicación</h3>
+                        <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl text-center text-sm font-mono border border-slate-100 dark:border-slate-800">
                             $$\lim_{x \to a} [f(x) \cdot g(x)] = L \cdot M$$
                         </div>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">El límite del producto de dos funciones es el producto de sus respectivos límites.</p>
+                        <p class="text-xs text-slate-500 leading-relaxed"><strong>Significado:</strong> Multiplica directamente los límites individuales obtenidos.</p>
                     </div>
 
-                    <!-- Tarjeta Propiedad 3 -->
-                    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-700">
-                        <div class="text-xs font-semibold text-brand-600 dark:text-brand-400 uppercase tracking-wide mb-1">Cociente</div>
-                        <h3 class="font-bold text-lg mb-2">Límite de un Cociente</h3>
-                        <div class="bg-slate-50 dark:bg-slate-900 p-3 rounded-lg text-center font-mono text-sm mb-3">
-                            $$\lim_{x \to a} \frac{f(x)}{g(x)} = \frac{L}{M}, \quad M \neq 0$$
+                    <!-- Tarjeta 3 -->
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
+                        <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">Regla 3: Cociente</span>
+                        <h3 class="font-bold text-slate-900 dark:text-white">Límite de División</h3>
+                        <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl text-center text-sm font-mono border border-slate-100 dark:border-slate-800">
+                            $$\lim_{x \to a} \frac{f(x)}{g(x)} = \frac{L}{M} \quad (M \neq 0)$$
                         </div>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Válido siempre y cuando el límite del denominador $M$ sea distinto de cero.</p>
+                        <p class="text-xs text-slate-500 leading-relaxed"><strong>Significado:</strong> Divide el límite del numerador entre el denominador (siempre que $M$ no sea cero).</p>
                     </div>
 
-                    <!-- Tarjeta Propiedad 4 -->
-                    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-700">
-                        <div class="text-xs font-semibold text-brand-600 dark:text-brand-400 uppercase tracking-wide mb-1">Potencia y Raíz</div>
-                        <h3 class="font-bold text-lg mb-2">Límite de una Potencia</h3>
-                        <div class="bg-slate-50 dark:bg-slate-900 p-3 rounded-lg text-center font-mono text-sm mb-3">
-                            $$\lim_{x \to a} [f(x)]^n = L^n$$
-                        </div>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">El límite de la función elevada a un exponente equivale al límite elevado a esa potencia.</p>
-                    </div>
-
-                    <!-- Tarjeta Propiedad 5 -->
-                    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-700">
-                        <div class="text-xs font-semibold text-brand-600 dark:text-brand-400 uppercase tracking-wide mb-1">Multiplicación por Constante</div>
-                        <h3 class="font-bold text-lg mb-2">Factor Constante</h3>
-                        <div class="bg-slate-50 dark:bg-slate-900 p-3 rounded-lg text-center font-mono text-sm mb-3">
-                            $$\lim_{x \to a} [c \cdot f(x)] = c \cdot L$$
-                        </div>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Las constantes multiplicativas pueden salir fuera del operador de límite libremente.</p>
-                    </div>
-
-                    <!-- Tarjeta Propiedad 6 -->
-                    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-700">
-                        <div class="text-xs font-semibold text-brand-600 dark:text-brand-400 uppercase tracking-wide mb-1">Límite Trigonométrico Notables</div>
-                        <h3 class="font-bold text-lg mb-2">Seno Fundamental</h3>
-                        <div class="bg-slate-50 dark:bg-slate-900 p-3 rounded-lg text-center font-mono text-sm mb-3">
+                    <!-- Tarjeta 4 -->
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
+                        <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">Regla 4: Especial Trigonometría</span>
+                        <h3 class="font-bold text-slate-900 dark:text-white">Seno Notable</h3>
+                        <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl text-center text-sm font-mono border border-slate-100 dark:border-slate-800">
                             $$\lim_{x \to 0} \frac{\sin(x)}{x} = 1$$
                         </div>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Uno de los límites trigonométricos especiales más ampliamente utilizados.</p>
+                        <p class="text-xs text-slate-500 leading-relaxed"><strong>Significado:</strong> Cuando el ángulo $x$ tiende a cero, el seno de $x$ y $x$ valen prácticamente lo mismo.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Formas Indeterminadas & Técnicas de Resolución -->
-            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 space-y-6">
-                <h2 class="text-xl font-bold flex items-center gap-2">
-                    <i data-lucide="wrench" class="text-brand-600"></i>
-                    Formas Indeterminadas y Técnicas Algebraicas
-                </h2>
-                <p class="text-slate-600 dark:text-slate-400 text-sm">
-                    Al sustituir directamente $x = a$, con frecuencia obtenemos expresiones indeterminadas como $\frac{0}{0}$ o $\frac{\infty}{\infty}$. Estas formas <strong>no representan la inexistencia del límite</strong>, sino que exigen simplificar la expresión mediante herramientas matemáticas específicas:
-                </p>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Técnica 1: Factorización -->
-                    <div class="border-l-4 border-indigo-500 pl-4 py-1 space-y-2">
-                        <h4 class="font-bold text-base">1. Factorización y Cancelación ($\frac{0}{0}$)</h4>
-                        <p class="text-sm text-slate-600 dark:text-slate-400">
-                            Se utiliza para polinomios. El factor $(x - a)$ suele causar que el numerador y el denominador se anulen simultáneamente. Factorizar (utilizando diferencia de cuadrados, trinomios o suma/diferencia de cubos) permite simplificar este factor nulo.
-                        </p>
-                        <div class="bg-slate-100 dark:bg-slate-900 p-2 rounded text-xs font-mono">
-                            Fórmulas útiles: $a^2-b^2=(a-b)(a+b)$ <br>
-                            $a^3-b^3=(a-b)(a^2+ab+b^2)$
-                        </div>
-                    </div>
-
-                    <!-- Técnica 2: Racionalización -->
-                    <div class="border-l-4 border-indigo-500 pl-4 py-1 space-y-2">
-                        <h4 class="font-bold text-base">2. Racionalización ($\frac{0}{0}$)</h4>
-                        <p class="text-sm text-slate-600 dark:text-slate-400">
-                            Cuando aparecen raíces cuadradas o cúbicas, multiplicamos el numerador y denominador por la <strong>expresión conjugada</strong> para transformar las raíces en expresiones algebraicas que permitan aislar y cancelar el factor crítico $(x - a)$.
-                        </p>
-                        <div class="bg-slate-100 dark:bg-slate-900 p-2 rounded text-xs font-mono">
-                            Conjugado: $(\sqrt{A} - \sqrt{B}) \rightarrow (\sqrt{A} + \sqrt{B})$
-                        </div>
-                    </div>
-
-                    <!-- Técnica 3: División por la Máxima Potencia -->
-                    <div class="border-l-4 border-indigo-500 pl-4 py-1 space-y-2">
-                        <h4 class="font-bold text-base">3. Divisibilidad al Infinito ($\frac{\infty}{\infty}$)</h4>
-                        <p class="text-sm text-slate-600 dark:text-slate-400">
-                            Para límites donde $x \to \infty$ o $x \to -\infty$ en funciones racionales, dividimos tanto el numerador como el denominador entre $x^k$, donde $k$ representa la mayor potencia del denominador. Aprovechamos la propiedad $\lim_{x \to \infty} \frac{1}{x^n} = 0$.
-                        </p>
-                    </div>
-
-                    <!-- Técnica 4: Regla de L'Hôpital -->
-                    <div class="border-l-4 border-indigo-500 pl-4 py-1 space-y-2">
-                        <h4 class="font-bold text-base">4. Regla de L'Hôpital</h4>
-                        <p class="text-sm text-slate-600 dark:text-slate-400">
-                            Si $\lim_{x \to a} \frac{f(x)}{g(x)}$ produce las indeterminaciones $\frac{0}{0}$ o $\frac{\pm \infty}{\pm \infty}$, y las funciones son derivables:
-                        </p>
-                        <div class="bg-slate-100 dark:bg-slate-900 p-2 rounded text-xs font-mono">
-                            $$\lim_{x \to a} \frac{f(x)}{g(x)} = \lim_{x \to a} \frac{f'(x)}{g'(x)}$$
-                        </div>
-                    </div>
+            <!-- Sección de Atención Especial / Puntos Ciegos -->
+            <div class="bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-2xl p-6 space-y-4">
+                <div class="flex items-center gap-2 text-amber-800 dark:text-amber-300 font-bold">
+                    <i data-lucide="alert-circle" class="w-5 h-5 text-amber-600"></i>
+                    <h3>¡Atención Aquí! Las Trampas Algebraicas Más Comunes</h3>
                 </div>
+                <ul class="space-y-3 text-sm text-amber-950 dark:text-amber-200/90 leading-relaxed">
+                    <li class="flex items-start gap-2">
+                        <span class="bg-amber-200 dark:bg-amber-900 text-amber-900 dark:text-amber-100 font-bold px-2 py-0.5 rounded text-xs mt-0.5">1</span>
+                        <span><strong>Confundir $\frac{0}{0}$ con "No existe" o Cero:</strong> $\frac{0}{0}$ NO significa que el límite no exista o valga cero. Es una <em>indeterminación</em> que nos pide simplificar la función para ver el valor oculto.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="bg-amber-200 dark:bg-amber-900 text-amber-900 dark:text-amber-100 font-bold px-2 py-0.5 rounded text-xs mt-0.5">2</span>
+                        <span><strong>Olvidar colocar paréntesis al factorizar:</strong> Al simplificar $(x - a)$ en el denominador, asegúrate de mantener protegidos los términos con paréntesis para no equivocar signos.</span>
+                    </li>
+                </ul>
             </div>
         </section>
 
-        <!-- TAB 2: EJEMPLOS RESUELTOS -->
+        <!-- TAB 2: EJEMPLOS GUIADOS CON ACORDEÓN PASO A PASO -->
         <section id="tab-examples" class="tab-content hidden space-y-6">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h2 class="text-2xl font-bold">Ejemplos Detallados Paso a Paso</h2>
-                    <p class="text-sm text-slate-600 dark:text-slate-400">Analiza el procedimiento paso a paso para resolver los principales tipos de límites.</p>
-                </div>
+            <div>
+                <h2 class="text-2xl font-bold tracking-tight">Ejemplos Guiados por Acordeón</h2>
+                <p class="text-slate-600 dark:text-slate-400 text-sm mt-1">
+                    Haz clic en cada paso numérico para desplegarlo progresivamente a tu propio ritmo.
+                </p>
             </div>
 
             <div class="space-y-6">
-                <!-- Ejemplo 1 -->
-                <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 text-xs font-semibold">Factorización</span>
-                        <h3 class="text-lg font-bold">Ejemplo 1: Indeterminación $\frac{0}{0}$ mediante Diferencia de Cuadrados</h3>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <p class="text-sm">Calcular el siguiente límite: <span class="font-semibold">$$\lim_{x \to 3} \frac{x^2 - 9}{x - 3}$$</span></p>
-                        
-                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl space-y-3 text-sm border border-slate-200 dark:border-slate-700">
-                            <p class="font-semibold text-slate-700 dark:text-slate-300">Paso 1: Evaluación por sustitución directa</p>
-                            <p class="text-slate-600 dark:text-slate-400">$$\frac{(3)^2 - 9}{3 - 3} = \frac{9 - 9}{0} = \frac{0}{0} \quad \text{(Indeterminación)}$$</p>
-                            
-                            <p class="font-semibold text-slate-700 dark:text-slate-300">Paso 2: Factorizar el numerador</p>
-                            <p class="text-slate-600 dark:text-slate-400">Aplicando diferencia de cuadrados $a^2 - b^2 = (a-b)(a+b)$ en el numerador $x^2 - 9$:</p>
-                            <p>$$\lim_{x \to 3} \frac{(x - 3)(x + 3)}{x - 3}$$</p>
-
-                            <p class="font-semibold text-slate-700 dark:text-slate-300">Paso 3: Cancelar el factor común $(x-3)$</p>
-                            <p class="text-slate-600 dark:text-slate-400">Como $x \to 3$, $x \neq 3$, por lo que $(x - 3) \neq 0$ y es válido simplificarlo:</p>
-                            <p>$$\lim_{x \to 3} (x + 3)$$</p>
-
-                            <p class="font-semibold text-slate-700 dark:text-slate-300">Paso 4: Sustituir nuevamente</p>
-                            <p class="text-slate-600 dark:text-slate-400 font-semibold text-brand-600 dark:text-brand-400">$$3 + 3 = 6$$</p>
+                <!-- Ejemplo 1 Acordeón -->
+                <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                    <div class="p-5 bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                        <div>
+                            <span class="px-2.5 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 text-xs font-semibold">Factorización</span>
+                            <h3 class="text-lg font-bold mt-1">Ejemplo 1: Limite con Diferencia de Cuadrados</h3>
+                        </div>
+                        <div class="text-lg font-mono font-bold text-indigo-600 dark:text-indigo-400">
+                            $$\lim_{x \to 4} \frac{x^2 - 16}{x - 4}$$
                         </div>
                     </div>
-                </div>
 
-                <!-- Ejemplo 2 -->
-                <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 text-xs font-semibold">Racionalización</span>
-                        <h3 class="text-lg font-bold">Ejemplo 2: Indeterminación con Raíces Cuadradas</h3>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <p class="text-sm">Calcular el límite: <span class="font-semibold">$$\lim_{x \to 4} \frac{\sqrt{x} - 2}{x - 4}$$</span></p>
-                        
-                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl space-y-3 text-sm border border-slate-200 dark:border-slate-700">
-                            <p class="font-semibold text-slate-700 dark:text-slate-300">Paso 1: Evaluar la expresión</p>
-                            <p class="text-slate-600 dark:text-slate-400">$$\frac{\sqrt{4} - 2}{4 - 4} = \frac{2 - 2}{0} = \frac{0}{0} \quad \text{(Indeterminación)}$$</p>
-
-                            <p class="font-semibold text-slate-700 dark:text-slate-300">Paso 2: Multiplicar por el conjugado del numerador</p>
-                            <p class="text-slate-600 dark:text-slate-400">Multiplicamos numerador y denominador por $(\sqrt{x} + 2)$:</p>
-                            <p>$$\lim_{x \to 4} \frac{(\sqrt{x} - 2)(\sqrt{x} + 2)}{(x - 4)(\sqrt{x} + 2)}$$</p>
-
-                            <p class="font-semibold text-slate-700 dark:text-slate-300">Paso 3: Simplificar mediante $(\sqrt{a})^2 - b^2$</p>
-                            <p>$$\lim_{x \to 4} \frac{x - 4}{(x - 4)(\sqrt{x} + 2)}$$</p>
-
-                            <p class="font-semibold text-slate-700 dark:text-slate-300">Paso 4: Cancelar el factor $(x-4)$ y sustituir</p>
-                            <p>$$\lim_{x \to 4} \frac{1}{\sqrt{x} + 2} = \frac{1}{\sqrt{4} + 2} = \frac{1}{2 + 2} = \frac{1}{4}$$</p>
+                    <!-- Micro Pasos Desplegables -->
+                    <div class="p-5 space-y-3">
+                        <!-- Paso 1 -->
+                        <div class="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+                            <button onclick="toggleAccordion('ex1-p1')" class="w-full text-left px-4 py-3 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-900 flex justify-between items-center font-semibold text-sm">
+                                <span>Paso 1: Probar Sustitución Directa (Diagnóstico Inicial)</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
+                            </button>
+                            <div id="ex1-p1" class="px-4 py-3 bg-white dark:bg-slate-900 text-sm space-y-2 border-t border-slate-100 dark:border-slate-800">
+                                <p class="text-slate-600 dark:text-slate-300">Sustituimos $x = 4$ directamente en la expresión:</p>
+                                <p class="font-mono bg-slate-50 dark:bg-slate-950 p-2 rounded text-center">$$\frac{(4)^2 - 16}{4 - 4} = \frac{16 - 16}{0} = \frac{0}{0}$$</p>
+                                <p class="text-xs text-amber-600 dark:text-amber-400 font-medium">Conclusión: Obtenemos la indeterminación $\frac{0}{0}$. Esto nos indica que el factor nulo de arriba y abajo es $(x - 4)$. ¡Debemos factorizarlo!</p>
+                            </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Ejemplo 3 -->
-                <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 text-xs font-semibold">Límites al Infinito</span>
-                        <h3 class="text-lg font-bold">Ejemplo 3: Función Racional cuando $x \to \infty$</h3>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <p class="text-sm">Resolver el límite: <span class="font-semibold">$$\lim_{x \to \infty} \frac{5x^3 - 2x + 1}{2x^3 + 4x^2 - 7}$$</span></p>
-                        
-                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl space-y-3 text-sm border border-slate-200 dark:border-slate-700">
-                            <p class="font-semibold text-slate-700 dark:text-slate-300">Paso 1: Identificar la mayor potencia del denominador</p>
-                            <p class="text-slate-600 dark:text-slate-400">La máxima potencia de $x$ presente en el denominador es $x^3$.</p>
+                        <!-- Paso 2 -->
+                        <div class="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+                            <button onclick="toggleAccordion('ex1-p2')" class="w-full text-left px-4 py-3 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-900 flex justify-between items-center font-semibold text-sm">
+                                <span>Paso 2: Aplicar la Fórmula de Diferencia de Cuadrados</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
+                            </button>
+                            <div id="ex1-p2" class="px-4 py-3 bg-white dark:bg-slate-900 text-sm space-y-2 border-t border-slate-100 dark:border-slate-800">
+                                <p class="text-slate-600 dark:text-slate-300">Recordemos que $a^2 - b^2 = (a - b)(a + b)$. Por lo tanto, $x^2 - 16 = (x - 4)(x + 4)$:</p>
+                                <p class="font-mono bg-slate-50 dark:bg-slate-950 p-2 rounded text-center">$$\lim_{x \to 4} \frac{(x - 4)(x + 4)}{x - 4}$$</p>
+                            </div>
+                        </div>
 
-                            <p class="font-semibold text-slate-700 dark:text-slate-300">Paso 2: Dividir cada término entre $x^3$</p>
-                            <p>$$\lim_{x \to \infty} \frac{\frac{5x^3}{x^3} - \frac{2x}{x^3} + \frac{1}{x^3}}{\frac{2x^3}{x^3} + \frac{4x^2}{x^3} - \frac{7}{x^3}} = \lim_{x \to \infty} \frac{5 - \frac{2}{x^2} + \frac{1}{x^3}}{2 + \frac{4}{x} - \frac{7}{x^3}}$$</p>
-
-                            <p class="font-semibold text-slate-700 dark:text-slate-300">Paso 3: Aplicar el límite al infinito</p>
-                            <p class="text-slate-600 dark:text-slate-400">Dado que $\lim_{x \to \infty} \frac{k}{x^n} = 0$ para todo $n > 0$:</p>
-                            <p class="font-semibold text-brand-600 dark:text-brand-400">$$\frac{5 - 0 + 0}{2 + 0 - 0} = \frac{5}{2}$$</p>
+                        <!-- Paso 3 -->
+                        <div class="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+                            <button onclick="toggleAccordion('ex1-p3')" class="w-full text-left px-4 py-3 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-900 flex justify-between items-center font-semibold text-sm">
+                                <span>Paso 3: Cancelar y Calcular Resultado Final</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
+                            </button>
+                            <div id="ex1-p3" class="px-4 py-3 bg-white dark:bg-slate-900 text-sm space-y-2 border-t border-slate-100 dark:border-slate-800">
+                                <p class="text-slate-600 dark:text-slate-300">Cancelamos el bloque repetido $(x - 4)$ arriba y abajo:</p>
+                                <p class="font-mono bg-slate-50 dark:bg-slate-950 p-2 rounded text-center">$$\lim_{x \to 4} (x + 4) = 4 + 4 = 8$$</p>
+                                <p class="text-xs text-emerald-600 dark:text-emerald-400 font-bold">¡Resultado Final: 8!</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- TAB 3: PRÁCTICA ADAPTATIVA -->
+        <!-- TAB 3: PRÁCTICA ADAPTATIVA ASISTIDA CON PISTAS -->
         <section id="tab-quiz" class="tab-content hidden space-y-6">
-            <!-- Banner Módulo Adaptativo -->
-            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <!-- Barra Superior del Modulo -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div class="space-y-1">
-                    <div class="flex items-center space-x-2">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span> Generador Paramétrico Activo
-                        </span>
-                    </div>
-                    <h2 class="text-2xl font-bold">Práctica Guiada con Motor Adaptativo</h2>
-                    <p class="text-sm text-slate-600 dark:text-slate-400">
-                        El sistema generará ejercicios infinitos no repetitivos y ajustará automáticamente el enfoque según tus áreas de oportunidad.
-                    </p>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span> Generador Paramétrico Activo
+                    </span>
+                    <h2 class="text-xl font-bold tracking-tight">Práctica con Ayuda Progresiva</h2>
                 </div>
 
-                <!-- Selector Manual / Modo Inteligente -->
-                <div class="flex items-center bg-slate-100 dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold">
-                    <button onclick="setQuizMode('adaptive')" id="btn-mode-adaptive" class="px-3 py-2 rounded-lg transition-all bg-white dark:bg-slate-800 text-brand-600 dark:text-brand-400 shadow-sm">
-                        Modo Inteligente
+                <!-- Selector de Modo -->
+                <div class="flex items-center bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-semibold">
+                    <button onclick="setQuizMode('adaptive')" id="btn-mode-adaptive" class="px-3 py-1.5 rounded-lg transition-all bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm">
+                        Modo Adaptativo
                     </button>
-                    <button onclick="setQuizMode('random')" id="btn-mode-random" class="px-3 py-2 rounded-lg transition-all text-slate-500 dark:text-slate-400">
-                        Alea Global
+                    <button onclick="setQuizMode('random')" id="btn-mode-random" class="px-3 py-1.5 rounded-lg transition-all text-slate-500">
+                        Aleatorio Global
                     </button>
                 </div>
             </div>
 
-            <!-- Quiz Card -->
-            <div id="quiz-card" class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
-                <!-- Header del Ejercicio -->
-                <div class="bg-slate-50 dark:bg-slate-900/50 px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                    <div class="flex items-center space-x-3">
-                        <span id="quiz-topic-tag" class="px-3 py-1 rounded-full text-xs font-semibold bg-brand-100 text-brand-700 dark:bg-brand-900/50 dark:text-brand-300">
-                            Categoría
+            <!-- Quiz Card Principal -->
+            <div id="quiz-card" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md overflow-hidden space-y-6 p-6 sm:p-8">
+                
+                <!-- Tag de Tema & Nivel -->
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+                    <div class="flex items-center space-x-2">
+                        <span id="quiz-topic-tag" class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300">
+                            Tema
                         </span>
-                        <span id="quiz-difficulty-tag" class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 font-medium">
-                            Nivel Medio
+                        <span id="quiz-difficulty-tag" class="text-xs text-slate-500 font-medium">
+                            Nivel
                         </span>
                     </div>
-                    <div class="text-xs text-slate-400 font-mono">
+                    <div class="text-xs font-mono text-slate-400">
                         Ejercicio #<span id="quiz-count">1</span>
                     </div>
                 </div>
 
-                <!-- Pregunta / Expresión Matemática -->
-                <div class="p-6 sm:p-8 space-y-6">
-                    <div class="text-center space-y-3">
-                        <p class="text-slate-600 dark:text-slate-300 font-medium">Evalúa o calcula el valor exacto del siguiente límite:</p>
-                        <div id="quiz-math-container" class="text-2xl sm:text-3xl font-bold py-4 text-slate-900 dark:text-white bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 shadow-inner">
-                            $$\lim_{x \to 2} \frac{x^2 - 4}{x - 2}$$
-                        </div>
-                    </div>
-
-                    <!-- Opciones de Respuesta -->
-                    <div id="quiz-options" class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                        <!-- Generado por JS -->
-                    </div>
-
-                    <!-- Explicación / Retroalimentación -->
-                    <div id="quiz-feedback" class="hidden rounded-xl p-5 border space-y-3">
-                        <!-- Generado por JS tras responder -->
+                <!-- Enunciado y Expresión Matemática -->
+                <div class="space-y-4 text-center">
+                    <p class="text-slate-600 dark:text-slate-300 font-medium text-sm">Determina el valor exacto del siguiente límite:</p>
+                    <div id="quiz-math-container" class="text-2xl sm:text-3xl font-bold py-6 px-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 text-slate-900 dark:text-white shadow-inner">
+                        $$\lim_{x \to 2} \frac{x^2 - 4}{x - 2}$$
                     </div>
                 </div>
 
-                <!-- Footer / Navegación -->
-                <div class="bg-slate-50 dark:bg-slate-900/50 px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex justify-between items-center">
-                    <div class="text-xs text-slate-500">
-                        Puntuación: <span id="quiz-score-val" class="font-bold text-slate-800 dark:text-slate-200">0</span> aciertos
+                <!-- Escalera de Pistas (Hint Ladder) -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <button onclick="revealNextHint()" id="hint-btn" class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1.5 bg-indigo-50 dark:bg-indigo-950/60 px-3 py-2 rounded-xl transition">
+                            <i data-lucide="help-circle" class="w-4 h-4"></i>
+                            <span>¿Necesitas una Pista Guiada? (<span id="hint-count-text">2 disponibles</span>)</span>
+                        </button>
                     </div>
-                    <button id="quiz-next-btn" onclick="generateNewExercise()" class="hidden bg-brand-600 hover:bg-brand-700 text-white px-5 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2 shadow-md shadow-brand-500/20">
+
+                    <!-- Cajas de Pistas Reveladas -->
+                    <div id="hint-box-1" class="hidden bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/40 text-amber-900 dark:text-amber-200 text-xs p-3.5 rounded-xl space-y-1">
+                        <strong>Pista 1 (Diagnóstico):</strong> <span id="hint-text-1">Sustituye primero el valor. Si resulta 0/0, busca qué factor provoca el cero.</span>
+                    </div>
+                    <div id="hint-box-2" class="hidden bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-900/40 text-indigo-900 dark:text-indigo-200 text-xs p-3.5 rounded-xl space-y-1">
+                        <strong>Pista 2 (Estrategia):</strong> <span id="hint-text-2">Aplica la fórmula de factorización adecuada para simplificar la fracción.</span>
+                    </div>
+                </div>
+
+                <!-- Opciones de Respuesta -->
+                <div id="quiz-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                    <!-- Opciones inyectadas dinámicamente -->
+                </div>
+
+                <!-- Retroalimentación Ultra-Detallada y Explicativa -->
+                <div id="quiz-feedback" class="hidden rounded-2xl p-5 border space-y-4">
+                    <!-- Inyectado por JS -->
+                </div>
+
+                <!-- Footer del Quiz -->
+                <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                    <div class="text-xs text-slate-500">
+                        Racha Actual: <span id="quiz-score-val" class="font-bold text-emerald-600 dark:text-emerald-400">0</span> aciertos
+                    </div>
+                    <button id="quiz-next-btn" onclick="generateNewExercise()" class="hidden bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-2 shadow-sm">
                         <span>Siguiente Ejercicio</span>
                         <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </button>
@@ -442,115 +393,104 @@
             </div>
         </section>
 
-        <!-- TAB 4: DIAGNÓSTICO Y ESTADÍSTICAS -->
+        <!-- TAB 4: ESTADÍSTICAS Y DIAGNÓSTICO -->
         <section id="tab-stats" class="tab-content hidden space-y-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <h2 class="text-2xl font-bold">Diagnóstico Continuo y Panel de Dominio</h2>
-                    <p class="text-sm text-slate-600 dark:text-slate-400">Análisis detallado de rendimiento y áreas de fortaleza detectadas por el sistema.</p>
+                    <h2 class="text-2xl font-bold tracking-tight">Mi Progreso y Diagnóstico</h2>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">Métricas acumuladas de comprensión sin penalizaciones.</p>
                 </div>
-                <button onclick="resetStats()" class="text-xs text-rose-600 dark:text-rose-400 hover:underline flex items-center gap-1 font-medium">
+                <button onclick="resetStats()" class="text-xs text-rose-600 dark:text-rose-400 hover:underline flex items-center gap-1 font-semibold">
                     <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                    Reiniciar Progreso
+                    Reiniciar Métricas
                 </button>
             </div>
 
-            <!-- Métricas Resumen -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-4">
-                    <div class="p-3 bg-brand-100 dark:bg-brand-900/40 text-brand-600 dark:text-brand-300 rounded-xl">
-                        <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center space-x-3">
+                    <div class="p-3 bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-300 rounded-xl">
+                        <i data-lucide="check" class="w-5 h-5"></i>
                     </div>
                     <div>
                         <div class="text-2xl font-bold" id="stat-total-correct">0</div>
-                        <div class="text-xs text-slate-500">Ejercicios Correctos</div>
+                        <div class="text-xs text-slate-500">Ejercicios Resueltos</div>
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-4">
-                    <div class="p-3 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300 rounded-xl">
-                        <i data-lucide="target" class="w-6 h-6"></i>
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center space-x-3">
+                    <div class="p-3 bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-300 rounded-xl">
+                        <i data-lucide="target" class="w-5 h-5"></i>
                     </div>
                     <div>
                         <div class="text-2xl font-bold" id="stat-accuracy">0%</div>
-                        <div class="text-xs text-slate-500">Tasa de Acierto Global</div>
+                        <div class="text-xs text-slate-500">Precisión Global</div>
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-4">
-                    <div class="p-3 bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-300 rounded-xl">
-                        <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center space-x-3">
+                    <div class="p-3 bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-300 rounded-xl">
+                        <i data-lucide="compass" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <div class="text-2xl font-bold text-amber-600 dark:text-amber-400" id="stat-weakest-topic">N/A</div>
-                        <div class="text-xs text-slate-500">Punto Débil Principal</div>
+                        <div class="text-sm font-bold text-amber-700 dark:text-amber-400 truncate max-w-[120px]" id="stat-weakest-topic">N/A</div>
+                        <div class="text-xs text-slate-500">Área a Reforzar</div>
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center space-x-4">
-                    <div class="p-3 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 rounded-xl">
-                        <i data-lucide="award" class="w-6 h-6"></i>
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center space-x-3">
+                    <div class="p-3 bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-300 rounded-xl">
+                        <i data-lucide="award" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400" id="stat-strongest-topic">N/A</div>
-                        <div class="text-xs text-slate-500">Área de Mayor Dominio</div>
+                        <div class="text-sm font-bold text-blue-700 dark:text-blue-400 truncate max-w-[120px]" id="stat-strongest-topic">N/A</div>
+                        <div class="text-xs text-slate-500">Mayor Dominio</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Gráficos -->
+            <!-- Gráficos Visuales -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Gráfico de Radar de Dominio -->
-                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
-                    <h3 class="font-bold text-base flex items-center gap-2">
-                        <i data-lucide="pie-chart" class="w-4 h-4 text-brand-600"></i>
-                        Perfil de Dominio por Categoria (%)
-                    </h3>
-                    <div class="relative h-64 w-full">
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                    <h3 class="font-bold text-sm">Perfil de Dominio por Categoría (%)</h3>
+                    <div class="relative h-60 w-full">
                         <canvas id="radarChart"></canvas>
                     </div>
                 </div>
 
-                <!-- Gráfico de Aciertos vs Errores -->
-                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
-                    <h3 class="font-bold text-base flex items-center gap-2">
-                        <i data-lucide="bar-chart" class="w-4 h-4 text-brand-600"></i>
-                        Distribución de Respuestas por Tema
-                    </h3>
-                    <div class="relative h-64 w-full">
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                    <h3 class="font-bold text-sm">Aciertos vs Errores por Tema</h3>
+                    <div class="relative h-60 w-full">
                         <canvas id="barChart"></canvas>
                     </div>
                 </div>
             </div>
 
-            <!-- Reporte Inteligente Diagnóstico -->
-            <div class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white rounded-2xl p-6 shadow-md space-y-3">
-                <div class="flex items-center space-x-2 text-brand-400 font-semibold text-xs uppercase tracking-wider">
+            <!-- Mensaje Diagnóstico -->
+            <div class="bg-slate-900 text-white rounded-2xl p-6 shadow-sm space-y-2">
+                <div class="flex items-center gap-2 text-indigo-400 text-xs font-semibold uppercase tracking-wider">
                     <i data-lucide="sparkles" class="w-4 h-4"></i>
                     <span>Diagnóstico Adaptativo del Sistema</span>
                 </div>
-                <h4 class="text-lg font-bold">Recomendación Personalizada de Estudio</h4>
+                <h4 class="text-base font-bold">Orientación de Estudio Personalizada</h4>
                 <p id="diagnostic-recommendation" class="text-slate-300 text-sm leading-relaxed">
-                    Resuelve al menos 5 ejercicios en el módulo de Práctica Adaptativa para que el motor identifique tus patrones de error y genere recomendaciones personalizadas.
+                    Resuelve algunos ejercicios en el módulo de Práctica para generar recomendaciones personalizadas.
                 </p>
             </div>
         </section>
     </main>
 
-    <!-- Footer -->
-    <footer class="border-t border-slate-200 dark:border-slate-800 py-6 bg-white dark:bg-slate-900 text-center text-xs text-slate-500">
-        <p>MasteryLimits &copy; 2026 - Plataforma Educativa Interactiva para el Cálculo Diferencial</p>
+    <footer class="border-t border-slate-200 dark:border-slate-800 py-6 bg-white dark:bg-slate-900 text-center text-xs text-slate-400">
+        MasteryLimits &copy; 2026 - Plataforma Educativa Adaptativa Paso a Paso
     </footer>
 
-    <!-- LÓGICA DE LA APLICACIÓN -->
+    <!-- LOGICA JAVASCRIPT -->
     <script>
-        // --- ESTADO GLOBAL Y CATEGORÍAS ---
         const TOPICS = {
             DIRECT: 'Sustitución Directa',
-            FACT_QUAD: 'Factorización (Trinomios y Diferencia de Cuadrados)',
+            FACT_QUAD: 'Factorización Quadrática',
             RACIONALIZATION: 'Racionalización de Raíces',
             INFINITY: 'Límites al Infinito (∞/∞)',
-            TRIG: 'Límites Trigonométricos Notables'
+            TRIG: 'Límites Trigonométricos'
         };
 
         let stats = {
@@ -561,14 +501,16 @@
             [TOPICS.TRIG]: { correct: 0, wrong: 0 }
         };
 
-        let quizMode = 'adaptive'; // 'adaptive' | 'random'
+        let quizMode = 'adaptive';
         let currentExercise = null;
         let exerciseCount = 0;
         let totalScore = 0;
+        let currentHintLevel = 0;
+        let isFocusMode = false;
+
         let radarChartInstance = null;
         let barChartInstance = null;
 
-        // --- INICIALIZACIÓN ---
         window.addEventListener('DOMContentLoaded', () => {
             loadStatsFromStorage();
             initLucideIcons();
@@ -600,7 +542,7 @@
                         throwOnError: false
                     });
                 }
-            }, 50);
+            }, 40);
         }
 
         function initLucideIcons() {
@@ -609,27 +551,33 @@
             }
         }
 
-        // --- NAVEGACIÓN ENTRE TABS ---
+        function toggleFocusMode() {
+            isFocusMode = !isFocusMode;
+            document.body.classList.toggle('focus-mode-active', isFocusMode);
+            const btnText = document.getElementById('focus-btn-text');
+            btnText.innerText = isFocusMode ? "Modo Normal" : "Modo Enfoque";
+        }
+
+        function toggleAccordion(id) {
+            const el = document.getElementById(id);
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+            reRenderMath();
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
             document.getElementById(`tab-${tabId}`).classList.remove('hidden');
 
-            // Actualizar botones Nav Desktop
             document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.className = "nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800";
+                btn.className = "nav-btn px-3.5 py-2 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800";
             });
             const activeBtn = document.getElementById(`nav-${tabId}`);
             if (activeBtn) {
-                activeBtn.className = "nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2 text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/30";
-            }
-
-            // Actualizar botones Nav Mobile
-            document.querySelectorAll('[id^="mnav-"]').forEach(btn => {
-                btn.className = "p-2 text-slate-500 flex flex-col items-center text-xs font-medium";
-            });
-            const activeMNav = document.getElementById(`mnav-${tabId}`);
-            if (activeMNav) {
-                activeMNav.className = "p-2 text-brand-600 flex flex-col items-center text-xs font-medium";
+                activeBtn.className = "nav-btn px-3.5 py-2 rounded-xl text-sm font-semibold transition-all flex items-center space-x-2 text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60";
             }
 
             if (tabId === 'stats') {
@@ -649,16 +597,15 @@
             const btnRandom = document.getElementById('btn-mode-random');
 
             if (mode === 'adaptive') {
-                btnAdaptive.className = "px-3 py-2 rounded-lg transition-all bg-white dark:bg-slate-800 text-brand-600 dark:text-brand-400 shadow-sm font-semibold";
-                btnRandom.className = "px-3 py-2 rounded-lg transition-all text-slate-500 dark:text-slate-400 font-normal";
+                btnAdaptive.className = "px-3 py-1.5 rounded-lg transition-all bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm";
+                btnRandom.className = "px-3 py-1.5 rounded-lg transition-all text-slate-500";
             } else {
-                btnRandom.className = "px-3 py-2 rounded-lg transition-all bg-white dark:bg-slate-800 text-brand-600 dark:text-brand-400 shadow-sm font-semibold";
-                btnAdaptive.className = "px-3 py-2 rounded-lg transition-all text-slate-500 dark:text-slate-400 font-normal";
+                btnRandom.className = "px-3 py-1.5 rounded-lg transition-all bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm";
+                btnAdaptive.className = "px-3 py-1.5 rounded-lg transition-all text-slate-500";
             }
             generateNewExercise();
         }
 
-        // --- MOTOR DEDICADO DE GENERACIÓN ALEATORIA PARAMÉTRICA ---
         function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
@@ -669,7 +616,6 @@
                 return keys[Math.floor(Math.random() * keys.length)];
             }
 
-            // Algoritmo Adaptativo: Pondera según tasa de error (o bajo número de intentos)
             let maxWeight = -1;
             let chosenTopic = TOPICS.DIRECT;
 
@@ -679,14 +625,13 @@
                 let weight = 0;
 
                 if (total === 0) {
-                    weight = 50; // Peso inicial para explorar temas no probados
+                    weight = 40;
                 } else {
                     const errorRate = data.wrong / total;
-                    weight = errorRate * 100 + (10 / total); // Más peso a fallas
+                    weight = errorRate * 100 + (8 / total);
                 }
 
-                // Añadir pequeña variabilidad aleatoria para no estancar
-                weight += Math.random() * 15;
+                weight += Math.random() * 10;
 
                 if (weight > maxWeight) {
                     maxWeight = weight;
@@ -697,45 +642,61 @@
             return chosenTopic;
         }
 
+        // MOTOR GENERADOR PARAMÉTRICO CON ANÁLISIS DE ERRORES Y DISTRACTORES
         function generateExerciseData() {
             const topic = pickTopicByWeakness();
 
             switch (topic) {
                 case TOPICS.DIRECT: {
-                    const a = getRandomInt(1, 5);
-                    const b = getRandomInt(-4, 6);
-                    const c = getRandomInt(1, 4);
-                    const latex = `\\lim_{x \\to ${a}} (${c}x^2 ${b >= 0 ? '+' + b : b})`;
-                    const correctAns = c * a * a + b;
+                    const a = getRandomInt(1, 4);
+                    const b = getRandomInt(-3, 5);
+                    const c = getRandomInt(2, 4);
+                    const latex = `\\lim_{x \\to ${a}} (${c}x + ${b >= 0 ? b : '(' + b + ')'})`;
+                    const correctAns = (c * a + b).toString();
                     
-                    const options = [
-                        correctAns.toString(),
-                        (correctAns + getRandomInt(2, 5)).toString(),
-                        (correctAns - getRandomInt(2, 4)).toString(),
-                        (c * a + b).toString()
+                    const distractor1 = (c * a).toString(); // Olvidó sumar b
+                    const distractor2 = (c + b).toString(); // Olvidó multiplicar x por c
+                    const distractor3 = (c * a - b).toString(); // Equivocó signo de b
+
+                    const optionsObj = [
+                        { val: correctAns, isCorrect: true, rationale: "Sustitución directa perfecta." },
+                        { val: distractor1, isCorrect: false, rationale: "Si elegiste esta opción, es posible que olvidaste agregar el término constante al final." },
+                        { val: distractor2, isCorrect: false, rationale: "Parece que olvidaste evaluar la x sustituyéndola por su valor numérico." },
+                        { val: distractor3, isCorrect: false, rationale: "Revisa los signos algebraicos al evaluar el término constante." }
                     ];
 
                     return {
                         topic: TOPICS.DIRECT,
                         difficulty: 'Fácil',
                         latex: latex,
-                        correct: correctAns.toString(),
-                        options: shuffleArray(options),
-                        explanation: `Sustitución directa inmediata: $x = ${a} \\Rightarrow ${c}(${a})^2 + (${b}) = ${correctAns}$.`
+                        correct: correctAns,
+                        hints: [
+                            `Evalúa sustituyendo directamente $x = ${a}$ en la expresión.`,
+                            `Realiza primero la multiplicación $(${c} \\cdot ${a})$ y luego suma el término restante.`
+                        ],
+                        options: shuffleArray(optionsObj),
+                        microReinforcement: "Propiedad de la función lineal: $\\lim_{x \\to a} (cx + b) = c(a) + b$.",
+                        explanationSteps: [
+                            `Paso 1: Reemplazar $x$ por $a = ${a}$.`,
+                            `Paso 2: Realizar la operación aritmética: $${c}(${a}) + (${b}) = ${correctAns}$.`
+                        ]
                     };
                 }
 
                 case TOPICS.FACT_QUAD: {
-                    const a = getRandomInt(1, 6);
-                    // (x^2 - a^2) / (x - a)
+                    const a = getRandomInt(2, 6);
                     const latex = `\\lim_{x \\to ${a}} \\frac{x^2 - ${a*a}}{x - ${a}}`;
                     const correctAns = (2 * a).toString();
 
-                    const options = [
-                        correctAns,
-                        (a).toString(),
-                        (2 * a + 2).toString(),
-                        "0"
+                    const distractor1 = a.toString(); // Canceló y dejó solo x
+                    const distractor2 = "0"; // Pensó que 0/0 da cero
+                    const distractor3 = (2 * a + 2).toString(); // Error de suma
+
+                    const optionsObj = [
+                        { val: correctAns, isCorrect: true, rationale: "¡Excelente! Factorizaste $(x - a)(x + a)$ y simplificaste el factor nulo." },
+                        { val: distractor1, isCorrect: false, rationale: "Si elegiste esta opción, recuerda que al simplificar $(x - a)$ queda $(x + a)$, no solo $x$." },
+                        { val: distractor2, isCorrect: false, rationale: "Atención: La indeterminación $0/0$ NO significa que el resultado sea 0. Debes factorizar primero." },
+                        { val: distractor3, isCorrect: false, rationale: "Revisa la suma final al sustituir $x = ${a}$." }
                     ];
 
                     return {
@@ -743,27 +704,38 @@
                         difficulty: 'Intermedio',
                         latex: latex,
                         correct: correctAns,
-                        options: shuffleArray(options),
-                        explanation: `1) Al evaluar da $\\frac{0}{0}$.<br>2) Factorizamos diferencia de cuadrados: $x^2 - ${a*a} = (x - ${a})(x + ${a})$.<br>3) Cancelamos $(x - ${a})$: $\\lim_{x \\to ${a}} (x + ${a}) = ${a} + ${a} = ${correctAns}$.`
+                        hints: [
+                            `Al probar $x = ${a}$ da $\\frac{0}{0}$. Factoriza el numerador usando diferencia de cuadrados.`,
+                            `Recuerda: $x^2 - ${a*a} = (x - ${a})(x + ${a})$. Cancela el termino repetido.`
+                        ],
+                        options: shuffleArray(optionsObj),
+                        microReinforcement: "Diferencia de Cuadrados: $A^2 - B^2 = (A - B)(A + B)$.",
+                        explanationSteps: [
+                            `Paso 1: Sustitución directa produce la indeterminación $0/0$.`,
+                            `Paso 2: Factorizar el numerador: $x^2 - ${a*a} = (x - ${a})(x + ${a})$.`,
+                            `Paso 3: Cancelar el factor nulo $(x - ${a})$ arriba y abajo.`,
+                            `Paso 4: Evaluar $\\lim_{x \\to ${a}} (x + ${a}) = ${a} + ${a} = ${correctAns}$.`
+                        ]
                     };
                 }
 
                 case TOPICS.RACIONALIZATION: {
-                    const k = getRandomInt(1, 9);
-                    const sqrtK = Math.sqrt(k);
-                    // Para números exactos elegimos cuadrados perfectos
-                    const squares = [1, 4, 9, 16, 25];
+                    const squares = [1, 4, 9, 16];
                     const a = squares[Math.floor(Math.random() * squares.length)];
                     const sqrtA = Math.sqrt(a);
 
                     const latex = `\\lim_{x \\to ${a}} \\frac{\\sqrt{x} - ${sqrtA}}{x - ${a}}`;
                     const correctVal = `1/${2 * sqrtA}`;
 
-                    const options = [
-                        `1/${2 * sqrtA}`,
-                        `${2 * sqrtA}`,
-                        `1/${sqrtA}`,
-                        "0"
+                    const distractor1 = `${2 * sqrtA}`; // Invirtió el numerador y denominador
+                    const distractor2 = `1/${sqrtA}`; // Olvidó el factor 2
+                    const distractor3 = "0";
+
+                    const optionsObj = [
+                        { val: correctVal, isCorrect: true, rationale: "¡Paso perfecto! Multiplicaste por la raíz conjugada y simplificaste la fracción correctamente." },
+                        { val: distractor1, isCorrect: false, rationale: "Si elegiste esta respuesta, verifica la posición del numerador. El número debe quedar en el denominador." },
+                        { val: distractor2, isCorrect: false, rationale: "Recuerda que al evaluar el conjugado $(\\sqrt{x} + ${sqrtA})$ obtenemos $\\sqrt{${a}} + ${sqrtA} = ${2*sqrtA}$." },
+                        { val: distractor3, isCorrect: false, rationale: "Recuerda eliminar la indeterminación racionalizando antes de concluir." }
                     ];
 
                     return {
@@ -771,8 +743,18 @@
                         difficulty: 'Avanzado',
                         latex: latex,
                         correct: correctVal,
-                        options: shuffleArray(options),
-                        explanation: `1) Genera la indeterminación $\\frac{0}{0}$.<br>2) Multiplicamos por la expresión conjugada $(\\sqrt{x} + ${sqrtA})$ arriba y abajo.<br>3) Se simplifica a $\\lim_{x \\to ${a}} \\frac{x - ${a}}{(x - ${a})(\\sqrt{x} + ${sqrtA})} = \\lim_{x \\to ${a}} \\frac{1}{\\sqrt{x} + ${sqrtA}} = \\frac{1}{2 \\cdot ${sqrtA}} = ${correctVal}$.`
+                        hints: [
+                            `Multiplica numerador y denominador por la expresión conjugada: $(\\sqrt{x} + ${sqrtA})$.`,
+                            `Usa $(\\sqrt{x} - ${sqrtA})(\\sqrt{x} + ${sqrtA}) = (x - ${a})$ para cancelar el denominador.`
+                        ],
+                        options: shuffleArray(optionsObj),
+                        microReinforcement: "Conjugado con Raíces: $(\\sqrt{A} - B)(\\sqrt{A} + B) = A - B^2$.",
+                        explanationSteps: [
+                            `Paso 1: Multiplicar por $(\\sqrt{x} + ${sqrtA}) / (\\sqrt{x} + ${sqrtA})$.`,
+                            `Paso 2: Simplificar el numerador a $(x - ${a})$.`,
+                            `Paso 3: Cancelar $(x - ${a})$ dejando $1 / (\\sqrt{x} + ${sqrtA})$.`,
+                            `Paso 4: Sustituir $x = ${a} \\Rightarrow 1 / (${sqrtA} + ${sqrtA}) = ${correctVal}$.`
+                        ]
                     };
                 }
 
@@ -781,14 +763,18 @@
                     const d = getRandomInt(2, 5);
                     const p = getRandomInt(2, 4);
 
-                    const latex = `\\lim_{x \\to \\infty} \\frac{${n}x^${p} + ${getRandomInt(1, 9)}x}{${d}x^${p} - ${getRandomInt(1, 9)}}`;
+                    const latex = `\\lim_{x \\to \\infty} \\frac{${n}x^${p} + 3}{${d}x^${p} - 1}`;
                     const correctAns = `${n}/${d}`;
 
-                    const options = [
-                        `${n}/${d}`,
-                        `${n}`,
-                        "\\infty",
-                        "0"
+                    const distractor1 = `${n}`;
+                    const distractor2 = "\\infty";
+                    const distractor3 = "0";
+
+                    const optionsObj = [
+                        { val: correctAns, isCorrect: true, rationale: "¡Exacto! Cuando los grados del polinomio son iguales, el límite son sus coeficientes principales." },
+                        { val: distractor1, isCorrect: false, rationale: "No olvides considerar el coeficiente del denominador en la división final." },
+                        { val: distractor2, isCorrect: false, rationale: "No tiende a infinito porque los grados del numerador y denominador son idénticos." },
+                        { val: distractor3, isCorrect: false, rationale: "El resultado solo sería cero si el grado del denominador fuera mayor al del numerador." }
                     ];
 
                     return {
@@ -796,21 +782,34 @@
                         difficulty: 'Intermedio',
                         latex: latex,
                         correct: correctAns,
-                        options: shuffleArray(options),
-                        explanation: `1) Indeterminación $\\frac{\\infty}{\\infty}$.<br>2) Dividimos término a término entre la máxima potencia $x^${p}$.<br>3) Las fracciones con $x$ en el denominador tienden a 0, quedando únicamente la razón de los coeficientes principales: $\\frac{${n}}{${d}}$.`
+                        hints: [
+                            `Identifica el término con mayor exponente tanto arriba como abajo ($x^${p}$).`,
+                            `Divide todos los términos entre $x^${p}$. Recuerda que $k / x^n \\to 0$ cuando $x \\to \\infty$.`
+                        ],
+                        options: shuffleArray(optionsObj),
+                        microReinforcement: "Límites al Infinito: Si grado(Num) = grado(Den), el resultado es CoeficienteNum / CoeficienteDen.",
+                        explanationSteps: [
+                            `Paso 1: Dividir numerador y denominador entre $x^${p}$.`,
+                            `Paso 2: Los términos con $x$ en el denominador se reducen a 0.`,
+                            `Paso 3: Queda únicamente la razón de coeficientes $\\frac{${n}}{${d}}$.`
+                        ]
                     };
                 }
 
                 case TOPICS.TRIG: {
-                    const k = getRandomInt(2, 8);
+                    const k = getRandomInt(2, 7);
                     const latex = `\\lim_{x \\to 0} \\frac{\\sin(${k}x)}{x}`;
                     const correctAns = k.toString();
 
-                    const options = [
-                        correctAns,
-                        "1",
-                        `1/${k}`,
-                        "0"
+                    const distractor1 = "1";
+                    const distractor2 = `1/${k}`;
+                    const distractor3 = "0";
+
+                    const optionsObj = [
+                        { val: correctAns, isCorrect: true, rationale: "¡Muy bien! Utilizaste correctamente el límite trigonométrico fundamental multiplicado por el factor k." },
+                        { val: distractor1, isCorrect: false, rationale: "Si respondiste 1, recuerda que dentro del seno hay un factor $k = ${k}$ multiplicando a $x$." },
+                        { val: distractor2, isCorrect: false, rationale: "Cuidado con la inversión de la constante. La constante $k$ multiplica al límite directo." },
+                        { val: distractor3, isCorrect: false, rationale: "Aplica la propiedad notable $\\lim_{u \\to 0} \\frac{\\sin(u)}{u} = 1$ ajustando las constantes." }
                     ];
 
                     return {
@@ -818,8 +817,17 @@
                         difficulty: 'Intermedio',
                         latex: latex,
                         correct: correctAns,
-                        options: shuffleArray(options),
-                        explanation: `Utilizando la propiedad fundamental del límite trigonométrico notable $\\lim_{u \\to 0} \\frac{\\sin(u)}{u} = 1$:<br>Multiplicamos y dividimos por $${k}$: $\\lim_{x \\to 0} ${k} \\cdot \\frac{\\sin(${k}x)}{${k}x} = ${k} \\cdot (1) = ${k}$.`
+                        hints: [
+                            `Multiplica y divide la expresión por $${k}$ para emparejar el argumento del seno.`,
+                            `Usa la propiedad $\\lim_{u \\to 0} \\frac{\\sin(u)}{u} = 1$ donde $u = ${k}x$.`
+                        ],
+                        options: shuffleArray(optionsObj),
+                        microReinforcement: "Límite Trigonometrico Especial: $\\lim_{x \\to 0} \\frac{\\sin(kx)}{kx} = 1$.",
+                        explanationSteps: [
+                            `Paso 1: Reescribir el límite como $${k} \\cdot \\lim_{x \\to 0} \\frac{\\sin(${k}x)}{${k}x}$.`,
+                            `Paso 2: Aplicar la propiedad trigonométrica notable que vale 1.`,
+                            `Paso 3: Multiplicar $${k} \\cdot 1 = ${correctAns}$.`
+                        ]
                     };
                 }
             }
@@ -834,69 +842,107 @@
             return arr;
         }
 
-        // --- RENDERIZADO DEL EJERCICIO EN PANTALLA ---
         function generateNewExercise() {
             currentExercise = generateExerciseData();
             exerciseCount++;
+            currentHintLevel = 0;
 
             document.getElementById('quiz-count').innerText = exerciseCount;
             document.getElementById('quiz-topic-tag').innerText = currentExercise.topic;
             document.getElementById('quiz-difficulty-tag').innerText = `Dificultad: ${currentExercise.difficulty}`;
             
-            const mathContainer = document.getElementById('quiz-math-container');
-            mathContainer.innerHTML = `$$${currentExercise.latex}$$`;
+            document.getElementById('quiz-math-container').innerHTML = `$$${currentExercise.latex}$$`;
 
+            // Reset Pistas
+            document.getElementById('hint-box-1').classList.add('hidden');
+            document.getElementById('hint-box-2').classList.add('hidden');
+            document.getElementById('hint-text-1').innerHTML = currentExercise.hints[0];
+            document.getElementById('hint-text-2').innerHTML = currentExercise.hints[1];
+            document.getElementById('hint-count-text').innerText = '2 disponibles';
+            document.getElementById('hint-btn').disabled = false;
+
+            // Inyectar opciones
             const optionsContainer = document.getElementById('quiz-options');
             optionsContainer.innerHTML = '';
 
-            currentExercise.options.forEach((opt, index) => {
+            currentExercise.options.forEach((optObj, index) => {
                 const btn = document.createElement('button');
-                btn.className = "option-btn text-left p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 hover:bg-brand-50 dark:hover:bg-brand-900/30 hover:border-brand-300 transition-all text-sm font-medium flex items-center justify-between";
-                btn.onclick = () => checkAnswer(opt, btn);
+                btn.className = "option-btn text-left p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 hover:border-indigo-300 transition-all text-sm font-medium flex items-center justify-between";
+                btn.onclick = () => checkAnswer(optObj, btn);
                 btn.innerHTML = `
-                    <span class="font-mono text-slate-800 dark:text-slate-200">$${opt}$</span>
-                    <span class="w-5 h-5 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-xs font-bold text-slate-400 opacity-60">${String.fromCharCode(65 + index)}</span>
+                    <span class="font-mono text-slate-800 dark:text-slate-200">$${optObj.val}$</span>
+                    <span class="w-6 h-6 rounded-full border border-slate-300 dark:border-slate-700 flex items-center justify-center text-xs font-bold text-slate-400">${String.fromCharCode(65 + index)}</span>
                 `;
                 optionsContainer.appendChild(btn);
             });
 
-            // Ocultar feedback y botón siguiente
-            const feedbackEl = document.getElementById('quiz-feedback');
-            feedbackEl.className = "hidden rounded-xl p-5 border space-y-3";
+            document.getElementById('quiz-feedback').className = "hidden rounded-2xl p-5 border space-y-4";
             document.getElementById('quiz-next-btn').classList.add('hidden');
 
             reRenderMath();
         }
 
-        function checkAnswer(selectedOpt, selectedBtn) {
-            const isCorrect = (selectedOpt === currentExercise.correct);
-            const feedbackEl = document.getElementById('quiz-feedback');
-            const allOptionBtns = document.querySelectorAll('.option-btn');
+        function revealNextHint() {
+            if (currentHintLevel === 0) {
+                document.getElementById('hint-box-1').classList.remove('hidden');
+                currentHintLevel = 1;
+                document.getElementById('hint-count-text').innerText = '1 disponible';
+            } else if (currentHintLevel === 1) {
+                document.getElementById('hint-box-2').classList.remove('hidden');
+                currentHintLevel = 2;
+                document.getElementById('hint-count-text').innerText = '0 disponibles';
+                document.getElementById('hint-btn').disabled = true;
+            }
+            reRenderMath();
+        }
 
-            // Deshabilitar botones de opciones
-            allOptionBtns.forEach(btn => btn.disabled = true);
+        function checkAnswer(selectedObj, selectedBtn) {
+            const feedbackEl = document.getElementById('quiz-feedback');
+            const allBtns = document.querySelectorAll('.option-btn');
+
+            allBtns.forEach(b => b.disabled = true);
+
+            const isCorrect = selectedObj.isCorrect;
 
             if (isCorrect) {
-                selectedBtn.classList.add('bg-emerald-100', 'dark:bg-emerald-900/40', 'border-emerald-500', 'text-emerald-900', 'dark:text-emerald-200');
-                feedbackEl.className = "block bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 rounded-xl p-5 text-sm space-y-2";
+                selectedBtn.classList.add('bg-emerald-100', 'dark:bg-emerald-950', 'border-emerald-500', 'text-emerald-900', 'dark:text-emerald-200');
+                feedbackEl.className = "block bg-emerald-50/90 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900/60 text-emerald-950 dark:text-emerald-200 rounded-2xl p-5 text-sm space-y-3";
+                
                 feedbackEl.innerHTML = `
-                    <div class="flex items-center gap-2 font-bold text-emerald-700 dark:text-emerald-400">
-                        <i data-lucide="check-circle" class="w-5 h-5"></i>
-                        <span>¡Respuesta Correcta! Excelente procedimiento.</span>
+                    <div class="flex items-center gap-2 font-bold text-emerald-800 dark:text-emerald-300 text-base">
+                        <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600"></i>
+                        <span>¡Respuesta Correcta! Paso Ejecutado con Éxito</span>
                     </div>
-                    <div class="pt-2 border-t border-emerald-200/60 dark:border-emerald-800/60">${currentExercise.explanation}</div>
+                    <p class="text-xs text-emerald-900 dark:text-emerald-200">${selectedObj.rationale}</p>
+                    <div class="p-3 bg-white/80 dark:bg-slate-900 rounded-xl border border-emerald-200 dark:border-emerald-800 text-xs font-mono">
+                        <strong>Micro-Refuerzo Visual:</strong> $${currentExercise.microReinforcement}$
+                    </div>
+                    <div class="space-y-1.5 pt-2 border-t border-emerald-200 dark:border-emerald-800">
+                        <span class="font-bold text-xs uppercase tracking-wider text-emerald-800 dark:text-emerald-300">Desglose Paso a Paso:</span>
+                        ${currentExercise.explanationSteps.map(step => `<p class="text-xs text-slate-700 dark:text-slate-300">• ${step}</p>`).join('')}
+                    </div>
                 `;
                 stats[currentExercise.topic].correct++;
                 totalScore++;
             } else {
-                selectedBtn.classList.add('bg-rose-100', 'dark:bg-rose-900/40', 'border-rose-500', 'text-rose-900', 'dark:text-rose-200');
-                feedbackEl.className = "block bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800 text-rose-900 dark:text-rose-200 rounded-xl p-5 text-sm space-y-2";
+                selectedBtn.classList.add('bg-rose-100', 'dark:bg-rose-950', 'border-rose-500', 'text-rose-900', 'dark:text-rose-200');
+                feedbackEl.className = "block bg-rose-50/90 dark:bg-rose-950/40 border-rose-200 dark:border-rose-900/60 text-rose-950 dark:text-rose-200 rounded-2xl p-5 text-sm space-y-3";
+
                 feedbackEl.innerHTML = `
-                    <div class="flex items-center gap-2 font-bold text-rose-700 dark:text-rose-400">
-                        <i data-lucide="x-circle" class="w-5 h-5"></i>
-                        <span>Respuesta Incorrecta. Revisa la explicación paso a paso:</span>
+                    <div class="flex items-center gap-2 font-bold text-rose-800 dark:text-rose-300 text-base">
+                        <i data-lucide="help-circle" class="w-5 h-5 text-rose-600"></i>
+                        <span>Análisis Guiado de tu Respuesta</span>
                     </div>
-                    <div class="pt-2 border-t border-rose-200/60 dark:border-rose-800/60">${currentExercise.explanation}</div>
+                    <div class="p-3 bg-white/80 dark:bg-slate-900 rounded-xl border border-rose-200 dark:border-rose-800 text-xs text-rose-900 dark:text-rose-200">
+                        <strong>Mecanismo del Error:</strong> ${selectedObj.rationale}
+                    </div>
+                    <div class="p-3 bg-white/80 dark:bg-slate-900 rounded-xl border border-rose-200 dark:border-rose-800 text-xs font-mono">
+                        <strong>Recordatorio Teórico:</strong> $${currentExercise.microReinforcement}$
+                    </div>
+                    <div class="space-y-1.5 pt-2 border-t border-rose-200 dark:border-rose-800">
+                        <span class="font-bold text-xs uppercase tracking-wider text-rose-800 dark:text-rose-300">Procedimiento Correcto:</span>
+                        ${currentExercise.explanationSteps.map(step => `<p class="text-xs text-slate-700 dark:text-slate-300">• ${step}</p>`).join('')}
+                    </div>
                 `;
                 stats[currentExercise.topic].wrong++;
             }
@@ -910,7 +956,6 @@
             reRenderMath();
         }
 
-        // --- SISTEMA DE ESTADÍSTICAS Y GRÁFICOS (CHART.JS) ---
         function initCharts() {
             const ctxRadar = document.getElementById('radarChart').getContext('2d');
             const ctxBar = document.getElementById('barChart').getContext('2d');
@@ -922,26 +967,17 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: '% de Dominio',
+                        label: '% Dominio',
                         data: [0, 0, 0, 0, 0],
                         backgroundColor: 'rgba(99, 102, 241, 0.2)',
                         borderColor: '#6366f1',
-                        pointBackgroundColor: '#4f46e5',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: '#4f46e5'
+                        pointBackgroundColor: '#4f46e5'
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            min: 0,
-                            max: 100,
-                            ticks: { display: false }
-                        }
-                    },
+                    scales: { r: { min: 0, max: 100, ticks: { display: false } } },
                     plugins: { legend: { display: false } }
                 }
             });
@@ -951,25 +987,14 @@
                 data: {
                     labels: labels,
                     datasets: [
-                        {
-                            label: 'Aciertos',
-                            data: [0, 0, 0, 0, 0],
-                            backgroundColor: '#10b981'
-                        },
-                        {
-                            label: 'Errores',
-                            data: [0, 0, 0, 0, 0],
-                            backgroundColor: '#f43f5e'
-                        }
+                        { label: 'Aciertos', data: [0, 0, 0, 0, 0], backgroundColor: '#10b981' },
+                        { label: 'Ajustes', data: [0, 0, 0, 0, 0], backgroundColor: '#f43f5e' }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: {
-                        x: { stacked: true, ticks: { font: { size: 9 } } },
-                        y: { stacked: true, beginAtZero: true }
-                    }
+                    scales: { x: { stacked: true, ticks: { font: { size: 9 } } }, y: { stacked: true, beginAtZero: true } }
                 }
             });
         }
@@ -1033,34 +1058,28 @@
 
             document.getElementById('stat-total-correct').innerText = totalCorrect;
             document.getElementById('stat-accuracy').innerText = `${globalAccuracy}%`;
-            document.getElementById('stat-weakest-topic').innerText = weakestTopic === 'N/A' ? 'N/A' : truncateString(weakestTopic, 18);
-            document.getElementById('stat-strongest-topic').innerText = strongestTopic === 'N/A' ? 'N/A' : truncateString(strongestTopic, 18);
+            document.getElementById('stat-weakest-topic').innerText = weakestTopic;
+            document.getElementById('stat-strongest-topic').innerText = strongestTopic;
 
-            // Generar recomendación inteligente en el panel
             const recEl = document.getElementById('diagnostic-recommendation');
             if (totalAns < 3) {
-                recEl.innerText = "Completa más ejercicios en el módulo de Práctica para obtener un diagnóstico adaptativo preciso.";
+                recEl.innerText = "Completa más ejercicios en el módulo de Práctica para recibir sugerencias de aprendizaje personalizadas.";
             } else if (weakestTopic !== 'N/A') {
-                recEl.innerHTML = `El motor adaptativo ha detectado dificultades en: <strong class="text-brand-300">${weakestTopic}</strong>. El sistema continuará priorizando este tema en tus sesiones de práctica para reforzar tus habilidades.`;
+                recEl.innerHTML = `Hemos observado una excelente oportunidad de refuerzo en el tema: <strong class="text-indigo-400">${weakestTopic}</strong>. Te presentaremos ejercicios guiados de este área con mayor frecuencia.`;
             } else {
-                recEl.innerText = "¡Excelente desempeño general! Continúa practicando para mantener el dominio absoluto del Cálculo de Límites.";
+                recEl.innerText = "¡Sigue así! Tu avance en el Cálculo de Límites muestra una consistencia excelente.";
             }
-        }
-
-        function truncateString(str, num) {
-            if (str.length <= num) return str;
-            return str.slice(0, num) + '...';
         }
 
         function saveStatsToStorage() {
             try {
-                localStorage.setItem('mastery_limits_stats', JSON.stringify(stats));
+                localStorage.setItem('mastery_limits_stats_v2', JSON.stringify(stats));
             } catch(e) {}
         }
 
         function loadStatsFromStorage() {
             try {
-                const saved = localStorage.getItem('mastery_limits_stats');
+                const saved = localStorage.getItem('mastery_limits_stats_v2');
                 if (saved) {
                     stats = JSON.parse(saved);
                 }
