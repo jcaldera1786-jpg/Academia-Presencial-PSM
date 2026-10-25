@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Detallada: Propiedades de los Límites</title>
+    <!-- Tailwind CSS para un diseño limpio y moderno -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- KaTeX para renderizado matemático impecable -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <style>
+        body { background-color: #f8fafc; color: #1e293b; }
+        .math-card { transition: all 0.2s ease-in-out; }
+        .math-card:hover { transform: translateY(-2px); shadow: lg; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto space-y-8">
+        
+        <!-- Cabecera -->
+        <header class="bg-indigo-600 text-white p-6 rounded-2xl shadow-md">
+            <h1 class="text-2xl md:text-3xl font-bold mb-2">Guía Estructurada: Propiedades de los Límites</h1>
+            <p class="text-indigo-100 text-sm md:text-base">Explicación paso a paso, diseñada con claridad y enfoque progresivo (Sin trigonometría).</p>
+        </header>
+
+        <!-- Sección Teórica: Las 6 Reglas -->
+        <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+            <h2 class="text-xl font-bold text-slate-800 mb-4 border-b pb-2">💡 Las 6 Reglas Básicas</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <span class="font-bold text-indigo-600">1. Constante:</span>
+                    <div class="my-1">$$\lim_{x \to a} c = c$$</div>
+                </div>
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <span class="font-bold text-indigo-600">2. Identidad:</span>
+                    <div class="my-1">$$\lim_{x \to a} x = a$$</div>
+                </div>
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <span class="font-bold text-indigo-600">3. Suma / Resta:</span>
+                    <div class="my-1">$$\lim [f(x) \pm g(x)] = \lim f(x) \pm \lim g(x)$$</div>
+                </div>
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <span class="font-bold text-indigo-600">4. Constante por Función:</span>
+                    <div class="my-1">$$\lim [k \cdot f(x)] = k \cdot \lim f(x)$$</div>
+                </div>
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <span class="font-bold text-indigo-600">5. Producto:</span>
+                    <div class="my-1">$$\lim [f(x) \cdot g(x)] = \lim f(x) \cdot \lim g(x)$$</div>
+                </div>
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <span class="font-bold text-indigo-600">6. Cociente:</span>
+                    <div class="my-1">$$\lim \frac{f(x)}{g(x)} = \frac{\lim f(x)}{\lim g(x)}$$</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ejemplo 1 -->
+        <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 math-card">
+            <div class="flex items-center space-x-2 mb-3">
+                <span class="bg-indigo-100 text-indigo-700 font-bold px-3 py-1 rounded-full text-xs">Ejemplo 1</span>
+                <h3 class="text-lg font-bold text-slate-800">Suma, Resta y Constante</h3>
+            </div>
+            <p class="text-slate-600 mb-4">Calcular el límite aplicando propiedades paso a paso:</p>
+            <div class="p-3 bg-indigo-50/50 rounded-xl text-center text-lg font-semibold text-indigo-900 mb-4">
+                $$\lim_{x \to 2} (3x^2 - 5x + 4)$$
+            </div>
+            
+            <div class="space-y-3 text-slate-700 text-sm md:text-base border-l-4 border-indigo-500 pl-4">
+                <div><strong class="text-slate-900">Paso 1:</strong> Separar cada término en un límite individual utilizando la regla de suma y resta.
+                    <div class="my-2">$$= \lim_{x \to 2} (3x^2) - \lim_{x \to 2} (5x) + \lim_{x \to 2} 4$$</div>
+                </div>
+                <div><strong class="text-slate-900">Paso 2:</strong> Sacar las constantes multiplicadoras fuera del operador límite.
+                    <div class="my-2">$$= 3 \cdot \lim_{x \to 2} (x^2) - 5 \cdot \lim_{x \to 2} x + \lim_{x \to 2} 4$$</div>
+                </div>
+                <div><strong class="text-slate-900">Paso 3:</strong> Evaluar sustituyendo el valor de $x \to 2$.
+                    <div class="my-2">$$= 3(2^2) - 5(2) + 4 = 3(4) - 10 + 4$$</div>
+                </div>
+                <div><strong class="text-slate-900">Paso 4:</strong> Operaciones aritméticas finales.
+                    <div class="my-2">$$= 12 - 10 + 4 = 6$$</div>
+                </div>
+            </div>
+            <div class="mt-4 p-3 bg-emerald-50 text-emerald-800 rounded-xl text-center font-bold">
+                Resultado Final: \(\lim_{x \to 2} (3x^2 - 5x + 4) = 6\)
+            </div>
+        </section>
+
+        <!-- Ejemplo 2 -->
+        <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 math-card">
+            <div class="flex items-center space-x-2 mb-3">
+                <span class="bg-indigo-100 text-indigo-700 font-bold px-3 py-1 rounded-full text-xs">Ejemplo 2</span>
+                <h3 class="text-lg font-bold text-slate-800">Propiedad del Cociente (División)</h3>
+            </div>
+            <p class="text-slate-600 mb-4">Calcular aplicando propiedades:</p>
+            <div class="p-3 bg-indigo-50/50 rounded-xl text-center text-lg font-semibold text-indigo-900 mb-4">
+                $$\lim_{x \to 3} \frac{2x + 1}{x + 4}$$
+            </div>
+            
+            <div class="space-y-3 text-slate-700 text-sm md:text-base border-l-4 border-indigo-500 pl-4">
+                <div><strong class="text-slate-900">Paso 1:</strong> Distribuir el límite al numerador y al denominador.
+                    <div class="my-2">$$= \frac{\lim_{x \to 3} (2x + 1)}{\lim_{x \to 3} (x + 4)}$$</div>
+                </div>
+                <div><strong class="text-slate-900">Paso 2:</strong> Separar términos y sacar la constante del numerador.
+                    <div class="my-2">$$= \frac{2 \cdot \lim_{x \to 3} x + \lim_{x \to 3} 1}{\lim_{x \to 3} x + \lim_{x \to 3} 4}$$</div>
+                </div>
+                <div><strong class="text-slate-900">Paso 3:</strong> Evaluar numéricamente sustituyendo $x = 3$.
+                    <div class="my-2">$$= \frac{2(3) + 1}{3 + 4} = \frac{6 + 1}{7}$$</div>
+                </div>
+            </div>
+            <div class="mt-4 p-3 bg-emerald-50 text-emerald-800 rounded-xl text-center font-bold">
+                Resultado Final: \(\lim_{x \to 3} \frac{2x + 1}{x + 4} = 1\)
+            </div>
+        </section>
+
+        <!-- Ejemplo 3 -->
+        <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 math-card">
+            <div class="flex items-center space-x-2 mb-3">
+                <span class="bg-indigo-100 text-indigo-700 font-bold px-3 py-1 rounded-full text-xs">Ejemplo 3</span>
+                <h3 class="text-lg font-bold text-slate-800">Propiedad de la Raíz y Potencia</h3>
+            </div>
+            <p class="text-slate-600 mb-4">Calcular el límite aplicando propiedades:</p>
+            <div class="p-3 bg-indigo-50/50 rounded-xl text-center text-lg font-semibold text-indigo-900 mb-4">
+                $$\lim_{x \to 4} \sqrt{2x^2 + 1}$$
+            </div>
+            
+            <div class="space-y-3 text-slate-700 text-sm md:text-base border-l-4 border-indigo-500 pl-4">
+                <div><strong class="text-slate-900">Paso 1:</strong> Introducir el operador límite dentro de la raíz cuadrada.
+                    <div class="my-2">$$= \sqrt{\lim_{x \to 4} (2x^2 + 1)}$$</div>
+                </div>
+                <div><strong class="text-slate-900">Paso 2:</strong> Aplicar suma y sacar constante.
+                    <div class="my-2">$$= \sqrt{2 \cdot \lim_{x \to 4} (x^2) + \lim_{x \to 4} 1}$$</div>
+                </div>
+                <div><strong class="text-slate-900">Paso 3:</strong> Evaluar potencia y resolver dentro del radical.
+                    <div class="my-2">$$= \sqrt{2(4^2) + 1} = \sqrt{2(16) + 1} = \sqrt{32 + 1} = \sqrt{33}$$</div>
+                </div>
+            </div>
+            <div class="mt-4 p-3 bg-emerald-50 text-emerald-800 rounded-xl text-center font-bold">
+                Resultado Final: \(\lim_{x \to 4} \sqrt{2x^2 + 1} = \sqrt{33}\)
+            </div>
+        </section>
+
+        <footer class="text-center text-xs text-slate-400 py-4">
+            Guía diseñada con enfoque de claridad y apoyo cognitivo paso a paso.
+        </footer>
+
+    </div>
+
+    <!-- Script para activar KaTeX de forma automática en toda la página -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "$", right: "$", display: false},
+                    {left: "\\(", right: "\\)", display: false},
+                    {left: "\\[", right: "\\]", display: true}
+                ],
+                throwOnError : false
+            });
+        });
+    </script>
+</body>
+</html>
