@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Detallada: Límites al Infinito</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- KaTeX CSS y JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <style>
+        body { background-color: #f8fafc; color: #1e293b; }
+        .math-card { transition: all 0.2s ease-in-out; }
+        .math-card:hover { transform: translateY(-2px); }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto space-y-8">
+        
+        <!-- Cabecera -->
+        <header class="bg-indigo-600 text-white p-6 rounded-2xl shadow-md">
+            <h1 class="text-2xl md:text-3xl font-bold mb-2">Guía Estructurada: Límites al Infinito (\(x \to \infty\))</h1>
+            <p class="text-indigo-100 text-sm md:text-base">Análisis paso a paso del comportamiento en el infinito y división entre la mayor potencia.</p>
+        </header>
+
+        <!-- Regla Fundamental -->
+        <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+            <h2 class="text-xl font-bold text-slate-800 mb-3">💡 Propiedad Clave para el Infinito</h2>
+            <div class="p-4 bg-indigo-50 rounded-xl border border-indigo-200 text-center text-lg font-semibold text-indigo-900 mb-3">
+                $$\lim_{x \to \infty} \frac{k}{x^n} = 0 \quad (\text{para cualquier constante } k \text{ y } n > 0)$$
+            </div>
+            <p class="text-slate-600 text-sm md:text-base leading-relaxed">
+                <strong>¿Por qué ocurre esto?</strong> Si divides una torta (\(k = 1\)) entre un número infinitamente grande de personas (\(x \to \infty\)), a cada persona le toca una porción tan ridículamente pequeña que prácticamente es <strong>cero</strong> (\(0\)).
+            </p>
+        </section>
+
+        <!-- Ejemplos -->
+        <div class="space-y-6">
+
+            <!-- Ejemplo 1 -->
+            <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 math-card">
+                <div class="flex items-center space-x-2 mb-3">
+                    <span class="bg-indigo-100 text-indigo-700 font-bold px-3 py-1 rounded-full text-xs">Ejemplo 1</span>
+                    <h3 class="text-lg font-bold text-slate-800">Grados Iguales en Numerador y Denominador</h3>
+                </div>
+                <div class="p-3 bg-indigo-50/50 rounded-xl text-center text-lg font-semibold text-indigo-900 mb-4">
+                    $$\lim_{x \to \infty} \frac{3x^2 + 5x}{2x^2 - 1}$$
+                </div>
+                <div class="space-y-3 text-slate-700 text-sm md:text-base border-l-4 border-indigo-500 pl-4">
+                    <div><strong class="text-slate-900">Paso 1: Identificar la mayor potencia de \(x\).</strong> La potencia más alta en todo el ejercicio es \(x^2\).</div>
+                    <div><strong class="text-slate-900">Paso 2: Dividir cada término entre \(x^2\).</strong>
+                        <div class="my-1">$$\lim_{x \to \infty} \frac{\frac{3x^2}{x^2} + \frac{5x}{x^2}}{\frac{2x^2}{x^2} - \frac{1}{x^2}}$$</div>
+                    </div>
+                    <div><strong class="text-slate-900">Paso 3: Simplificar cada fracción individual.</strong>
+                        <div class="my-1">$$\lim_{x \to \infty} \frac{3 + \frac{5}{x}}{2 - \frac{1}{x^2}}$$</div>
+                    </div>
+                    <div><strong class="text-slate-900">Paso 4: Aplicar el límite (los términos con \(x\) abajo se vuelven \(0\)).</strong>
+                        <div class="my-1">$$\frac{3 + 0}{2 - 0} = \frac{3}{2}$$</div>
+                    </div>
+                </div>
+                <div class="mt-4 p-3 bg-emerald-50 text-emerald-800 rounded-xl text-center font-bold">
+                    Resultado Final: \(\lim_{x \to \infty} \frac{3x^2 + 5x}{2x^2 - 1} = \frac{3}{2}\)
+                </div>
+            </section>
+
+            <!-- Ejemplo 2 -->
+            <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 math-card">
+                <div class="flex items-center space-x-2 mb-3">
+                    <span class="bg-indigo-100 text-indigo-700 font-bold px-3 py-1 rounded-full text-xs">Ejemplo 2</span>
+                    <h3 class="text-lg font-bold text-slate-800">Grado Mayor en el Denominador</h3>
+                </div>
+                <div class="p-3 bg-indigo-50/50 rounded-xl text-center text-lg font-semibold text-indigo-900 mb-4">
+                    $$\lim_{x \to \infty} \frac{4x + 7}{x^2 - 3}$$
+                </div>
+                <div class="space-y-3 text-slate-700 text-sm md:text-base border-l-4 border-indigo-500 pl-4">
+                    <div><strong class="text-slate-900">Paso 1: Mayor potencia de \(x\).</strong> Es \(x^2\).</div>
+                    <div><strong class="text-slate-900">Paso 2: Dividir todos los términos entre \(x^2\).</strong>
+                        <div class="my-1">$$\lim_{x \to \infty} \frac{\frac{4x}{x^2} + \frac{7}{x^2}}{\frac{x^2}{x^2} - \frac{3}{x^2}}$$</div>
+                    </div>
+                    <div><strong class="text-slate-900">Paso 3: Simplificar algebraicamente.</strong>
+                        <div class="my-1">$$\lim_{x \to \infty} \frac{\frac{4}{x} + \frac{7}{x^2}}{1 - \frac{3}{x^2}}$$</div>
+                    </div>
+                    <div><strong class="text-slate-900">Paso 4: Evaluar tendiendo a infinito.</strong>
+                        <div class="my-1">$$\frac{0 + 0}{1 - 0} = \frac{0}{1} = 0$$</div>
+                    </div>
+                </div>
+                <div class="mt-4 p-3 bg-emerald-50 text-emerald-800 rounded-xl text-center font-bold">
+                    Resultado Final: \(\lim_{x \to \infty} \frac{4x + 7}{x^2 - 3} = 0\)
+                </div>
+            </section>
+
+            <!-- Ejemplo 3 -->
+            <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 math-card">
+                <div class="flex items-center space-x-2 mb-3">
+                    <span class="bg-indigo-100 text-indigo-700 font-bold px-3 py-1 rounded-full text-xs">Ejemplo 3</span>
+                    <h3 class="text-lg font-bold text-slate-800">Grado Mayor en el Numerador</h3>
+                </div>
+                <div class="p-3 bg-indigo-50/50 rounded-xl text-center text-lg font-semibold text-indigo-900 mb-4">
+                    $$\lim_{x \to \infty} \frac{5x^3 - 2}{x^2 + 4}$$
+                </div>
+                <div class="space-y-3 text-slate-700 text-sm md:text-base border-l-4 border-indigo-500 pl-4">
+                    <div><strong class="text-slate-900">Paso 1: Mayor potencia de \(x\).</strong> Es \(x^3\).</div>
+                    <div><strong class="text-slate-900">Paso 2: Dividir entre \(x^3\).</strong>
+                        <div class="my-1">$$\lim_{x \to \infty} \frac{\frac{5x^3}{x^3} - \frac{2}{x^3}}{\frac{x^2}{x^3} + \frac{4}{x^3}}$$</div>
+                    </div>
+                    <div><strong class="text-slate-900">Paso 3: Simplificar.</strong>
+                        <div class="my-1">$$\lim_{x \to \infty} \frac{5 - \frac{2}{x^3}}{\frac{1}{x} + \frac{4}{x^3}}$$</div>
+                    </div>
+                    <div><strong class="text-slate-900">Paso 4: Evaluar el límite.</strong>
+                        <div class="my-1">$$\frac{5 - 0}{0 + 0} = \frac{5}{0} \to \infty$$</div>
+                    </div>
+                </div>
+                <div class="mt-4 p-3 bg-emerald-50 text-emerald-800 rounded-xl text-center font-bold">
+                    Resultado Final: El límite NO existe (Tiende a \(+\infty\))
+                </div>
+            </section>
+
+            <!-- Ejemplo 4 -->
+            <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 math-card">
+                <div class="flex items-center space-x-2 mb-3">
+                    <span class="bg-indigo-100 text-indigo-700 font-bold px-3 py-1 rounded-full text-xs">Ejemplo 4</span>
+                    <h3 class="text-lg font-bold text-slate-800">Límite polinómico simple al infinito</h3>
+                </div>
+                <div class="p-3 bg-indigo-50/50 rounded-xl text-center text-lg font-semibold text-indigo-900 mb-4">
+                    $$\lim_{x \to \infty} \frac{2x + 1}{6x - 5}$$
+                </div>
+                <div class="space-y-3 text-slate-700 text-sm md:text-base border-l-4 border-indigo-500 pl-4">
+                    <div><strong class="text-slate-900">Paso 1: Mayor potencia de \(x\).</strong> Es \(x^1\) (\(x\)).</div>
+                    <div><strong class="text-slate-900">Paso 2: Dividir todo entre \(x\).</strong>
+                        <div class="my-1">$$\lim_{x \to \infty} \frac{2 + \frac{1}{x}}{6 - \frac{5}{x}}$$</div>
+                    </div>
+                    <div><strong class="text-slate-900">Paso 3: Evaluar los términos tendiendo a cero.</strong>
+                        <div class="my-1">$$\frac{2 + 0}{6 - 0} = \frac{2}{6} = \frac{1}{3}$$</div>
+                    </div>
+                </div>
+                <div class="mt-4 p-3 bg-emerald-50 text-emerald-800 rounded-xl text-center font-bold">
+                    Resultado Final: \(\lim_{x \to \infty} \frac{2x + 1}{6x - 5} = \frac{1}{3}\)
+                </div>
+            </section>
+
+            <!-- Ejemplo 5 -->
+            <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 math-card">
+                <div class="flex items-center space-x-2 mb-3">
+                    <span class="bg-indigo-100 text-indigo-700 font-bold px-3 py-1 rounded-full text-xs">Ejemplo 5</span>
+                    <h3 class="text-lg font-bold text-slate-800">Límite al infinito con términos cuadráticos</h3>
+                </div>
+                <div class="p-3 bg-indigo-50/50 rounded-xl text-center text-lg font-semibold text-indigo-900 mb-4">
+                    $$\lim_{x \to \infty} \frac{x^2 - 4x + 3}{3x^2 + 2x - 1}$$
+                </div>
+                <div class="space-y-3 text-slate-700 text-sm md:text-base border-l-4 border-indigo-500 pl-4">
+                    <div><strong class="text-slate-900">Paso 1: Dividir entre la mayor potencia (\(x^2\)).</strong>
+                        <div class="my-1">$$\lim_{x \to \infty} \frac{1 - \frac{4}{x} + \frac{3}{x^2}}{3 + \frac{2}{x} - \frac{1}{x^2}}$$</div>
+                    </div>
+                    <div><strong class="text-slate-900">Paso 2: Convertir cada fracción con \(x\) a cero.</strong>
+                        <div class="my-1">$$\frac{1 - 0 + 0}{3 + 0 - 0} = \frac{1}{3}$$</div>
+                    </div>
+                </div>
+                <div class="mt-4 p-3 bg-emerald-50 text-emerald-800 rounded-xl text-center font-bold">
+                    Resultado Final: \(\lim_{x \to \infty} \frac{x^2 - 4x + 3}{3x^2 + 2x - 1} = \frac{1}{3}\)
+                </div>
+            </section>
+
+            <!-- Ejemplo 6 -->
+            <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 math-card">
+                <div class="flex items-center space-x-2 mb-3">
+                    <span class="bg-indigo-100 text-indigo-700 font-bold px-3 py-1 rounded-full text-xs">Ejemplo 6</span>
+                    <h3 class="text-lg font-bold text-slate-800">Límite con constante en el numerador</h3>
+                </div>
+                <div class="p-3 bg-indigo-50/50 rounded-xl text-center text-lg font-semibold text-indigo-900 mb-4">
+                    $$\lim_{x \to \infty} \frac{10}{x^3 + 2}$$
+                </div>
+                <div class="space-y-3 text-slate-700 text-sm md:text-base border-l-4 border-indigo-500 pl-4">
+                    <div><strong class="text-slate-900">Paso 1: Análisis directo de comportamiento.</strong>
+                        Como el numerador es una constante fija (\(10\)) y el denominador aumenta sin límite hacia infinito (\(\infty^3 + 2 \to \infty\)):
+                    </div>
+                    <div><strong class="text-slate-900">Paso 2: Evaluar la división.</strong>
+                        <div class="my-1">$$\frac{10}{\infty} = 0$$</div>
+                    </div>
+                </div>
+                <div class="mt-4 p-3 bg-emerald-50 text-emerald-800 rounded-xl text-center font-bold">
+                    Resultado Final: \(\lim_{x \to \infty} \frac{10}{x^3 + 2} = 0\)
+                </div>
+            </section>
+
+        </div>
+
+        <footer class="text-center text-xs text-slate-400 py-6">
+            Guía de Apoyo Estructurado &bull; Límites al Infinito
+        </footer>
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "$", right: "$", display: false},
+                    {left: "\\(", right: "\\)", display: false},
+                    {left: "\\[", right: "\\]", display: true}
+                ],
+                throwOnError : false
+            });
+        });
+    </script>
+</body>
+</html>
